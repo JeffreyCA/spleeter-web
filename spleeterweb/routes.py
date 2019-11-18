@@ -1,24 +1,27 @@
-from spleeterweb import app
-
-import sys
 import os
-from flask import flash, jsonify, request, redirect, url_for, send_from_directory
-from werkzeug.utils import secure_filename
+import sys
+import traceback
+import uuid
+from os.path import join
 
-from spleeter import *
+import ffmpeg
+from flask import (flash, json, jsonify, redirect, request,
+                   send_from_directory, url_for)
+from pathvalidate import is_valid_filename
+from spleeter.separator import Separator
 from spleeter.utils import *
 from spleeter.utils.audio.adapter import get_default_audio_adapter
-from spleeter.separator import Separator
-from os.path import join
-import traceback
-import ffmpeg
-import uuid
+from werkzeug.exceptions import HTTPException
+from werkzeug.utils import secure_filename
+
+from spleeterweb import app
+
+from .spleeterseparator import *
 
 ALLOWED_EXTENSIONS = {'mp3', 'wav'}
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -50,13 +53,14 @@ def upload_file():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/predict', methods=['GET'])
 def get_prediction():
     filename = request.args.get('filename')
 
+    if (not is_valid_filename(filename)):
+        raise InvalidArgument(f'Invalid filename: {filename}')
     try:
         separator = SpleeterSeparator(filename)
         outfile = separator.predict()
@@ -64,7 +68,7 @@ def get_prediction():
     except Exception as e:
         raise e
 
-class InvalidUsage(Exception):
+class InvalidArgument(Exception):
     status_code = 400
 
     def __init__(self, message, status_code=None, payload=None):
@@ -79,36 +83,31 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
-@app.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
+    def __str__(self):
+        return self.message
+
+@app.errorhandler(HTTPException)
+def handle_httpexception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
     return response
 
-class SpleeterSeparator:
-    def __init__(self, filename):
-        self.filename = filename
-        # Using embedded configuration.
-        self.separator = Separator('spleeter:4stems')
-        self.audio_adapter = get_default_audio_adapter()
-        self.sample_rate = 44100
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return e
 
-        try:
-            self.waveform, _ = self.audio_adapter.load(join('uploads', filename), sample_rate=self.sample_rate)
-        except ffmpeg.Error as e:
-            print('stdout:', e.stdout.decode('utf8'))
-            print('stderr:', e.stderr.decode('utf8'))
-            raise e
-        except Exception as e:
-            print(traceback.format_exc())
+    if isinstance(e, ffmpeg._run.Error):
+        stderr_log = e.stderr.decode('utf8')
+        last_line = stderr_log.splitlines()[-1]
+        return jsonify({'message': last_line})
 
-    def predict(self):
-        prediction = self.separator.separate(self.waveform)
-        out = prediction["vocals"]
-        for key in ["bass", "other"]:
-            out += prediction[key]
-        out /= 3
-
-        filepath = join('output', str(uuid.uuid4()), 'track.mp3')
-        self.audio_adapter.save(filepath, out, self.separator._sample_rate, "mp3", "128k")
-        return filepath
+    return jsonify({'message': str(e)})

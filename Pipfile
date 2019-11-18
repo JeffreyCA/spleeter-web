@@ -5,11 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+autopep8 = "*"
 
 [packages]
 flask = "==1.0.2"
 jsonify = "*"
 spleeter = "*"
+pathvalidate = "*"
 
 [requires]
 python_version = "3.7"
