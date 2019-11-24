@@ -6,7 +6,7 @@ import ffmpeg
 from spleeter import *
 from spleeter.separator import Separator
 from spleeter.utils import *
-from spleeter.utils.audio.adapter import get_default_audio_adapter
+from spleeter.audio.adapter import get_default_audio_adapter
 from spleeterweb import app
 
 class SpleeterSeparator:
@@ -18,16 +18,16 @@ class SpleeterSeparator:
     track_name = app.config['TRACK_NAME']
 
     spleeter_stem = app.config['SPLEETER_STEM']
+    sample_rate = 44100
 
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self):
         # Using embedded configuration.
         self.separator = Separator(self.spleeter_stem)
         self.audio_adapter = get_default_audio_adapter()
-        self.sample_rate = 44100
 
+    def predict(self, filename):
         try:
-            self.waveform, _ = self.audio_adapter.load(join(self.upload_folder, filename), sample_rate = self.sample_rate)
+            waveform, _ = self.audio_adapter.load(join(self.upload_folder, filename), sample_rate = self.sample_rate)
         except ffmpeg.Error as e:
             print('stdout:', e.stdout.decode('utf8'))
             print('stderr:', e.stderr.decode('utf8'))
@@ -35,8 +35,7 @@ class SpleeterSeparator:
         except Exception as e:
             print(traceback.format_exc())
 
-    def predict(self):
-        prediction = self.separator.separate(self.waveform)
+        prediction = self.separator.separate(waveform)
         out = prediction['vocals']
         for key in ['bass', 'other']:
             out += prediction[key]

@@ -10,18 +10,29 @@ from flask import (flash, json, jsonify, redirect, request,
 from pathvalidate import is_valid_filename
 from spleeter.separator import Separator
 from spleeter.utils import *
-from spleeter.utils.audio.adapter import get_default_audio_adapter
+from spleeter.audio.adapter import get_default_audio_adapter
 from werkzeug.exceptions import HTTPException
 from werkzeug.utils import secure_filename
 
-from spleeterweb import app
+from spleeterweb import app, celery
 
 from .spleeterseparator import *
+from celery import Celery, Task
 
 ALLOWED_EXTENSIONS = {'mp3', 'wav'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+class PredictTask(Task):
+    def __init__(self):
+        self.separator = SpleeterSeparator()
+
+@celery.task(base=PredictTask)
+def make_prediction(filename):
+    sep = make_prediction.separator
+    outfile = sep.predict(filename)
+    return outfile
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -62,9 +73,9 @@ def get_prediction():
     if (not is_valid_filename(filename)):
         raise InvalidArgument(f'Invalid filename: {filename}')
     try:
-        separator = SpleeterSeparator(filename)
-        outfile = separator.predict()
-        return jsonify({'output': outfile})
+        result = make_prediction.delay(filename)
+        outfile = result.get()
+        return jsonify({ 'outfile': outfile })
     except Exception as e:
         raise e
 
