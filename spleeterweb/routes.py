@@ -19,10 +19,14 @@ from spleeterweb import app, celery
 from .spleeterseparator import *
 from celery import Celery, Task
 
-ALLOWED_EXTENSIONS = {'mp3', 'wav'}
+ALLOWED_EXTENSIONS = {'mp3', 'flac', 'wav'}
+ALLOWED_MIMES = {'audio/mpeg', 'audio/mp3', 'audio/flac', 'audio/wav'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def allowed_mime(mime):
+    return mime in ALLOWED_MIMES
 
 class PredictTask(Task):
     def __init__(self):
@@ -47,11 +51,11 @@ def upload_file():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
-        if file and allowed_file(file.filename):
+
+        if file and allowed_file(file.filename) and allowed_mime(file.content_type):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
+            return jsonify({'file': filename})
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -68,14 +72,14 @@ def uploaded_file(filename):
 
 @app.route('/predict', methods=['GET'])
 def get_prediction():
-    filename = request.args.get('filename')
+    filename = request.args.get('file')
 
     if (not is_valid_filename(filename)):
         raise InvalidArgument(f'Invalid filename: {filename}')
     try:
         result = make_prediction.delay(filename)
         outfile = result.get()
-        return jsonify({ 'outfile': outfile })
+        return jsonify({ 'output': outfile })
     except Exception as e:
         raise e
 
