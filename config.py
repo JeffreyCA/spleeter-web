@@ -5,8 +5,8 @@ AUDIO_SAMPLE_RATE = 44100
 TRACK_NAME = 'track'
 
 SPLEETER_STEM = 'spleeter:4stems'
-UPLOAD_FOLDER = '/Users/jeffrey/Dev/spleeter-web/uploads'
-OUTPUT_FOLDER = '/Users/jeffrey/Dev/spleeter-web/output'
+UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'output'
 
 MAX_CONTENT_LENGTH = 40 * 1024 * 1024
 
