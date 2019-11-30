@@ -15,6 +15,7 @@ pathvalidate = "*"
 celery = "*"
 redis = "*"
 billiard = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
