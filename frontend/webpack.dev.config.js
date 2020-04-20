@@ -1,10 +1,13 @@
-var path = require("path")
-var webpack = require('webpack')
-var BundleTracker = require('webpack-bundle-tracker')
+const path = require("path")
+const webpack = require('webpack')
+const BundleTracker = require('webpack-bundle-tracker')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
+  mode: 'development',
   context: __dirname,
-  devtool: 'source-map',
+  devtool: 'cheap-module-eval-source-map',
   entry: './src/index',
   output: {
     path: path.resolve('./assets/dist/'),
@@ -15,6 +18,7 @@ module.exports = {
       path: __dirname,
       filename: 'webpack-stats.json'
     }),
+    new CleanWebpackPlugin()
   ],
   module: {
     rules: [
@@ -29,15 +33,24 @@ module.exports = {
           limit: 10000
         }
       },
-      { test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/ }
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/
+      }
     ]
   },
-  resolve: {
-    extensions: ['.js', '.jsx']
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
   },
   performance: {
     hints: false,
     maxEntrypointSize: 512000,
     maxAssetSize: 512000
-  }
+  },
+  resolve: {
+    extensions: ['.js', '.jsx']
+  },
 }
