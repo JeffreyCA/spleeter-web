@@ -1,5 +1,7 @@
 .vscode
 
+out/
+
 # Models
 pretrained_models/
 
@@ -31,3 +33,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+*.sqlite3
+.coverage
