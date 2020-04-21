@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "postinstall": "npm install --prefix frontend",
-        "heroku-postbuild": "npm run build --prefix frontend"
+        "heroku-postbuild": "npm run build --prefix frontend",
+        "dev": "npm run dev --prefix frontend & python3 manage.py runserver"
     }
 }
