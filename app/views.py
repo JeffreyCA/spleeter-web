@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.db.models.deletion import ProtectedError
 # Create your views here.
 from .models import Song, TempFile
 from .serializers import SongSerializer, TempFileSerializer
@@ -23,9 +24,10 @@ class TempFileViewSet(viewsets.ModelViewSet):
         file_id = request.data['id']
         try:
             instance = TempFile.objects.get(id=file_id)
-            instance.file.delete()
             instance.delete()
             return JsonResponse({'status': 'success'})
         except TempFile.DoesNotExist:
-            return JsonResponse({'status': 'failure'})
+            return JsonResponse({'status': 'failure', 'error': 'The instance does not exist'})
+        except ProtectedError:
+            return JsonResponse({'status': 'failure', 'error': 'A Song currently references this file'})
 

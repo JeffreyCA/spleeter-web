@@ -4,7 +4,7 @@ from .models import Song, TempFile
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        fields = ('id', 'title', 'artist', 'length', 'file')
+        fields = ('id', 'file', 'artist', 'title')
 
 class TempFileSerializer(serializers.ModelSerializer):
     class Meta:
