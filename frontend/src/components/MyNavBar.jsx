@@ -1,9 +1,7 @@
 import React from 'react';
-import axios from 'axios';
-import { Button, Container, Navbar, Nav, NavDropdown, DropdownButton, Dropdown} from 'react-bootstrap';
-import Link from 'react-router-dom';
+import { Button, Container, Navbar, Nav, DropdownButton, Dropdown} from 'react-bootstrap';
 import { withRouter } from 'react-router';
-import { CloudUpload, Upload } from 'react-bootstrap-icons';
+import { CloudUpload } from 'react-bootstrap-icons';
 
 class MyNavBar extends React.Component {
   constructor(props) {
@@ -11,7 +9,7 @@ class MyNavBar extends React.Component {
   }
 
   render() {
-    const styles = { 'paddingRight': '10px' } ;
+    const { onUploadClick } = this.props;
 
     return (
       <Navbar bg="light" variant="light" expand="lg">
@@ -20,7 +18,7 @@ class MyNavBar extends React.Component {
           <Navbar.Toggle />
           <Navbar.Collapse className="flex-grow-1 text-right">
           <Nav className="ml-auto">
-            <Button variant="success mr-3">Upload <CloudUpload /></Button>
+            <Button onClick={onUploadClick} variant="success mr-3">Upload <CloudUpload /></Button>
             <DropdownButton title="Jeffrey" variant="outline-secondary">
               <Dropdown.Item>Profile</Dropdown.Item>
               <Dropdown.Item>Logout</Dropdown.Item>

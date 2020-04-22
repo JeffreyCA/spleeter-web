@@ -1,0 +1,79 @@
+import React from 'react'
+import { ProgressBar } from 'react-bootstrap';
+
+import { formatBytes, formatDuration } from 'react-dropzone-uploader'
+
+import cancelImg from '../../svg/cancel.svg'
+import removeImg from '../../svg/remove.svg'
+import restartImg from '../../svg/restart.svg'
+
+const iconByFn = {
+  cancel: { backgroundImage: `url(${cancelImg})` },
+  remove: { backgroundImage: `url(${removeImg})` },
+  restart: { backgroundImage: `url(${restartImg})` },
+}
+
+const CustomPreview = ({ className,
+  imageClassName,
+  style,
+  imageStyle,
+  fileWithMeta: { cancel, remove, restart },
+  meta: { name = '', percent = 0, size = 0, previewUrl, status, duration, validationError },
+  isUpload,
+  canCancel,
+  canRemove,
+  canRestart,
+  extra: { minSizeBytes } }) => {
+  const cancelThenRemove = () => {
+    cancel()
+    remove()
+  }
+  let title = `${name || '?'}, ${formatBytes(size)}`
+    if (duration) title = `${title}, ${formatDuration(duration)}`
+
+    if (status === 'error_file_size' || status === 'error_validation') {
+      return (
+        <div className={className} style={style}>
+          <span className="dzu-previewFileNameError">{title}</span>
+          {status === 'error_file_size' && <span>{size < minSizeBytes ? 'File too small' : 'File too big'}</span>}
+          {status === 'error_validation' && <span>{String(validationError)}</span>}
+          {canRemove && <span className="dzu-previewButton" style={iconByFn.remove} onClick={remove} />}
+        </div>
+      )
+    }
+
+    if (status === 'error_upload_params' || status === 'exception_upload' || status === 'error_upload') {
+      title = `${title} (upload failed)`
+    }
+    if (status === 'aborted') title = `${title} (cancelled)`
+
+    const doneUpload = status === 'done' || status === 'headers_received';
+
+    return (
+      <div className={className} style={style}>
+        <div className="row">
+          <div className="col">
+            {previewUrl && <img className={imageClassName} style={imageStyle} src={previewUrl} alt={title} title={title} />}
+            {!previewUrl && <span className="dzu-previewFileName">{title}</span>}
+          </div>
+        </div>
+        <div className="row mt-2">
+          <div className="col">
+            <div className="d-flex">
+            {isUpload && (
+              <ProgressBar className="w-100" max={100} now={doneUpload ? 100 : percent} variant={doneUpload ? "success" : undefined} />
+            )}
+            {status === 'uploading' && canCancel && (
+              <span className="dzu-previewButton" style={iconByFn.remove} onClick={cancelThenRemove} />
+            )}
+            {status !== 'preparing' && status !== 'getting_upload_params' && status !== 'uploading' && canRemove && (
+              <span className="dzu-previewButton" style={iconByFn.remove} onClick={remove} />
+            )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+}
+
+export default CustomPreview
