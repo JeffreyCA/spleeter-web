@@ -65,6 +65,10 @@
   cursor: pointer;
 }
 
+.dzu-sizeError {
+  color: #FF0000
+}
+
 .dzu-previewContainer {
   padding: 40px 3%;
   width: 100%;

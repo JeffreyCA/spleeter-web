@@ -34,10 +34,20 @@ const CustomPreview = ({ className,
     if (status === 'error_file_size' || status === 'error_validation') {
       return (
         <div className={className} style={style}>
-          <span className="dzu-previewFileNameError">{title}</span>
-          {status === 'error_file_size' && <span>{size < minSizeBytes ? 'File too small' : 'File too big'}</span>}
-          {status === 'error_validation' && <span>{String(validationError)}</span>}
-          {canRemove && <span className="dzu-previewButton" style={iconByFn.remove} onClick={remove} />}
+          <div className="row">
+            <div className="col">
+              <span className="dzu-previewFileNameError">{title}</span>
+            </div>
+          </div>
+          <div className="row mt-2">
+            <div className="col">
+              <div className="d-flex">
+                {status === 'error_file_size' && <span className="dzu-sizeError">{size < minSizeBytes ? 'File too small!' : 'File too large!'}</span>}
+                {status === 'error_validation' && <span>{String(validationError)}</span>}
+                {canRemove && <span className="dzu-previewButton align-self-center" style={iconByFn.remove} onClick={remove} />}
+              </div>
+            </div>
+          </div>
         </div>
       )
     }

@@ -6,6 +6,8 @@ import CustomPreview from './Dropzone/CustomPreview'
 import CustomInput from './Dropzone/CustomInput'
 import './UploadDialog.css'
 
+const MAX_FILE_BYTES = 30 * 1048576
+
 class UploadDialogForm extends React.Component {
   constructor(props) {
     super(props)
@@ -82,7 +84,7 @@ class UploadDialog extends React.Component {
 
   handleChangeStatus = ({ meta, remove, xhr }, status) => {
     const aborted = status === 'aborted' || status === 'rejected_file_type' || status === 'rejected_max_files' || status === 'error_file_size' || status === 'error_validation' || status === 'error_upload_params' || status === 'error_upload'
-
+    console.log('status change: ' + status)
     if (aborted) {
       this.resetState()
     } else if (status === 'removed') {
@@ -128,6 +130,7 @@ class UploadDialog extends React.Component {
         {detailsStep ? <UploadDialogForm artist={artist} title={title} handleChange={this.handleChange} /> : (
           <Dropzone
           maxFiles={1}
+          maxSizeBytes={MAX_FILE_BYTES}
           multiple={false}
           accept="audio/*"
           onChangeStatus={this.handleChangeStatus}
