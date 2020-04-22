@@ -36,3 +36,4 @@ venv.bak/
 
 *.sqlite3
 .coverage
+media/

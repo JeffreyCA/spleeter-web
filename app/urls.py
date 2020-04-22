@@ -14,8 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
+
 from . import views
 
 urlpatterns = [
     path('api/song/', views.SongListCreate.as_view()),
-]
+    path('api/upload/', views.TempFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

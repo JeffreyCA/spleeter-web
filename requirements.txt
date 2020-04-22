@@ -40,13 +40,14 @@ protobuf==3.11.3
 psycopg2==2.8.5
 pycparser==2.20
 pylint==2.4.4
+pylint-django==2.0.15
+pylint-plugin-utils==0.6
 python-dateutil==2.8.1
 pytz==2019.3
 requests==2.23.0
 resampy==0.2.2
 scikit-learn==0.22.2.post1
 scipy==1.4.1
-setuptools==46.1.3
 six==1.14.0
 SoundFile==0.10.3.post1
 spleeter==1.5.1

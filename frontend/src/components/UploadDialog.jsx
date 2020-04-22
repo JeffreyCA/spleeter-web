@@ -1,110 +1,147 @@
 import React from 'react';
-import { Button, Modal, ProgressBar } from 'react-bootstrap';
+import { Button, Col, Form, Modal } from 'react-bootstrap';
+import axios from 'axios';
 import Dropzone from 'react-dropzone-uploader'
-import './UploadDialog.css'
-import { getDroppedOrSelectedFiles } from 'html5-file-selector'
-import { CloudUpload } from 'react-bootstrap-icons';
 import CustomPreview from './Dropzone/CustomPreview'
 import CustomInput from './Dropzone/CustomInput'
+import './UploadDialog.css'
 
-/*
-const CustomInput = () => {
-  const handleSubmit = (files, allFiles) => {
-    console.log(files.map(f => f.meta))
-    allFiles.forEach(f => f.remove())
+class UploadDialogForm extends React.Component {
+  constructor(props) {
+    super(props)
   }
 
-  const getFilesFromEvent = e => {
-    return new Promise(resolve => {
-      getDroppedOrSelectedFiles(e).then(chosenFiles => {
-        resolve(chosenFiles.map(f => f.fileObject))
-      })
-    })
-  }
+  render() {
+    const { artist, title, handleChange } = this.props
+    return (
+      <Form.Row>
+        <Form.Group as={Col} controlId="formGridFirst">
+            <Form.Label>Artist</Form.Label>
+            <Form.Control name="artist" defaultValue={artist} onChange={handleChange}/>
+        </Form.Group>
 
-  return (
-    <Dropzone
-      maxFiles={1}
-      multiple={false}
-      accept="image/*,audio/*,video/*,.pdf"
-      getUploadParams={() => ({ url: 'https://httpbin.org/post' })}
-      InputComponent={Input}
-      PreviewComponent={MyPrev}
-      getFilesFromEvent={getFilesFromEvent}
-    />
-  )
+        <Form.Group as={Col} controlId="formGridLast">
+            <Form.Label>Title</Form.Label>
+            <Form.Control name = "title" defaultValue={title} onChange={handleChange}/>
+        </Form.Group>
+      </Form.Row>
+    )
+  }
 }
-*/
 
 class UploadDialog extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       droppedFile: false,
-      isUploading: false
+      isUploading: false,
+      detailsStep: false,
+      fileId: -1,
+      artist: '',
+      title: ''
     }
   }
 
-  onUploadComplete() {
-
+  resetState = () => {
+    this.setState({
+      droppedFile: false,
+      isUploading: false,
+      detailsStep: false,
+      fileId: -1,
+      artist: '',
+      title: ''
+    })
   }
 
-  handleChangeStatus = ({ meta, remove }, status) => {
-    console.log(status)
-    const aborted = status === 'aborted' || status === 'removed' || status === 'rejected_file_type' || status === 'rejected_max_files' || status === 'error_file_size' || status === 'error_validation' || status === 'error_upload_params' || status === 'error_upload'
-  
-    if (status === 'preparing') {
+  deleteCurrentFile = () => {
+    if (this.state.fileId != -1) {
+      console.log('Deleted ' + this.state.fileId)
+      axios.delete('/api/upload/', { data: { id: this.state.fileId } });
+    }
+  }
+
+  onHide = () => {
+    this.deleteCurrentFile()
+    this.resetState()
+    this.props.close()
+  }
+
+  onNext = () => {
+    if (!this.state.detailsStep) {
+      this.setState({
+        detailsStep: true
+      })
+    } else {
+      console.log('Finish song upload')
+      console.log('Artist: ' + this.state.artist)
+      console.log('Title: ' + this.state.title)
+      this.resetState()
+      this.props.close()
+    }
+  }
+
+  handleChangeStatus = ({ meta, remove, xhr }, status) => {
+    const aborted = status === 'aborted' || status === 'rejected_file_type' || status === 'rejected_max_files' || status === 'error_file_size' || status === 'error_validation' || status === 'error_upload_params' || status === 'error_upload'
+
+    if (aborted) {
+      this.resetState()
+    } else if (status === 'removed') {
+      this.deleteCurrentFile()
+      this.resetState()
+    } else if (status === 'preparing') {
       this.setState({
         droppedFile: true,
         isUploading: true
       })
-    } else if (aborted) {
-      this.setState({
-        droppedFile: false,
-        isUploading: false
-      })
-    } else if (status === 'headers_received') {
-      console.log(`${meta.name} uploaded!`)
-      this.setState({
-        isUploading: false
-      })
+    } else if (status === 'done') {
+      const responseObject = JSON.parse(xhr.response)
+      if (responseObject['file_id']) {
+        this.setState({
+          isUploading: false,
+          fileId: responseObject['file_id'],
+          artist: 'Test Artist',
+          title: 'Test Title'
+        })
+      }
     }
   }
 
-  getFilesFromEvent = e => {
-    return new Promise(resolve => {
-      getDroppedOrSelectedFiles(e).then(chosenFiles => {
-        resolve(chosenFiles.map(f => f.fileObject))
-      })
-    })
+  handleChange = (event) => {
+    event.preventDefault();
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
   }
 
   render() {
-    const { droppedFile, isUploading } = this.state;
-    const { show, close } = this.props;
-
+    const { droppedFile, isUploading, detailsStep, artist, title } = this.state;
+    const { show } = this.props;
+    const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song'
+    const primaryText = detailsStep ? 'Finish' : 'Next'
+    const buttonDisabled = detailsStep ? (!artist && !title) : !(droppedFile && !isUploading);
+    
     return (
-      <Modal show={show} onHide={close}>
+      <Modal show={show} onHide={this.onHide}>
         <Modal.Header closeButton>
-          <Modal.Title>Upload Song</Modal.Title>
+        <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <Dropzone
+        {detailsStep ? <UploadDialogForm artist={artist} title={title} handleChange={this.handleChange} /> : (
+          <Dropzone
           maxFiles={1}
           multiple={false}
-          accept="image/*,audio/*,video/*,.pdf"
+          accept="audio/*"
           onChangeStatus={this.handleChangeStatus}
-          getUploadParams={() => ({ url: 'https://httpbin.org/post' })}
+          getUploadParams={() => ({ url: '/api/upload/' })}
           InputComponent={CustomInput}
-          PreviewComponent={CustomPreview}
-        />
+          PreviewComponent={CustomPreview} />
+        )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={close}>
+          <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="success" disabled={!(droppedFile && !isUploading)} onClick={close}>
-            Upload
+          <Button variant={detailsStep ? "success" : "primary"} disabled={buttonDisabled} onClick={this.onNext}>
+            {primaryText}
           </Button>
         </Modal.Footer>
       </Modal>

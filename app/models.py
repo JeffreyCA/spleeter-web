@@ -6,3 +6,6 @@ class Song(models.Model):
     artist = models.CharField(max_length=100)
     length = models.DurationField()
     file = models.FileField(upload_to='uploads/')
+
+class TempFile(models.Model):
+    file = models.FileField(upload_to='tmp/')
