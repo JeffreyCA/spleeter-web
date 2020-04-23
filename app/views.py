@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models.deletion import ProtectedError
-# Create your views here.
+from rest_framework import generics, viewsets
 from .models import Song, SourceFile
 from .serializers import SongSerializer, SourceFileSerializer
-from rest_framework import generics, viewsets
 
 class SongListCreate(generics.ListCreateAPIView):
     queryset = Song.objects.all()
@@ -18,7 +17,8 @@ class SourceFileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         source_file = serializer.save()
-        return JsonResponse({'file_id': source_file.id, 'url': source_file.file.url})
+        (artist, title) = source_file.metadata()
+        return JsonResponse({'file_id': source_file.id, 'artist': artist, 'title': title})
 
     def perform_destroy(self, request):
         file_id = request.data['id']
