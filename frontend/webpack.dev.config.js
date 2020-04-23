@@ -2,12 +2,11 @@ const path = require("path")
 const webpack = require('webpack')
 const BundleTracker = require('webpack-bundle-tracker')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'development',
   context: __dirname,
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval',
   entry: './src/index',
   output: {
     path: path.resolve('./assets/dist/'),
@@ -18,7 +17,7 @@ module.exports = {
       path: __dirname,
       filename: 'webpack-stats.json'
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
   ],
   module: {
     rules: [
@@ -42,13 +41,17 @@ module.exports = {
     ]
   },
   optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin()],
-  },
-  performance: {
-    hints: false,
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000
+    moduleIds: 'hashed',
+    runtimeChunk:'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      },
+    }
   },
   resolve: {
     extensions: ['.js', '.jsx']

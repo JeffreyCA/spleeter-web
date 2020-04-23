@@ -40,12 +40,24 @@ module.exports = {
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin({
+      cache: true,
+      parallel: true
+    })],
+    moduleIds: 'hashed',
+    runtimeChunk:'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
   },
   performance: {
-    hints: false,
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000
+    hints: false
   },
   resolve: {
     extensions: ['.js', '.jsx']

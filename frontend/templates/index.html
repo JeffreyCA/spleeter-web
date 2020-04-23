@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Spleeter Web</title>
   {% render_bundle 'main' 'css' %}
+  {% render_bundle 'runtime' 'css' %}
+  {% render_bundle 'vendors' 'css' %}
 </head>
 <body>
   <div id="react"></div>
   {% render_bundle 'main' 'js' %}
+  {% render_bundle 'runtime' 'js' %}
+  {% render_bundle 'vendors' 'js' %}
 </body>
 </html>
