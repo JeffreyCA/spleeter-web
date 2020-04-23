@@ -1,8 +1,17 @@
 import React from 'react'
 import { CloudUpload } from 'react-bootstrap-icons';
+import { getDroppedOrSelectedFiles } from 'html5-file-selector'
 
-const CustomInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
+const CustomInput = ({ accept, onFiles, files }) => {
   const text = 'Select file'
+
+  const getFilesFromEvent = e => {
+    return new Promise(resolve => {
+      getDroppedOrSelectedFiles(e).then(chosenFiles => {
+        resolve(chosenFiles.map(f => f.fileObject))
+      })
+    })
+  }
 
   return files.length > 0 ? null : (
     <div className="text-center p-3">
@@ -15,9 +24,9 @@ const CustomInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
           type="file"
           accept={accept}
           onChange={e => {
-              getFilesFromEvent(e).then(chosenFiles => {
+            getFilesFromEvent(e).then(chosenFiles => {
               onFiles(chosenFiles)
-              })
+            })
           }}
         />
       </label>
