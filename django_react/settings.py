@@ -29,6 +29,10 @@ ALLOWED_HOSTS = []
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 
+VALID_MIME_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg-3', 'video/mpeg', 'video/x-mpeg']
+VALID_FILE_EXT = ['.mp3']
+UPLOAD_FILE_SIZE_LIMIT = 30 * 1024 * 1024
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,11 +55,11 @@ WEBPACK_LOADER = {
     }
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    )
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     )
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

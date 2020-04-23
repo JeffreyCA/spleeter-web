@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProgressBar } from 'react-bootstrap';
 
-import { formatBytes, formatDuration } from 'react-dropzone-uploader'
+import { formatBytes, formatDuration } from 'react-dropzone-uploader-error-upload-fix'
 
 import cancelImg from '../../svg/cancel.svg'
 import removeImg from '../../svg/remove.svg'
@@ -52,12 +52,21 @@ const CustomPreview = ({ className,
       )
     }
 
+    var variant = undefined
     if (status === 'error_upload_params' || status === 'exception_upload' || status === 'error_upload') {
       title = `${title} (upload failed)`
+      variant = 'danger'
     }
-    if (status === 'aborted') title = `${title} (cancelled)`
 
+    if (status === 'aborted') {
+      title = `${title} (cancelled)`
+      variant = 'secondary'
+    }
+  
     const doneUpload = status === 'done' || status === 'headers_received';
+    if (doneUpload) {
+      variant = 'success'
+    }
 
     return (
       <div className={className} style={style}>
@@ -71,7 +80,7 @@ const CustomPreview = ({ className,
           <div className="col">
             <div className="d-flex">
             {isUpload && (
-              <ProgressBar className="w-100" max={100} now={doneUpload ? 100 : percent} variant={doneUpload ? "success" : undefined} />
+              <ProgressBar className="w-100" max={100} now={doneUpload ? 100 : percent} variant={variant} />
             )}
             {status === 'uploading' && canCancel && (
               <span className="dzu-previewButton" style={iconByFn.remove} onClick={cancelThenRemove} />

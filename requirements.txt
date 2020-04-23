@@ -43,6 +43,7 @@ pylint==2.4.4
 pylint-django==2.0.15
 pylint-plugin-utils==0.6
 python-dateutil==2.8.1
+python-magic==0.4.15
 pytz==2019.3
 requests==2.23.0
 resampy==0.2.2

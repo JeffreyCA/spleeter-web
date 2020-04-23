@@ -22,5 +22,5 @@ from . import views
 
 urlpatterns = [
     path('api/song/', views.SongListCreate.as_view()),
-    path('api/upload/', views.TempFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
+    path('api/upload/', views.SourceFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

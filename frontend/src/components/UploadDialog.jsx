@@ -1,12 +1,20 @@
 import React from 'react';
-import { Button, Col, Form, Modal } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import Dropzone from 'react-dropzone-uploader'
+import Dropzone from 'react-dropzone-uploader-error-upload-fix'
 import CustomPreview from './Dropzone/CustomPreview'
 import CustomInput from './Dropzone/CustomInput'
 import './UploadDialog.css'
 
-const MAX_FILE_BYTES = 30 * 1048576
+const MAX_FILE_BYTES = 30 * 1024 * 1024
+
+const ERROR_MAP = {
+  'aborted': 'Operation aborted.',
+  'rejected_file_type': 'File type not supported.',
+  'rejected_max_files': 'Only one file is allowed.',
+  'error_file_size': 'File exceeds size limit (30 MB).',
+  'error_upload_params': 'Unknown error occurred.'
+}
 
 class UploadDialogForm extends React.Component {
   constructor(props) {
@@ -40,7 +48,8 @@ class UploadDialog extends React.Component {
       detailsStep: false,
       fileId: -1,
       artist: '',
-      title: ''
+      title: '',
+      errors: []
     }
   }
 
@@ -55,6 +64,12 @@ class UploadDialog extends React.Component {
     })
   }
 
+  resetErrors = () => {
+    this.setState({
+      errors: []
+    })
+  }
+
   deleteCurrentFile = () => {
     if (this.state.fileId != -1) {
       console.log('Deleted ' + this.state.fileId)
@@ -64,8 +79,12 @@ class UploadDialog extends React.Component {
 
   onHide = () => {
     this.deleteCurrentFile()
-    this.resetState()
     this.props.close()
+  }
+
+  onExited = () => {
+    this.resetState()
+    this.resetErrors()
   }
 
   onNext = () => {
@@ -74,23 +93,45 @@ class UploadDialog extends React.Component {
         detailsStep: true
       })
     } else {
-      console.log('Finish song upload')
-      console.log('Artist: ' + this.state.artist)
-      console.log('Title: ' + this.state.title)
-      this.resetState()
-      this.props.close()
+      const song = {
+        file: this.state.fileId,
+        artist: this.state.artist,
+        title: this.state.title
+      }
+      axios.post('/api/song/', song)
+        .then(({ data }) => {
+          console.log(data)
+          this.props.close()
+          this.resetState()
+          this.resetErrors()
+      })
+      .catch(errs => {
+        this.setState({
+          errors: [errs]
+        })
+      })
     }
   }
 
   handleChangeStatus = ({ meta, remove, xhr }, status) => {
-    const aborted = status === 'aborted' || status === 'rejected_file_type' || status === 'rejected_max_files' || status === 'error_file_size' || status === 'error_validation' || status === 'error_upload_params' || status === 'error_upload'
+    const aborted = status === 'aborted' || status === 'rejected_file_type' || status === 'rejected_max_files' || status === 'error_file_size' || status === 'error_validation' || status === 'error_upload_params'
     console.log('status change: ' + status)
+
     if (aborted) {
+      const errorMsg = ERROR_MAP[status] ? [ERROR_MAP[status]] : []
       this.resetState()
+      this.setState({ errors: errorMsg })
+    } else if (status === 'error_upload') {
+      const responseObject = JSON.parse(xhr.response)
+      if (responseObject && responseObject['file']) {
+        this.setState({ errors: responseObject['file'] })
+      }
     } else if (status === 'removed') {
       this.deleteCurrentFile()
       this.resetState()
+      this.resetErrors()
     } else if (status === 'preparing') {
+      this.resetErrors()
       this.setState({
         droppedFile: true,
         isUploading: true
@@ -115,18 +156,22 @@ class UploadDialog extends React.Component {
   }
 
   render() {
-    const { droppedFile, isUploading, detailsStep, artist, title } = this.state;
+    const { droppedFile, isUploading, detailsStep, artist, title, errors } = this.state;
     const { show } = this.props;
     const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song'
     const primaryText = detailsStep ? 'Finish' : 'Next'
     const buttonDisabled = detailsStep ? (!artist && !title) : !(droppedFile && !isUploading);
     
     return (
-      <Modal show={show} onHide={this.onHide}>
+      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
         <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+        {errors.length > 0 && (
+        <Alert variant="danger">
+          {errors.map((val, idx) => (<div key={idx}>{val}</div>))}
+        </Alert>)}
         {detailsStep ? <UploadDialogForm artist={artist} title={title} handleChange={this.handleChange} /> : (
           <Dropzone
           maxFiles={1}
