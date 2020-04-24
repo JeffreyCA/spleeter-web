@@ -1,0 +1,44 @@
+.rhap_additional-controls {
+    flex: initial !important;
+}
+
+.rhap_container {
+    min-width: initial !important;
+}
+
+.rhap_controls-section {
+    flex: initial !important;
+}
+
+.rhap_volume-controls {
+    flex: initial !important;
+}
+
+/*
+ * Only show play/stop button on smaller screens
+ */
+@media only screen and (max-width: 992px) {
+    .rhap_container {
+        display: inherit !important;
+    }
+
+    .rhap_horizontal .rhap_controls-section {
+        margin-left: 0px !important;
+    }
+
+    .rhap_main {
+        justify-content: center !important;
+    }
+
+    .rhap_progress-container {
+        display: none !important;
+    }
+
+    .rhap_progress-section {
+        display: none !important;
+    }
+
+    .rhap_time {
+        display: none !important;
+    }
+}

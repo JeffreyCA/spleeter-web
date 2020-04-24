@@ -24,22 +24,20 @@ class App extends Component {
     this.setState({ showUploadModal: false });
   }
 
-  render() {
-    const { showUploadModal } = this.state;
+  refresh = () => {
+    this.props.history.push('/')
+  }
 
+  render() {
     return (
       <div className="App">
         <Router>
-          <div>
-            <MyNavBar onUploadClick={this.onUploadClick} />
-            <Switch>
-              <Route path="/">
-                <Home />
-              </Route>
-            </Switch>
-          </div>
+          <Switch>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
         </Router>
-        <UploadDialog show={showUploadModal} close={this.handleUploadModalClose} />
       </div>
     );
   }

@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app.apps.MyAppConfig',
+    'frontend.apps.FrontendConfig',
     'rest_framework',
-    'frontend',
     'webpack_loader'
 ]
 

@@ -32,8 +32,12 @@ def delete_temp_file(sender, instance, using, **kwargs):
     instance.file.delete()
 
 class Song(models.Model):
-    file = models.OneToOneField(SourceFile, on_delete=models.PROTECT)
+    source_id = models.OneToOneField(SourceFile, on_delete=models.PROTECT)
     artist = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
+
+    def source_url(self):
+        return self.source_id.file.url
+
     def __str__(self):
         return self.artist + ' - ' + self.title

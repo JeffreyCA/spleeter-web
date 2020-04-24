@@ -92,7 +92,7 @@ class UploadDialog extends React.Component {
       })
     } else {
       const song = {
-        file: this.state.fileId,
+        source_id: this.state.fileId,
         artist: this.state.artist,
         title: this.state.title
       }
@@ -101,6 +101,7 @@ class UploadDialog extends React.Component {
         .then(({ data }) => {
           console.log(data)
           this.props.close()
+          this.props.refresh()
       }).catch(err => {
         this.setState({
           errors: [err]
