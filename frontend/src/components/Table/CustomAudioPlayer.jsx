@@ -26,7 +26,7 @@ class CustomAudioPlayer extends React.Component {
         customVolumeControls={[]}
         customAdditionalControls={[]}
         onPause={this.onPause}
-        preload="metadata"
+        preload="none"
         customIcons={{ pause: pauseIcon }} />
     );
   }

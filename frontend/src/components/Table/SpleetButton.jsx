@@ -1,11 +1,11 @@
 import React from 'react';
-import BootstrapTable from 'react-bootstrap-table-next';
 import { Button } from 'react-bootstrap';
 import './SpleetButton.css'
 
 class SpleetButton extends React.Component {
   handleClick = () => {
-    this.props.onSpleetClick(this.props.sourceId);
+    console.log(this.props.song)
+    this.props.onSpleetClick(this.props.song);
   }
 
   render() {

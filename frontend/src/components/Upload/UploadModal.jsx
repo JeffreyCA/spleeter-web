@@ -4,8 +4,8 @@ import axios from 'axios';
 import Dropzone from 'react-dropzone-uploader-error-upload-fix'
 import CustomPreview from './CustomPreview'
 import CustomInput from './CustomInput'
-import UploadDialogForm from './UploadDialogForm'
-import './UploadDialog.css'
+import UploadModalForm from './UploadModalForm'
+import './UploadModal.css'
 
 // This value is the same on the server-side (settings.py)
 const MAX_FILE_BYTES = 30 * 1024 * 1024
@@ -18,7 +18,7 @@ const ERROR_MAP = {
   'error_upload_params': 'Unknown error occurred.'
 }
 
-class UploadDialog extends React.Component {
+class UploadModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -70,7 +70,7 @@ class UploadDialog extends React.Component {
    */
   onHide = () => {
     this.deleteCurrentFile()
-    this.props.close()
+    this.props.hide()
   }
 
   /**
@@ -100,7 +100,7 @@ class UploadDialog extends React.Component {
       axios.post('/api/song/', song)
         .then(({ data }) => {
           console.log(data)
-          this.props.close()
+          this.props.hide()
           this.props.refresh()
       }).catch(err => {
         this.setState({
@@ -174,7 +174,7 @@ class UploadDialog extends React.Component {
         <Alert variant="danger">
           {errors.map((val, idx) => (<div key={idx}>{val}</div>))}
         </Alert>)}
-        {detailsStep ? <UploadDialogForm artist={artist} title={title} handleChange={this.handleChange} /> : (
+        {detailsStep ? <UploadModalForm artist={artist} title={title} handleChange={this.handleChange} /> : (
           <Dropzone
           maxFiles={1}
           maxSizeBytes={MAX_FILE_BYTES}
@@ -199,4 +199,4 @@ class UploadDialog extends React.Component {
   }
 }
 
-export default UploadDialog;
+export default UploadModal;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import SongTable from './SongTable'
-import UploadDialog from './Upload/UploadDialog'
-import SpleetModal from './SpleetModal'
+import UploadModal from './Upload/UploadModal'
+import SpleetModal from './Table/SpleetModal'
+import SongTable from './Table/SongTable'
 import MyNavBar from './MyNavBar'
 import axios from 'axios'
 
@@ -12,25 +12,28 @@ class Home extends Component {
       showSpleetModal: false,
       showUploadModal: false,
       songData: [],
-      sourceId: -1
+      currentSong: null
     }
+  }
+
+  onSpleetClick = (song) => {
+    this.setState({ showSpleetModal: true, currentSong: song });
   }
 
   onUploadClick = () => {
     this.setState({ showUploadModal: true });
   }
 
-  handleUploadModalClose = () => {
+  handleSpleetModalHide = () => {
+    this.setState({ showSpleetModal: false });
+  }
+
+  handleSpleetModalExited = () => {
+    this.setState({ currentSong: null });
+  }
+
+  handleUploadModalHide = () => {
     this.setState({ showUploadModal: false });
-  }
-
-  onSpleetClick = (sourceId) => {
-    console.log("one spleet clicked: ", sourceId)
-    this.setState({ showSpleetModal: true, sourceId: sourceId });
-  }
-
-  handleSpleetModalClose = () => {
-    this.setState({ showSpleetModal: false, sourceId: -1 });
   }
 
   componentDidMount() {
@@ -48,7 +51,7 @@ class Home extends Component {
   }
 
   render() {
-    const { songData, showSpleetModal, showUploadModal } = this.state;
+    const { songData, showSpleetModal, showUploadModal, currentSong } = this.state;
 
     return (
       <div>
@@ -63,8 +66,8 @@ class Home extends Component {
             <SongTable data={songData} onSpleetClick={this.onSpleetClick} />
           </div>
         </div>
-        <UploadDialog show={showUploadModal} close={this.handleUploadModalClose} refresh={this.loadData} />
-        <SpleetModal show={showSpleetModal} close={this.handleSpleetModalClose} refresh={this.loadData} />
+        <UploadModal show={showUploadModal} hide={this.handleUploadModalHide} refresh={this.loadData} />
+        <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} refresh={this.loadData} song={currentSong} />
       </div>
     );
   }

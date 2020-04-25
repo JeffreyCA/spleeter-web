@@ -17,12 +17,12 @@ const SCREEN_WIDTH_BREAKPOINT = 992
 
 const actionFormatter = (cell, row, rowIndex, formatExtraData) => {
   const { minimal, onSpleetClick } = formatExtraData
-  const { source_id, source_url } = row
+  const { source_url } = row
 
   return (
     <div className="d-flex align-items-center">
       <CustomAudioPlayer isMinimal={minimal} sourceUrl={source_url} />
-      <SpleetButton isMinimal={minimal} onSpleetClick={onSpleetClick} sourceId={source_id} />
+      <SpleetButton isMinimal={minimal} onSpleetClick={onSpleetClick} song={row} />
     </div>
   );
 }
