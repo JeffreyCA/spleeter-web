@@ -2,12 +2,11 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models.deletion import ProtectedError
 from rest_framework import generics, viewsets
-from .models import Song, SourceFile
-from .serializers import SongSerializer, SourceFileSerializer
+from .models import *
+from .serializers import *
+from huey.exceptions import HueyException
 
-class SongListCreate(generics.ListCreateAPIView):
-    queryset = Song.objects.all()
-    serializer_class = SongSerializer
+from .tasks import *
 
 class SourceFileViewSet(viewsets.ModelViewSet):
     queryset = SourceFile.objects.all()
@@ -30,3 +29,19 @@ class SourceFileViewSet(viewsets.ModelViewSet):
             return JsonResponse({'status': 'failure', 'error': 'The instance does not exist'})
         except ProtectedError:
             return JsonResponse({'status': 'failure', 'error': 'A Song currently references this file'})
+
+class SourceSongViewSet(generics.ListCreateAPIView):
+    queryset = SourceSong.objects.all()
+    serializer_class = SourceSongSerializer
+
+class SeparatedSongViewSet(generics.CreateAPIView):
+    serializer_class = SeparatedSongSerializer
+    queryset = SeparatedSong.objects.all()
+
+def test(request):
+    r = count_beans(100)
+    try:
+        r(blocking=True)
+    except HueyException as h:
+        return JsonResponse({'status': 'failure'})
+    return JsonResponse({'status': 'success'})

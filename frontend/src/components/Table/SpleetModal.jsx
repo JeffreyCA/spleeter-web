@@ -2,13 +2,16 @@ import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import SpleetModalForm from './SpleetModalForm'
 
-const parts = [ 'Vocals', 'Drums', 'Bass', 'Other' ]
+const PARTS = [ 'vocals', 'drums', 'bass', 'other' ]
 
 class SpleetModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      checkedParts: new Set()
+      vocals: false,
+      drums: false,
+      bass: false,
+      other: false
     }
   }
 
@@ -44,19 +47,18 @@ class SpleetModal extends React.Component {
 
   handleCheckboxChange = (event) => {
     const { name, checked } = event.target
-    this.setState({ 
-      checkedParts: checked ? this.state.checkedParts.add(name) : this.state.checkedParts.delete(name)
-    })
+    this.setState({ [name]: checked });
   }
 
   render() {
-    const { checkedParts } = this.state
+    const { vocals, drums, bass, other } = this.state
     const { show, song } = this.props
     if (!song) {
       return null
     }
   
-    const showAlert = checkedParts.size == parts.length
+    const allChecked = vocals && drums && bass && other
+    const noneChecked = !(vocals || drums || bass || other)
 
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
@@ -64,13 +66,13 @@ class SpleetModal extends React.Component {
         <Modal.Title>Separate Source</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <SpleetModalForm parts={parts} song={song} showAlert={showAlert} handleCheckboxChange={this.handleCheckboxChange} />
+          <SpleetModalForm parts={PARTS} song={song} allChecked={allChecked} noneChecked={noneChecked} handleCheckboxChange={this.handleCheckboxChange} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="primary" disabled={showAlert} onClick={this.onSubmit}>
+          <Button variant="primary" disabled={allChecked || noneChecked} onClick={this.onSubmit}>
             Finish
           </Button>
         </Modal.Footer>

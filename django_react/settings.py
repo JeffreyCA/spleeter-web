@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'app.apps.MyAppConfig',
     'frontend.apps.FrontendConfig',
     'rest_framework',
-    'webpack_loader'
+    'webpack_loader',
+    'huey.contrib.djhuey'
 ]
 
 WEBPACK_LOADER = {
@@ -144,8 +145,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'assets'),
-    os.path.join(BASE_DIR, 'frontend', 'templates'),
-    os.path.join(BASE_DIR, 'media')
+    os.path.join(BASE_DIR, 'frontend', 'templates')
 )
 
 django_heroku.settings(locals())

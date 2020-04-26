@@ -21,6 +21,7 @@ google-pasta==0.2.0
 grpcio==1.28.1
 gunicorn==20.0.4
 h5py==2.10.0
+huey==2.2.0
 idna==2.9
 isort==4.3.21
 joblib==0.14.1
@@ -46,6 +47,7 @@ pylint-plugin-utils==0.6
 python-dateutil==2.8.1
 python-magic==0.4.15
 pytz==2019.3
+redis==3.4.1
 requests==2.23.0
 resampy==0.2.2
 scikit-learn==0.22.2.post1

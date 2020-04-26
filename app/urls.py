@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-    path('api/song/', views.SongListCreate.as_view()),
     path('api/upload/', views.SourceFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
+    path('api/song/', views.SourceSongViewSet.as_view()),
+    path('api/process/', views.SeparatedSongViewSet.as_view()),
+    path('api/test', views.test)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

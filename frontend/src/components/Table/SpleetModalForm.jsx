@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, Col, Form, Row } from 'react-bootstrap';
+import './SpleetModalForm.css'
 
 class SpleetModalForm extends React.Component {
   constructor(props) {
@@ -7,11 +8,12 @@ class SpleetModalForm extends React.Component {
   }
 
   render() {
-    const { parts, song, showAlert, handleCheckboxChange } = this.props
+    const { parts, song, allChecked, noneChecked, handleCheckboxChange } = this.props
+
     const checkboxes = parts.map(part => {
       return (
         <Form.Group key={part} controlId={`${part}-checkbox`} className="mb-0">
-          <Form.Check type="checkbox" name={part} label={part} onChange={handleCheckboxChange} />
+          <Form.Check type="checkbox" name={part} label={part} onChange={handleCheckboxChange} className="capitalize" />
         </Form.Group>)})
 
     return (
@@ -40,9 +42,13 @@ class SpleetModalForm extends React.Component {
             {checkboxes}
           </div>
         </Form.Group>
-        {showAlert && (
+        {allChecked && (
         <Alert variant="warning">
         You must leave at least one part out.
+        </Alert>)}
+        {noneChecked && (
+        <Alert variant="warning">
+        You must check at least one part to include.
         </Alert>)}
       </Form>
     )
