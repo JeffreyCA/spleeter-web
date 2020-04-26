@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models.deletion import ProtectedError
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, mixins
 from .models import *
 from .serializers import *
 from huey.exceptions import HueyException
@@ -37,6 +37,11 @@ class SourceSongViewSet(generics.ListCreateAPIView):
 class SeparatedSongViewSet(generics.CreateAPIView):
     serializer_class = SeparatedSongSerializer
     queryset = SeparatedSong.objects.all()
+
+class SeparatedSongRetrieve(generics.RetrieveAPIView):
+    serializer_class = SeparatedSongSerializer
+    queryset = SeparatedSong.objects.all()
+    lookup_field = 'id'
 
 def test(request):
     r = count_beans(100)

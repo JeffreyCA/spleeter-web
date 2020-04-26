@@ -8,8 +8,7 @@ class SpleetModalForm extends React.Component {
   }
 
   render() {
-    const { parts, song, allChecked, noneChecked, handleCheckboxChange } = this.props
-
+    const { parts, song, allChecked, noneChecked, errors, handleCheckboxChange } = this.props
     const checkboxes = parts.map(part => {
       return (
         <Form.Group key={part} controlId={`${part}-checkbox`} className="mb-0">
@@ -44,11 +43,15 @@ class SpleetModalForm extends React.Component {
         </Form.Group>
         {allChecked && (
         <Alert variant="warning">
-        You must leave at least one part out.
+        You must leave at least one part unchecked.
         </Alert>)}
         {noneChecked && (
         <Alert variant="warning">
-        You must check at least one part to include.
+        You must check at least one part.
+        </Alert>)}
+        {errors.length > 0 && (
+        <Alert variant="danger">
+        {errors.map((val, idx) => (<div key={idx}>{val}</div>))}
         </Alert>)}
       </Form>
     )

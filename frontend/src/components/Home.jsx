@@ -4,6 +4,8 @@ import SpleetModal from './Table/SpleetModal'
 import SongTable from './Table/SongTable'
 import MyNavBar from './MyNavBar'
 import axios from 'axios'
+import { Alert } from 'react-bootstrap';
+
 
 class Home extends Component {
   constructor(props) {
@@ -12,8 +14,13 @@ class Home extends Component {
       showSpleetModal: false,
       showUploadModal: false,
       songData: [],
-      currentSong: null
+      currentSong: null,
+      task: null
     }
+  }
+
+  onSpleetTaskSubmit = (id, status) => {
+    this.setState({ task: {id: id, status: status} });
   }
 
   onSpleetClick = (song) => {
@@ -41,7 +48,7 @@ class Home extends Component {
   }
 
   loadData = () => {
-    axios.get('/api/song/')
+    axios.get('/api/source/')
     .then(({ data }) => {
       if (data) {
         this.setState({ songData: data })
@@ -51,8 +58,8 @@ class Home extends Component {
   }
 
   render() {
-    const { songData, showSpleetModal, showUploadModal, currentSong } = this.state;
-
+    const { songData, showSpleetModal, showUploadModal, currentSong, task } = this.state;
+    const endpoint = '/api/process/'
     return (
       <div>
         <MyNavBar onUploadClick={this.onUploadClick} />
@@ -63,11 +70,14 @@ class Home extends Component {
               Source separation on the go.
             </p>
             <hr className="my-4" />
+            {task && (<Alert variant="success">
+              <span><a href={`/api/separate/${task.id}`}>{task.id}</a>: {task.status}</span>
+            </Alert>)}
             <SongTable data={songData} onSpleetClick={this.onSpleetClick} />
           </div>
         </div>
         <UploadModal show={showUploadModal} hide={this.handleUploadModalHide} refresh={this.loadData} />
-        <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} refresh={this.loadData} song={currentSong} />
+        <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} submit={this.onSpleetTaskSubmit} refresh={this.loadData} song={currentSong} />
       </div>
     );
   }

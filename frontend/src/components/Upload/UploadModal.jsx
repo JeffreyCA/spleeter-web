@@ -97,7 +97,7 @@ class UploadModal extends React.Component {
         title: this.state.title
       }
       // Make request to add Song
-      axios.post('/api/song/', song)
+      axios.post('/api/source/', song)
         .then(({ data }) => {
           console.log(data)
           this.props.hide()

@@ -1,11 +1,12 @@
 import os
 import sys
+import uuid
 
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from .validators import *
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from mutagen.easyid3 import EasyID3
 
 # Create your models here.
@@ -37,12 +38,27 @@ class SourceSong(models.Model):
     def __str__(self):
         return self.artist + ' - ' + self.title
 
-class SeparatedSong(models.Model):
+class SeparateTaskResult(models.Model):
     class Status(models.IntegerChoices):
         CREATED = 1
         IN_PROGRESS = 2
         DONE = 3
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    source_song = models.ForeignKey(SourceSong, on_delete=models.CASCADE)
+    vocals = models.BooleanField()
+    drums = models.BooleanField()
+    bass = models.BooleanField()
+    other = models.BooleanField()
 
+class SeparatedSong(models.Model):
+    class Status(models.IntegerChoices):
+        CREATED = 0
+        IN_PROGRESS = 1
+        DONE = 2
+        ERROR = -1
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     source_song = models.ForeignKey(SourceSong, on_delete=models.CASCADE)
     vocals = models.BooleanField()
     drums = models.BooleanField()
@@ -50,10 +66,10 @@ class SeparatedSong(models.Model):
     other = models.BooleanField()
     status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
     file = models.FileField(blank=True)
+    error = models.TextField(blank=True)
 
     class Meta:
         unique_together = [['source_song', 'vocals', 'drums', 'bass', 'other']]
-
 
 @receiver(pre_delete, sender=SourceFile, dispatch_uid='delete_temp_file_signal')
 def delete_temp_file(sender, instance, using, **kwargs):

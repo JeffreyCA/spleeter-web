@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import SpleetModalForm from './SpleetModalForm'
+import axios from 'axios';
 
 const PARTS = [ 'vocals', 'drums', 'bass', 'other' ]
 
@@ -11,7 +12,8 @@ class SpleetModal extends React.Component {
       vocals: false,
       drums: false,
       bass: false,
-      other: false
+      other: false,
+      errors: []
     }
   }
 
@@ -43,15 +45,36 @@ class SpleetModal extends React.Component {
    * Called when primary modal button is clicked
    */
   onSubmit = () => {
+    console.log(this.props.song)
+    const data = {
+      source_song: this.props.song.id,
+      vocals: this.state.vocals,
+      drums: this.state.drums,
+      bass: this.state.bass,
+      other: this.state.other
+    }
+    // Make request to add Song
+    axios.post('/api/separate/', data)
+      .then(({ data }) => {
+        this.props.submit(data.id, data.status)
+        this.props.hide()
+    }).catch(({ response }) => {
+      const { data } = response
+      if (data['non_field_errors']) {
+        this.setState({
+          errors: data['non_field_errors']
+        })
+      }
+    })
   }
 
   handleCheckboxChange = (event) => {
     const { name, checked } = event.target
-    this.setState({ [name]: checked });
+    this.setState({ [name]: checked, errors: [] });
   }
 
   render() {
-    const { vocals, drums, bass, other } = this.state
+    const { vocals, drums, bass, other, errors } = this.state
     const { show, song } = this.props
     if (!song) {
       return null
@@ -66,7 +89,7 @@ class SpleetModal extends React.Component {
         <Modal.Title>Separate Source</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <SpleetModalForm parts={PARTS} song={song} allChecked={allChecked} noneChecked={noneChecked} handleCheckboxChange={this.handleCheckboxChange} />
+          <SpleetModalForm parts={PARTS} song={song} allChecked={allChecked} noneChecked={noneChecked} errors={errors} handleCheckboxChange={this.handleCheckboxChange} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-danger" onClick={this.onHide}>
