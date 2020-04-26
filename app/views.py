@@ -38,15 +38,11 @@ class SeparatedSongViewSet(generics.CreateAPIView):
     serializer_class = SeparatedSongSerializer
     queryset = SeparatedSong.objects.all()
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        separate_task(instance)
+
 class SeparatedSongRetrieve(generics.RetrieveAPIView):
     serializer_class = SeparatedSongSerializer
     queryset = SeparatedSong.objects.all()
     lookup_field = 'id'
-
-def test(request):
-    r = count_beans(100)
-    try:
-        r(blocking=True)
-    except HueyException as h:
-        return JsonResponse({'status': 'failure'})
-    return JsonResponse({'status': 'success'})

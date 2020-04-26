@@ -21,7 +21,7 @@ class SeparatedSongSerializer(serializers.ModelSerializer):
     status = ChoicesSerializerField()
     class Meta:
         model = SeparatedSong
-        fields = ('id', 'source_song', 'vocals', 'drums', 'bass', 'other', 'status')
+        fields = ('id', 'source_song', 'vocals', 'drums', 'bass', 'other', 'status', 'file', 'error')
 
     def validate(self, data):
         all_checked = data['vocals'] and data['drums'] and data['bass'] and data['other']

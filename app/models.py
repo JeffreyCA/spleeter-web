@@ -11,7 +11,7 @@ from mutagen.easyid3 import EasyID3
 
 # Create your models here.
 class SourceFile(models.Model):
-    file = models.FileField(upload_to='tmp/', validators=[is_valid_size, is_mp3])
+    file = models.FileField(upload_to='uploads/', validators=[is_valid_size, is_mp3])
 
     # Extract artist and title information from MP3
     def metadata(self):
@@ -31,6 +31,9 @@ class SourceSong(models.Model):
     source_id = models.OneToOneField(SourceFile, on_delete=models.PROTECT, unique=True)
     artist = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
+
+    def source_path(self):
+        return self.source_id.file.path
 
     def source_url(self):
         return self.source_id.file.url
@@ -65,8 +68,27 @@ class SeparatedSong(models.Model):
     bass = models.BooleanField()
     other = models.BooleanField()
     status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
-    file = models.FileField(blank=True)
+    file = models.FileField(upload_to='separate/', blank=True)
     error = models.TextField(blank=True)
+
+    def formatted_name(self):
+        prefix_lst = [self.source_song.artist, ' - ', self.source_song.title]
+        parts_lst = []
+        if self.vocals:
+            parts_lst.append('vocals')
+        if self.drums:
+            parts_lst.append('drums')
+        if self.bass:
+            parts_lst.append('bass')
+        if self.other:
+            parts_lst.append('other')
+        prefix = ''.join(prefix_lst)
+        parts = ', '.join(parts_lst)
+        formatted = prefix + ' (' + parts + ')'
+        return formatted
+
+    def source_path(self):
+        return self.source_song.source_id.file.path
 
     class Meta:
         unique_together = [['source_song', 'vocals', 'drums', 'bass', 'other']]

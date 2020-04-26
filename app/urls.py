@@ -13,8 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, include
-from django.conf.urls import url
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -24,6 +23,5 @@ urlpatterns = [
     path('api/upload/', views.SourceFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
     path('api/source/', views.SourceSongViewSet.as_view()),
     path('api/separate/', views.SeparatedSongViewSet.as_view()),
-    path('api/separate/<uuid:id>/', views.SeparatedSongRetrieve.as_view()),
-    path('api/test', views.test)
+    path('api/separate/<uuid:id>/', views.SeparatedSongRetrieve.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
