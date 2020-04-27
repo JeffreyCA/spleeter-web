@@ -1,0 +1,12 @@
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.react-bootstrap-table .row-expansion-style {
+    padding: 0;
+}
+
+.react-bootstrap-table table {
+    table-layout: auto !important;
+}
+

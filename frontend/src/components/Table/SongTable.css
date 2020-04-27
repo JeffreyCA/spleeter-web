@@ -1,3 +1,39 @@
 .table > tbody > tr > td {
     vertical-align: middle;
 }
+
+th.expand-cell-header {
+    padding: 0 !important;
+}
+
+td.expand-cell {
+    cursor: pointer;
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+div.header-col {
+    height: 44px;
+    display: flex;
+}
+
+.react-bootstrap-table .row-expansion-style {
+    padding: 0;
+}
+
+.react-bootstrap-table table {
+    table-layout: auto !important;
+}
+
+.row-expand-slide-appear-active{
+    transition: max-height 0.5s ease-in !important;
+}
+
+.row-expand-slide-exit-active{
+    transition: 0 0.25s ease-out !important;
+}
+
+.inner-table > tbody > tr:nth-child(odd) > td,
+.inner-table > tbody > tr:nth-child(even) > td {
+ background-color: white;
+}

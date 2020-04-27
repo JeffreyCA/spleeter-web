@@ -1,12 +1,9 @@
 import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { Button, Col, Row } from 'react-bootstrap';
-
-import AudioPlayer from 'react-h5-audio-player';
-import { Icon } from '@iconify/react'
-import pauseCircle from '@iconify/icons-mdi/pause-circle'
-import stopCircle from '@iconify/icons-mdi/stop-circle'
+import { Button, Badge, Card, Col, ListGroup, Row } from 'react-bootstrap';
+import { CaretDownFill, CaretUpFill, ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 import CustomAudioPlayer from './CustomAudioPlayer'
+import SeparatedSongTable from './SeparatedSongTable'
 import SpleetButton from './SpleetButton'
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -26,6 +23,21 @@ const actionFormatter = (cell, row, rowIndex, formatExtraData) => {
     </div>
   );
 }
+
+const expandRow = {
+  renderer: row => {
+    return <SeparatedSongTable data={row.separated} />
+  },
+  showExpandColumn: true,
+  expandColumnPosition: 'right',
+  expandByColumnOnly: true,
+  expandHeaderColumnRenderer: ({ isAnyExpands }) => {
+    return (<div className="header-col" onClick={(e) => { e.stopPropagation() }}></div>)
+  },
+  expandColumnRenderer: ({ expanded }) => {
+    return expanded ? <CaretUpFill /> : <CaretDownFill />
+  }
+};
 
 class SongTable extends React.Component {
   constructor(props) {
@@ -81,8 +93,7 @@ class SongTable extends React.Component {
         data={data}
         columns={columns}
         sort={sort}
-        striped
-        hover />
+        expandRow={expandRow} />
     );
   }
 }
