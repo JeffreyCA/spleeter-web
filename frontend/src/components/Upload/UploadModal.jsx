@@ -97,7 +97,7 @@ class UploadModal extends React.Component {
         title: this.state.title
       }
       // Make request to add Song
-      axios.post('/api/source/', song)
+      axios.post('/api/source-song/', song)
         .then(({ data }) => {
           console.log(data)
           this.props.hide()
@@ -181,7 +181,7 @@ class UploadModal extends React.Component {
           multiple={false}
           accept=".mp3"
           onChangeStatus={this.handleChangeStatus}
-          getUploadParams={() => ({ url: '/api/upload/' })}
+          getUploadParams={() => ({ url: '/api/source-file/' })}
           InputComponent={CustomInput}
           PreviewComponent={CustomPreview} />
         )}

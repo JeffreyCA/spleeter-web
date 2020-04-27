@@ -139,7 +139,11 @@ USE_TZ = True
 
 HUEY = {
     'results': False,
-    'immediate': False
+    'immediate': False,
+    'consumer': {
+        'workers': 2,
+        'worker_type': 'process'
+    },
 }
 
 # Static files (CSS, JavaScript, Images)

@@ -14,15 +14,23 @@ def separate_task(separate_song):
     separate_song.status = SeparatedSong.Status.IN_PROGRESS
     separate_song.save()
     try:
+        # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, 'separate', str(separate_song.id))
         filename = separate_song.formatted_name() + '.mp3'
         rel_media_path = os.path.join('separate', str(separate_song.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
 
+        parts = {
+            'vocals': separate_song.vocals,
+            'drums': separate_song.drums,
+            'bass': separate_song.bass,
+            'other': separate_song.other
+        }
         separator = SpleeterSeparator()
-        separator.predict(separate_song.source_path(), rel_path)
+        separator.predict(parts, separate_song.source_path(), rel_path)
 
+        # Check file exists
         if os.path.exists(rel_path):
             separate_song.status = SeparatedSong.Status.DONE
             separate_song.file.name = rel_media_path

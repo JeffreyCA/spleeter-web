@@ -62,7 +62,7 @@ class SeparatedSong(models.Model):
         ERROR = -1
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    source_song = models.ForeignKey(SourceSong, on_delete=models.CASCADE)
+    source_song = models.ForeignKey(SourceSong, related_name='separated', on_delete=models.CASCADE)
     vocals = models.BooleanField()
     drums = models.BooleanField()
     bass = models.BooleanField()

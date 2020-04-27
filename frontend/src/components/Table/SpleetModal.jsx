@@ -13,6 +13,7 @@ class SpleetModal extends React.Component {
       drums: false,
       bass: false,
       other: false,
+      overwrite: false,
       errors: []
     }
   }
@@ -22,7 +23,13 @@ class SpleetModal extends React.Component {
    */
   resetState = () => {
     console.log('reset state')
-    this.setState({ checkedParts: new Set() })
+    this.setState({ 
+      vocals: false,
+      drums: false,
+      bass: false,
+      other: false,
+      overwrite: false
+    })
   }
 
   /**
@@ -51,7 +58,8 @@ class SpleetModal extends React.Component {
       vocals: this.state.vocals,
       drums: this.state.drums,
       bass: this.state.bass,
-      other: this.state.other
+      other: this.state.other,
+      overwrite: this.state.overwrite
     }
     // Make request to add Song
     axios.post('/api/separate/', data)

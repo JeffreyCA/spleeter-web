@@ -48,7 +48,7 @@ class Home extends Component {
   }
 
   loadData = () => {
-    axios.get('/api/source/')
+    axios.get('/api/source-song/')
     .then(({ data }) => {
       if (data) {
         this.setState({ songData: data })

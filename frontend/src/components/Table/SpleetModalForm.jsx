@@ -41,6 +41,9 @@ class SpleetModalForm extends React.Component {
             {checkboxes}
           </div>
         </Form.Group>
+        <Form.Group controlId="overwrite-checkbox">
+            <Form.Check type="checkbox" inline name="overwrite" label="Overwrite if exists?" onChange={handleCheckboxChange} />
+          </Form.Group>
         {allChecked && (
         <Alert variant="warning">
         You must leave at least one part unchecked.

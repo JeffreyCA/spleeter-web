@@ -7,6 +7,7 @@ from spleeter import *
 from spleeter.separator import Separator
 from spleeter.utils import *
 from spleeter.audio.adapter import get_default_audio_adapter
+import numpy as np
 
 class SpleeterSeparator:
     def __init__(self, config=None):
@@ -20,10 +21,10 @@ class SpleeterSeparator:
             self.audio_format = config['audio_format']
             self.sample_rate = config['sample_rate']
             self.spleeter_stem = config['spleeter_stem']
-        self.separator = Separator(self.spleeter_stem)
+        self.separator = Separator(self.spleeter_stem, stft_backend='tensorflow', multiprocess=False)
         self.audio_adapter = get_default_audio_adapter()
 
-    def predict(self, input_path, output_path):
+    def predict(self, parts, input_path, output_path):
         try:
             waveform, _ = self.audio_adapter.load(input_path, sample_rate=self.sample_rate)
         except ffmpeg.Error as e:
@@ -34,9 +35,13 @@ class SpleeterSeparator:
             print(traceback.format_exc())
 
         prediction = self.separator.separate(waveform)
-        out = prediction['vocals']
-        for key in ['bass', 'other']:
-            out += prediction[key]
-        out /= 3
+        out = np.zeros_like(prediction['vocals'])
+        part_count = 0
 
+        # Add up parts that were requested
+        for key in prediction:
+            if parts[key]:
+                out += prediction[key]
+                part_count += 1
+        out /= part_count
         self.audio_adapter.save(output_path, out, self.separator._sample_rate, self.audio_format, self.audio_bitrate)

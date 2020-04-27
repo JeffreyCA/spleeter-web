@@ -20,8 +20,8 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-    path('api/upload/', views.SourceFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
-    path('api/source/', views.SourceSongViewSet.as_view()),
+    path('api/source-file/', views.SourceFileViewSet.as_view({'post': 'create', 'delete': 'perform_destroy'})),
+    path('api/source-song/', views.SourceSongViewSet.as_view()),
     path('api/separate/', views.SeparatedSongViewSet.as_view()),
     path('api/separate/<uuid:id>/', views.SeparatedSongRetrieve.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
