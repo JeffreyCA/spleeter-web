@@ -1,0 +1,10 @@
+.progress-bar {
+    display: initial !important;
+    flex-direction: initial !important;
+    justify-content: initial !important;
+    overflow: initial !important;
+    text-align: initial !important;
+    white-space: initial !important;
+    background-color: initial !important;
+    transition: initial !important;
+}

@@ -1,11 +1,9 @@
 import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { Button, Badge, Card, Col, ListGroup, Row } from 'react-bootstrap';
-import { CaretDownFill, CaretUpFill, ChevronDown, ChevronUp } from 'react-bootstrap-icons';
-import CustomAudioPlayer from './CustomAudioPlayer'
+import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 import SeparatedSongTable from './SeparatedSongTable'
 import SpleetButton from './SpleetButton'
-
+import PausePlayButton from './PausePlayButton'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-h5-audio-player/lib/styles.css';
 import './SongTable.css'
@@ -13,13 +11,13 @@ import './SongTable.css'
 const SCREEN_WIDTH_BREAKPOINT = 992
 
 const actionFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { minimal, onSpleetClick } = formatExtraData
-  const { source_url } = row
+  const { minimal, onSpleetClick, currentSong, isPlaying, handlePause, handlePlay } = formatExtraData
+  const isPlayingCurrent = currentSong === row && isPlaying
 
   return (
-    <div className="d-flex align-items-center">
-      <CustomAudioPlayer isMinimal={minimal} sourceUrl={source_url} />
-      <SpleetButton isMinimal={minimal} onSpleetClick={onSpleetClick} song={row} />
+    <div className="d-flex align-items-center justify-content-between">
+      <PausePlayButton playing={isPlayingCurrent} song={row} onPauseClick={handlePause} onPlayClick={handlePlay} />
+      <SpleetButton isMinimal={minimal} onClick={onSpleetClick} song={row} />
     </div>
   );
 }
@@ -63,7 +61,7 @@ class SongTable extends React.Component {
 
   render() {
     const { windowWidth, sort } = this. state;
-    const { data, onSpleetClick } = this.props;
+    const { data, onSpleetClick, currentSong, isPlaying, onAudioPause, onAudioPlay } = this.props;
     const columns = [
       {
         dataField: 'id',
@@ -84,7 +82,14 @@ class SongTable extends React.Component {
         dataField: 'source_url',
         text: '',
         formatter: actionFormatter,
-        formatExtraData: { minimal: windowWidth < SCREEN_WIDTH_BREAKPOINT, onSpleetClick: onSpleetClick }
+        formatExtraData: {
+          minimal: windowWidth < SCREEN_WIDTH_BREAKPOINT,
+          currentSong: currentSong,
+          isPlaying: isPlaying,
+          handlePause: onAudioPause,
+          handlePlay: onAudioPlay,
+          onSpleetClick: onSpleetClick
+        }
       }]
     return (
       <BootstrapTable

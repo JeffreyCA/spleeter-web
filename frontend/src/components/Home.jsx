@@ -5,7 +5,7 @@ import SongTable from './Table/SongTable'
 import MyNavBar from './MyNavBar'
 import axios from 'axios'
 import { Alert } from 'react-bootstrap';
-
+import MusicPlayer from './MusicPlayer'
 
 class Home extends Component {
   constructor(props) {
@@ -13,10 +13,26 @@ class Home extends Component {
     this.state = {
       showSpleetModal: false,
       showUploadModal: false,
-      songData: [],
+      songList: [],
       currentSong: null,
+      isPlaying: false,
       task: null
     }
+  }
+
+  onAudioPlay = (song) => {
+    console.log('Playing: ' + song.title)
+    this.setState({
+      currentSong: song,
+      isPlaying: true
+    })
+  }
+
+  onAudioPause = (song) => {
+    console.log('Paused: ' + song.title)
+    this.setState({
+      isPlaying: false
+    })
   }
 
   onSpleetTaskSubmit = (id, status) => {
@@ -51,15 +67,14 @@ class Home extends Component {
     axios.get('/api/source-song/')
     .then(({ data }) => {
       if (data) {
-        this.setState({ songData: data })
+        this.setState({ songList: data })
       }
     })
     .catch(error => console.log('API errors:', error))
   }
 
   render() {
-    const { songData, showSpleetModal, showUploadModal, currentSong, task } = this.state;
-    const endpoint = '/api/process/'
+    const { songList, showSpleetModal, showUploadModal, currentSong, isPlaying, task } = this.state;
     return (
       <div>
         <MyNavBar onUploadClick={this.onUploadClick} />
@@ -73,9 +88,15 @@ class Home extends Component {
             {task && (<Alert variant="success">
               <span><a href={`/api/separate/${task.id}`}>{task.id}</a>: {task.status}</span>
             </Alert>)}
-            <SongTable data={songData} onSpleetClick={this.onSpleetClick} />
+            <SongTable data={songList}
+              currentSong={currentSong}
+              isPlaying={isPlaying}
+              onAudioPause={this.onAudioPause}
+              onAudioPlay={this.onAudioPlay}
+              onSpleetClick={this.onSpleetClick} />
           </div>
         </div>
+        <MusicPlayer song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />
         <UploadModal show={showUploadModal} hide={this.handleUploadModalHide} refresh={this.loadData} />
         <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} submit={this.onSpleetTaskSubmit} refresh={this.loadData} song={currentSong} />
       </div>

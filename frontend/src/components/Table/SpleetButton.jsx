@@ -5,7 +5,7 @@ import './SpleetButton.css'
 class SpleetButton extends React.Component {
   handleClick = () => {
     console.log(this.props.song)
-    this.props.onSpleetClick(this.props.song);
+    this.props.onClick(this.props.song);
   }
 
   render() {
