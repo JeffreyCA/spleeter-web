@@ -8,16 +8,22 @@ import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-h5-audio-player/lib/styles.css';
 import './SongTable.css'
 
-const SCREEN_WIDTH_BREAKPOINT = 992
-
-const actionFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { minimal, onSpleetClick, currentSong, isPlaying, handlePause, handlePlay } = formatExtraData
+const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
+  const { currentSong, isPlaying, handlePause, handlePlay } = formatExtraData
   const isPlayingCurrent = currentSong === row && isPlaying
 
   return (
-    <div className="d-flex align-items-center justify-content-between">
+    <div className="d-flex align-items-center justify-content-center">
       <PausePlayButton playing={isPlayingCurrent} song={row} onPauseClick={handlePause} onPlayClick={handlePlay} />
-      <SpleetButton isMinimal={minimal} onClick={onSpleetClick} song={row} />
+    </div>
+  );
+}
+
+const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
+  const { onSpleetClick } = formatExtraData
+  return (
+    <div className="d-flex align-items-center">
+      <SpleetButton onClick={onSpleetClick} song={row} />
     </div>
   );
 }
@@ -41,28 +47,26 @@ class SongTable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      windowWidth: 0,
       sort: { dataField: 'title', order: 'asc' }
     }
   }
 
-  componentDidMount() {
-    this.updateWindowDimensions();
-    window.addEventListener("resize", this.updateWindowDimensions);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateWindowDimensions);
-  }
-
-  updateWindowDimensions = () => {
-    this.setState({ windowWidth: window.innerWidth });
-  };
-
   render() {
-    const { windowWidth, sort } = this. state;
+    const { sort } = this. state;
     const { data, onSpleetClick, currentSong, isPlaying, onPauseButtonClick, onPlayButtonClick } = this.props;
     const columns = [
+      {
+        dataField: 'source_url',
+        text: '',
+        formatter: playColFormatter,
+        formatExtraData: {
+          currentSong: currentSong,
+          isPlaying: isPlaying,
+          handlePause: onPauseButtonClick,
+          handlePlay: onPlayButtonClick,
+          onSpleetClick: onSpleetClick
+        }
+      },
       {
         dataField: 'id',
         text: 'ID',
@@ -79,15 +83,11 @@ class SongTable extends React.Component {
         sort: true,
       },
       {
-        dataField: 'source_url',
-        text: '',
-        formatter: actionFormatter,
+        dataField: 'download_dummy',
+        isDummyField: true,
+        text: 'Separate Source',
+        formatter: spleetColFormatter,
         formatExtraData: {
-          minimal: windowWidth < SCREEN_WIDTH_BREAKPOINT,
-          currentSong: currentSong,
-          isPlaying: isPlaying,
-          handlePause: onPauseButtonClick,
-          handlePlay: onPlayButtonClick,
           onSpleetClick: onSpleetClick
         }
       }]
