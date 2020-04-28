@@ -61,7 +61,7 @@ class SongTable extends React.Component {
 
   render() {
     const { windowWidth, sort } = this. state;
-    const { data, onSpleetClick, currentSong, isPlaying, onAudioPause, onAudioPlay } = this.props;
+    const { data, onSpleetClick, currentSong, isPlaying, onPauseButtonClick, onPlayButtonClick } = this.props;
     const columns = [
       {
         dataField: 'id',
@@ -86,8 +86,8 @@ class SongTable extends React.Component {
           minimal: windowWidth < SCREEN_WIDTH_BREAKPOINT,
           currentSong: currentSong,
           isPlaying: isPlaying,
-          handlePause: onAudioPause,
-          handlePlay: onAudioPlay,
+          handlePause: onPauseButtonClick,
+          handlePlay: onPlayButtonClick,
           onSpleetClick: onSpleetClick
         }
       }]

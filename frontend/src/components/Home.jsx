@@ -14,25 +14,55 @@ class Home extends Component {
       showSpleetModal: false,
       showUploadModal: false,
       songList: [],
+      audioInstance: null,
       currentSong: null,
+      currentModalSong: null,
       isPlaying: false,
       task: null
     }
   }
 
-  onAudioPlay = (song) => {
-    console.log('Playing: ' + song.title)
+  getAudioInstance = (instance) => {
     this.setState({
-      currentSong: song,
+      audioInstance: instance
+    })
+  }
+
+  onAudioPause = (audioInfo) => {
+    this.setState({
+      isPlaying: false
+    })
+  }
+
+  onAudioPlay = (audioInfo) => {
+    this.setState({
       isPlaying: true
     })
   }
 
-  onAudioPause = (song) => {
-    console.log('Paused: ' + song.title)
+  onSongPauseButtonClick = (song) => {
     this.setState({
       isPlaying: false
     })
+    if (this.state.audioInstance) {
+      this.state.audioInstance.pause()
+    }
+  }
+
+  onSongPlayButtonClick = (song) => {
+    if (this.state.currentSong === song) {
+      this.setState({
+        isPlaying: true
+      })
+      if (this.state.audioInstance) {
+        this.state.audioInstance.play()
+      }
+    } else {
+      this.setState({
+        currentSong: song,
+        isPlaying: true
+      })
+    }
   }
 
   onSpleetTaskSubmit = (id, status) => {
@@ -40,7 +70,7 @@ class Home extends Component {
   }
 
   onSpleetClick = (song) => {
-    this.setState({ showSpleetModal: true, currentSong: song });
+    this.setState({ showSpleetModal: true, currentModalSong: song });
   }
 
   onUploadClick = () => {
@@ -52,7 +82,7 @@ class Home extends Component {
   }
 
   handleSpleetModalExited = () => {
-    this.setState({ currentSong: null });
+    this.setState({ currentModalSong: null });
   }
 
   handleUploadModalHide = () => {
@@ -74,7 +104,7 @@ class Home extends Component {
   }
 
   render() {
-    const { songList, showSpleetModal, showUploadModal, currentSong, isPlaying, task } = this.state;
+    const { songList, showSpleetModal, showUploadModal, currentSong, currentModalSong, isPlaying, task } = this.state;
     return (
       <div>
         <MyNavBar onUploadClick={this.onUploadClick} />
@@ -91,14 +121,14 @@ class Home extends Component {
             <SongTable data={songList}
               currentSong={currentSong}
               isPlaying={isPlaying}
-              onAudioPause={this.onAudioPause}
-              onAudioPlay={this.onAudioPlay}
+              onPauseButtonClick={this.onSongPauseButtonClick}
+              onPlayButtonClick={this.onSongPlayButtonClick}
               onSpleetClick={this.onSpleetClick} />
           </div>
         </div>
-        <MusicPlayer song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />
+        <MusicPlayer getAudioInstance={this.getAudioInstance} song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />
         <UploadModal show={showUploadModal} hide={this.handleUploadModalHide} refresh={this.loadData} />
-        <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} submit={this.onSpleetTaskSubmit} refresh={this.loadData} song={currentSong} />
+        <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} submit={this.onSpleetTaskSubmit} refresh={this.loadData} song={currentModalSong} />
       </div>
     );
   }

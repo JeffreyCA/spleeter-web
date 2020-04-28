@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import Dropzone from 'react-dropzone-uploader-error-upload-fix'
+import Dropzone from '@jeffreyca/react-dropzone-uploader'
 import CustomPreview from './CustomPreview'
 import CustomInput from './CustomInput'
 import UploadModalForm from './UploadModalForm'
@@ -61,7 +61,7 @@ class UploadModal extends React.Component {
   deleteCurrentFile = () => {
     if (this.state.fileId != -1) {
       console.log('Deleted ' + this.state.fileId)
-      axios.delete('/api/upload/', { data: { id: this.state.fileId } });
+      axios.delete('/api/source-file/', { data: { id: this.state.fileId } });
     }
   }
 

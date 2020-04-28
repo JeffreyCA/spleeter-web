@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProgressBar } from 'react-bootstrap';
 
-import { formatBytes, formatDuration } from 'react-dropzone-uploader-error-upload-fix'
+import { formatBytes, formatDuration } from '@jeffreyca/react-dropzone-uploader'
 
 import cancelImg from '../../svg/cancel.svg'
 import removeImg from '../../svg/remove.svg'
