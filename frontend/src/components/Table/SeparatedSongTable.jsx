@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
-import { Badge } from 'react-bootstrap';
+import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PausePlayButton from './PausePlayButton'
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -70,9 +70,28 @@ class SeparatedSongTable extends Component {
       {
         dataField: 'status',
         text: 'Status',
-        formatter: (cellValue) => {
+        formatter: (cellValue, row) => {
           const variant = cellValue ? statusVariantMap[cellValue] : 'secondary'
           const badgeLabel = cellValue ? cellValue : 'Other'
+
+          if (cellValue === 'Error') {
+            function renderErrorTooltip(props) {
+              return (
+                <Tooltip id="button-tooltip" {...props}>
+                  {row.error}
+                </Tooltip>
+              );
+            }
+            const ErrorOverlay = () => (
+              <OverlayTrigger
+                placement="right"
+                delay={{ show: 100, hide: 100 }}
+                overlay={renderErrorTooltip}>
+                <Badge variant={variant}>{badgeLabel}</Badge>
+              </OverlayTrigger>
+            );
+            return <h5 className="mb-0"><ErrorOverlay /></h5>
+          }
           return (
             <h5 className="mb-0"><Badge variant={variant}>{badgeLabel}</Badge></h5>
           );
