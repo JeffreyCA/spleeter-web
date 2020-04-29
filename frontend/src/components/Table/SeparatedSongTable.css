@@ -11,7 +11,16 @@
 }
 
 .inner-table {
-    background-color: #e8e8e8;
+    background-color: #ececec;
+}
+
+.inner-table th {
+    border-top: #b7b7b7 solid 2px !important;
+    border-bottom: #b7b7b7 solid 2px !important;
+}
+
+.inner-table td {
+    border-top: #b7b7b7 solid 2px !important;
 }
 
 .inner-table > tbody > tr > td {
