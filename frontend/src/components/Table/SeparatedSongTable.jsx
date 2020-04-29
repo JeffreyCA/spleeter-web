@@ -89,11 +89,12 @@ class SeparatedSongTable extends Component {
       return (
         <div>
           <BootstrapTable
+            classes="inner-table mb-0"
             bootstrap4
             keyField="id"
             data={data}
             columns={columns}
-            striped />
+            bordered={false} />
         </div>
       )
     } else {

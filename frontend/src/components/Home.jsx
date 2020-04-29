@@ -145,7 +145,6 @@ class Home extends Component {
             <p className="lead">
               Source separation on the go.
             </p>
-            <hr className="my-4" />
             {task && (<Alert variant="success">
               <span><a href={`/api/separate/${task.id}`}>{task.id}</a>: {task.status}</span>
             </Alert>)}

@@ -98,7 +98,7 @@ class SongTable extends React.Component {
         data={data}
         columns={columns}
         sort={sort}
-        expandRow={expandRow} />
+        expandRow={expandRow} bordered={false} />
     );
   }
 }

@@ -9,3 +9,11 @@
 .react-bootstrap-table table {
     table-layout: auto !important;
 }
+
+.inner-table {
+    background-color: #e8e8e8;
+}
+
+.inner-table > tbody > tr > td {
+    background-color: #e8e8e8 !important;
+}
