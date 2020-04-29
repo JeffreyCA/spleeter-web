@@ -5,7 +5,6 @@ import SeparatedSongTable from './SeparatedSongTable'
 import SpleetButton from './SpleetButton'
 import PausePlayButton from './PausePlayButton'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import 'react-h5-audio-player/lib/styles.css';
 import './SongTable.css'
 
 const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
