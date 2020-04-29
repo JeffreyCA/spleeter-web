@@ -36,7 +36,6 @@ class SongTable extends React.Component {
   }
 
   render() {
-    const { sort } = this. state;
     const { data, onSpleetClick, currentSongUrl, isPlaying, onSepSongPauseClick, onSepSongPlayClick, onSrcSongPauseClick, onSrcSongPlayClick } = this.props;
     const expandRow = {
       renderer: row => {
@@ -46,7 +45,7 @@ class SongTable extends React.Component {
       expandColumnPosition: 'right',
       expandByColumnOnly: true,
       expandHeaderColumnRenderer: ({ isAnyExpands }) => {
-        return (<div className="header-col" onClick={(e) => { e.stopPropagation() }}></div>)
+        return isAnyExpands ? <CaretUpFill /> : <CaretDownFill />
       },
       expandColumnRenderer: ({ expanded }) => {
         return expanded ? <CaretUpFill /> : <CaretDownFill />
@@ -91,6 +90,7 @@ class SongTable extends React.Component {
           onSpleetClick: onSpleetClick
         }
       }]
+    const sort = { dataField: 'title', order: 'asc' }
     return (
       <BootstrapTable
         bootstrap4

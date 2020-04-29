@@ -4,17 +4,15 @@
 
 th.expand-cell-header {
     padding: 0 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    cursor: pointer !important;
 }
 
 td.expand-cell {
     cursor: pointer;
     padding: 0 !important;
     text-align: center !important;
-}
-
-div.header-col {
-    height: 44px;
-    display: flex;
 }
 
 .react-bootstrap-table .row-expansion-style {

@@ -17,3 +17,9 @@
 .inner-table > tbody > tr > td {
     background-color: #e8e8e8 !important;
 }
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+    color: #fff;
+    background-color: #b1b2b3 !important;
+    border-color: #b1b2b3 !important;
+}

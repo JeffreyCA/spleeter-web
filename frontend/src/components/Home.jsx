@@ -135,6 +135,7 @@ class Home extends Component {
     const { songList, showSpleetModal, showUploadModal, currentSrcSong, currentSepSong, currentModalSong, isPlaying, task } = this.state;
     const currentSong = currentSrcSong ? currentSrcSong : (currentSepSong ? currentSepSong : null)
     const currentSongUrl = currentSrcSong ? currentSrcSong.url : (currentSepSong ? currentSepSong.url : null)
+    const songType = currentSrcSong ? 'src' : (currentSepSong ? 'sep' : null)
 
     return (
       <div>
@@ -158,7 +159,7 @@ class Home extends Component {
               onSpleetClick={this.onSpleetClick} />
           </div>
         </div>
-        <MusicPlayer getAudioInstance={this.getAudioInstance} song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />
+        <MusicPlayer getAudioInstance={this.getAudioInstance} songType={songType} song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />
         <UploadModal show={showUploadModal} hide={this.handleUploadModalHide} refresh={this.loadData} />
         <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} submit={this.onSpleetTaskSubmit} refresh={this.loadData} song={currentModalSong} />
       </div>

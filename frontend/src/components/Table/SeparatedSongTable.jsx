@@ -58,9 +58,9 @@ class SeparatedSongTable extends Component {
         isDummyField: true,
         text: 'Included parts',
         formatter: (cellContent, row) => {
-          const vocalBadge = row.vocals ? <Badge pill variant="primary">Vocals</Badge> : null
-          const drumsBadge = row.drums ? <Badge pill variant="danger">Drums</Badge> : null
-          const bassBadge = row.bass ? <Badge pill variant="warning">Bass</Badge> : null
+          const vocalBadge = row.vocals ? <Badge pill variant="secondary">Vocals</Badge> : null
+          const drumsBadge = row.drums ? <Badge pill variant="secondary">Drums</Badge> : null
+          const bassBadge = row.bass ? <Badge pill variant="secondary">Bass</Badge> : null
           const otherBadge = row.other ? <Badge pill variant="secondary">Other</Badge> : null
           return (
             <h5 className="mb-0">{vocalBadge} {drumsBadge} {bassBadge} {otherBadge}</h5>
@@ -76,7 +76,8 @@ class SeparatedSongTable extends Component {
           return (
             <h5 className="mb-0"><Badge variant={variant}>{badgeLabel}</Badge></h5>
           );
-        }
+        },
+        sort: true
       },
       {
         dataField: 'file',
@@ -84,6 +85,7 @@ class SeparatedSongTable extends Component {
         formatter: downloadFormatter
       },
     ]
+    const sort = { dataField: 'status', order: 'asc' }
 
     if (data.length > 0) {
       return (
@@ -94,6 +96,8 @@ class SeparatedSongTable extends Component {
             keyField="id"
             data={data}
             columns={columns}
+            sort={sort}
+            defaultSortDirection="asc"
             bordered={false} />
         </div>
       )
