@@ -37,6 +37,9 @@ class SourceSong(models.Model):
 
     def source_url(self):
         return self.source_id.file.url
+    
+    def url(self):
+        return self.source_id.file.url
 
     def __str__(self):
         return self.artist + ' - ' + self.title
@@ -70,6 +73,17 @@ class SeparatedSong(models.Model):
     status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
     file = models.FileField(upload_to='separate/', blank=True)
     error = models.TextField(blank=True)
+
+    def artist(self):
+        return self.source_song.artist
+
+    def title(self):
+        return self.source_song.title
+
+    def url(self):
+        if self.file:
+            return self.file.url
+        return ''
 
     def formatted_name(self):
         prefix_lst = [self.source_song.artist, ' - ', self.source_song.title]

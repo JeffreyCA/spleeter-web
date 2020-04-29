@@ -12,10 +12,10 @@ class PausePlayButton extends Component {
   }
 
   render() {
-    const { playing } = this.props;
+    const { playing, disabled } = this.props;
     return (
-      <Button onClick={this.handlePlay} className="btn-circle p-1" variant="secondary" size="lg">
-        {playing ? <PauseFill size={28} /> : <PlayFill size={28} />}
+      <Button disabled={disabled} onClick={this.handlePlay} className="btn-circle p-1" variant="secondary" size="lg">
+        {playing && !disabled ? <PauseFill size={28} /> : <PlayFill size={28} />}
       </Button>
     )
   }

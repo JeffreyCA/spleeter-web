@@ -15,7 +15,8 @@ class Home extends Component {
       showUploadModal: false,
       songList: [],
       audioInstance: null,
-      currentSong: null,
+      currentSrcSong: null,
+      currentSepSong: null,
       currentModalSong: null,
       isPlaying: false,
       task: null
@@ -40,7 +41,7 @@ class Home extends Component {
     })
   }
 
-  onSongPauseButtonClick = (song) => {
+  onSrcSongPauseClick = (song) => {
     this.setState({
       isPlaying: false
     })
@@ -49,8 +50,8 @@ class Home extends Component {
     }
   }
 
-  onSongPlayButtonClick = (song) => {
-    if (this.state.currentSong === song) {
+  onSrcSongPlayClick = (song) => {
+    if (this.state.currentSrcSong === song) {
       this.setState({
         isPlaying: true
       })
@@ -59,7 +60,34 @@ class Home extends Component {
       }
     } else {
       this.setState({
-        currentSong: song,
+        currentSrcSong: song,
+        currentSepSong: null,
+        isPlaying: true
+      })
+    }
+  }
+
+  onSepSongPauseClick = (song) => {
+    this.setState({
+      isPlaying: false
+    })
+    if (this.state.audioInstance) {
+      this.state.audioInstance.pause()
+    }
+  }
+
+  onSepSongPlayClick = (song) => {
+    if (this.state.currentSepSong === song) {
+      this.setState({
+        isPlaying: true
+      })
+      if (this.state.audioInstance) {
+        this.state.audioInstance.play()
+      }
+    } else {
+      this.setState({
+        currentSrcSong: null,
+        currentSepSong: song,
         isPlaying: true
       })
     }
@@ -104,7 +132,10 @@ class Home extends Component {
   }
 
   render() {
-    const { songList, showSpleetModal, showUploadModal, currentSong, currentModalSong, isPlaying, task } = this.state;
+    const { songList, showSpleetModal, showUploadModal, currentSrcSong, currentSepSong, currentModalSong, isPlaying, task } = this.state;
+    const currentSong = currentSrcSong ? currentSrcSong : (currentSepSong ? currentSepSong : null)
+    const currentSongUrl = currentSrcSong ? currentSrcSong.url : (currentSepSong ? currentSepSong.url : null)
+
     return (
       <div>
         <MyNavBar onUploadClick={this.onUploadClick} />
@@ -119,10 +150,12 @@ class Home extends Component {
               <span><a href={`/api/separate/${task.id}`}>{task.id}</a>: {task.status}</span>
             </Alert>)}
             <SongTable data={songList}
-              currentSong={currentSong}
+              currentSongUrl={currentSongUrl}
               isPlaying={isPlaying}
-              onPauseButtonClick={this.onSongPauseButtonClick}
-              onPlayButtonClick={this.onSongPlayButtonClick}
+              onSepSongPauseClick={this.onSepSongPauseClick}
+              onSepSongPlayClick={this.onSepSongPlayClick}
+              onSrcSongPauseClick={this.onSrcSongPauseClick}
+              onSrcSongPlayClick={this.onSrcSongPlayClick}
               onSpleetClick={this.onSpleetClick} />
           </div>
         </div>

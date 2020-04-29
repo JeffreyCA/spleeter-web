@@ -8,12 +8,12 @@ import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import './SongTable.css'
 
 const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { currentSong, isPlaying, handlePause, handlePlay } = formatExtraData
-  const isPlayingCurrent = currentSong === row && isPlaying
+  const { currentSongUrl, isPlaying, handleSrcSongPause, handleSrcSongPlay } = formatExtraData
+  const isPlayingCurrent = isPlaying && currentSongUrl === row.url
 
   return (
     <div className="d-flex align-items-center justify-content-center">
-      <PausePlayButton playing={isPlayingCurrent} song={row} onPauseClick={handlePause} onPlayClick={handlePlay} />
+      <PausePlayButton playing={isPlayingCurrent} song={row} onPauseClick={handleSrcSongPause} onPlayClick={handleSrcSongPlay} />
     </div>
   );
 }
@@ -27,21 +27,6 @@ const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
   );
 }
 
-const expandRow = {
-  renderer: row => {
-    return <SeparatedSongTable data={row.separated} />
-  },
-  showExpandColumn: true,
-  expandColumnPosition: 'right',
-  expandByColumnOnly: true,
-  expandHeaderColumnRenderer: ({ isAnyExpands }) => {
-    return (<div className="header-col" onClick={(e) => { e.stopPropagation() }}></div>)
-  },
-  expandColumnRenderer: ({ expanded }) => {
-    return expanded ? <CaretUpFill /> : <CaretDownFill />
-  }
-};
-
 class SongTable extends React.Component {
   constructor(props) {
     super(props)
@@ -52,18 +37,34 @@ class SongTable extends React.Component {
 
   render() {
     const { sort } = this. state;
-    const { data, onSpleetClick, currentSong, isPlaying, onPauseButtonClick, onPlayButtonClick } = this.props;
+    const { data, onSpleetClick, currentSongUrl, isPlaying, onSepSongPauseClick, onSepSongPlayClick, onSrcSongPauseClick, onSrcSongPlayClick } = this.props;
+    const expandRow = {
+      renderer: row => {
+        return <SeparatedSongTable data={row.separated} currentSongUrl={currentSongUrl} isPlaying={isPlaying} onPauseClick={onSepSongPauseClick} onPlayClick={onSepSongPlayClick} />
+      },
+      showExpandColumn: true,
+      expandColumnPosition: 'right',
+      expandByColumnOnly: true,
+      expandHeaderColumnRenderer: ({ isAnyExpands }) => {
+        return (<div className="header-col" onClick={(e) => { e.stopPropagation() }}></div>)
+      },
+      expandColumnRenderer: ({ expanded }) => {
+        return expanded ? <CaretUpFill /> : <CaretDownFill />
+      }
+    }
     const columns = [
       {
-        dataField: 'source_url',
+        dataField: 'url',
         text: '',
         formatter: playColFormatter,
         formatExtraData: {
-          currentSong: currentSong,
+          currentSongUrl: currentSongUrl,
           isPlaying: isPlaying,
-          handlePause: onPauseButtonClick,
-          handlePlay: onPlayButtonClick,
-          onSpleetClick: onSpleetClick
+          handleSrcSongPause: onSrcSongPauseClick,
+          handleSrcSongPlay: onSrcSongPlayClick
+        },
+        headerStyle: () => {
+          return { width: '65px' };
         }
       },
       {

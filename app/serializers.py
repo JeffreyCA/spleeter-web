@@ -13,7 +13,7 @@ class SeparatedSongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SeparatedSong
-        fields = ('id', 'source_song', 'vocals', 'drums', 'bass', 'other', 'status', 'file', 'error', 'overwrite')
+        fields = ('id', 'source_song', 'artist', 'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error', 'overwrite')
 
     def validate(self, data):
         all_checked = data['vocals'] and data['drums'] and data['bass'] and data['other']
@@ -33,4 +33,4 @@ class SourceSongSerializer(serializers.ModelSerializer):
     separated = SeparatedSongSerializer(many=True, read_only=True)
     class Meta:
         model = SourceSong
-        fields = ('id', 'source_id', 'source_url', 'artist', 'title', 'separated')
+        fields = ('id', 'source_id', 'url', 'artist', 'title', 'separated')

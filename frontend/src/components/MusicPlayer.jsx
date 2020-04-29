@@ -13,8 +13,7 @@ class MusicPlayer extends Component {
     const audioList = [{
       name: song.title,
       singer: song.artist,
-      cover: '',
-      musicSrc: song.source_url
+      musicSrc: song.url
     }]
 
     return (
