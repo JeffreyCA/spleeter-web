@@ -8,23 +8,7 @@ import './App.css'
 
 class App extends Component {
   constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      showUploadModal: false
-    };
-  }
-
-  onUploadClick = () => {
-    this.setState({ showUploadModal: true });
-  }
-
-  handleUploadModalClose = () => {
-    this.setState({ showUploadModal: false });
-  }
-
-  refresh = () => {
-    this.props.history.push('/')
+    super(props)
   }
 
   render() {

@@ -4,15 +4,20 @@ import ReactJkMusicPlayer from '@jeffreyca/react-jinke-music-player';
 import '@jeffreyca/react-jinke-music-player/assets/index.css';
 import './MusicPlayer.css'
 
+/**
+ * Music player component that controls audio playback. It shows up as a horizontal bar at the
+ * bottom of the screen.
+ */
 class MusicPlayer extends Component {
   render() {
-    const { getAudioInstance, songType, song, onAudioPause, onAudioPlay } = this.props
+    const { getAudioInstance, isSource, song, onAudioPause, onAudioPlay } = this.props
     if (!song) {
       return null
     }
 
+    // Show a colour-coded badge indicating the components that are included
     var audioTitleExtra
-    if (songType === 'src') {
+    if (isSource) {
       audioTitleExtra = <Badge className="ml-2 mr-2" pill variant="primary">Original</Badge>
     } else {
       const vocalBadge = song.vocals ? <Badge pill variant="vocals">Vocals</Badge> : null
@@ -22,6 +27,7 @@ class MusicPlayer extends Component {
       audioTitleExtra = (<div className="badge-flex ml-2 mr-2">{vocalBadge} {accompBadge} {bassBadge} {drumsBadge}</div>)
     }
 
+    // List of audio tracks conforming to music player API
     const audioList = [{
       name: song.title,
       singer: song.artist,
@@ -43,8 +49,13 @@ class MusicPlayer extends Component {
         drag={false}
         preload={true}
         autoHiddenCover={true}
-        showDownload={false} showPlayMode={false} showReload={false} showThemeSwitch={false} showLyric={false}
-        onAudioPause={onAudioPause} onAudioPlay={onAudioPlay} 
+        showDownload={false}
+        showPlayMode={false}
+        showReload={false}
+        showThemeSwitch={false}
+        showLyric={false}
+        onAudioPause={onAudioPause}
+        onAudioPlay={onAudioPlay} 
         onAudioListsChange={this.onAudioListsChange}
         locale={{ playListsText: 'Now Playing' }} />
     );

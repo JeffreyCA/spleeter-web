@@ -1,8 +1,11 @@
 import React from 'react';
 import { Button, Container, Navbar, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
-import { withRouter } from 'react-router';
 import { CloudUpload } from 'react-bootstrap-icons';
+import { withRouter } from 'react-router';
 
+/**
+ * Navigation bar component
+ */
 class MyNavBar extends React.Component {
   constructor(props) {
     super(props)
