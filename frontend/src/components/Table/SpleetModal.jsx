@@ -3,7 +3,12 @@ import { Button, Modal } from 'react-bootstrap';
 import SpleetModalForm from './SpleetModalForm'
 import axios from 'axios';
 
-const PARTS = [ 'vocals', 'drums', 'bass', 'other' ]
+const PARTS = {
+  'vocals': 'Vocals',
+  'other': 'Accompaniment',
+  'bass': 'Bass',
+  'drums': 'Drums'
+}
 
 class SpleetModal extends React.Component {
   constructor(props) {

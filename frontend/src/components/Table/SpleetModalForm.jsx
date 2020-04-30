@@ -4,15 +4,15 @@ import './SpleetModalForm.css'
 
 class SpleetModalForm extends React.Component {
   constructor(props) {
-      super(props)
+    super(props)
   }
 
   render() {
     const { parts, song, allChecked, noneChecked, errors, handleCheckboxChange } = this.props
-    const checkboxes = parts.map(part => {
+    const checkboxes = Object.keys(parts).map(key => {
       return (
-        <Form.Group key={part} controlId={`${part}-checkbox`} className="mb-0">
-          <Form.Check type="checkbox" name={part} label={part} onChange={handleCheckboxChange} className="capitalize" />
+        <Form.Group key={key} controlId={`${key}-checkbox`} className="mb-0">
+          <Form.Check type="checkbox" name={key} label={parts[key]} onChange={handleCheckboxChange} className="capitalize" />
         </Form.Group>)})
 
     return (
