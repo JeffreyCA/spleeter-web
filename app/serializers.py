@@ -11,10 +11,6 @@ class SeparatedSongSerializer(serializers.ModelSerializer):
     status = ChoicesSerializerField()
     overwrite = serializers.BooleanField(read_only=True)
 
-    class Meta:
-        model = SeparatedSong
-        fields = ('id', 'source_song', 'artist', 'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error', 'overwrite')
-
     def validate(self, data):
         all_checked = data['vocals'] and data['drums'] and data['bass'] and data['other']
         none_checked = not (data['vocals'] or data['drums'] or data['bass'] or data['other'])
@@ -24,6 +20,10 @@ class SeparatedSongSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'checked': 'You must check at least one part.'})
         return data
 
+    class Meta:
+        model = SeparatedSong
+        fields = ('id', 'source_song', 'artist', 'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error', 'overwrite', 'date_created')
+
 class SourceFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = SourceFile
@@ -31,6 +31,7 @@ class SourceFileSerializer(serializers.ModelSerializer):
 
 class SourceSongSerializer(serializers.ModelSerializer):
     separated = SeparatedSongSerializer(many=True, read_only=True)
+
     class Meta:
         model = SourceSong
-        fields = ('id', 'source_id', 'url', 'artist', 'title', 'separated')
+        fields = ('id', 'source_id', 'url', 'artist', 'title', 'separated', 'date_created')

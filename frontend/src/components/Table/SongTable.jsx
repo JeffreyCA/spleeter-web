@@ -1,4 +1,5 @@
 import React from 'react';
+import { DateTime } from 'luxon';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 import SeparatedSongTable from './SeparatedSongTable'
@@ -79,6 +80,12 @@ class SongTable extends React.Component {
       {
         dataField: 'artist',
         text: 'Artist',
+        sort: true,
+      },
+      {
+        dataField: 'date_created',
+        text: 'Created',
+        formatter: (cell) => DateTime.fromISO(cell).toRelative(),
         sort: true,
       },
       {

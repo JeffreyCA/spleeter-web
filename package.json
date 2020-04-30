@@ -7,6 +7,7 @@
         "dev": "npm run dev --prefix frontend & python3 manage.py runserver 0.0.0.0:8000",
         "prod": "npm run prod --prefix frontend & python3 manage.py runserver",
         "migrate": "python3 manage.py makemigrations app && python3 manage.py migrate",
-        "huey": "python3 manage.py run_huey"
+        "huey": "python3 manage.py run_huey",
+        "clean": "rm -r media/separate/* && rm -r media/uploads/*"
     }
 }

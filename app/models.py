@@ -31,6 +31,7 @@ class SourceSong(models.Model):
     source_id = models.OneToOneField(SourceFile, on_delete=models.PROTECT, unique=True)
     artist = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
 
     def source_path(self):
         return self.source_id.file.path
@@ -43,19 +44,6 @@ class SourceSong(models.Model):
 
     def __str__(self):
         return self.artist + ' - ' + self.title
-
-class SeparateTaskResult(models.Model):
-    class Status(models.IntegerChoices):
-        CREATED = 1
-        IN_PROGRESS = 2
-        DONE = 3
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    source_song = models.ForeignKey(SourceSong, on_delete=models.CASCADE)
-    vocals = models.BooleanField()
-    drums = models.BooleanField()
-    bass = models.BooleanField()
-    other = models.BooleanField()
 
 class SeparatedSong(models.Model):
     class Status(models.IntegerChoices):
@@ -73,6 +61,7 @@ class SeparatedSong(models.Model):
     status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
     file = models.FileField(upload_to='separate/', blank=True)
     error = models.TextField(blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
 
     def artist(self):
         return self.source_song.artist

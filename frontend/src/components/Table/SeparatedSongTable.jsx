@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { DateTime } from 'luxon';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import PausePlayButton from './PausePlayButton'
@@ -97,6 +98,12 @@ class SeparatedSongTable extends Component {
           );
         },
         sort: true
+      },
+      {
+        dataField: 'date_created',
+        text: 'Created',
+        formatter: (cell) => DateTime.fromISO(cell).toRelative(),
+        sort: true,
       },
       {
         dataField: 'file',
