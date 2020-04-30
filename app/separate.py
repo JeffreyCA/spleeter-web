@@ -27,21 +27,19 @@ class SpleeterSeparator:
     def predict(self, parts, input_path, output_path):
         try:
             waveform, _ = self.audio_adapter.load(input_path, sample_rate=self.sample_rate)
+            prediction = self.separator.separate(waveform)
+            out = np.zeros_like(prediction['vocals'])
+            part_count = 0
+
+            # Add up parts that were requested
+            for key in prediction:
+                if parts[key]:
+                    out += prediction[key]
+                    part_count += 1
+            out /= part_count
+            self.audio_adapter.save(output_path, out, self.separator._sample_rate, self.audio_format, self.audio_bitrate)
         except ffmpeg.Error as e:
             print('stdout:', e.stdout.decode('utf8'))
             print('stderr:', e.stderr.decode('utf8'))
             raise e
-        except Exception as e:
-            print(traceback.format_exc())
 
-        prediction = self.separator.separate(waveform)
-        out = np.zeros_like(prediction['vocals'])
-        part_count = 0
-
-        # Add up parts that were requested
-        for key in prediction:
-            if parts[key]:
-                out += prediction[key]
-                part_count += 1
-        out /= part_count
-        self.audio_adapter.save(output_path, out, self.separator._sample_rate, self.audio_format, self.audio_bitrate)
