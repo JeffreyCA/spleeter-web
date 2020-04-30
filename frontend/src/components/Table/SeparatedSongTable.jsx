@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { DateTime } from 'luxon';
+import { toRelativeDateSpan } from '../../Utils';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Badge, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import PausePlayButton from './PausePlayButton'
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -29,7 +29,7 @@ const downloadFormatter = (cell, row, rowIndex) => {
   const { url } = row
   if (url) {
     return (
-      <a href={url}>Link</a>
+      <a href={url} download>Link</a>
     );
   } else {
     return null
@@ -59,14 +59,28 @@ class SeparatedSongTable extends Component {
         isDummyField: true,
         text: 'Included parts',
         formatter: (cellContent, row) => {
-          const vocalBadge = row.vocals ? <Badge pill variant="secondary">Vocals</Badge> : null
-          const drumsBadge = row.drums ? <Badge pill variant="secondary">Drums</Badge> : null
-          const bassBadge = row.bass ? <Badge pill variant="secondary">Bass</Badge> : null
-          const otherBadge = row.other ? <Badge pill variant="secondary">Other</Badge> : null
+          const vocalBadge = row.vocals ?
+            <Badge pill variant="vocals">Vocals</Badge> :
+            <Badge pill variant="vocals-faded">Vocals</Badge>
+          const accompBadge = row.other ?
+            <Badge pill variant="accomp">Accompaniment</Badge> :
+            <Badge pill variant="accomp-faded">Accompaniment</Badge>
+          const drumsBadge = row.drums ?
+            <Badge pill variant="drums">Drums</Badge> :
+            <Badge pill variant="drums-faded">Drums</Badge>
+          const bassBadge = row.bass ?
+            <Badge pill variant="bass">Bass</Badge> :
+            <Badge pill variant="bass-faded">Bass</Badge>
           return (
-            <h5 className="mb-0">{vocalBadge} {drumsBadge} {bassBadge} {otherBadge}</h5>
+            <h5 className="mb-0">{vocalBadge} {accompBadge} {bassBadge} {drumsBadge}</h5>
           );
         }
+      },
+      {
+        dataField: 'date_created',
+        text: 'Created',
+        formatter: toRelativeDateSpan,
+        sort: true,
       },
       {
         dataField: 'status',
@@ -77,9 +91,10 @@ class SeparatedSongTable extends Component {
 
           if (cellValue === 'Error') {
             function renderErrorTooltip(props) {
+              const errorText = row.error ? row.error : 'Unknown Error'
               return (
                 <Tooltip id="button-tooltip" {...props}>
-                  {row.error}
+                  {errorText}
                 </Tooltip>
               );
             }
@@ -92,18 +107,21 @@ class SeparatedSongTable extends Component {
               </OverlayTrigger>
             );
             return <h5 className="mb-0"><ErrorOverlay /></h5>
+          } else if (cellValue === 'In Progress') {
+            return (
+              <h5 className="mb-0">
+                <Badge variant={variant}>{badgeLabel}</Badge>
+                <Spinner className="ml-2" animation="border" variant="primary" size="sm"/>
+              </h5>
+            );
           }
           return (
-            <h5 className="mb-0"><Badge variant={variant}>{badgeLabel}</Badge></h5>
+            <h5 className="mb-0">
+              <Badge variant={variant}>{badgeLabel}</Badge>
+            </h5>
           );
         },
         sort: true
-      },
-      {
-        dataField: 'date_created',
-        text: 'Created',
-        formatter: (cell) => DateTime.fromISO(cell).toRelative(),
-        sort: true,
       },
       {
         dataField: 'file',
@@ -111,7 +129,7 @@ class SeparatedSongTable extends Component {
         formatter: downloadFormatter
       },
     ]
-    const sort = { dataField: 'status', order: 'asc' }
+    const sort = { dataField: 'date_created', order: 'desc' }
 
     if (data.length > 0) {
       return (

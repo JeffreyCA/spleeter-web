@@ -19,7 +19,8 @@ class Home extends Component {
       currentSepSong: null,
       currentModalSong: null,
       isPlaying: false,
-      task: null
+      task: null,
+      expandedIds: []
     }
   }
 
@@ -51,7 +52,7 @@ class Home extends Component {
   }
 
   onSrcSongPlayClick = (song) => {
-    if (this.state.currentSrcSong === song) {
+    if (this.state.currentSrcSong && this.state.currentSrcSong.url === song.url) {
       this.setState({
         isPlaying: true
       })
@@ -77,7 +78,7 @@ class Home extends Component {
   }
 
   onSepSongPlayClick = (song) => {
-    if (this.state.currentSepSong === song) {
+    if (this.state.currentSepSong && this.state.currentSepSong.url === song.url) {
       this.setState({
         isPlaying: true
       })
@@ -93,8 +94,46 @@ class Home extends Component {
     }
   }
 
-  onSpleetTaskSubmit = (id, status) => {
-    this.setState({ task: {id: id, status: status} });
+  onSpleetTaskSubmit = (src_id, id, status) => {
+    this.setState({ 
+      task: {
+        src_id: src_id,
+        id: id,
+        status: status
+      },
+      expandedIds: [...this.state.expandedIds, src_id]
+    })
+    this.loadData()
+    setInterval(() => {
+      this.setState({ 
+        task: null
+      })
+    }, 3000)
+  }
+
+  // Manually handle which rows are expanded
+  onExpandRow = (row, isExpand) => {
+    if (isExpand) {
+      this.setState({
+        expandedIds: [...this.state.expandedIds, row.id]
+      })
+    } else {
+      this.setState({
+        expandedIds: this.state.expandedIds.filter(s => s !== row.id)
+      })
+    }
+  }
+
+  onExpandAll = (isExpandAll, results) => {
+    if (isExpandAll) {
+      this.setState({
+        expandedIds: results.map(i => i.id)
+      })
+    } else {
+      this.setState({
+        expandedIds: []
+      })
+    }
   }
 
   onSpleetClick = (song) => {
@@ -119,9 +158,12 @@ class Home extends Component {
 
   componentDidMount() {
     this.loadData()
+    setInterval(this.loadData, 10000)
   }
 
-  loadData = () => {
+  loadData = async () => {
+    console.log('loading data')
+    console.log(this.state.expandedIds)
     axios.get('/api/source-song/')
     .then(({ data }) => {
       if (data) {
@@ -132,7 +174,17 @@ class Home extends Component {
   }
 
   render() {
-    const { songList, showSpleetModal, showUploadModal, currentSrcSong, currentSepSong, currentModalSong, isPlaying, task } = this.state;
+    const {
+      songList,
+      showSpleetModal,
+      showUploadModal,
+      currentSrcSong,
+      currentSepSong,
+      currentModalSong,
+      isPlaying,
+      task,
+      expandedIds
+    } = this.state;
     const currentSong = currentSrcSong ? currentSrcSong : (currentSepSong ? currentSepSong : null)
     const currentSongUrl = currentSrcSong ? currentSrcSong.url : (currentSepSong ? currentSepSong.url : null)
     const songType = currentSrcSong ? 'src' : (currentSepSong ? 'sep' : null)
@@ -152,11 +204,14 @@ class Home extends Component {
             <SongTable data={songList}
               currentSongUrl={currentSongUrl}
               isPlaying={isPlaying}
+              expandedIds={expandedIds}
+              onExpandRow={this.onExpandRow}
+              onExpandAll={this.onExpandAll}
+              onSpleetClick={this.onSpleetClick}
               onSepSongPauseClick={this.onSepSongPauseClick}
               onSepSongPlayClick={this.onSepSongPlayClick}
               onSrcSongPauseClick={this.onSrcSongPauseClick}
-              onSrcSongPlayClick={this.onSrcSongPlayClick}
-              onSpleetClick={this.onSpleetClick} />
+              onSrcSongPlayClick={this.onSrcSongPlayClick} />
           </div>
         </div>
         <MusicPlayer getAudioInstance={this.getAudioInstance} songType={songType} song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />

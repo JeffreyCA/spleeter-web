@@ -15,11 +15,11 @@ class MusicPlayer extends Component {
     if (songType === 'src') {
       audioTitleExtra = <Badge className="ml-2 mr-2" pill variant="primary">Original</Badge>
     } else {
-      const vocalBadge = song.vocals ? <Badge pill variant="secondary">Vocals</Badge> : null
-      const drumsBadge = song.drums ? <Badge pill variant="secondary">Drums</Badge> : null
-      const bassBadge = song.bass ? <Badge pill variant="secondary">Bass</Badge> : null
-      const otherBadge = song.other ? <Badge pill variant="secondary">Other</Badge> : null
-      audioTitleExtra = (<div className="d-flex ml-2 mr-2">{vocalBadge} {drumsBadge} {bassBadge} {otherBadge}</div>)
+      const vocalBadge = song.vocals ? <Badge pill variant="vocals">Vocals</Badge> : null
+      const accompBadge = song.other ? <Badge pill variant="accomp">Accomp.</Badge> : null
+      const bassBadge = song.bass ? <Badge pill variant="bass">Bass</Badge> : null
+      const drumsBadge = song.drums ? <Badge pill variant="drums">Drums</Badge> : null
+      audioTitleExtra = (<div className="badge-flex ml-2 mr-2">{vocalBadge} {accompBadge} {bassBadge} {drumsBadge}</div>)
     }
 
     const audioList = [{

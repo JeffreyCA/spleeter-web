@@ -64,7 +64,7 @@ class SpleetModal extends React.Component {
     // Make request to add Song
     axios.post('/api/separate/', data)
       .then(({ data }) => {
-        this.props.submit(data.id, data.status)
+        this.props.submit(data.source_song, data.id, data.status)
         this.props.hide()
     }).catch(({ response }) => {
       const { data } = response

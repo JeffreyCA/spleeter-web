@@ -32,3 +32,9 @@
     background-color: #b1b2b3 !important;
     border-color: #b1b2b3 !important;
 }
+
+.spinner-border {
+    vertical-align: middle !important;
+    -webkit-animation: spinner-border 1s linear infinite !important;
+    animation: spinner-border 1s linear infinite !important;
+}

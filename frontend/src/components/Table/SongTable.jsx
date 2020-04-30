@@ -1,5 +1,5 @@
 import React from 'react';
-import { DateTime } from 'luxon';
+import { toRelativeDateSpan } from '../../Utils';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 import SeparatedSongTable from './SeparatedSongTable'
@@ -22,7 +22,7 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
 const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
   const { onSpleetClick } = formatExtraData
   return (
-    <div className="d-flex align-items-center">
+    <div className="d-flex align-items-center justify-content-center">
       <SpleetButton onClick={onSpleetClick} song={row} />
     </div>
   );
@@ -31,17 +31,30 @@ const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
 class SongTable extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      sort: { dataField: 'title', order: 'asc' }
-    }
   }
 
   render() {
-    const { data, onSpleetClick, currentSongUrl, isPlaying, onSepSongPauseClick, onSepSongPlayClick, onSrcSongPauseClick, onSrcSongPlayClick } = this.props;
+    const {
+      data,
+      currentSongUrl,
+      isPlaying,
+      expandedIds,
+      onSpleetClick,
+      onSepSongPauseClick,
+      onSepSongPlayClick,
+      onSrcSongPauseClick,
+      onSrcSongPlayClick,
+      onExpandRow,
+      onExpandAll,
+    } = this.props;
+
     const expandRow = {
       renderer: row => {
         return <SeparatedSongTable data={row.separated} currentSongUrl={currentSongUrl} isPlaying={isPlaying} onPauseClick={onSepSongPauseClick} onPlayClick={onSepSongPlayClick} />
       },
+      expanded: expandedIds,
+      onExpand: onExpandRow,
+      onExpandAll: onExpandAll,
       showExpandColumn: true,
       expandColumnPosition: 'right',
       expandByColumnOnly: true,
@@ -84,8 +97,8 @@ class SongTable extends React.Component {
       },
       {
         dataField: 'date_created',
-        text: 'Created',
-        formatter: (cell) => DateTime.fromISO(cell).toRelative(),
+        text: 'Uploaded',
+        formatter: toRelativeDateSpan,
         sort: true,
       },
       {
