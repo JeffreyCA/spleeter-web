@@ -1,10 +1,13 @@
 import React from 'react'
-import { DateTime } from 'luxon';
+import { DateTime } from 'luxon'
 
 const SEC_PER_MIN = 60
 const DAYS_PER_WEEK = 7
 
-export const toRelativeDateSpan = (isoDateString) => {
+/**
+ * Convert ISO date string to custom format (hybrid of relative and absolute date)
+ */
+export const toRelativeDateSpan = isoDateString => {
   const dateTime = DateTime.fromISO(isoDateString)
   const longDateTimeStr = dateTime.toLocaleString(DateTime.DATETIME_MED)
   const diffSeconds = -dateTime.diffNow().as('seconds')
@@ -19,4 +22,4 @@ export const toRelativeDateSpan = (isoDateString) => {
     label = dateTime.toLocaleString(DateTime.DATE_MED)
   }
   return <span title={longDateTimeStr}>{label}</span>
-};
+}

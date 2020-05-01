@@ -1,27 +1,27 @@
 .badge-flex {
-    display: -ms-flexbox !important;
-    display: flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
 }
 
 .badge-flex > * {
-    margin-right: 3px;
+  margin-right: 3px;
 }
 
 .progress-bar {
-    display: initial !important;
-    flex-direction: initial !important;
-    justify-content: initial !important;
-    overflow: initial !important;
-    text-align: initial !important;
-    white-space: initial !important;
-    background-color: initial !important;
-    transition: initial !important;
+  display: initial !important;
+  flex-direction: initial !important;
+  justify-content: initial !important;
+  overflow: initial !important;
+  text-align: initial !important;
+  white-space: initial !important;
+  background-color: initial !important;
+  transition: initial !important;
 }
 
 .audio-lists-panel-content .audio-item .player-name {
-    padding: 0 5px 0 5px !important;
+  padding: 0 5px 0 5px !important;
 }
 
 .react-jinke-music-player-main.light-theme .player-time {
-    color: rgba(162, 162, 162, 0.9) !important;
+  color: rgba(162, 162, 162, 0.9) !important;
 }

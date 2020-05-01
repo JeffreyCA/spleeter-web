@@ -1,33 +1,52 @@
-import React from 'react';
-import { toRelativeDateSpan } from '../../Utils';
-import BootstrapTable from 'react-bootstrap-table-next';
-import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
+import React from 'react'
+import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons'
+import BootstrapTable from 'react-bootstrap-table-next'
+import { toRelativeDateSpan } from '../../Utils'
+import PausePlayButton from './PausePlayButton'
 import SeparatedSongTable from './SeparatedSongTable'
 import SpleetButton from './SpleetButton'
-import PausePlayButton from './PausePlayButton'
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './SongTable.css'
 
+/**
+ * Formatter function for play column
+ */
 const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { currentSongUrl, isPlaying, handleSrcSongPause, handleSrcSongPlay } = formatExtraData
+  const {
+    currentSongUrl,
+    isPlaying,
+    handleSrcSongPause,
+    handleSrcSongPlay
+  } = formatExtraData
   const isPlayingCurrent = isPlaying && currentSongUrl === row.url
 
   return (
     <div className="d-flex align-items-center justify-content-center">
-      <PausePlayButton playing={isPlayingCurrent} song={row} onPauseClick={handleSrcSongPause} onPlayClick={handleSrcSongPlay} />
+      <PausePlayButton
+        playing={isPlayingCurrent}
+        song={row}
+        onPauseClick={handleSrcSongPause}
+        onPlayClick={handleSrcSongPlay}
+      />
     </div>
-  );
+  )
 }
 
+/**
+ * Formatter function for separate button column. 
+ */
 const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
   const { onSpleetClick } = formatExtraData
   return (
     <div className="d-flex align-items-center justify-content-center">
       <SpleetButton onClick={onSpleetClick} song={row} />
     </div>
-  );
+  )
 }
 
+/**
+ * Component for the song table, containing the uploaded songs and their separated tracks.
+ */
 class SongTable extends React.Component {
   constructor(props) {
     super(props)
@@ -45,12 +64,21 @@ class SongTable extends React.Component {
       onSrcSongPauseClick,
       onSrcSongPlayClick,
       onExpandRow,
-      onExpandAll,
-    } = this.props;
+      onExpandAll
+    } = this.props
 
+    // Show separated song details inside expand row
     const expandRow = {
       renderer: row => {
-        return <SeparatedSongTable data={row.separated} currentSongUrl={currentSongUrl} isPlaying={isPlaying} onPauseClick={onSepSongPauseClick} onPlayClick={onSepSongPlayClick} />
+        return (
+          <SeparatedSongTable
+            data={row.separated}
+            currentSongUrl={currentSongUrl}
+            isPlaying={isPlaying}
+            onPauseClick={onSepSongPauseClick}
+            onPlayClick={onSepSongPlayClick}
+          />
+        )
       },
       expanded: expandedIds,
       onExpand: onExpandRow,
@@ -65,6 +93,7 @@ class SongTable extends React.Component {
         return expanded ? <CaretUpFill /> : <CaretDownFill />
       }
     }
+    // Song table columns
     const columns = [
       {
         dataField: 'url',
@@ -77,7 +106,7 @@ class SongTable extends React.Component {
           handleSrcSongPlay: onSrcSongPlayClick
         },
         headerStyle: () => {
-          return { width: '65px' };
+          return { width: '65px' }
         }
       },
       {
@@ -88,18 +117,18 @@ class SongTable extends React.Component {
       {
         dataField: 'title',
         text: 'Title',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'artist',
         text: 'Artist',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'date_created',
         text: 'Uploaded',
         formatter: toRelativeDateSpan,
-        sort: true,
+        sort: true
       },
       {
         dataField: 'download_dummy',
@@ -109,18 +138,21 @@ class SongTable extends React.Component {
         formatExtraData: {
           onSpleetClick: onSpleetClick
         }
-      }]
+      }
+    ]
     const sort = { dataField: 'title', order: 'asc' }
     return (
       <BootstrapTable
         bootstrap4
-        keyField='id'
+        keyField="id"
         data={data}
         columns={columns}
         sort={sort}
-        expandRow={expandRow} bordered={false} />
-    );
+        expandRow={expandRow}
+        bordered={false}
+      />
+    )
   }
 }
 
-export default SongTable;
+export default SongTable

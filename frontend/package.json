@@ -12,7 +12,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "clean-webpack-plugin": "^3.0.0"
+    "clean-webpack-plugin": "^3.0.0",
+    "prettier": "2.0.5"
   },
   "dependencies": {
     "@babel/core": "^7.9.0",

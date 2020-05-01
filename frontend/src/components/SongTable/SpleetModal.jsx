@@ -1,24 +1,29 @@
-import React from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import React from 'react'
+import { Button, Modal } from 'react-bootstrap'
+import axios from 'axios'
 import SpleetModalForm from './SpleetModalForm'
-import axios from 'axios';
 
+/**
+ * Mapping of song components from backend-supported keys to user-friendly names.
+ */
 const PARTS = {
   'vocals': 'Vocals',
   'other': 'Accompaniment',
   'bass': 'Bass',
   'drums': 'Drums'
 }
-
+ /**
+  * Component of the source separation modal.
+  */
 class SpleetModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      vocals: false,
-      drums: false,
-      bass: false,
-      other: false,
-      overwrite: false,
+      vocals: false,    // Include vocals
+      drums: false,     // Include drums
+      bass: false,      // Include bass
+      other: false,     // Include accompaniment
+      overwrite: false, // Whether to overwrite existing separated song, if exists
       errors: []
     }
   }
@@ -27,8 +32,7 @@ class SpleetModal extends React.Component {
    * Reset all non-error state fields
    */
   resetState = () => {
-    console.log('reset state')
-    this.setState({ 
+    this.setState({
       vocals: false,
       drums: false,
       bass: false,
@@ -57,7 +61,6 @@ class SpleetModal extends React.Component {
    * Called when primary modal button is clicked
    */
   onSubmit = () => {
-    console.log(this.props.song)
     const data = {
       source_song: this.props.song.id,
       vocals: this.state.vocals,
@@ -67,23 +70,25 @@ class SpleetModal extends React.Component {
       overwrite: this.state.overwrite
     }
     // Make request to add Song
-    axios.post('/api/separate/', data)
+    axios
+      .post('/api/separate/', data)
       .then(({ data }) => {
         this.props.submit(data.source_song, data.id, data.status)
         this.props.hide()
-    }).catch(({ response }) => {
-      const { data } = response
-      if (data['non_field_errors']) {
-        this.setState({
-          errors: data['non_field_errors']
-        })
-      }
-    })
+      })
+      .catch(({ response }) => {
+        const { data } = response
+        if (data['non_field_errors']) {
+          this.setState({
+            errors: data['non_field_errors']
+          })
+        }
+      })
   }
 
-  handleCheckboxChange = (event) => {
+  handleCheckboxChange = event => {
     const { name, checked } = event.target
-    this.setState({ [name]: checked, errors: [] });
+    this.setState({ [name]: checked, errors: [] })
   }
 
   render() {
@@ -92,29 +97,40 @@ class SpleetModal extends React.Component {
     if (!song) {
       return null
     }
-  
+
+    // Display error if all or no parts are checked
     const allChecked = vocals && drums && bass && other
     const noneChecked = !(vocals || drums || bass || other)
 
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-        <Modal.Title>Separate Source</Modal.Title>
+          <Modal.Title>Separate Source</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <SpleetModalForm parts={PARTS} song={song} allChecked={allChecked} noneChecked={noneChecked} errors={errors} handleCheckboxChange={this.handleCheckboxChange} />
+          <SpleetModalForm
+            parts={PARTS}
+            song={song}
+            allChecked={allChecked}
+            noneChecked={noneChecked}
+            errors={errors}
+            handleCheckboxChange={this.handleCheckboxChange}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="primary" disabled={allChecked || noneChecked} onClick={this.onSubmit}>
+          <Button
+            variant="primary"
+            disabled={allChecked || noneChecked}
+            onClick={this.onSubmit}>
             Finish
           </Button>
         </Modal.Footer>
       </Modal>
-    );
+    )
   }
 }
 
-export default SpleetModal;
+export default SpleetModal

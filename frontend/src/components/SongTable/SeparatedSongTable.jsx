@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { toRelativeDateSpan } from '../../Utils';
-import BootstrapTable from 'react-bootstrap-table-next';
-import { Badge, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
+import { Badge, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap'
+import BootstrapTable from 'react-bootstrap-table-next'
+import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
 
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './SeparatedSongTable.css'
 
 const statusVariantMap = {
@@ -15,22 +15,35 @@ const statusVariantMap = {
 }
 
 const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { currentSongUrl, isPlaying, onPauseClick, onPlayClick } = formatExtraData
+  const {
+    currentSongUrl,
+    isPlaying,
+    onPauseClick,
+    onPlayClick
+  } = formatExtraData
   const isPlayingCurrent = isPlaying && currentSongUrl === row.url
 
   return (
     <div className="d-flex align-items-center justify-content-center">
-      <PausePlayButton playing={isPlayingCurrent} disabled={!row.url} song={row} onPauseClick={onPauseClick} onPlayClick={onPlayClick} />
+      <PausePlayButton
+        playing={isPlayingCurrent}
+        disabled={!row.url}
+        song={row}
+        onPauseClick={onPauseClick}
+        onPlayClick={onPlayClick}
+      />
     </div>
-  );
+  )
 }
 
 const downloadFormatter = (cell, row, rowIndex) => {
   const { url } = row
   if (url) {
     return (
-      <a href={url} download>Link</a>
-    );
+      <a href={url} download>
+        Link
+      </a>
+    )
   } else {
     return null
   }
@@ -38,7 +51,13 @@ const downloadFormatter = (cell, row, rowIndex) => {
 
 class SeparatedSongTable extends Component {
   render() {
-    const { data, currentSongUrl, isPlaying, onPauseClick, onPlayClick } = this.props
+    const {
+      data,
+      currentSongUrl,
+      isPlaying,
+      onPauseClick,
+      onPlayClick
+    } = this.props
     const columns = [
       {
         dataField: 'url',
@@ -51,7 +70,7 @@ class SeparatedSongTable extends Component {
           onPlayClick: onPlayClick
         },
         headerStyle: () => {
-          return { width: '65px' };
+          return { width: '65px' }
         }
       },
       {
@@ -59,28 +78,54 @@ class SeparatedSongTable extends Component {
         isDummyField: true,
         text: 'Included parts',
         formatter: (cellContent, row) => {
-          const vocalBadge = row.vocals ?
-            <Badge pill variant="vocals">Vocals</Badge> :
-            <Badge pill variant="vocals-faded">Vocals</Badge>
-          const accompBadge = row.other ?
-            <Badge pill variant="accomp">Accompaniment</Badge> :
-            <Badge pill variant="accomp-faded">Accompaniment</Badge>
-          const drumsBadge = row.drums ?
-            <Badge pill variant="drums">Drums</Badge> :
-            <Badge pill variant="drums-faded">Drums</Badge>
-          const bassBadge = row.bass ?
-            <Badge pill variant="bass">Bass</Badge> :
-            <Badge pill variant="bass-faded">Bass</Badge>
+          const vocalBadge = row.vocals ? (
+            <Badge pill variant="vocals">
+              Vocals
+            </Badge>
+          ) : (
+            <Badge pill variant="vocals-faded">
+              Vocals
+            </Badge>
+          )
+          const accompBadge = row.other ? (
+            <Badge pill variant="accomp">
+              Accompaniment
+            </Badge>
+          ) : (
+            <Badge pill variant="accomp-faded">
+              Accompaniment
+            </Badge>
+          )
+          const drumsBadge = row.drums ? (
+            <Badge pill variant="drums">
+              Drums
+            </Badge>
+          ) : (
+            <Badge pill variant="drums-faded">
+              Drums
+            </Badge>
+          )
+          const bassBadge = row.bass ? (
+            <Badge pill variant="bass">
+              Bass
+            </Badge>
+          ) : (
+            <Badge pill variant="bass-faded">
+              Bass
+            </Badge>
+          )
           return (
-            <h5 className="mb-0">{vocalBadge} {accompBadge} {bassBadge} {drumsBadge}</h5>
-          );
+            <h5 className="mb-0">
+              {vocalBadge} {accompBadge} {bassBadge} {drumsBadge}
+            </h5>
+          )
         }
       },
       {
         dataField: 'date_created',
         text: 'Created',
         formatter: toRelativeDateSpan,
-        sort: true,
+        sort: true
       },
       {
         dataField: 'status',
@@ -96,7 +141,7 @@ class SeparatedSongTable extends Component {
                 <Tooltip id="button-tooltip" {...props}>
                   {errorText}
                 </Tooltip>
-              );
+              )
             }
             const ErrorOverlay = () => (
               <OverlayTrigger
@@ -105,21 +150,30 @@ class SeparatedSongTable extends Component {
                 overlay={renderErrorTooltip}>
                 <Badge variant={variant}>{badgeLabel}</Badge>
               </OverlayTrigger>
-            );
-            return <h5 className="mb-0"><ErrorOverlay /></h5>
+            )
+            return (
+              <h5 className="mb-0">
+                <ErrorOverlay />
+              </h5>
+            )
           } else if (cellValue === 'In Progress') {
             return (
               <h5 className="mb-0">
                 <Badge variant={variant}>{badgeLabel}</Badge>
-                <Spinner className="ml-2" animation="border" variant="primary" size="sm"/>
+                <Spinner
+                  className="ml-2"
+                  animation="border"
+                  variant="primary"
+                  size="sm"
+                />
               </h5>
-            );
+            )
           }
           return (
             <h5 className="mb-0">
               <Badge variant={variant}>{badgeLabel}</Badge>
             </h5>
-          );
+          )
         },
         sort: true
       },
@@ -127,7 +181,7 @@ class SeparatedSongTable extends Component {
         dataField: 'file',
         text: 'Download',
         formatter: downloadFormatter
-      },
+      }
     ]
     const sort = { dataField: 'date_created', order: 'desc' }
 
@@ -142,13 +196,16 @@ class SeparatedSongTable extends Component {
             columns={columns}
             sort={sort}
             defaultSortDirection="asc"
-            bordered={false} />
+            bordered={false}
+          />
         </div>
       )
     } else {
       return (
         <div className="m-4 text-center">
-          <p>No separated tracks. Press the "Spleet" button to separate this song.</p>
+          <p>
+            No separated tracks. Press the "Spleet" button to separate this song.
+          </p>
         </div>
       )
     }

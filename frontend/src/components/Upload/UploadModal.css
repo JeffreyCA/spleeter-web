@@ -2,7 +2,9 @@
   pointer-events: none;
 }
 
-.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
   cursor: not-allowed;
 }
 
@@ -16,14 +18,14 @@
   margin: 0 auto;
   position: relative;
   box-sizing: border-box;
-  transition: all .15s linear;
+  transition: all 0.15s linear;
   border: 2px solid #d9d9d9;
   border-radius: 4px;
 }
 
 .dzu-dropzoneActive {
-  background-color: #DEEBFF;
-  border-color: #2484FF;
+  background-color: #deebff;
+  border-color: #2484ff;
 }
 
 .dzu-dropzoneDisabled {
@@ -51,8 +53,8 @@
   align-self: flex-start;
   padding: 0 14px;
   min-height: 32px;
-  background-color: #E6E6E6;
-  color: #2484FF;
+  background-color: #e6e6e6;
+  color: #2484ff;
   border: none;
   font-family: 'Helvetica', sans-serif;
   border-radius: 4px;
@@ -66,7 +68,7 @@
 }
 
 .dzu-sizeError {
-  color: #FF0000
+  color: #ff0000;
 }
 
 .dzu-previewContainer {
@@ -74,7 +76,7 @@
   width: 100%;
   min-height: 60px;
   z-index: 1;
-  border-bottom: 1px solid #ECECEC;
+  border-bottom: 1px solid #ececec;
   box-sizing: border-box;
 }
 
@@ -116,20 +118,20 @@
 .dzu-submitButton {
   padding: 0 14px;
   min-height: 32px;
-  background-color: #2484FF;
+  background-color: #2484ff;
   border: none;
   border-radius: 4px;
   font-family: 'Helvetica', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #FFF;
+  color: #fff;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   cursor: pointer;
 }
 
 .dzu-submitButton:disabled {
-  background-color: #E6E6E6;
+  background-color: #e6e6e6;
   color: #333333;
   cursor: unset;
 }

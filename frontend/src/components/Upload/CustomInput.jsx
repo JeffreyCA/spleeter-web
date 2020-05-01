@@ -1,10 +1,16 @@
 import React from 'react'
-import { CloudUpload } from 'react-bootstrap-icons';
 import { getDroppedOrSelectedFiles } from 'html5-file-selector'
+import { CloudUpload } from 'react-bootstrap-icons'
 
+/**
+ * Custom file input component for the dropzone uploader.
+ */
 const CustomInput = ({ accept, onFiles, files }) => {
   const text = 'Select file'
 
+  /**
+   * Get dropped files.
+   */
   const getFilesFromEvent = e => {
     return new Promise(resolve => {
       getDroppedOrSelectedFiles(e).then(chosenFiles => {
@@ -34,4 +40,4 @@ const CustomInput = ({ accept, onFiles, files }) => {
   )
 }
 
-export default CustomInput;
+export default CustomInput

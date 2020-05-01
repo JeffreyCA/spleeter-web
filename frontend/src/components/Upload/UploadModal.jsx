@@ -1,6 +1,6 @@
-import React from 'react';
-import { Alert, Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
+import React from 'react'
+import { Alert, Button, Modal } from 'react-bootstrap'
+import axios from 'axios'
 import Dropzone from '@jeffreyca/react-dropzone-uploader'
 import CustomPreview from './CustomPreview'
 import CustomInput from './CustomInput'
@@ -61,7 +61,7 @@ class UploadModal extends React.Component {
   deleteCurrentFile = () => {
     if (this.state.fileId != -1) {
       console.log('Deleted ' + this.state.fileId)
-      axios.delete('/api/source-file/', { data: { id: this.state.fileId } });
+      axios.delete('/api/source-file/', { data: { id: this.state.fileId } })
     }
   }
 
@@ -97,21 +97,29 @@ class UploadModal extends React.Component {
         title: this.state.title
       }
       // Make request to add Song
-      axios.post('/api/source-song/', song)
+      axios
+        .post('/api/source-song/', song)
         .then(({ data }) => {
           console.log(data)
           this.props.hide()
           this.props.refresh()
-      }).catch(err => {
-        this.setState({
-          errors: [err]
         })
-      })
+        .catch(err => {
+          this.setState({
+            errors: [err]
+          })
+        })
     }
   }
 
   handleChangeStatus = ({ meta, remove, xhr }, status) => {
-    const aborted = status === 'aborted' || status === 'rejected_file_type' || status === 'rejected_max_files' || status === 'error_file_size' || status === 'error_validation' || status === 'error_upload_params'
+    const aborted =
+      status === 'aborted' ||
+      status === 'rejected_file_type' ||
+      status === 'rejected_max_files' ||
+      status === 'error_file_size' ||
+      status === 'error_validation' ||
+      status === 'error_upload_params'
     console.log('status change: ' + status)
 
     if (aborted) {
@@ -151,52 +159,74 @@ class UploadModal extends React.Component {
     }
   }
 
-  handleChange = (event) => {
-    event.preventDefault();
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  handleChange = event => {
+    event.preventDefault()
+    const { name, value } = event.target
+    this.setState({ [name]: value })
   }
 
   render() {
-    const { droppedFile, isUploading, detailsStep, artist, title, errors } = this.state;
-    const { show } = this.props;
+    const {
+      droppedFile,
+      isUploading,
+      detailsStep,
+      artist,
+      title,
+      errors
+    } = this.state
+    const { show } = this.props
     const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song'
     const primaryText = detailsStep ? 'Finish' : 'Next'
-    const buttonDisabled = detailsStep ? !(artist && title) : !(droppedFile && !isUploading);
-    
+    const buttonDisabled = detailsStep
+      ? !(artist && title)
+      : !(droppedFile && !isUploading)
+
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-        <Modal.Title>{modalTitle}</Modal.Title>
+          <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        {errors.length > 0 && (
-        <Alert variant="danger">
-          {errors.map((val, idx) => (<div key={idx}>{val}</div>))}
-        </Alert>)}
-        {detailsStep ? <UploadModalForm artist={artist} title={title} handleChange={this.handleChange} /> : (
-          <Dropzone
-          maxFiles={1}
-          maxSizeBytes={MAX_FILE_BYTES}
-          multiple={false}
-          accept=".mp3"
-          onChangeStatus={this.handleChangeStatus}
-          getUploadParams={() => ({ url: '/api/source-file/' })}
-          InputComponent={CustomInput}
-          PreviewComponent={CustomPreview} />
-        )}
+          {errors.length > 0 && (
+            <Alert variant="danger">
+              {errors.map((val, idx) => (
+                <div key={idx}>{val}</div>
+              ))}
+            </Alert>
+          )}
+          {detailsStep ? (
+            <UploadModalForm
+              artist={artist}
+              title={title}
+              handleChange={this.handleChange}
+            />
+          ) : (
+            <Dropzone
+              maxFiles={1}
+              maxSizeBytes={MAX_FILE_BYTES}
+              multiple={false}
+              accept=".mp3"
+              onChangeStatus={this.handleChangeStatus}
+              getUploadParams={() => ({ url: '/api/source-file/' })}
+              InputComponent={CustomInput}
+              PreviewComponent={CustomPreview}
+            />
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant={detailsStep ? "success" : "primary"} disabled={buttonDisabled} onClick={this.onNext}>
+          <Button
+            variant={detailsStep ? 'success' : 'primary'}
+            disabled={buttonDisabled}
+            onClick={this.onNext}>
             {primaryText}
           </Button>
         </Modal.Footer>
       </Modal>
-    );
+    )
   }
 }
 
-export default UploadModal;
+export default UploadModal

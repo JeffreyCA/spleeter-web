@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import axios from 'axios'
-import { Alert } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap'
 import MusicPlayer from './MusicPlayer'
 import MyNavBar from './MyNavBar'
-import SongTable from './Table/SongTable'
-import SpleetModal from './Table/SpleetModal'
+import SongTable from './SongTable/SongTable'
+import SpleetModal from './SongTable/SpleetModal'
 import UploadModal from './Upload/UploadModal'
 
 /**
@@ -13,7 +13,7 @@ import UploadModal from './Upload/UploadModal'
  */
 class Home extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       showSpleetModal: false, // Whether to show source separation modal
       showUploadModal: false, // Whether to show upload modal
@@ -28,25 +28,25 @@ class Home extends Component {
     }
   }
 
-  getAudioInstance = (instance) => {
+  getAudioInstance = instance => {
     this.setState({
       audioInstance: instance
     })
   }
 
-  onAudioPause = (audioInfo) => {
+  onAudioPause = audioInfo => {
     this.setState({
       isPlaying: false
     })
   }
 
-  onAudioPlay = (audioInfo) => {
+  onAudioPlay = audioInfo => {
     this.setState({
       isPlaying: true
     })
   }
 
-  onSrcSongPauseClick = (song) => {
+  onSrcSongPauseClick = song => {
     this.setState({
       isPlaying: false
     })
@@ -55,8 +55,11 @@ class Home extends Component {
     }
   }
 
-  onSrcSongPlayClick = (song) => {
-    if (this.state.currentSrcSong && this.state.currentSrcSong.url === song.url) {
+  onSrcSongPlayClick = song => {
+    if (
+      this.state.currentSrcSong &&
+      this.state.currentSrcSong.url === song.url
+    ) {
       this.setState({
         isPlaying: true
       })
@@ -72,7 +75,7 @@ class Home extends Component {
     }
   }
 
-  onSepSongPauseClick = (song) => {
+  onSepSongPauseClick = song => {
     this.setState({
       isPlaying: false
     })
@@ -81,7 +84,7 @@ class Home extends Component {
     }
   }
 
-  onSepSongPlayClick = (song) => {
+  onSepSongPlayClick = song => {
     if (this.state.currentSepSong && this.state.currentSepSong.url === song.url) {
       this.setState({
         isPlaying: true
@@ -99,7 +102,7 @@ class Home extends Component {
   }
 
   onSpleetTaskSubmit = (src_id, id, status) => {
-    this.setState({ 
+    this.setState({
       task: {
         src_id: src_id,
         id: id,
@@ -110,7 +113,7 @@ class Home extends Component {
     this.loadData()
     // Set task state to null after 3 seconds
     setInterval(() => {
-      this.setState({ 
+      this.setState({
         task: null
       })
     }, 3000)
@@ -150,37 +153,38 @@ class Home extends Component {
     }
   }
 
-  onSpleetClick = (song) => {
-    this.setState({ showSpleetModal: true, currentModalSong: song });
+  onSpleetClick = song => {
+    this.setState({ showSpleetModal: true, currentModalSong: song })
   }
 
   onUploadClick = () => {
-    this.setState({ showUploadModal: true });
+    this.setState({ showUploadModal: true })
   }
 
   handleSpleetModalHide = () => {
-    this.setState({ showSpleetModal: false });
+    this.setState({ showSpleetModal: false })
   }
 
   handleSpleetModalExited = () => {
-    this.setState({ currentModalSong: null });
+    this.setState({ currentModalSong: null })
   }
 
   handleUploadModalHide = () => {
-    this.setState({ showUploadModal: false });
+    this.setState({ showUploadModal: false })
   }
 
   /**
    * Fetch song data from backend
    */
   loadData = async () => {
-    axios.get('/api/source-song/')
-    .then(({ data }) => {
-      if (data) {
-        this.setState({ songList: data })
-      }
-    })
-    .catch(error => console.log('API errors:', error))
+    axios
+      .get('/api/source-song/')
+      .then(({ data }) => {
+        if (data) {
+          this.setState({ songList: data })
+        }
+      })
+      .catch(error => console.log('API errors:', error))
   }
 
   componentDidMount() {
@@ -200,9 +204,17 @@ class Home extends Component {
       isPlaying,
       task,
       expandedIds
-    } = this.state;
-    const currentSong = currentSrcSong ? currentSrcSong : (currentSepSong ? currentSepSong : null)
-    const currentSongUrl = currentSrcSong ? currentSrcSong.url : (currentSepSong ? currentSepSong.url : null)
+    } = this.state
+    const currentSong = currentSrcSong
+      ? currentSrcSong
+      : (currentSepSong
+      ? currentSepSong
+      : null)
+    const currentSongUrl = currentSrcSong
+      ? currentSrcSong.url
+      : (currentSepSong
+      ? currentSepSong.url
+      : null)
 
     return (
       <div>
@@ -210,13 +222,17 @@ class Home extends Component {
         <div className="jumbotron jumbotron-fluid bg-transparent">
           <div className="container secondary-color">
             <h1 className="display-4">Spleeter Web</h1>
-            <p className="lead">
-              Source separation on the go.
-            </p>
-            {task && (<Alert variant="success">
-              <span><a href={`/api/separate/${task.id}`}>{task.id}</a>: {task.status}</span>
-            </Alert>)}
-            <SongTable data={songList}
+            <p className="lead">Source separation on the go.</p>
+            {task && (
+              <Alert variant="success">
+                <span>
+                  <a href={`/api/separate/${task.id}`}>{task.id}</a>:{' '}
+                  {task.status}
+                </span>
+              </Alert>
+            )}
+            <SongTable
+              data={songList}
               currentSongUrl={currentSongUrl}
               isPlaying={isPlaying}
               expandedIds={expandedIds}
@@ -226,15 +242,33 @@ class Home extends Component {
               onSepSongPauseClick={this.onSepSongPauseClick}
               onSepSongPlayClick={this.onSepSongPlayClick}
               onSrcSongPauseClick={this.onSrcSongPauseClick}
-              onSrcSongPlayClick={this.onSrcSongPlayClick} />
+              onSrcSongPlayClick={this.onSrcSongPlayClick}
+            />
           </div>
         </div>
-        <MusicPlayer getAudioInstance={this.getAudioInstance} isSource={currentSrcSong} song={currentSong} onAudioPause={this.onAudioPause} onAudioPlay={this.onAudioPlay} />
-        <UploadModal show={showUploadModal} hide={this.handleUploadModalHide} refresh={this.loadData} />
-        <SpleetModal show={showSpleetModal} hide={this.handleSpleetModalHide} exit={this.handleSpleetModalExited} submit={this.onSpleetTaskSubmit} refresh={this.loadData} song={currentModalSong} />
+        <MusicPlayer
+          getAudioInstance={this.getAudioInstance}
+          isSource={currentSrcSong}
+          song={currentSong}
+          onAudioPause={this.onAudioPause}
+          onAudioPlay={this.onAudioPlay}
+        />
+        <UploadModal
+          show={showUploadModal}
+          hide={this.handleUploadModalHide}
+          refresh={this.loadData}
+        />
+        <SpleetModal
+          show={showSpleetModal}
+          hide={this.handleSpleetModalHide}
+          exit={this.handleSpleetModalExited}
+          submit={this.onSpleetTaskSubmit}
+          refresh={this.loadData}
+          song={currentModalSong}
+        />
       </div>
-    );
+    )
   }
 }
 
-export default Home;
+export default Home

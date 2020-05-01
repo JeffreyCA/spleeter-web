@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { Component } from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Home from './Home'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min'
 import './App.css'
 
 class App extends Component {
@@ -22,8 +22,8 @@ class App extends Component {
           </Switch>
         </Router>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App

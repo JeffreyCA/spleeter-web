@@ -1,7 +1,14 @@
-import React from 'react';
-import { Button, Container, Navbar, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
-import { CloudUpload } from 'react-bootstrap-icons';
-import { withRouter } from 'react-router';
+import React from 'react'
+import {
+  Button,
+  Container,
+  Navbar,
+  Nav,
+  DropdownButton,
+  Dropdown
+} from 'react-bootstrap'
+import { CloudUpload } from 'react-bootstrap-icons'
+import { withRouter } from 'react-router'
 
 /**
  * Navigation bar component
@@ -12,7 +19,7 @@ class MyNavBar extends React.Component {
   }
 
   render() {
-    const { onUploadClick } = this.props;
+    const { onUploadClick } = this.props
 
     return (
       <Navbar bg="light" variant="light" expand="lg">
@@ -21,7 +28,9 @@ class MyNavBar extends React.Component {
           <Navbar.Toggle />
           <Navbar.Collapse className="text-right">
             <Nav className="ml-auto">
-              <Button onClick={onUploadClick} variant="success mr-3">Upload <CloudUpload /></Button>
+              <Button onClick={onUploadClick} variant="success mr-3">
+                Upload <CloudUpload />
+              </Button>
               <DropdownButton title="Jeffrey" variant="outline-secondary">
                 <Dropdown.Item>Profile</Dropdown.Item>
                 <Dropdown.Item>Logout</Dropdown.Item>
@@ -30,8 +39,8 @@ class MyNavBar extends React.Component {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    );
+    )
   }
 }
 
-export default withRouter(MyNavBar);
+export default withRouter(MyNavBar)
