@@ -5,6 +5,7 @@ import Dropzone from '@jeffreyca/react-dropzone-uploader'
 import CustomPreview from './CustomPreview'
 import CustomInput from './CustomInput'
 import UploadModalForm from './UploadModalForm'
+import YouTubeLinkField from './YouTubeLinkField'
 import './UploadModal.css'
 
 // This value is the same on the server-side (settings.py)
@@ -18,6 +19,11 @@ const ERROR_MAP = {
   'error_upload_params': 'Unknown error occurred.'
 }
 
+function isValidYouTubeLink(link) {
+  const re = /(?:youtube\.com\/\S*(?:(?:\/e(?:mbed))?\/|watch\?(?:\S*?&?v\=))|youtu\.be\/)([a-zA-Z0-9_-]{6,11})/
+  return re.test(link)
+}
+
 class UploadModal extends React.Component {
   constructor(props) {
     super(props)
@@ -28,6 +34,7 @@ class UploadModal extends React.Component {
       fileId: -1,
       artist: '',
       title: '',
+      link: '',
       errors: []
     }
   }
@@ -120,7 +127,6 @@ class UploadModal extends React.Component {
       status === 'error_file_size' ||
       status === 'error_validation' ||
       status === 'error_upload_params'
-    console.log('status change: ' + status)
 
     if (aborted) {
       // Upload aborted, so reset state and show error message
@@ -143,7 +149,8 @@ class UploadModal extends React.Component {
       this.resetErrors()
       this.setState({
         droppedFile: true,
-        isUploading: true
+        isUploading: true,
+        link: ''
       })
     } else if (status === 'done') {
       // File upload completed successfully, get returned ID and metadata info
@@ -163,6 +170,14 @@ class UploadModal extends React.Component {
     event.preventDefault()
     const { name, value } = event.target
     this.setState({ [name]: value })
+
+    if (name === 'link') {
+      if (value && !isValidYouTubeLink(value)) {
+        this.setState({ errors: ['Invalid YouTube link.'] })
+      } else {
+        this.resetErrors()
+      }
+    }
   }
 
   render() {
@@ -172,14 +187,19 @@ class UploadModal extends React.Component {
       detailsStep,
       artist,
       title,
+      link,
+      validLink,
       errors
     } = this.state
     const { show } = this.props
-    const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song'
+    const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song or provide YouTube link'
     const primaryText = detailsStep ? 'Finish' : 'Next'
-    const buttonDisabled = detailsStep
-      ? !(artist && title)
-      : !(droppedFile && !isUploading)
+    var buttonEnabled
+    if (!detailsStep) {
+      buttonEnabled = (droppedFile && !isUploading) || (!droppedFile && link && errors.length == 0)
+    } else {
+      buttonEnabled = artist && title
+    }
 
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
@@ -201,16 +221,21 @@ class UploadModal extends React.Component {
               handleChange={this.handleChange}
             />
           ) : (
-            <Dropzone
-              maxFiles={1}
-              maxSizeBytes={MAX_FILE_BYTES}
-              multiple={false}
-              accept=".mp3"
-              onChangeStatus={this.handleChangeStatus}
-              getUploadParams={() => ({ url: '/api/source-file/' })}
-              InputComponent={CustomInput}
-              PreviewComponent={CustomPreview}
-            />
+            <div>
+              <Dropzone
+                disabled={link}
+                maxFiles={1}
+                maxSizeBytes={MAX_FILE_BYTES}
+                multiple={false}
+                accept=".mp3"
+                onChangeStatus={this.handleChangeStatus}
+                getUploadParams={() => ({ url: '/api/source-file/' })}
+                InputComponent={CustomInput}
+                PreviewComponent={CustomPreview}
+              />
+              <hr className="hr-text" data-content="OR" />
+              <YouTubeLinkField disabled={droppedFile} link={link} handleChange={this.handleChange} />
+            </div>
           )}
         </Modal.Body>
         <Modal.Footer>
@@ -219,7 +244,7 @@ class UploadModal extends React.Component {
           </Button>
           <Button
             variant={detailsStep ? 'success' : 'primary'}
-            disabled={buttonDisabled}
+            disabled={!buttonEnabled}
             onClick={this.onNext}>
             {primaryText}
           </Button>

@@ -5,9 +5,9 @@ import { CloudUpload } from 'react-bootstrap-icons'
 /**
  * Custom file input component for the dropzone uploader.
  */
-const CustomInput = ({ accept, onFiles, files }) => {
+const CustomInput = ({ accept, onFiles, files, disabled }) => {
   const text = 'Select file'
-
+  const buttonClass = disabled ? 'btn btn-primary disabled' : 'btn btn-primary' 
   /**
    * Get dropped files.
    */
@@ -18,12 +18,12 @@ const CustomInput = ({ accept, onFiles, files }) => {
       })
     })
   }
-
+  
   return files.length > 0 ? null : (
     <div className="text-center p-3">
       <CloudUpload color="grey" size={70} />
       <p>Drag and drop an MP3 file</p>
-      <label className="btn btn-primary">
+      <label className={buttonClass}>
         {text}
         <input
           style={{ display: 'none' }}
