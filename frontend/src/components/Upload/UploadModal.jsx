@@ -5,7 +5,7 @@ import Dropzone from '@jeffreyca/react-dropzone-uploader'
 import CustomPreview from './CustomPreview'
 import CustomInput from './CustomInput'
 import UploadModalForm from './UploadModalForm'
-import YouTubeLinkField from './YouTubeLinkField'
+import { YouTubeLinkField, FetchStatus } from './YouTubeLinkField'
 import './UploadModal.css'
 
 // This value is the same on the server-side (settings.py)
@@ -29,6 +29,7 @@ class UploadModal extends React.Component {
     super(props)
     this.state = {
       droppedFile: false,
+      fetchingState: FetchStatus.IDLE,
       isUploading: false,
       detailsStep: false,
       fileId: -1,
@@ -45,11 +46,13 @@ class UploadModal extends React.Component {
   resetState = () => {
     this.setState({
       droppedFile: false,
+      fetchingState: FetchStatus.IDLE,
       isUploading: false,
       detailsStep: false,
       fileId: -1,
       artist: '',
-      title: ''
+      title: '',
+      link: ''
     })
   }
 
@@ -59,6 +62,12 @@ class UploadModal extends React.Component {
   resetErrors = () => {
     this.setState({
       errors: []
+    })
+  }
+
+  resetFetchState = () => {
+    this.setState({
+      fetchingState: FetchStatus.IDLE
     })
   }
 
@@ -97,7 +106,7 @@ class UploadModal extends React.Component {
       this.setState({
         detailsStep: true
       })
-    } else {
+    } else if (this.state.droppedFile) {
       const song = {
         source_id: this.state.fileId,
         artist: this.state.artist,
@@ -116,6 +125,24 @@ class UploadModal extends React.Component {
             errors: [err]
           })
         })
+    } else if (this.state.link) {
+      const details = {
+        youtube_link: this.state.link,
+        artist: this.state.artist,
+        title: this.state.title
+      }
+      axios
+      .post('/api/source-song/youtube/', details)
+      .then(({ data }) => {
+        this.props.hide()
+        this.props.refresh()
+      })
+      .catch(({ response }) => {
+        const { data } = response
+        this.setState({
+          errors: data.errors
+        })
+      })
     }
   }
 
@@ -136,8 +163,8 @@ class UploadModal extends React.Component {
     } else if (status === 'error_upload') {
       // Error with upload, so show error message
       const responseObject = JSON.parse(xhr.response)
-      if (responseObject && responseObject['file']) {
-        this.setState({ errors: responseObject['file'] })
+      if (responseObject && responseObject['errors']) {
+        this.setState({ errors: responseObject['errors'] })
       }
     } else if (status === 'removed') {
       // File was removed
@@ -169,13 +196,50 @@ class UploadModal extends React.Component {
   handleChange = event => {
     event.preventDefault()
     const { name, value } = event.target
+    this.resetErrors()
     this.setState({ [name]: value })
 
+    // YouTube link input was changed
     if (name === 'link') {
-      if (value && !isValidYouTubeLink(value)) {
+      // Clear state if input field was cleared
+      if (!value) {
+        this.resetFetchState()
+      } else if (value && !isValidYouTubeLink(value)) {
+        // Invalid link
+        this.resetFetchState()
         this.setState({ errors: ['Invalid YouTube link.'] })
       } else {
-        this.resetErrors()
+        // Wait for results from backend
+        this.setState({
+          fetchingState: FetchStatus.IS_FETCHING
+        })
+
+        axios.get('/api/source-file/youtube/', {
+          params: {
+            link: value
+          }
+        }).then(({ data }) => {
+          const { artist, title } = data
+          this.setState({
+            fetchingState: FetchStatus.DONE,
+            artist: artist,
+            title: title
+          })
+        }).catch(({ response }) => {
+          console.log(response)
+          const { data } = response
+          if (data.status === 'duplicate') {
+            this.setState({
+              dupeId: data.id,
+              fetchingState: FetchStatus.ERROR
+            })
+          } else {
+            this.setState({
+              errors: response.data.errors,
+              fetchingState: FetchStatus.ERROR
+            })
+          }
+        })
       }
     }
   }
@@ -183,12 +247,12 @@ class UploadModal extends React.Component {
   render() {
     const {
       droppedFile,
+      fetchingState,
       isUploading,
       detailsStep,
       artist,
       title,
       link,
-      validLink,
       errors
     } = this.state
     const { show } = this.props
@@ -196,7 +260,11 @@ class UploadModal extends React.Component {
     const primaryText = detailsStep ? 'Finish' : 'Next'
     var buttonEnabled
     if (!detailsStep) {
-      buttonEnabled = (droppedFile && !isUploading) || (!droppedFile && link && errors.length == 0)
+      if (droppedFile) {
+        buttonEnabled = !isUploading
+      } else {
+        buttonEnabled = errors.length == 0 && link && fetchingState === FetchStatus.DONE
+      }
     } else {
       buttonEnabled = artist && title
     }
@@ -234,7 +302,7 @@ class UploadModal extends React.Component {
                 PreviewComponent={CustomPreview}
               />
               <hr className="hr-text" data-content="OR" />
-              <YouTubeLinkField disabled={droppedFile} link={link} handleChange={this.handleChange} />
+              <YouTubeLinkField fetchingState={fetchingState} disabled={droppedFile} link={link} handleChange={this.handleChange} />
             </div>
           )}
         </Modal.Body>

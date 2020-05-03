@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from .validators import is_valid_youtube
 
 class ChoicesSerializerField(serializers.SerializerMethodField):
     def to_representation(self, value):
@@ -27,7 +28,16 @@ class SeparatedSongSerializer(serializers.ModelSerializer):
 class SourceFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = SourceFile
-        fields = ('id', 'file')
+        fields = ('id', 'file', 'is_youtube', 'youtube_link', 'youtube_fetch_task')
+
+class YouTubeLinkSerializer(serializers.Serializer):
+    link = serializers.URLField(validators=[is_valid_youtube])
+
+class FetchTaskSerializer(serializers.ModelSerializer):
+    status = ChoicesSerializerField()
+    class Meta:
+        model = YouTubeFetchTask
+        fields = ('id', 'status')
 
 class SourceSongSerializer(serializers.ModelSerializer):
     separated = SeparatedSongSerializer(many=True, read_only=True)
@@ -35,3 +45,16 @@ class SourceSongSerializer(serializers.ModelSerializer):
     class Meta:
         model = SourceSong
         fields = ('id', 'source_id', 'url', 'artist', 'title', 'separated', 'date_created')
+
+class SourceSongYouTubeSerializer(serializers.ModelSerializer):
+    youtube_link = serializers.URLField(write_only=True)
+    artist = serializers.CharField(max_length=100)
+    title = serializers.CharField(max_length=100)
+
+    def create(self, validated_data):
+        validated_data.pop('youtube_link', None)
+        return super().create(validated_data)
+
+    class Meta:
+        model = SourceSong
+        fields = ['id', 'youtube_link', 'artist', 'title']

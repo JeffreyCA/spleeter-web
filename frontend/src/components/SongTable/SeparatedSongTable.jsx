@@ -28,6 +28,7 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
       <PausePlayButton
         playing={isPlayingCurrent}
         disabled={!row.url}
+        disabledText="Processing"
         song={row}
         onPauseClick={onPauseClick}
         onPlayClick={onPlayClick}

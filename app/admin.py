@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(SourceFile)
 admin.site.register(SourceSong)
 admin.site.register(SeparatedSong)
+admin.site.register(YouTubeFetchTask)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { PauseFill, PlayFill } from 'react-bootstrap-icons'
 
 class PausePlayButton extends Component {
@@ -12,10 +12,23 @@ class PausePlayButton extends Component {
   }
 
   render() {
-    const { playing, disabled } = this.props
-    return (
+    const { playing, disabled, disabledText } = this.props
+
+    function renderTooltip(props) {
+      return (
+        <Tooltip id="button-tooltip" {...props}>
+          {disabledText}
+        </Tooltip>
+      );
+    }
+
+    const customButtonStyle = disabled? {
+      pointerEvents: 'none'
+    } : {}
+    const customButton = (
       <Button
         disabled={disabled}
+        style={customButtonStyle}
         onClick={this.handlePlay}
         className="btn-circle p-1"
         variant="secondary"
@@ -27,6 +40,21 @@ class PausePlayButton extends Component {
         )}
       </Button>
     )
+
+    const buttonOverlay = (
+      <OverlayTrigger
+        placement="right"
+        delay={{ show: 100, hide: 100 }}
+        overlay={renderTooltip}>
+        <span className="d-inline-block">{customButton}</span>
+      </OverlayTrigger>
+    )
+
+    if (disabled && disabledText) {
+      return buttonOverlay
+    } else {
+      return customButton
+    }
   }
 }
 

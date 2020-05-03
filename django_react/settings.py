@@ -28,10 +28,13 @@ ALLOWED_HOSTS = ['spleeter-web.herokuapp.com', '127.0.0.1:8000']
 
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
+SEPARATE_DIR = 'separate'
+UPLOAD_DIR = 'uploads'
 
 VALID_MIME_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg-3', 'video/mpeg', 'video/x-mpeg']
 VALID_FILE_EXT = ['.mp3']
 UPLOAD_FILE_SIZE_LIMIT = 30 * 1024 * 1024
+YOUTUBE_LENGTH_LIMIT = 10 * 60
 
 # Application definition
 
@@ -142,7 +145,6 @@ HUEY = {
     'immediate': False,
     'consumer': {
         'workers': 2,
-        'worker_type': 'process'
     },
 }
 

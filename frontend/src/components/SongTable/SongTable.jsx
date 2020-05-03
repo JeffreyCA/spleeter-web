@@ -19,10 +19,13 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
     handleSrcSongPlay
   } = formatExtraData
   const isPlayingCurrent = isPlaying && currentSongUrl === row.url
+  const isDisabled = !row.url
 
   return (
     <div className="d-flex align-items-center justify-content-center">
       <PausePlayButton
+        disabled={isDisabled}
+        disabledText="Processing"
         playing={isPlayingCurrent}
         song={row}
         onPauseClick={handleSrcSongPause}
@@ -140,14 +143,14 @@ class SongTable extends React.Component {
         }
       }
     ]
-    const sort = { dataField: 'title', order: 'asc' }
+    const sort = [{ dataField: 'date_created', order: 'desc' }]
     return (
       <BootstrapTable
         bootstrap4
         keyField="id"
         data={data}
         columns={columns}
-        sort={sort}
+        defaultSorted={sort}
         expandRow={expandRow}
         bordered={false}
       />

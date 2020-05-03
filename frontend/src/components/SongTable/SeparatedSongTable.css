@@ -39,3 +39,7 @@
   -webkit-animation: spinner-border 1s linear infinite !important;
   animation: spinner-border 1s linear infinite !important;
 }
+
+.reset-expansion-style {
+  background-color: #ececec;
+}

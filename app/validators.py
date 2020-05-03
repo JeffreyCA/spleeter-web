@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 import os
 import magic
+from .youtubedl import get_meta_info
+from youtube_dl.utils import DownloadError
 
 def is_valid_size(value):
     if value.size > settings.UPLOAD_FILE_SIZE_LIMIT:
@@ -20,3 +22,11 @@ def is_mp3(file):
     ext = os.path.splitext(file.name)[1]
     if ext.lower() not in settings.VALID_FILE_EXT:
         raise ValidationError('File extension not allowed.')
+
+def is_valid_youtube(link):
+    try:
+        info = get_meta_info(link)
+        if info['duration'] > settings.YOUTUBE_LENGTH_LIMIT:
+            raise ValidationError('Video length too long.')
+    except DownloadError:
+        raise ValidationError('Invalid YouTube link')

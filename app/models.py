@@ -2,32 +2,67 @@ import os
 import sys
 import uuid
 
-from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-from .validators import *
+from django.conf import settings
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+from django.db import models
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
+
 from mutagen.easyid3 import EasyID3
 
-# Create your models here.
-class SourceFile(models.Model):
-    file = models.FileField(upload_to='uploads/', validators=[is_valid_size, is_mp3])
+from .validators import *
+from .youtubedl import get_meta_info
 
-    # Extract artist and title information from MP3
+class YouTubeFetchTask(models.Model):
+    class Status(models.IntegerChoices):
+        CREATED = 0
+        IN_PROGRESS = 1
+        DONE = 2
+        ERROR = -1
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
+    error = models.TextField(blank=True)
+
+class SourceFile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    file = models.FileField(upload_to='uploads/', blank=True, null=True, validators=[is_valid_size, is_mp3])
+    is_youtube = models.BooleanField(default=False)
+    youtube_link = models.URLField(unique=True, blank=True, null=True, validators=[is_valid_youtube])
+    youtube_fetch_task = models.OneToOneField(YouTubeFetchTask, on_delete=models.SET_NULL, null=True, blank=True)
+
+    # Extract artist and title information from MP3 or YouTube video
     def metadata(self):
-        audio = EasyID3(self.file.path)
         artist = ''
         title = ''
-        if 'artist' in audio:
-            artist = audio['artist'][0]
-        if 'title' in audio:
-            title = audio['title'][0]
+        if self.youtube_link:
+            info = get_meta_info(self.youtube_link)
+            if info['embedded_artist'] and info['embedded_title']:
+                artist = info['embedded_artist']
+                title = info['embedded_title']
+            elif info['parsed_artist'] and info['parsed_title']:
+                artist = info['parsed_artist']
+                title = info['parsed_title']
+            else:
+                artist = info['uploader']
+                title = info['title']
+        else:
+            audio = EasyID3(self.file.path)
+            if 'artist' in audio:
+                artist = audio['artist'][0]
+            if 'title' in audio:
+                title = audio['title'][0]
         return (artist, title)
 
     def __str__(self):
-        return os.path.basename(self.file.name)
+        if self.file and self.file.name:
+            return os.path.basename(self.file.name)
+        elif self.youtube_link:
+            return self.youtube_link
+        else:
+            return self.id
 
 class SourceSong(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     source_id = models.OneToOneField(SourceFile, on_delete=models.PROTECT, unique=True)
     artist = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
@@ -40,7 +75,15 @@ class SourceSong(models.Model):
         return self.source_id.file.url
     
     def url(self):
-        return self.source_id.file.url
+        if self.source_id.file:
+            return self.source_id.file.url
+        return ''
+
+    def youtube_link(self):
+        return self.source_id.youtube_link
+    
+    def youtube_fetch_task(self):
+        return self.source_id.youtube_fetch_task.id
 
     def __str__(self):
         return self.artist + ' - ' + self.title
@@ -95,8 +138,3 @@ class SeparatedSong(models.Model):
 
     class Meta:
         unique_together = [['source_song', 'vocals', 'drums', 'bass', 'other']]
-
-@receiver(pre_delete, sender=SourceFile, dispatch_uid='delete_temp_file_signal')
-def delete_temp_file(sender, instance, using, **kwargs):
-    # Delete file on disk before deleting instance
-    instance.file.delete()

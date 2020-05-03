@@ -1,0 +1,15 @@
+.form-control::-webkit-input-placeholder {
+  color: rgb(175, 175, 175) !important;
+}
+.form-control:-moz-placeholder {
+  color: rgb(175, 175, 175) !important;
+}
+.form-control::-moz-placeholder {
+  color: rgb(175, 175, 175) !important;
+}
+.form-control:-ms-input-placeholder {
+  color: rgb(175, 175, 175) !important;
+}
+.form-control::-ms-input-placeholder {
+  color: rgb(175, 175, 175) !important;
+}

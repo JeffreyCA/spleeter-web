@@ -78,11 +78,9 @@ class SpleetModal extends React.Component {
       })
       .catch(({ response }) => {
         const { data } = response
-        if (data['non_field_errors']) {
-          this.setState({
-            errors: data['non_field_errors']
-          })
-        }
+        this.setState({
+          errors: data.errors
+        })
       })
   }
 
