@@ -5,6 +5,8 @@ It is powered by [Spleeter](https://github.com/deezer/spleeter), the awesome sou
 
 The app uses [Django](https://www.djangoproject.com/) for the backend API, [React](https://reactjs.org/) for the frontend, [PostgreSQL](https://www.postgresql.org/) for the database, and [Huey](https://huey.readthedocs.io/en/latest/)+[Redis](https://redis.io/) for the task queue.
 
+![](./screenshots/main.png)
+
 ## Requirements
 * Python 3.4+
 * Node.JS 12

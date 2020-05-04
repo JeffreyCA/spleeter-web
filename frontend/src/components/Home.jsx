@@ -221,8 +221,8 @@ class Home extends Component {
         <MyNavBar onUploadClick={this.onUploadClick} />
         <div className="jumbotron jumbotron-fluid bg-transparent">
           <div className="container secondary-color">
-            <h1 className="display-4">Spleeter Web</h1>
-            <p className="lead">Source separation on the go.</p>
+            <h2 className="display-5">Song List</h2>
+            <p className="lead">Get started by uploading a song or separating an existing song.</p>
             {task && (
               <Alert variant="success">
                 <span>

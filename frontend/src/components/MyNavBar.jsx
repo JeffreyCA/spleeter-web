@@ -31,10 +31,6 @@ class MyNavBar extends React.Component {
               <Button onClick={onUploadClick} variant="success mr-3">
                 Upload <CloudUpload />
               </Button>
-              <DropdownButton title="Jeffrey" variant="outline-secondary">
-                <Dropdown.Item>Profile</Dropdown.Item>
-                <Dropdown.Item>Logout</Dropdown.Item>
-              </DropdownButton>
             </Nav>
           </Navbar.Collapse>
         </Container>
