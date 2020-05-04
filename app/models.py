@@ -15,12 +15,12 @@ from .youtubedl import get_meta_info
 
 class YouTubeFetchTask(models.Model):
     class Status(models.IntegerChoices):
-        CREATED = 0
+        QUEUED = 0
         IN_PROGRESS = 1
         DONE = 2
         ERROR = -1
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
+    status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
     error = models.TextField(blank=True)
 
 class SourceFile(models.Model):
@@ -90,7 +90,7 @@ class SourceSong(models.Model):
 
 class SeparatedSong(models.Model):
     class Status(models.IntegerChoices):
-        CREATED = 0
+        QUEUED = 0
         IN_PROGRESS = 1
         DONE = 2
         ERROR = -1
@@ -101,7 +101,7 @@ class SeparatedSong(models.Model):
     drums = models.BooleanField()
     bass = models.BooleanField()
     other = models.BooleanField()
-    status = models.IntegerField(choices=Status.choices, default=Status.CREATED)
+    status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
     file = models.FileField(upload_to='separate/', blank=True)
     error = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)

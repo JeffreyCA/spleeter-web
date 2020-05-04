@@ -11,7 +11,7 @@ const statusVariantMap = {
   'Done': 'success',
   'Error': 'danger',
   'In Progress': 'primary',
-  'Created': 'secondary'
+  'Queued': 'secondary'
 }
 
 const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
