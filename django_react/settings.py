@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['spleeter-web.herokuapp.com']
 
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
+AZURE_ACCOUNT_NAME = "spleeterweb"
+AZURE_CONTAINER = 'media'
+
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 SEPARATE_DIR = 'separate'

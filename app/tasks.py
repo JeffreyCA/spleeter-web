@@ -3,6 +3,7 @@ import os.path
 import pathlib
 
 from django.core.files import File
+from django.core.files.base import ContentFile
 from django.conf import settings
 from huey.contrib.djhuey import task
 
@@ -19,6 +20,7 @@ def separate_task(separate_song):
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(separate_song.id))
         filename = separate_song.formatted_name() + '.mp3'
         rel_media_path = os.path.join(settings.SEPARATE_DIR, str(separate_song.id), filename)
+        rel_separate_path = os.path.join(str(separate_song.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
 
@@ -29,12 +31,29 @@ def separate_task(separate_song):
             'other': separate_song.other
         }
         separator = SpleeterSeparator()
-        separator.predict(parts, separate_song.source_path(), rel_path)
+        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
+
+        if is_local:
+            separator.predict(parts, separate_song.source_path(), rel_path)
+        else:
+            separator.predict(parts, separate_song.source_url(), rel_path)
 
         # Check file exists
         if os.path.exists(rel_path):
             separate_song.status = SeparatedSong.Status.DONE
-            separate_song.file.name = rel_media_path
+            if is_local:
+                # File is already on local filesystem
+                separate_song.file.name = rel_media_path
+            else:
+                # Need to copy local file to S3/Azure Blob/etc.
+                raw_file = open(rel_path, 'rb')
+                content_file = ContentFile(raw_file.read())
+                content_file.name = rel_separate_path
+                separate_song.file = content_file
+                # Remove local file
+                rel_dir_path = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(separate_song.id))
+                os.remove(rel_path)
+                os.rmdir(rel_dir_path)
             separate_song.save()
         else:
             raise Exception('Error writing to file')

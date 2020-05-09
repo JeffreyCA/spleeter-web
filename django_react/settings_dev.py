@@ -27,6 +27,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1:8000']
 
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# OR
+# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
+AZURE_ACCOUNT_NAME = "spleeterweb"
+AZURE_CONTAINER = 'media'
+
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 SEPARATE_DIR = 'separate'

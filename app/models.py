@@ -145,6 +145,9 @@ class SeparatedSong(models.Model):
         formatted = prefix + ' (' + parts + ')'
         return formatted
 
+    def source_path(self):
+        return self.source_song.source_id.file.path
+
     def source_url(self):
         return self.source_song.source_id.file.url
 
