@@ -26,7 +26,7 @@ class YouTubeFetchTask(models.Model):
 
 class SourceFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    file = models.FileField(upload_to='uploads/', blank=True, null=True, validators=[is_valid_size, is_mp3])
+    file = models.FileField(upload_to='uploads/', blank=True, null=True, max_length=255, validators=[is_valid_size, is_mp3])
     is_youtube = models.BooleanField(default=False)
     youtube_link = models.URLField(unique=True, blank=True, null=True, validators=[is_valid_youtube])
     youtube_fetch_task = models.OneToOneField(YouTubeFetchTask, on_delete=models.SET_NULL, null=True, blank=True)
@@ -106,7 +106,7 @@ class SeparatedSong(models.Model):
     bass = models.BooleanField()
     other = models.BooleanField()
     status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
-    file = models.FileField(upload_to='separate/', blank=True)
+    file = models.FileField(upload_to='separate/', max_length=255, blank=True)
     error = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 

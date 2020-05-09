@@ -68,4 +68,5 @@ def fetch_youtube_audio(source_file, artist, title, link):
             raise Exception('Error writing to file')
     except BaseException as error:
         fetch_task.status = YouTubeFetchTask.Status.ERROR
+        fetch_task.error = str(error)
         fetch_task.save()

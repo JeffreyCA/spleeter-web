@@ -37,7 +37,7 @@ class FetchTaskSerializer(serializers.ModelSerializer):
     status = ChoicesSerializerField()
     class Meta:
         model = YouTubeFetchTask
-        fields = ('id', 'status')
+        fields = ('id', 'status', 'error')
 
 class SourceSongSerializer(serializers.ModelSerializer):
     separated = SeparatedSongSerializer(many=True, read_only=True)
