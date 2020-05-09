@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', 'default')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['spleeter-web.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1:8000']
 
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
@@ -61,11 +61,11 @@ WEBPACK_LOADER = {
     }
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    )
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     )
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,8 +102,16 @@ WSGI_APPLICATION = 'django_react.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config()
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
+
+    # Assume PostgreSQL running on localhost
+    'default': dj_database_url.parse('postgres://spleeter-web@127.0.0.1:5432/spleeter-web', conn_max_age=600)
 }
+
+# DATABASES['default'] = dj_database_url.parse('postgres://spleeter-web@127.0.0.1:5432/spleeter-web', conn_max_age=600)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -144,7 +152,6 @@ HUEY = {
     'consumer': {
         'workers': 2,
     },
-    'url': os.environ.get('REDIS_URL', 'redis://localhost:6379/?db=1')
 }
 
 # Static files (CSS, JavaScript, Images)
