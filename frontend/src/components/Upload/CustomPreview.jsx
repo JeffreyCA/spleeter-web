@@ -76,7 +76,7 @@ const CustomPreview = ({
     )
   }
 
-  var variant = undefined
+  var variant = 'primary'
   if (
     status === 'error_upload_params' ||
     status === 'exception_upload' ||
