@@ -121,6 +121,7 @@ const CustomPreview = ({
                 max={100}
                 now={doneUpload ? 100 : percent}
                 variant={variant}
+                animated={!doneUpload}
               />
             )}
             {status === 'uploading' && canCancel && (

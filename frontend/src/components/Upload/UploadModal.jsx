@@ -162,9 +162,13 @@ class UploadModal extends React.Component {
       this.setState({ errors: errorMsg })
     } else if (status === 'error_upload') {
       // Error with upload, so show error message
-      const responseObject = JSON.parse(xhr.response)
-      if (responseObject && responseObject['errors']) {
-        this.setState({ errors: responseObject['errors'] })
+      try {
+        const responseObject = JSON.parse(xhr.response)
+        if (responseObject && responseObject['errors']) {
+          this.setState({ errors: responseObject['errors'] })
+        }
+      } catch {
+        this.setState({ errors: ['Unknown error.'] })
       }
     } else if (status === 'removed') {
       // File was removed
