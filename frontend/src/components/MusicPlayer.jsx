@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Badge } from 'react-bootstrap'
 import ReactJkMusicPlayer from '@jeffreyca/react-jinke-music-player'
-import '@jeffreyca/react-jinke-music-player/assets/index.css'
 import './MusicPlayer.css'
 
 /**
