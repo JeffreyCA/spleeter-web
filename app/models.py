@@ -68,8 +68,8 @@ class SourceFile(models.Model):
 class SourceSong(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     source_id = models.OneToOneField(SourceFile, on_delete=models.PROTECT, unique=True)
-    artist = models.CharField(max_length=100)
-    title = models.CharField(max_length=100)
+    artist = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def source_path(self):
