@@ -1,4 +1,6 @@
+from io import BytesIO
 import os
+import requests
 import sys
 import uuid
 
@@ -14,6 +16,9 @@ from mutagen.id3 import ID3NoHeaderError
 from .validators import *
 from .youtubedl import get_meta_info
 
+def source_file_path(instance, filename):
+    return os.path.join(settings.UPLOAD_DIR, str(instance.id), filename)
+
 class YouTubeFetchTask(models.Model):
     class Status(models.IntegerChoices):
         QUEUED = 0
@@ -26,7 +31,7 @@ class YouTubeFetchTask(models.Model):
 
 class SourceFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    file = models.FileField(upload_to='uploads/', blank=True, null=True, max_length=255, validators=[is_valid_size, is_mp3])
+    file = models.FileField(upload_to=source_file_path, blank=True, null=True, max_length=255, validators=[is_valid_size, is_mp3])
     is_youtube = models.BooleanField(default=False)
     youtube_link = models.URLField(unique=True, blank=True, null=True, validators=[is_valid_youtube])
     youtube_fetch_task = models.OneToOneField(YouTubeFetchTask, on_delete=models.SET_NULL, null=True, blank=True)
@@ -48,7 +53,13 @@ class SourceFile(models.Model):
                 title = info['title']
         else:
             try:
-                audio = EasyID3(self.file.path)
+                if settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage':
+                    audio = EasyID3(self.file.path)
+                else:
+                    r = requests.get(self.file.url)
+                    file = BytesIO(r.content)
+                    audio = EasyID3(file)
+
                 if 'artist' in audio:
                     artist = audio['artist'][0]
                 if 'title' in audio:
@@ -71,9 +82,6 @@ class SourceSong(models.Model):
     artist = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
-
-    def source_path(self):
-        return self.source_id.file.path
 
     def source_url(self):
         return self.source_id.file.url
@@ -106,7 +114,7 @@ class SeparatedSong(models.Model):
     bass = models.BooleanField()
     other = models.BooleanField()
     status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
-    file = models.FileField(upload_to='separate/', max_length=255, blank=True)
+    file = models.FileField(upload_to=settings.SEPARATE_DIR, max_length=255, blank=True)
     error = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -137,8 +145,8 @@ class SeparatedSong(models.Model):
         formatted = prefix + ' (' + parts + ')'
         return formatted
 
-    def source_path(self):
-        return self.source_song.source_id.file.path
+    def source_url(self):
+        return self.source_song.source_id.file.url
 
     class Meta:
         unique_together = [['source_song', 'vocals', 'drums', 'bass', 'other']]
