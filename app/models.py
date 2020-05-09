@@ -9,6 +9,7 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3NoHeaderError
 
 from .validators import *
 from .youtubedl import get_meta_info
@@ -46,11 +47,14 @@ class SourceFile(models.Model):
                 artist = info['uploader']
                 title = info['title']
         else:
-            audio = EasyID3(self.file.path)
-            if 'artist' in audio:
-                artist = audio['artist'][0]
-            if 'title' in audio:
-                title = audio['title'][0]
+            try:
+                audio = EasyID3(self.file.path)
+                if 'artist' in audio:
+                    artist = audio['artist'][0]
+                if 'title' in audio:
+                    title = audio['title'][0]
+            except ID3NoHeaderError:
+                pass
         return (artist, title)
 
     def __str__(self):
