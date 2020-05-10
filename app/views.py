@@ -105,7 +105,11 @@ class SourceSongYouTubeViewSet(generics.CreateAPIView):
             return JsonResponse({'status': 'error', 'errors': ['A source file with provided YouTube link already exists']}, status=400)
 
         source_song = serializer.save(source_id=source_file)
-        fetch_youtube_audio(source_file, data['artist'], data['title'], data['youtube_link'])
+        try:
+            fetch_youtube_audio(source_file, data['artist'], data['title'], data['youtube_link'])
+        except:
+            # YouTube library is flaky, so Huey will retry up to 2 additional times
+            pass
 
         return JsonResponse({'song_id': source_song.id, 'youtube_link': source_song.youtube_link(), 'fetch_task': source_song.youtube_fetch_task()})
 

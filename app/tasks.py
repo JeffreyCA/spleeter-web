@@ -20,7 +20,6 @@ def separate_task(separate_song):
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(separate_song.id))
         filename = separate_song.formatted_name() + '.mp3'
         rel_media_path = os.path.join(settings.SEPARATE_DIR, str(separate_song.id), filename)
-        rel_separate_path = os.path.join(str(separate_song.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
 
@@ -48,11 +47,12 @@ def separate_task(separate_song):
                 # Need to copy local file to S3/Azure Blob/etc.
                 raw_file = open(rel_path, 'rb')
                 content_file = ContentFile(raw_file.read())
-                content_file.name = rel_separate_path
+                content_file.name = filename
                 separate_song.file = content_file
-                # Remove local file
                 rel_dir_path = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(separate_song.id))
+                # Remove local file
                 os.remove(rel_path)
+                # Remove empty directory
                 os.rmdir(rel_dir_path)
             separate_song.save()
         else:
@@ -62,7 +62,7 @@ def separate_task(separate_song):
         separate_song.error = str(error)
         separate_song.save()
 
-@task(retries=2)
+@task(retries=settings.YOUTUBE_MAX_RETRIES)
 def fetch_youtube_audio(source_file, artist, title, link):
     fetch_task = source_file.youtube_fetch_task
     fetch_task.status = YouTubeFetchTask.Status.IN_PROGRESS
@@ -76,11 +76,25 @@ def fetch_youtube_audio(source_file, artist, title, link):
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
         download_audio(link, rel_path)
+        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
 
         # Check file exists
         if os.path.exists(rel_path):
             fetch_task.status = YouTubeFetchTask.Status.DONE
-            source_file.file.name = rel_media_path
+            if is_local:
+                # File is already on local filesystem
+                source_file.file.name = rel_media_path
+            else:
+                # Need to copy local file to S3/Azure Blob/etc.
+                raw_file = open(rel_path, 'rb')
+                content_file = ContentFile(raw_file.read())
+                content_file.name = filename
+                source_file.file = content_file
+                rel_dir_path = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR, str(source_file.id))
+                # Remove local file
+                os.remove(rel_path)
+                # Remove empty directory
+                os.rmdir(rel_dir_path)
             fetch_task.save()
             source_file.save()
         else:
@@ -89,3 +103,4 @@ def fetch_youtube_audio(source_file, artist, title, link):
         fetch_task.status = YouTubeFetchTask.Status.ERROR
         fetch_task.error = str(error)
         fetch_task.save()
+        raise error
