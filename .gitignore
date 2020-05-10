@@ -1,6 +1,7 @@
 .vscode
 
 out/
+staticfiles/
 
 # Models
 pretrained_models/

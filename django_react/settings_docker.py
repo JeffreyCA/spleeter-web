@@ -27,9 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1:8000']
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # OR
-# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
@@ -112,36 +112,9 @@ WSGI_APPLICATION = 'django_react.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
-
-    # Assume PostgreSQL running on localhost
+    # These values are defined in docker-compose.yml
     'default': dj_database_url.parse('postgres://postgres:postgres@db:5432/postgres', conn_max_age=600)
 }
-
-# DATABASES['default'] = dj_database_url.parse('postgres://spleeter-web@127.0.0.1:5432/spleeter-web', conn_max_age=600)
-
-# Password validation
-# https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
-
-"""
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-"""
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

@@ -1,7 +1,10 @@
 .git
 *Dockerfile*
 *docker-compose*
+env
+staticfiles
 
-frontend/node_modules
-frontend/assets/
-frontend/webpack-stats.json
+**/node_modules
+**/assets/
+**/webpack-stats.json
+

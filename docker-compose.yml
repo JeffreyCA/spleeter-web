@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 services:
   db:
     image: postgres
@@ -8,10 +8,15 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: env DJANGO_SETTINGS_MODULE=django_react.settings_docker python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./app:/spleeter-web/app
+      - ./frontend/src:/spleeter-web/frontend/src
+      - ./media:/spleeter-web/media
     ports:
       - "8000:8000"
+    stdin_open: true
+    tty: true
+    environment:
+      - DJANGO_SETTINGS_MODULE=django_react.settings_docker
     depends_on:
       - db
