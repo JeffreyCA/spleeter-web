@@ -45,6 +45,7 @@ VALID_MIME_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg-3', 
 VALID_FILE_EXT = ['.mp3']
 UPLOAD_FILE_SIZE_LIMIT = 30 * 1024 * 1024
 YOUTUBE_LENGTH_LIMIT = 10 * 60
+YOUTUBE_MAX_RETRIES = 3
 
 # Application definition
 

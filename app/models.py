@@ -19,6 +19,9 @@ from .youtubedl import get_meta_info
 def source_file_path(instance, filename):
     return os.path.join(settings.UPLOAD_DIR, str(instance.id), filename)
 
+def sep_song_path(instance, filename):
+    return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
+
 class YouTubeFetchTask(models.Model):
     class Status(models.IntegerChoices):
         QUEUED = 0
@@ -41,8 +44,15 @@ class SourceFile(models.Model):
         artist = ''
         title = ''
         if self.youtube_link:
-            info = get_meta_info(self.youtube_link)
-            if info['embedded_artist'] and info['embedded_title']:
+            try:
+                info = get_meta_info(self.youtube_link)
+            except:
+                print('Getting metadata failed')
+                info = None
+            if not info:
+                artist = ''
+                title = ''
+            elif info['embedded_artist'] and info['embedded_title']:
                 artist = info['embedded_artist']
                 title = info['embedded_title']
             elif info['parsed_artist'] and info['parsed_title']:
@@ -114,7 +124,7 @@ class SeparatedSong(models.Model):
     bass = models.BooleanField()
     other = models.BooleanField()
     status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
-    file = models.FileField(upload_to=settings.SEPARATE_DIR, max_length=255, blank=True)
+    file = models.FileField(upload_to=sep_song_path, max_length=255, blank=True)
     error = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
