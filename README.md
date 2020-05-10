@@ -11,6 +11,8 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 * Python 3.4+
 * Node.JS 12
 * Redis
+* PostgreSQL
+* ffmpeg
 
 ## Getting started (locally)
 1. Start backend and frontend servers:
