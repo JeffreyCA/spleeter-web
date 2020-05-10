@@ -21,7 +21,7 @@ class SpleeterSeparator:
             self.audio_format = config['audio_format']
             self.sample_rate = config['sample_rate']
             self.spleeter_stem = config['spleeter_stem']
-        self.separator = Separator(self.spleeter_stem, stft_backend='tensorflow', multiprocess=False)
+        self.separator = Separator(self.spleeter_stem, stft_backend='librosa', multiprocess=False)
         self.audio_adapter = get_default_audio_adapter()
 
     def predict(self, parts, input_path, output_path):
