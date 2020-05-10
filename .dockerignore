@@ -1,0 +1,7 @@
+.git
+*Dockerfile*
+*docker-compose*
+
+frontend/node_modules
+frontend/assets/
+frontend/webpack-stats.json
