@@ -7,23 +7,47 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 
 ![](./screenshots/main.png)
 
-## Requirements
-* Python 3.4+
+## Getting started with Docker
+### Requirements
+* 4 GB+ of memory (source separation is memory-intensive)
+* Docker
+
+`// TODO`
+
+## Getting started without Docker
+### Requirements
+* 4 GB+ of memory (source separation is memory-intensive)
+* Python 3.6+
 * Node.JS 12
 * Redis
 * PostgreSQL
 * ffmpeg
 
-## Getting started (locally)
-1. Start backend and frontend servers:
+1. Authenticate to GitHub Packages:
+    > This is needed because some of the Node packages are hosted on GitHub Packages instead of NPM.
+
+    First, [create a new personal access token](https://github.com/settings/tokens/new) with the `read:packages` scope.
+    
+    Add the following line to your `~/.npmrc` file (create one if it doesn't exist):
+    ```
+    //npm.pkg.github.com/:_authToken=TOKEN
+    ```
+2. Install Python dependencies
     ```sh
     > python3 -m venv env
     > source env/bin/activate
-    > pip install -r requirements.txt
-    > npm run dev
+    > pip3 install -r requirements.txt
     ```
-
-2. Start Huey worker (in a separate session):
+3. Install Node dependencies
+    ```sh
+    > cd frontend
+    > npm install
+    ```
+4. Start backend and frontend servers (from project directory):
+    ```sh
+    > npm run dev --prefix frontend & python manage.py runserver 0.0.0.0:8000
+    ```
+2. In a separate session, start Huey worker (Redis should be running):
     ```sh
     > source env/bin/activate
     > python manage.py run_huey

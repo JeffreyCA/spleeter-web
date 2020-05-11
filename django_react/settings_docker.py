@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-import django_heroku
 import dj_database_url
 import os
 
@@ -25,7 +24,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1:8000']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0']
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # OR
@@ -113,7 +112,7 @@ WSGI_APPLICATION = 'django_react.wsgi.application'
 
 DATABASES = {
     # These values are defined in docker-compose.yml
-    'default': dj_database_url.parse('postgres://postgres:postgres@db:5432/postgres', conn_max_age=600)
+    'default': dj_database_url.config(conn_max_age=600)
 }
 
 # Internationalization
@@ -134,7 +133,8 @@ HUEY = {
     'immediate': False,
     'consumer': {
         'workers': 2,
-    }
+    },
+    'url': os.getenv('REDIS_URL')
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -146,5 +146,3 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'assets'),
     os.path.join(BASE_DIR, 'frontend', 'templates')
 )
-
-django_heroku.settings(locals())

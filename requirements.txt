@@ -13,9 +13,8 @@ coverage==5.1
 cryptography==2.9.2
 decorator==4.4.2
 dj-database-url==0.5.0
-Django==3.0.5
+Django==3.0.6
 django-cors-headers==3.2.1
-django-heroku==0.3.1
 django-storages==1.9.1
 django-webpack-loader==0.7.0
 djangorestframework==3.11.0
@@ -50,9 +49,9 @@ pylint==2.4.4
 pylint-django==2.0.15
 pylint-plugin-utils==0.6
 python-dateutil==2.8.1
-python-magic==0.4.15
+python-magic==0.4.18
 pytz==2019.3
-redis==3.4.1
+redis==3.5.1
 requests==2.23.0
 resampy==0.2.2
 scikit-learn==0.22.2.post1
@@ -71,5 +70,5 @@ urllib3==1.25.9
 Werkzeug==1.0.1
 whitenoise==5.0.1
 wrapt==1.11.2
-youtube-dl==2020.3.24
+youtube-dl==2020.5.8
 youtube-title-parse==1.0.0b3

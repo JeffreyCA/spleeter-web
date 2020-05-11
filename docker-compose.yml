@@ -6,6 +6,29 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 250M
+        reservations:
+          memory: 100M
+  redis:
+    image: redis:5.0.9-buster
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 50M
+        reservations:
+          memory: 25M
   web:
     build: .
     volumes:
@@ -18,5 +41,40 @@ services:
     tty: true
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - NPM_TOKEN
     depends_on:
       - db
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          memory: 1G
+  huey:
+    build:
+      context: .
+    entrypoint: ./huey-entrypoint.sh
+    volumes:
+      - ./app:/spleeter-web/app
+      - ./media:/spleeter-web/media
+      - ./pretrained_models:/spleeter-web/pretrained_models
+    environment:
+      - DJANGO_SETTINGS_MODULE=django_react.settings_docker
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - NPM_TOKEN
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 4G
+volumes:
+  pg-data:
+  redis-data:

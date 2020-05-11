@@ -11,10 +11,9 @@ while ! nc -z db 5432; do
 done
 echo "PostgreSQL started"
 
-echo "Apply database migrations"
+echo "Applying migrations"
 # python manage.py flush --no-input
 python manage.py migrate
 
-# Start server
 echo "Starting server"
 npm run dev
