@@ -12,6 +12,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 * 4 GB+ of memory (source separation is memory-intensive)
 * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
+### Instructions
 1. Build services:
 
     There are five services that Docker Compose will build: `db`, `redis`, `api`, `frontend`, and `huey`.
@@ -39,6 +40,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 * PostgreSQL
 * ffmpeg
 
+### Instructions
 1. Configure PostgreSQL and Redis
 
     In `django_react/settings_dev.py`, update `DATABASES['default']` to point to your PostgreSQL database.
