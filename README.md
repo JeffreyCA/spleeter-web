@@ -10,9 +10,25 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 ## Getting started with Docker
 ### Requirements
 * 4 GB+ of memory (source separation is memory-intensive)
-* Docker
+* [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-`// TODO`
+1. Build services:
+
+    There are five services that Docker Compose will build: `db`, `redis`, `api`, `frontend`, and `huey`.
+
+    ```sh
+    > docker-compose build
+    ```
+
+2. Start containers:
+
+    The `--compatibility` flag ensures the memory limits defined in `docker-compose.yml` are obeyed by each container.
+    ```sh
+    > docker-compose --compatibility up
+    ```
+3. Launch **spleeter-web**
+
+    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
 
 ## Getting started without Docker
 ### Requirements
@@ -23,15 +39,14 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 * PostgreSQL
 * ffmpeg
 
-1. Authenticate to GitHub Packages:
-    > This is needed because some of the Node packages are hosted on GitHub Packages instead of NPM.
+1. Configure PostgreSQL and Redis
 
-    First, [create a new personal access token](https://github.com/settings/tokens/new) with the `read:packages` scope.
-    
-    Add the following line to your `~/.npmrc` file (create one if it doesn't exist):
-    ```
-    //npm.pkg.github.com/:_authToken=TOKEN
-    ```
+    In `django_react/settings_dev.py`, update `DATABASES['default']` to point to your PostgreSQL database.
+
+    By default, it assumes you have a database called `spleeter-web` running on `localhost:5432` with the user `spleeter-web` and no password.
+
+    Next, ensure Redis is running on `localhost:6379`.
+
 2. Install Python dependencies
     ```sh
     > python3 -m venv env
@@ -44,14 +59,22 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
     > npm install
     ```
 4. Start backend and frontend servers (from project directory):
+
+    Set `DJANGO_SETTINGS_MODULE` to the development settings. By default it will use production values.
+
     ```sh
+    > export DJANGO_SETTINGS_MODULE=django_react.settings_dev
     > npm run dev --prefix frontend & python manage.py runserver 0.0.0.0:8000
     ```
-2. In a separate session, start Huey worker (Redis should be running):
+5. In a separate session, start Huey worker (Redis should be running):
     ```sh
+    > export DJANGO_SETTINGS_MODULE=django_react.settings_dev
     > source env/bin/activate
     > python manage.py run_huey
     ```
+6. Launch **spleeter-web**
+
+    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
 
 ## Deploying
-The app in its current state is not ready to be deployed yet!
+The app in its current state is not ready to be deployed yet.
