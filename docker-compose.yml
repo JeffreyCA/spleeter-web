@@ -33,6 +33,7 @@ services:
     restart: always
   api:
     build: .
+    image: jeffreyca/spleeter-web-api
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
@@ -48,6 +49,7 @@ services:
     depends_on:
       - db
       - redis
+      - frontend
     deploy:
       resources:
         limits:
@@ -58,6 +60,7 @@ services:
     restart: always
   frontend:
     build: ./frontend
+    image: jeffreyca/spleeter-web-frontend
     volumes:
       - ./frontend/src:/webapp/frontend/src
       - assets:/webapp/frontend/assets
@@ -74,6 +77,7 @@ services:
   huey:
     build:
       context: .
+    image: jeffreyca/spleeter-web-huey
     entrypoint: ./huey-entrypoint.sh
     volumes:
       - ./api:/webapp/api
@@ -84,6 +88,7 @@ services:
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     depends_on:
+      - db
       - redis
     deploy:
       resources:
