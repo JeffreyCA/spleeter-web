@@ -15,6 +15,7 @@ services:
           memory: 250M
         reservations:
           memory: 100M
+    restart: always
   redis:
     image: redis:5.0.9-buster
     hostname: redis
@@ -29,6 +30,7 @@ services:
           memory: 50M
         reservations:
           memory: 25M
+    restart: always
   api:
     build: .
     volumes:
@@ -53,6 +55,7 @@ services:
           memory: 2G
         reservations:
           memory: 1G
+    restart: always
   frontend:
     build: ./frontend
     volumes:
@@ -67,6 +70,7 @@ services:
           memory: 500M
         reservations:
           memory: 250M
+    restart: always
   huey:
     build:
       context: .
@@ -87,6 +91,7 @@ services:
           memory: 6G
         reservations:
           memory: 4G
+    restart: always
 volumes:
   pg-data:
   redis-data:
