@@ -12,8 +12,8 @@ done
 echo "PostgreSQL started"
 
 echo "Applying migrations"
-# python manage.py flush --no-input
+python manage.py makemigrations api
 python manage.py migrate
 
 echo "Starting server"
-npm run dev
+python manage.py runserver 0.0.0.0:8000

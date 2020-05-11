@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-import django_heroku
 import dj_database_url
 import os
 
@@ -57,7 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app.apps.MyAppConfig',
+    'api.apps.ApiConfig',
     'frontend.apps.FrontendConfig',
     'rest_framework',
     'webpack_loader',
@@ -67,7 +66,7 @@ INSTALLED_APPS = [
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'dist/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'webpack-stats.json')
+        'STATS_FILE': os.path.join(BASE_DIR, 'frontend', 'assets', 'webpack-stats.json')
     }
 }
 
@@ -173,5 +172,3 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'assets'),
     os.path.join(BASE_DIR, 'frontend', 'templates')
 )
-
-django_heroku.settings(locals())

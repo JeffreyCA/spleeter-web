@@ -17,7 +17,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 ## Getting started without Docker
 ### Requirements
 * 4 GB+ of memory (source separation is memory-intensive)
-* Python 3.6+
+* Python 3.6 or 3.7
 * Node.JS 12
 * Redis
 * PostgreSQL
