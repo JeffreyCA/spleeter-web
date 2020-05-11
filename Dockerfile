@@ -17,7 +17,6 @@ RUN pip install --upgrade pip -r requirements.txt
 
 # Install Node dependencies
 COPY frontend/package.json /spleeter-web/frontend/
-COPY frontend/.npmrc /spleeter-web/frontend/
 WORKDIR /spleeter-web/frontend
 RUN npm install
 
