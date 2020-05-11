@@ -46,6 +46,8 @@ services:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - AZURE_ACCOUNT_KEY
+      - AZURE_ACCOUNT_NAME
     depends_on:
       - db
       - redis
@@ -82,11 +84,13 @@ services:
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
-      - ./pretrained_models:/webapp/pretrained_models
+      - pretrained-models:/webapp/pretrained_models
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - AZURE_ACCOUNT_KEY
+      - AZURE_ACCOUNT_NAME
     depends_on:
       - db
       - redis
@@ -100,4 +104,5 @@ services:
 volumes:
   pg-data:
   redis-data:
+  pretrained-models:
   assets:

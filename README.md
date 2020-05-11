@@ -80,5 +80,24 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 
     Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
 
+## Using cloud storage (Azure Storage, AWS S3, etc.)
+
+By default, **spleeter-web** uses the local filesystem to store uploads and separated songs. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
+
+You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
+
+If using Docker, create an `.env` file in the project root directory with the django-storages params corresponding to your cloud provider:
+
+Example of `.env` contents:
+```
+AZURE_ACCOUNT_KEY={key}
+AZURE_ACCOUNT_NAME={account name}
+# OR
+AWS_ACCESS_KEY_ID={key}
+...
+```
+
+If not using Docker, set the above values as environment variables.
+
 ## Deploying
 The app in its current state is not ready to be deployed yet.

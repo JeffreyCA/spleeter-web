@@ -32,7 +32,7 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
-AZURE_ACCOUNT_NAME = "spleeterweb"
+AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', '')
 AZURE_CONTAINER = 'media'
 
 MEDIA_ROOT = 'media'
@@ -47,7 +47,6 @@ YOUTUBE_LENGTH_LIMIT = 10 * 60
 YOUTUBE_MAX_RETRIES = 3
 
 # Application definition
-
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.admin',
