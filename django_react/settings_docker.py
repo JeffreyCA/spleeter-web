@@ -111,36 +111,9 @@ WSGI_APPLICATION = 'django_react.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
-
-    # Assume PostgreSQL running on localhost
-    'default': dj_database_url.parse('postgres://spleeter-web@127.0.0.1:5432/spleeter-web', conn_max_age=600)
+    # These values are defined in docker-compose.yml
+    'default': dj_database_url.config(conn_max_age=600)
 }
-
-# DATABASES['default'] = dj_database_url.parse('postgres://spleeter-web@127.0.0.1:5432/spleeter-web', conn_max_age=600)
-
-# Password validation
-# https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
-
-"""
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-"""
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -161,6 +134,7 @@ HUEY = {
     'consumer': {
         'workers': 2,
     },
+    'url': os.getenv('REDIS_URL')
 }
 
 # Static files (CSS, JavaScript, Images)

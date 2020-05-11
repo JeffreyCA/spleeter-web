@@ -4,12 +4,11 @@
     "scripts": {
         "postinstall": "npm install --prefix frontend",
         "heroku-postbuild": "npm run build --prefix frontend",
-        "dev": "npm run dev --prefix frontend & env DJANGO_SETTINGS_MODULE=django_react.settings_dev python3 manage.py runserver 0.0.0.0:8000",
-        "dev-win": "npm run dev --prefix frontend & set DJANGO_SETTINGS_MODULE=django_react.settings_dev&& python3 manage.py runserver 0.0.0.0:8000",
-        "dev-prod": "npm run prod --prefix frontend & env DJANGO_SETTINGS_MODULE=django_react.settings_dev python3 manage.py runserver 0.0.0.0:8000",
+        "dev": "npm run dev --prefix frontend & python3 manage.py runserver 0.0.0.0:8000",
+        "dev-prod": "npm run prod --prefix frontend & python3 manage.py runserver 0.0.0.0:8000",
         "prod": "npm run prod --prefix frontend & python3 manage.py runserver",
-        "migrate": "env DJANGO_SETTINGS_MODULE=django_react.settings_dev python3 manage.py makemigrations app && env DJANGO_SETTINGS_MODULE=django_react.settings_dev python3 manage.py migrate",
-        "huey": "env DJANGO_SETTINGS_MODULE=django_react.settings_dev python3 manage.py run_huey",
+        "migrate": "python3 manage.py makemigrations api && python3 manage.py migrate",
+        "huey": "python3 manage.py run_huey",
         "clean": "rm -r media/separate/* && rm -r media/uploads/*"
     }
 }

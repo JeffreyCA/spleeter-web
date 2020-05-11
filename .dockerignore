@@ -1,0 +1,12 @@
+.git
+*Dockerfile*
+*docker-compose*
+web-entrypoint.sh
+
+env
+staticfiles
+
+frontend/assets/
+frontend/node_modules
+frontend/src
+frontend/webpack-stats.json

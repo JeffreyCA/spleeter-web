@@ -1,0 +1,98 @@
+version: '3.3'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 250M
+        reservations:
+          memory: 100M
+    restart: always
+  redis:
+    image: redis:5.0.9-buster
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 50M
+        reservations:
+          memory: 25M
+    restart: always
+  api:
+    build: .
+    volumes:
+      - ./api:/webapp/api
+      - ./media:/webapp/media
+      - assets:/webapp/frontend/assets
+    ports:
+      - "8000:8000"
+    stdin_open: true
+    tty: true
+    environment:
+      - DJANGO_SETTINGS_MODULE=django_react.settings_docker
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    depends_on:
+      - db
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          memory: 1G
+    restart: always
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/webapp/frontend/src
+      - assets:/webapp/frontend/assets
+    stdin_open: true
+    tty: true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          memory: 250M
+    restart: always
+  huey:
+    build:
+      context: .
+    entrypoint: ./huey-entrypoint.sh
+    volumes:
+      - ./api:/webapp/api
+      - ./media:/webapp/media
+      - ./pretrained_models:/webapp/pretrained_models
+    environment:
+      - DJANGO_SETTINGS_MODULE=django_react.settings_docker
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 4G
+    restart: always
+volumes:
+  pg-data:
+  redis-data:
+  assets:
