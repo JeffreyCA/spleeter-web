@@ -86,7 +86,7 @@ By default, **spleeter-web** uses the local filesystem to store uploads and sepa
 
 You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
 
-If using Docker, create an `.env` file in the project root directory with the django-storages params corresponding to your cloud provider:
+If using Docker, create an `.env` file in the project root directory with the **django-storages** params corresponding to your cloud provider.
 
 Example of `.env` contents:
 ```

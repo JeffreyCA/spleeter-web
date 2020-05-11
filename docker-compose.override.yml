@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+  db:
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+  redis:
+    volumes:
+      - redis-data:/data
+  api:
+    build: .
+    volumes:
+      - ./api:/webapp/api
+      - ./media:/webapp/media
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/webapp/frontend/src
+  huey:
+    build:
+      context: .
+    image: jeffreyca/spleeter-web-huey
+    volumes:
+      - ./api:/webapp/api
+      - ./media:/webapp/media

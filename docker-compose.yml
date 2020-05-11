@@ -33,10 +33,8 @@ services:
     restart: always
   api:
     build: .
-    image: jeffreyca/spleeter-web-api
+    image: jeffreyca/spleeter-web-api:latest
     volumes:
-      - ./api:/webapp/api
-      - ./media:/webapp/media
       - assets:/webapp/frontend/assets
     ports:
       - "8000:8000"
@@ -62,9 +60,8 @@ services:
     restart: always
   frontend:
     build: ./frontend
-    image: jeffreyca/spleeter-web-frontend
+    image: jeffreyca/spleeter-web-frontend:latest
     volumes:
-      - ./frontend/src:/webapp/frontend/src
       - assets:/webapp/frontend/assets
     stdin_open: true
     tty: true
@@ -79,11 +76,9 @@ services:
   huey:
     build:
       context: .
-    image: jeffreyca/spleeter-web-huey
+    image: jeffreyca/spleeter-web-huey:latest
     entrypoint: ./huey-entrypoint.sh
     volumes:
-      - ./api:/webapp/api
-      - ./media:/webapp/media
       - pretrained-models:/webapp/pretrained_models
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker

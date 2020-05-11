@@ -32,9 +32,5 @@ jobs:
         # Container registry server url
         login-server: https://index.docker.io/v1/
 
-    # Runs a single command using the runners shell
-    - name: Build images
-      run: docker-compose build
-
-    - name: Push images to Docker Hub
-      run: docker-compose push
+    - name: Build and push images to Docker Hub
+      run: docker-compose -f docker-compose.yml -f docker-compose.override.yml push
