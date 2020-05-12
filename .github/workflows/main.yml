@@ -6,7 +6,7 @@ name: Docker Compose push
 # events but only for the master branch
 on:
   push:
-    branches: [ master, azure ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
