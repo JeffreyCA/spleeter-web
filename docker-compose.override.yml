@@ -11,6 +11,8 @@ services:
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
+    environment:
+      - DJANGO_DEVELOPMENT
   frontend:
     build: ./frontend
     volumes:
@@ -22,3 +24,5 @@ services:
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
+    environment:
+      - DJANGO_DEVELOPMENT

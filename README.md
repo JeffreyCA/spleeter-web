@@ -64,15 +64,15 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
     ```
 4. Start backend and frontend servers (from project directory):
 
-    Set `DJANGO_SETTINGS_MODULE` to the development settings. By default it will use production values.
+    Set `DJANGO_DEVELOPMENT` to use development setting overrides. By default it will use production values.
 
     ```sh
-    > export DJANGO_SETTINGS_MODULE=django_react.settings_dev
+    > export DJANGO_DEVELOPMENT=true
     > npm run dev --prefix frontend & python manage.py runserver 0.0.0.0:8000
     ```
 5. In a separate session, start Huey worker (Redis should be running):
     ```sh
-    > export DJANGO_SETTINGS_MODULE=django_react.settings_dev
+    > export DJANGO_DEVELOPMENT=true
     > source env/bin/activate
     > python manage.py run_huey
     ```

@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # Collect static files
-# echo "Collect static files"
-# python manage.py collectstatic --noinput
+if [[ -z "${DJANGO_DEVELOPMENT}" ]]; then
+    echo "Collect static files"
+    python manage.py collectstatic --noinput
+fi
 
 # Apply database migrations
 echo "Waiting for postgres..."
