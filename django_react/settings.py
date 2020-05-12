@@ -129,7 +129,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend', 'assets'),
-    os.path.join(BASE_DIR, 'frontend', 'templates')
 )
 
 # Override production variables if DJANGO_DEVELOPMENT env variable is set

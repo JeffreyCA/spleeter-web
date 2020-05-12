@@ -1,0 +1,8 @@
+version: '3.3'
+services:
+  nginx:
+    ports:
+      - "80:80"
+  api:
+    expose:
+      - "8000"

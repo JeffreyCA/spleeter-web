@@ -1,5 +1,6 @@
 FROM node:12-buster
 
+RUN mkdir -p /webapp/frontend/assets
 WORKDIR /webapp/frontend
 
 # Install Node dependencies
