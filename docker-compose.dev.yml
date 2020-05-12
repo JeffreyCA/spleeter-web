@@ -6,18 +6,18 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_DEVELOPMENT
+      - DJANGO_DEVELOPMENT=true
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
   frontend:
     environment:
-      - DJANGO_DEVELOPMENT
+      - DJANGO_DEVELOPMENT=true
     volumes:
       - ./frontend/src:/webapp/frontend/src
   huey:
     environment:
-      - DJANGO_DEVELOPMENT
+      - DJANGO_DEVELOPMENT=true
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media

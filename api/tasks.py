@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import os.path
 import pathlib
@@ -5,11 +6,21 @@ import pathlib
 from django.core.files import File
 from django.core.files.base import ContentFile
 from django.conf import settings
-from huey.contrib.djhuey import task
+from django.utils import timezone
+
+from huey import crontab
+from huey.contrib.djhuey import task, periodic_task
 
 from .models import SeparatedSong, YouTubeFetchTask
 from .separate import SpleeterSeparator
 from .youtubedl import *
+
+# Check for stale song separation tasks and mark them as erroneous
+@periodic_task(crontab(minute='0', hour='*/1'))
+def check_in_progress_tasks():
+    time_threshold = timezone.now() - timedelta(minutes=settings.STALE_TASK_MIN_THRESHOLD)
+    in_progress_songs = SeparatedSong.objects.filter(status=SeparatedSong.Status.IN_PROGRESS, date_created__lte=time_threshold)
+    in_progress_songs.update(status=SeparatedSong.Status.ERROR, error='Operation timed out')
 
 @task()
 def separate_task(separate_song):

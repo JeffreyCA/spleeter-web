@@ -15,20 +15,14 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### Instructions
-1. Build services:
-
-    There are five services that Docker Compose will build: `db`, `redis`, `api`, `frontend`, and `huey`.
-
-    ```sh
-    > docker-compose build
-    ```
-
-2. Start containers:
+1. Build and start containers using dev config:
 
     The `--compatibility` flag ensures the memory limits defined in `docker-compose.yml` are obeyed by each container.
+
     ```sh
-    > docker-compose --compatibility up
+    > docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml --compatibility up --build
     ```
+
 3. Launch **spleeter-web**
 
     Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
