@@ -80,18 +80,46 @@ By default, **spleeter-web** uses the local filesystem to store uploads and sepa
 
 You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
 
-If using Docker, create an `.env` file in the project root directory with the **django-storages** params corresponding to your cloud provider.
+If using Docker, create an `.env` file in the project root directory with the **django-storages** parameters corresponding to your cloud provider.
 
 Example of `.env` contents:
 ```
-AZURE_ACCOUNT_KEY={key}
-AZURE_ACCOUNT_NAME={account name}
+AZURE_ACCOUNT_KEY=<key>
+AZURE_ACCOUNT_NAME=<account name>
 # OR
-AWS_ACCESS_KEY_ID={key}
+AWS_ACCESS_KEY_ID=<key>
 ...
 ```
 
 If not using Docker, set the above values as environment variables.
 
-## Deploying
-The app in its current state is not ready to be deployed yet.
+## Deploying to production
+**spleeter-web** can be deployed on VMs such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not supported out of the box.
+
+1. Clone this git repo
+    ```sh
+    > git clone https://github.com/JeffreyCA/spleeter-web.git
+    ```
+
+2. In `spleeter-web`, create an `.env` file with production environment variables
+
+    `.env` file:
+    ```
+    APP_HOST=<spleeter-web.com>
+    AZURE_ACCOUNT_KEY=<account key>
+    AZURE_ACCOUNT_NAME=<account name>
+    ```
+3. Build and start prebuilt production containers
+
+    The following pulls prebuilt Docker images from Docker Hub:
+    ```sh
+    > cd spleeter-web
+    > sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+    ```
+
+    Alternatively, you can build the Docker images from source.
+
+    ```sh
+    > cd spleeter-web
+    > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
+    ```

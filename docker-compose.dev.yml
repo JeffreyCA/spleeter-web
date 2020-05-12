@@ -15,6 +15,7 @@ services:
       - DJANGO_DEVELOPMENT=true
     volumes:
       - ./frontend/src:/webapp/frontend/src
+    restart: always
   huey:
     environment:
       - DJANGO_DEVELOPMENT=true

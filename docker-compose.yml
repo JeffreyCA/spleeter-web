@@ -78,7 +78,6 @@ services:
           memory: 2G
         reservations:
           memory: 500M
-    restart: always
   huey:
     image: jeffreyca/spleeter-web-huey:latest
     entrypoint: ./huey-entrypoint.sh

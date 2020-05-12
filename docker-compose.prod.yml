@@ -6,3 +6,5 @@ services:
   api:
     expose:
       - "8000"
+  frontend:
+    restart: "no"
