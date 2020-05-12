@@ -6,6 +6,8 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
     deploy:
@@ -31,18 +33,24 @@ services:
         reservations:
           memory: 25M
     restart: always
+  nginx:
+    image: jeffreyca/spleeter-web-nginx:latest
+    volumes:
+      - staticfiles:/webapp/staticfiles
+    depends_on:
+      - api
   api:
     image: jeffreyca/spleeter-web-api:latest
     volumes:
       - assets:/webapp/frontend/assets
-    ports:
-      - "8000:8000"
+      - staticfiles:/webapp/staticfiles
     stdin_open: true
     tty: true
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - APP_HOST
       - AZURE_ACCOUNT_KEY
       - AZURE_ACCOUNT_NAME
     depends_on:
@@ -66,10 +74,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 500M
+          cpus: '2.0'
+          memory: 2G
         reservations:
-          memory: 250M
+          memory: 500M
     restart: always
   huey:
     image: jeffreyca/spleeter-web-huey:latest
@@ -80,6 +88,7 @@ services:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - APP_HOST
       - AZURE_ACCOUNT_KEY
       - AZURE_ACCOUNT_NAME
     depends_on:
@@ -88,7 +97,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 6G
+          memory: 4G
         reservations:
           memory: 4G
     restart: always
@@ -97,3 +106,4 @@ volumes:
   redis-data:
   pretrained-models:
   assets:
+  staticfiles:

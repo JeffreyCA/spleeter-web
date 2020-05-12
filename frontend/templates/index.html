@@ -1,17 +1,24 @@
-{% load render_bundle from webpack_loader %}
+{% if DJANGO_DEVELOPMENT %}
+  {% load render_bundle from webpack_loader %}
+{% else %}
+  {% load static %}
+{% endif %}
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Spleeter Web</title>
-  {% render_bundle 'main' 'css' %}
-  {% render_bundle 'runtime' 'css' %}
-  {% render_bundle 'vendors' 'css' %}
 </head>
 <body>
   <div id="react"></div>
-  {% render_bundle 'main' 'js' %}
-  {% render_bundle 'runtime' 'js' %}
-  {% render_bundle 'vendors' 'js' %}
+  {% if DJANGO_DEVELOPMENT %}
+    {% render_bundle 'main' 'js' %}
+    {% render_bundle 'runtime' 'js' %}
+    {% render_bundle 'vendors' 'js' %}
+  {% else %}
+    <script src="{% static "dist/main.js" %}"></script>
+    <script src="{% static "dist/runtime.js" %}"></script>
+    <script src="{% static "dist/vendors.js" %}"></script>
+  {% endif %}
 </body>
 </html>

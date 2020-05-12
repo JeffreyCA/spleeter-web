@@ -1,6 +1,5 @@
 const path = require("path")
 const webpack = require('webpack')
-const BundleTracker = require('webpack-bundle-tracker')
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
@@ -9,14 +8,8 @@ module.exports = {
   entry: './src/index',
   output: {
     path: path.resolve('./assets/dist/'),
-    filename: "[name]-[hash].js",
+    filename: "[name].js",
   },
-  plugins: [
-    new BundleTracker({
-      path: path.resolve('./assets/'),
-      filename: 'webpack-stats.json'
-    }),
-  ],
   module: {
     rules: [
       {

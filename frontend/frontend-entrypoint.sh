@@ -1,4 +1,9 @@
 #!/bin/bash
 
 echo "Starting frontend"
-npm run dev
+rm -rf assets/dist
+if [[ -z "${DJANGO_DEVELOPMENT}" ]]; then
+    npm run prod
+else
+    npm run dev
+fi

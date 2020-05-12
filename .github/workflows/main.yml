@@ -33,7 +33,7 @@ jobs:
         login-server: https://index.docker.io/v1/
 
     - name: Build images
-      run: docker-compose build
+      run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build
 
     - name: Push images to Docker Hub
-      run: docker-compose push
+      run: docker-compose -f docker-compose.yml -f docker-compose.build.yml push

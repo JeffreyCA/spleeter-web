@@ -11,6 +11,7 @@ ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0']
 # DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # OR
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

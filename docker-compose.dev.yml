@@ -1,23 +1,23 @@
 version: '3.3'
 services:
-  db:
-  redis:
+  nginx:
+    entrypoint: ["echo", "Service nginx disabled"]
   api:
-    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_DEVELOPMENT
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
+  frontend:
     environment:
       - DJANGO_DEVELOPMENT
-  frontend:
-    build: ./frontend
     volumes:
       - ./frontend/src:/webapp/frontend/src
   huey:
-    build:
-      context: .
+    environment:
+      - DJANGO_DEVELOPMENT
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
-    environment:
-      - DJANGO_DEVELOPMENT

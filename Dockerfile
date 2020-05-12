@@ -3,6 +3,7 @@ FROM python:3.7.7-buster
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN mkdir -p /webapp/media /webapp/staticfiles
 WORKDIR /webapp
 
 # Install other system dependencies
