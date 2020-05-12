@@ -32,7 +32,6 @@ services:
           memory: 25M
     restart: always
   api:
-    build: .
     image: jeffreyca/spleeter-web-api:latest
     volumes:
       - assets:/webapp/frontend/assets
@@ -59,7 +58,6 @@ services:
           memory: 1G
     restart: always
   frontend:
-    build: ./frontend
     image: jeffreyca/spleeter-web-frontend:latest
     volumes:
       - assets:/webapp/frontend/assets
@@ -74,8 +72,6 @@ services:
           memory: 250M
     restart: always
   huey:
-    build:
-      context: .
     image: jeffreyca/spleeter-web-huey:latest
     entrypoint: ./huey-entrypoint.sh
     volumes:
