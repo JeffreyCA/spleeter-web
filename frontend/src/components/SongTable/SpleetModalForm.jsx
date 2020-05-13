@@ -38,26 +38,18 @@ class SpleetModalForm extends React.Component {
       <Form>
         <Form.Group as={Row} controlId="formGridFirst" className="mb-2">
           <Form.Label column sm="2">
-            Artist:
-          </Form.Label>
-          <Col>
-            <Form.Control name="artist" disabled value={song.artist} />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} controlId="formGridFirst" className="mb-2">
-          <Form.Label column sm="2">
             Title:
           </Form.Label>
           <Col>
             <Form.Control name="title" disabled value={song.title} />
           </Col>
         </Form.Group>
-        <Form.Group as={Row} controlId="formGridFirst">
+        <Form.Group as={Row} controlId="formGridSecond" className="mb-2">
           <Form.Label column sm="2">
-            Duration:
+            Artist:
           </Form.Label>
           <Col>
-            <Form.Control name="duration" disabled value="10:20" />
+            <Form.Control name="artist" disabled value={song.artist} />
           </Col>
         </Form.Group>
         <Form.Group>
@@ -69,7 +61,7 @@ class SpleetModalForm extends React.Component {
             type="checkbox"
             inline
             name="overwrite"
-            label="Overwrite if exists?"
+            label="Overwrite if exists"
             onChange={handleCheckboxChange}
           />
         </Form.Group>
