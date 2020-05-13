@@ -15,15 +15,13 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### Instructions
-1. Build and start containers using dev config:
-
-    The `--compatibility` flag ensures the memory limits defined in `docker-compose.yml` are obeyed by each container.
+1. Build and start containers using the development Docker config:
 
     ```sh
-    > docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml --compatibility up --build
+    > docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
     ```
 
-3. Launch **spleeter-web**
+2. Launch **spleeter-web**
 
     Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
 
@@ -67,6 +65,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 5. In a separate session, start Huey worker (Redis should be running):
     ```sh
     > export DJANGO_DEVELOPMENT=true
+    > export HUEY_WORKERS=1
     > source env/bin/activate
     > python manage.py run_huey
     ```
@@ -82,19 +81,17 @@ You can edit `django_react/settings_docker.py` (if using Docker) or `django_reac
 
 If using Docker, create an `.env` file in the project root directory with the **django-storages** parameters corresponding to your cloud provider.
 
-Example of `.env` contents:
+Example of `.env` using Azure Storage:
 ```
 AZURE_ACCOUNT_KEY=<key>
 AZURE_ACCOUNT_NAME=<account name>
-# OR
-AWS_ACCESS_KEY_ID=<key>
 ...
 ```
 
 If not using Docker, set the above values as environment variables.
 
-## Deploying to production
-**spleeter-web** can be deployed on VMs such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not supported out of the box.
+## Deploying
+**spleeter-web** can be deployed on VMs such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.
 
 1. Clone this git repo
     ```sh
@@ -108,6 +105,7 @@ If not using Docker, set the above values as environment variables.
     APP_HOST=<spleeter-web.com>
     AZURE_ACCOUNT_KEY=<account key>
     AZURE_ACCOUNT_NAME=<account name>
+    HUEY_WORKERS=<num workers>
     ```
 3. Build and start prebuilt production containers
 

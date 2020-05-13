@@ -32,7 +32,7 @@ VALID_FILE_EXT = ['.mp3']
 UPLOAD_FILE_SIZE_LIMIT = 30 * 1024 * 1024
 YOUTUBE_LENGTH_LIMIT = 10 * 60
 YOUTUBE_MAX_RETRIES = 3
-STALE_TASK_MIN_THRESHOLD = 30
+STALE_TASK_MIN_THRESHOLD = 15
 
 # Application definition
 INSTALLED_APPS = [
@@ -118,7 +118,7 @@ HUEY = {
     'results': False,
     'immediate': False,
     'consumer': {
-        'workers': 2,
+        'workers': int(os.getenv('HUEY_WORKERS', '2')),
     },
     'url': os.getenv('REDIS_URL', 'redis://localhost:6379')
 }

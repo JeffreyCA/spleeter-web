@@ -16,7 +16,7 @@ from .separate import SpleeterSeparator
 from .youtubedl import *
 
 # Check for stale song separation tasks and mark them as erroneous
-@periodic_task(crontab(minute='0', hour='*/1'))
+@periodic_task(crontab(minute='*/30'))
 def check_in_progress_tasks():
     time_threshold = timezone.now() - timedelta(minutes=settings.STALE_TASK_MIN_THRESHOLD)
     in_progress_songs = SeparatedSong.objects.filter(status=SeparatedSong.Status.IN_PROGRESS, date_created__lte=time_threshold)
