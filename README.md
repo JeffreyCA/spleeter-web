@@ -96,6 +96,7 @@ If not using Docker, set the above values as environment variables.
 1. Clone this git repo
     ```sh
     > git clone https://github.com/JeffreyCA/spleeter-web.git
+    > cd spleeter-web
     ```
 
 2. In `spleeter-web`, create an `.env` file with production environment variables
@@ -111,13 +112,11 @@ If not using Docker, set the above values as environment variables.
 
     The following pulls prebuilt Docker images from Docker Hub:
     ```sh
-    > cd spleeter-web
     > sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
     ```
 
     Alternatively, you can build the Docker images from source.
 
     ```sh
-    > cd spleeter-web
     > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
