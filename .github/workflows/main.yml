@@ -37,3 +37,6 @@ jobs:
 
     - name: Push images to Docker Hub
       run: docker-compose -f docker-compose.yml -f docker-compose.build.yml push
+      env:
+        DOCKER_CLIENT_TIMEOUT: 180
+        COMPOSE_HTTP_TIMEOUT: 180
