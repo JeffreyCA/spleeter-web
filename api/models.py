@@ -34,12 +34,12 @@ class YouTubeFetchTask(models.Model):
 
 class SourceFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    file = models.FileField(upload_to=source_file_path, blank=True, null=True, max_length=255, validators=[is_valid_size, is_mp3])
+    file = models.FileField(upload_to=source_file_path, blank=True, null=True, max_length=255, validators=[is_valid_size, is_valid_audio_file])
     is_youtube = models.BooleanField(default=False)
     youtube_link = models.URLField(unique=True, blank=True, null=True, validators=[is_valid_youtube])
     youtube_fetch_task = models.OneToOneField(YouTubeFetchTask, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # Extract artist and title information from MP3 or YouTube video
+    # Extract artist and title information from audio
     def metadata(self):
         artist = ''
         title = ''

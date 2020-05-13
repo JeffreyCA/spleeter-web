@@ -9,7 +9,7 @@ def is_valid_size(value):
     if value.size > settings.UPLOAD_FILE_SIZE_LIMIT:
         raise ValidationError('File too large.')
 
-def is_mp3(file):
+def is_valid_audio_file(file):
     first_bytes = file.read(1024)
     file_mime_type = magic.from_buffer(first_bytes, mime=True)
     if file_mime_type == 'application/octet-stream':

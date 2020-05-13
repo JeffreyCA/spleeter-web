@@ -27,8 +27,9 @@ MEDIA_URL = '/media/'
 SEPARATE_DIR = 'separate'
 UPLOAD_DIR = 'uploads'
 
-VALID_MIME_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg-3', 'video/mpeg', 'video/x-mpeg']
-VALID_FILE_EXT = ['.mp3']
+VALID_MIME_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg-3', 'video/mpeg',
+                    'video/x-mpeg', 'audio/flac', 'audio/x-flac', 'audio/wav', 'audio/x-wav']
+VALID_FILE_EXT = ['.mp3', '.flac', '.wav']
 UPLOAD_FILE_SIZE_LIMIT = 30 * 1024 * 1024
 YOUTUBE_LENGTH_LIMIT = 10 * 60
 YOUTUBE_MAX_RETRIES = 3
@@ -83,6 +84,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'frontend.context_processors.debug',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',

@@ -22,7 +22,7 @@ const CustomInput = ({ accept, onFiles, files, disabled }) => {
   return files.length > 0 ? null : (
     <div className="text-center p-3">
       <CloudUpload color="grey" size={70} />
-      <p>Drag and drop an MP3 file</p>
+      <p>Drag and drop an audio file (.mp3, .flac, .wav)</p>
       <label className={buttonClass}>
         {text}
         <input

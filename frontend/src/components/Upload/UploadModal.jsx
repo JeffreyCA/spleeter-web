@@ -299,7 +299,7 @@ class UploadModal extends React.Component {
                 maxFiles={1}
                 maxSizeBytes={MAX_FILE_BYTES}
                 multiple={false}
-                accept=".mp3"
+                accept=".mp3,.flac,.wav"
                 onChangeStatus={this.handleChangeStatus}
                 getUploadParams={() => ({ url: '/api/source-file/' })}
                 InputComponent={CustomInput}
