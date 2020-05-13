@@ -25,7 +25,7 @@ services:
       - staticfiles:/webapp/staticfiles
     depends_on:
       - api
-    restart: on-failure
+    restart: always
   api:
     image: jeffreyca/spleeter-web-api:latest
     volumes:

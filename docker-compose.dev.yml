@@ -2,6 +2,7 @@ version: '3.3'
 services:
   nginx:
     entrypoint: ["echo", "Service nginx disabled"]
+    restart: "no"
   api:
     ports:
       - "8000:8000"
