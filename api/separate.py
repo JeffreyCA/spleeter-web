@@ -3,11 +3,12 @@ import uuid
 from os.path import join
 
 import ffmpeg
+import numpy as np
 from spleeter import *
-from spleeter.separator import Separator
 from spleeter.utils import *
 from spleeter.audio.adapter import get_default_audio_adapter
-import numpy as np
+
+from .separator import Separator
 
 class SpleeterSeparator:
     def __init__(self, config=None):
@@ -21,7 +22,7 @@ class SpleeterSeparator:
             self.audio_format = config['audio_format']
             self.sample_rate = config['sample_rate']
             self.spleeter_stem = config['spleeter_stem']
-        self.separator = Separator(self.spleeter_stem, stft_backend='tensorflow', multiprocess=False)
+        self.separator = Separator(self.spleeter_stem, stft_backend='librosa', multiprocess=False)
         self.audio_adapter = get_default_audio_adapter()
 
     def predict(self, parts, input_path, output_path):
@@ -42,4 +43,3 @@ class SpleeterSeparator:
             print('stdout:', e.stdout.decode('utf8'))
             print('stderr:', e.stderr.decode('utf8'))
             raise e
-
