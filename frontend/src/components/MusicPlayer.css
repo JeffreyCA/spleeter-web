@@ -1206,14 +1206,6 @@
   background-color: initial !important;
 }
 
-:not(.sound-operation) > .rc-slider-track {
-  transition: width 0.25s ease-out 0s;
-}
-
-:not(.sound-operation) > .rc-slider-handle {
-  transition: left 0.25s ease-out 0s;
-}
-
 .audio-lists-panel-content .audio-item .player-name {
   padding: 0 5px 0 5px !important;
 }
