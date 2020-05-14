@@ -1,10 +1,13 @@
+.github
 .git
 *Dockerfile*
 *docker-compose*
 web-entrypoint.sh
 
+docs
 env
 staticfiles
+screenshots
 
 frontend/assets/
 frontend/node_modules
