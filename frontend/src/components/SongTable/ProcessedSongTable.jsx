@@ -5,7 +5,7 @@ import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
-import './SeparatedSongTable.css'
+import './ProcessedSongTable.css'
 
 const statusVariantMap = {
   'Done': 'success',
@@ -50,7 +50,7 @@ const downloadFormatter = (cell, row, rowIndex) => {
   }
 }
 
-class SeparatedSongTable extends Component {
+class ProcessedSongTable extends Component {
   render() {
     const {
       data,
@@ -205,7 +205,7 @@ class SeparatedSongTable extends Component {
       return (
         <div className="m-4 text-center">
           <p>
-            No separated tracks. Press the "Spleet" button to separate this song.
+            No processed tracks. Press the "Spleet" button to separate this song.
           </p>
         </div>
       )
@@ -213,4 +213,4 @@ class SeparatedSongTable extends Component {
   }
 }
 
-export default SeparatedSongTable
+export default ProcessedSongTable

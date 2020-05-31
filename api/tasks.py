@@ -11,72 +11,87 @@ from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import task, periodic_task
 
-from .models import SeparatedSong, YouTubeFetchTask
+from .models import ProcessedTrack, YTAudioDownloadTask
 from .separate import SpleeterSeparator
 from .youtubedl import *
 
-# Check for stale song separation tasks and mark them as erroneous
 @periodic_task(crontab(minute='*/30'))
 def check_in_progress_tasks():
+    """Periodic task that checks for stale separation tasks and marks them as erroneous."""
     time_threshold = timezone.now() - timedelta(minutes=settings.STALE_TASK_MIN_THRESHOLD)
-    in_progress_songs = SeparatedSong.objects.filter(status=SeparatedSong.Status.IN_PROGRESS, date_created__lte=time_threshold)
-    in_progress_songs.update(status=SeparatedSong.Status.ERROR, error='Operation timed out')
+    in_progress_tracks = ProcessedTrack.objects.filter(status=ProcessedTrack.Status.IN_PROGRESS, date_created__lte=time_threshold)
+    in_progress_tracks.update(status=ProcessedTrack.Status.ERROR, error='Operation timed out')
 
 @task()
-def separate_task(separate_song):
-    separate_song.status = SeparatedSong.Status.IN_PROGRESS
-    separate_song.save()
+def separate_task(processing_track):
+    """
+    Task that uses Spleeter API to separate/isolate the requested parts of a track.
+
+    :param processing_track: The audio track model (ProcessedTrack) to be processed
+    """
+    # Mark as in progress
+    processing_track.status = ProcessedTrack.Status.IN_PROGRESS
+    processing_track.save()
     try:
         # Get paths
-        directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(separate_song.id))
-        filename = separate_song.formatted_name() + '.mp3'
-        rel_media_path = os.path.join(settings.SEPARATE_DIR, str(separate_song.id), filename)
+        directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(processing_track.id))
+        filename = processing_track.formatted_name() + '.mp3'
+        rel_media_path = os.path.join(settings.SEPARATE_DIR, str(processing_track.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
 
-        parts = {
-            'vocals': separate_song.vocals,
-            'drums': separate_song.drums,
-            'bass': separate_song.bass,
-            'other': separate_song.other
-        }
         separator = SpleeterSeparator()
-        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
 
-        if is_local:
-            separator.predict(parts, separate_song.source_path(), rel_path)
-        else:
-            separator.predict(parts, separate_song.source_url(), rel_path)
+        parts = {
+            'vocals': processing_track.vocals,
+            'drums': processing_track.drums,
+            'bass': processing_track.bass,
+            'other': processing_track.other
+        }
+
+        # Non-local filesystems like S3/Azure Blob do not support source_path()
+        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
+        path = processing_track.source_path() if is_local else processing_track.source_url()
+        separator.separate(parts, path, rel_path)
 
         # Check file exists
         if os.path.exists(rel_path):
-            separate_song.status = SeparatedSong.Status.DONE
+            processing_track.status = ProcessedTrack.Status.DONE
             if is_local:
                 # File is already on local filesystem
-                separate_song.file.name = rel_media_path
+                processing_track.file.name = rel_media_path
             else:
                 # Need to copy local file to S3/Azure Blob/etc.
                 raw_file = open(rel_path, 'rb')
                 content_file = ContentFile(raw_file.read())
                 content_file.name = filename
-                separate_song.file = content_file
-                rel_dir_path = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(separate_song.id))
+                processing_track.file = content_file
+                rel_dir_path = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(processing_track.id))
                 # Remove local file
                 os.remove(rel_path)
                 # Remove empty directory
                 os.rmdir(rel_dir_path)
-            separate_song.save()
+            processing_track.save()
         else:
             raise Exception('Error writing to file')
     except BaseException as error:
-        separate_song.status = SeparatedSong.Status.ERROR
-        separate_song.error = str(error)
-        separate_song.save()
+        processing_track.status = ProcessedTrack.Status.ERROR
+        processing_track.error = str(error)
+        processing_track.save()
 
 @task(retries=settings.YOUTUBE_MAX_RETRIES)
 def fetch_youtube_audio(source_file, artist, title, link):
+    """
+    Task that uses youtubedl to extract the audio from a YouTube link.
+
+    :param source_file: SourceFile model
+    :param artist: Track artist
+    :param title: Track title
+    :param link: YouTube link
+    """
     fetch_task = source_file.youtube_fetch_task
-    fetch_task.status = YouTubeFetchTask.Status.IN_PROGRESS
+    # Mark as in progress
+    fetch_task.status = YTAudioDownloadTask.Status.IN_PROGRESS
     fetch_task.save()
 
     try:
@@ -86,12 +101,15 @@ def fetch_youtube_audio(source_file, artist, title, link):
         rel_media_path = os.path.join(settings.UPLOAD_DIR, str(fetch_task.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
+
+        # Start download
         download_audio(link, rel_path)
+
         is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
 
         # Check file exists
         if os.path.exists(rel_path):
-            fetch_task.status = YouTubeFetchTask.Status.DONE
+            fetch_task.status = YTAudioDownloadTask.Status.DONE
             if is_local:
                 # File is already on local filesystem
                 source_file.file.name = rel_media_path
@@ -111,7 +129,7 @@ def fetch_youtube_audio(source_file, artist, title, link):
         else:
             raise Exception('Error writing to file')
     except BaseException as error:
-        fetch_task.status = YouTubeFetchTask.Status.ERROR
+        fetch_task.status = YTAudioDownloadTask.Status.ERROR
         fetch_task.error = str(error)
         fetch_task.save()
         raise error

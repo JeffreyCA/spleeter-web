@@ -48,11 +48,11 @@ class YouTubeLinkInfoView(APIView):
 
         return JsonResponse({'status': 'success', 'artist': artist, 'title': title, 'url': url})
 
-class SourceFileList(generics.ListAPIView):
+class SourceFileListView(generics.ListAPIView):
     queryset = SourceFile.objects.all()
     serializer_class = SourceFileSerializer
 
-class SourceFileViewSet(viewsets.ModelViewSet):
+class SourceFileView(viewsets.ModelViewSet):
     queryset = SourceFile.objects.all()
     serializer_class = SourceFileSerializer
 
@@ -77,13 +77,16 @@ class SourceFileViewSet(viewsets.ModelViewSet):
         except ProtectedError:
             return JsonResponse({'status': 'error', 'error': 'A Song currently references this file'}, status=400)
 
-class SourceSongViewSet(generics.ListCreateAPIView):
-    queryset = SourceSong.objects.all()
-    serializer_class = SourceSongSerializer
+class SourceTrackListView(generics.ListAPIView):
+    queryset = SourceTrack.objects.all()
+    serializer_class = SourceTrackSerializer
 
-class SourceSongYouTubeViewSet(generics.CreateAPIView):
-    queryset = SourceSong.objects.all()
-    serializer_class = SourceSongYouTubeSerializer
+class FileSourceTrackView(generics.CreateAPIView):
+    serializer_class = SourceTrackSerializer
+
+class YTSourceTrackView(generics.CreateAPIView):
+    queryset = SourceTrack.objects.all()
+    serializer_class = YTSourceTrackSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -95,7 +98,7 @@ class SourceSongYouTubeViewSet(generics.CreateAPIView):
         if 'youtube_link' not in data:
             return JsonResponse({'status': 'error', 'errors': ['Missing YouTube link']}, status=400)
 
-        fetch_task = YouTubeFetchTask()
+        fetch_task = YTAudioDownloadTask()
         fetch_task.save()
         source_file = SourceFile(id=fetch_task.id, is_youtube=True, youtube_link=data['youtube_link'], youtube_fetch_task=fetch_task)
         try:
@@ -104,26 +107,26 @@ class SourceSongYouTubeViewSet(generics.CreateAPIView):
             fetch_task.delete()
             return JsonResponse({'status': 'error', 'errors': ['A source file with provided YouTube link already exists']}, status=400)
 
-        source_song = serializer.save(source_id=source_file)
+        source_track = serializer.save(source_file=source_file)
         try:
             fetch_youtube_audio(source_file, data['artist'], data['title'], data['youtube_link'])
         except:
             # YouTube library is flaky, so Huey will retry up to 2 additional times
             pass
 
-        return JsonResponse({'song_id': source_song.id, 'youtube_link': source_song.youtube_link(), 'fetch_task': source_song.youtube_fetch_task()})
+        return JsonResponse({'song_id': source_track.id, 'youtube_link': source_track.youtube_link(), 'fetch_task': source_track.youtube_fetch_task()})
 
-class SeparatedSongViewSet(generics.CreateAPIView):
-    serializer_class = SeparatedSongSerializer
-    queryset = SeparatedSong.objects.all()
+class ProcessedTrackViewSet(generics.CreateAPIView):
+    serializer_class = ProcessedTrackSerializer
+    queryset = ProcessedTrack.objects.all()
 
     def delete_existing(self, data):
-        source = data['source_song']
+        source = data['source_track']
         vocals = data['vocals']
         drums = data['drums']
         bass = data['bass']
         other = data['other']
-        SeparatedSong.objects.filter(source_song=source, vocals=vocals, drums=drums, bass=bass, other=other).exclude(status=SeparatedSong.Status.IN_PROGRESS).delete()
+        ProcessedTrack.objects.filter(source_track=source, vocals=vocals, drums=drums, bass=bass, other=other).exclude(status=ProcessedTrack.Status.IN_PROGRESS).delete()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -138,19 +141,19 @@ class SeparatedSongViewSet(generics.CreateAPIView):
                     serializer = self.get_serializer(data=request.data)
                     if serializer.is_valid():
                         return super().create(request, *args, **kwargs)
-                return JsonResponse({'status': 'error', 'errors': ['A separated song already exists with these parts.']}, status=400)
+                return JsonResponse({'status': 'error', 'errors': ['A processed song already exists with these parts.']}, status=400)
         return JsonResponse({'status': 'error', 'errors': ['Unknown error']}, status=400)
 
     def perform_create(self, serializer):
         instance = serializer.save()
         separate_task(instance)
 
-class SeparatedSongRetrieve(generics.RetrieveAPIView):
-    serializer_class = SeparatedSongSerializer
-    queryset = SeparatedSong.objects.all()
+class ProcessedTrackRetrieve(generics.RetrieveAPIView):
+    serializer_class = ProcessedTrackSerializer
+    queryset = ProcessedTrack.objects.all()
     lookup_field = 'id'
 
 class FetchTaskRetrieve(generics.RetrieveAPIView):
     serializer_class = FetchTaskSerializer
-    queryset = YouTubeFetchTask.objects.all()
+    queryset = YTAudioDownloadTask.objects.all()
     lookup_field = 'id'

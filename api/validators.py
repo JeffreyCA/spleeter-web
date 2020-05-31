@@ -6,10 +6,21 @@ from .youtubedl import get_meta_info
 from youtube_dl.utils import DownloadError
 
 def is_valid_size(value):
+    """
+    Validate file size is within upload file size limit.
+
+    :param value: File size in bytes
+    """
     if value.size > settings.UPLOAD_FILE_SIZE_LIMIT:
         raise ValidationError('File too large.')
 
 def is_valid_audio_file(file):
+    """
+    Validate file has a valid MP3/FLAC/WAV MIME type and file extension.
+
+    :param file: Audio file
+    """
+    # Only read initial bytes (usually enough to deduce file type)
     first_bytes = file.read(1024)
     file_mime_type = magic.from_buffer(first_bytes, mime=True)
     if file_mime_type == 'application/octet-stream':
@@ -24,9 +35,14 @@ def is_valid_audio_file(file):
         raise ValidationError('File extension not allowed.')
 
 def is_valid_youtube(link):
+    """
+    Validate YouTube link is a valid one and also within the duration limit.
+
+    :param link: YouTube link to validate
+    """
     try:
         info = get_meta_info(link)
         if info['duration'] > settings.YOUTUBE_LENGTH_LIMIT:
             raise ValidationError('Video length too long.')
     except DownloadError:
-        raise ValidationError('Invalid YouTube link')
+        raise ValidationError('Invalid YouTube link.')

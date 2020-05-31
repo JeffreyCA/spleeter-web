@@ -79,7 +79,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
-By default, **Spleeter Web** uses the local filesystem to store uploads and separated songs. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
+By default, **Spleeter Web** uses the local filesystem to store uploaded files and processed track files. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
 
 You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
 
@@ -124,3 +124,6 @@ If not using Docker, set the above values as environment variables.
     ```sh
     > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
+
+## LICENSE
+[MIT](./LICENSE)

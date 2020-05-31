@@ -108,13 +108,13 @@ class UploadModal extends React.Component {
       })
     } else if (this.state.droppedFile) {
       const song = {
-        source_id: this.state.fileId,
+        source_file: this.state.fileId,
         artist: this.state.artist,
         title: this.state.title
       }
       // Make request to add Song
       axios
-        .post('/api/source-song/', song)
+        .post('/api/source-song/file/', song)
         .then(({ data }) => {
           console.log(data)
           this.props.hide()
@@ -133,7 +133,7 @@ class UploadModal extends React.Component {
       }
       axios
       .post('/api/source-song/youtube/', details)
-      .then(({ data }) => {
+      .then(() => {
         this.props.hide()
         this.props.refresh()
       })
@@ -301,7 +301,7 @@ class UploadModal extends React.Component {
                 multiple={false}
                 accept=".mp3,.flac,.wav"
                 onChangeStatus={this.handleChangeStatus}
-                getUploadParams={() => ({ url: '/api/source-file/' })}
+                getUploadParams={() => ({ url: '/api/source-file/file/' })}
                 InputComponent={CustomInput}
                 PreviewComponent={CustomPreview}
               />

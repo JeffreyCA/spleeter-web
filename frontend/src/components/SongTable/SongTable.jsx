@@ -3,7 +3,7 @@ import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
-import SeparatedSongTable from './SeparatedSongTable'
+import ProcessedSongTable from './ProcessedSongTable'
 import SpleetButton from './SpleetButton'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './SongTable.css'
@@ -48,7 +48,7 @@ const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
 }
 
 /**
- * Component for the song table, containing the uploaded songs and their separated tracks.
+ * Component for the song table, containing the uploaded songs and their processed tracks.
  */
 class SongTable extends React.Component {
   constructor(props) {
@@ -70,12 +70,12 @@ class SongTable extends React.Component {
       onExpandAll
     } = this.props
 
-    // Show separated song details inside expand row
+    // Show processed song details inside expand row
     const expandRow = {
       renderer: row => {
         return (
-          <SeparatedSongTable
-            data={row.separated}
+          <ProcessedSongTable
+            data={row.processed}
             currentSongUrl={currentSongUrl}
             isPlaying={isPlaying}
             onPauseClick={onSepSongPauseClick}

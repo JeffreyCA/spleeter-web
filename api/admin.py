@@ -3,6 +3,6 @@ from .models import *
 
 # Register your models here.
 admin.site.register(SourceFile)
-admin.site.register(SourceSong)
-admin.site.register(SeparatedSong)
-admin.site.register(YouTubeFetchTask)
+admin.site.register(SourceTrack)
+admin.site.register(ProcessedTrack)
+admin.site.register(YTAudioDownloadTask)

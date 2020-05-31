@@ -20,7 +20,7 @@ class Home extends Component {
       songList: [],           // List of songs seen in the song table
       audioInstance: null,    // Reference audio player instance
       currentSrcSong: null,   // Current song, if it is a source song
-      currentSepSong: null,   // Current song, if it is a separated song
+      currentSepSong: null,   // Current song, if it is a processed song
       currentModalSong: null, // Current song displayed in the separation modal
       isPlaying: false,       // Whether audio is playing
       task: null,             // The separation task that was just submitted
