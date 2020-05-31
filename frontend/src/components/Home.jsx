@@ -203,8 +203,8 @@ class Home extends Component {
 
   componentDidMount() {
     this.loadData()
-    // Auto-refresh data every 10 seconds
-    setInterval(this.loadData, 10000)
+    // Auto-refresh data every 30 seconds
+    setInterval(this.loadData, 30000)
   }
 
   render() {
