@@ -5,6 +5,7 @@ WORKDIR /webapp/frontend
 
 # Install Node dependencies
 COPY package.json /webapp/frontend/
+COPY package-lock.json /webapp/frontend/
 RUN npm install
 
 COPY . .
