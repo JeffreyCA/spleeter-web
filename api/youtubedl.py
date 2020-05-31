@@ -16,7 +16,8 @@ def get_file_ext(url):
     opts = {
         # Always use the best audio quality available
         'format': 'bestaudio/best',
-        'forcefilename': True
+        'forcefilename': True,
+        'noplaylist': True
     }
     # Try up to 3 times as youtubedl tends to be flakey
     for _ in range(settings.YOUTUBE_MAX_RETRIES):
@@ -39,7 +40,8 @@ def get_meta_info(url):
     """
     opts = {
         'format': 'bestaudio/best',
-        'forcefilename': True
+        'forcefilename': True,
+        'noplaylist': True
     }
     # Try up to 3 times, as youtubedl tends to be flakey
     for _ in range(settings.YOUTUBE_MAX_RETRIES):
@@ -85,7 +87,8 @@ def download_audio(url, dir_path):
         'format': 'bestaudio/best',
         'forcefilename': True,
         'outtmpl': str(dir_path),
-        'cachedir': False
+        'cachedir': False,
+        'noplaylist': True
     }
 
     # Retry mechanism is handled on Huey's side

@@ -4,6 +4,7 @@ import BootstrapTable from 'react-bootstrap-table-next'
 import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
 import ProcessedSongTable from './ProcessedSongTable'
+import DeleteButton from './DeleteButton'
 import SpleetButton from './SpleetButton'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './SongTable.css'
@@ -39,10 +40,11 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
  * Formatter function for separate button column. 
  */
 const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { onSpleetClick } = formatExtraData
+  const { onDeleteClick, onSpleetClick } = formatExtraData
   return (
     <div className="d-flex align-items-center justify-content-center">
       <SpleetButton onClick={onSpleetClick} song={row} />
+      <DeleteButton onClick={onDeleteClick} song={row} />
     </div>
   )
 }
@@ -61,6 +63,7 @@ class SongTable extends React.Component {
       currentSongUrl,
       isPlaying,
       expandedIds,
+      onDeleteClick,
       onSpleetClick,
       onSepSongPauseClick,
       onSepSongPlayClick,
@@ -136,9 +139,10 @@ class SongTable extends React.Component {
       {
         dataField: 'download_dummy',
         isDummyField: true,
-        text: 'Separate Source',
+        text: '',
         formatter: spleetColFormatter,
         formatExtraData: {
+          onDeleteClick: onDeleteClick,
           onSpleetClick: onSpleetClick
         }
       }

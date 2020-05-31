@@ -77,7 +77,7 @@ class UploadModal extends React.Component {
   deleteCurrentFile = () => {
     if (this.state.fileId != -1) {
       console.log('Deleted ' + this.state.fileId)
-      axios.delete('/api/source-file/', { data: { id: this.state.fileId } })
+      axios.delete('/api/source-file/file/', { data: { id: this.state.fileId } })
     }
   }
 
@@ -114,7 +114,7 @@ class UploadModal extends React.Component {
       }
       // Make request to add Song
       axios
-        .post('/api/source-song/file/', song)
+        .post('/api/source-track/file/', song)
         .then(({ data }) => {
           console.log(data)
           this.props.hide()
@@ -132,7 +132,7 @@ class UploadModal extends React.Component {
         title: this.state.title
       }
       axios
-      .post('/api/source-song/youtube/', details)
+      .post('/api/source-track/youtube/', details)
       .then(() => {
         this.props.hide()
         this.props.refresh()

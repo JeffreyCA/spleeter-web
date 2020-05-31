@@ -4,6 +4,7 @@ import { Alert } from 'react-bootstrap'
 import MusicPlayer from './MusicPlayer'
 import MyNavBar from './MyNavBar'
 import SongTable from './SongTable/SongTable'
+import DeleteModal from './SongTable/DeleteModal'
 import SpleetModal from './SongTable/SpleetModal'
 import UploadModal from './Upload/UploadModal'
 
@@ -15,6 +16,7 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      showDeleteModal: false, // Whether to show delete track modal
       showSpleetModal: false, // Whether to show source separation modal
       showUploadModal: false, // Whether to show upload modal
       songList: [],           // List of songs seen in the song table
@@ -111,12 +113,12 @@ class Home extends Component {
       expandedIds: [...this.state.expandedIds, src_id]
     })
     this.loadData()
-    // Set task state to null after 3 seconds
+    // Set task state to null after 5 seconds
     setInterval(() => {
       this.setState({
         task: null
       })
-    }, 3000)
+    }, 5000)
   }
 
   /**
@@ -153,12 +155,24 @@ class Home extends Component {
     }
   }
 
+  onDeleteClick = song => {
+    this.setState({ showDeleteModal: true, currentModalSong: song })
+  }
+
   onSpleetClick = song => {
     this.setState({ showSpleetModal: true, currentModalSong: song })
   }
 
   onUploadClick = () => {
     this.setState({ showUploadModal: true })
+  }
+
+  handleDeleteModalHide = () => {
+    this.setState({ showDeleteModal: false })
+  }
+
+  handleDeleteModalExited = () => {
+    this.setState({ currentModalSong: null })
   }
 
   handleSpleetModalHide = () => {
@@ -178,7 +192,7 @@ class Home extends Component {
    */
   loadData = async () => {
     axios
-      .get('/api/source-song/')
+      .get('/api/source-track/')
       .then(({ data }) => {
         if (data) {
           this.setState({ songList: data })
@@ -196,6 +210,7 @@ class Home extends Component {
   render() {
     const {
       songList,
+      showDeleteModal,
       showSpleetModal,
       showUploadModal,
       currentSrcSong,
@@ -226,7 +241,7 @@ class Home extends Component {
             {task && (
               <Alert variant="success">
                 <span>
-                  <a href={`/api/separate/${task.id}`}>{task.id}</a>:{' '}
+                  <a target="_blank" href={`/api/separate/${task.id}`}>{task.id}</a>:{' '}
                   {task.status}
                 </span>
               </Alert>
@@ -238,6 +253,7 @@ class Home extends Component {
               expandedIds={expandedIds}
               onExpandRow={this.onExpandRow}
               onExpandAll={this.onExpandAll}
+              onDeleteClick={this.onDeleteClick}
               onSpleetClick={this.onSpleetClick}
               onSepSongPauseClick={this.onSepSongPauseClick}
               onSepSongPlayClick={this.onSepSongPlayClick}
@@ -263,6 +279,13 @@ class Home extends Component {
           hide={this.handleSpleetModalHide}
           exit={this.handleSpleetModalExited}
           submit={this.onSpleetTaskSubmit}
+          refresh={this.loadData}
+          song={currentModalSong}
+        />
+        <DeleteModal
+          show={showDeleteModal}
+          hide={this.handleDeleteModalHide}
+          exit={this.handleDeleteModalExited}
           refresh={this.loadData}
           song={currentModalSong}
         />

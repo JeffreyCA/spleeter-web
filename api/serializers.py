@@ -41,11 +41,11 @@ class SourceFileSerializer(serializers.ModelSerializer):
         model = SourceFile
         fields = ('id', 'file', 'is_youtube', 'youtube_link', 'youtube_fetch_task')
 
-class YouTubeLinkSerializer(serializers.Serializer):
+class YTLinkSerializer(serializers.Serializer):
     """Simple serializer for a valid YouTube video URL."""
     link = serializers.URLField(validators=[is_valid_youtube])
 
-class FetchTaskSerializer(serializers.ModelSerializer):
+class YTAudioDownloadTaskSerializer(serializers.ModelSerializer):
     """Serializer for YTAudioDownloadTask model"""
     status = ChoicesSerializerField()
     class Meta:
