@@ -1,17 +1,17 @@
-import traceback
-import uuid
-from os.path import join
-
 import ffmpeg
 import numpy as np
 from spleeter import *
-from spleeter.utils import *
 from spleeter.audio.adapter import get_default_audio_adapter
-
-from .separator import Separator
+from spleeter.separator import Separator
+from spleeter.utils import *
 
 class SpleeterSeparator:
+    """Performs source separation using Spleeter API."""
     def __init__(self, config=None):
+        """Default constructor.
+
+        :param config: Separator config, defaults to None
+        """
         if config is None:
             self.audio_bitrate = '256k'
             self.audio_format = 'mp3'
@@ -22,10 +22,18 @@ class SpleeterSeparator:
             self.audio_format = config['audio_format']
             self.sample_rate = config['sample_rate']
             self.spleeter_stem = config['spleeter_stem']
+        # Use librosa backend as it is less memory intensive
         self.separator = Separator(self.spleeter_stem, stft_backend='librosa', multiprocess=False)
         self.audio_adapter = get_default_audio_adapter()
 
-    def predict(self, parts, input_path, output_path):
+    def separate(self, parts, input_path, output_path):
+        """Performs source separation by adding together the parts to be kept.
+
+        :param parts: List of parts to keep ('vocals', 'drums', 'bass', 'other')
+        :param input_path: Path to source file
+        :param output_path: Path to output file
+        :raises e: FFMPEG error
+        """
         try:
             waveform, _ = self.audio_adapter.load(input_path, sample_rate=self.sample_rate)
             prediction = self.separator.separate(waveform)

@@ -23,7 +23,7 @@ class SpleetModal extends React.Component {
       drums: false,     // Include drums
       bass: false,      // Include bass
       other: false,     // Include accompaniment
-      overwrite: false, // Whether to overwrite existing separated song, if exists
+      overwrite: false, // Whether to overwrite existing processed song, if exists
       errors: []
     }
   }
@@ -62,7 +62,7 @@ class SpleetModal extends React.Component {
    */
   onSubmit = () => {
     const data = {
-      source_song: this.props.song.id,
+      source_track: this.props.song.id,
       vocals: this.state.vocals,
       drums: this.state.drums,
       bass: this.state.bass,
@@ -73,7 +73,7 @@ class SpleetModal extends React.Component {
     axios
       .post('/api/separate/', data)
       .then(({ data }) => {
-        this.props.submit(data.source_song, data.id, data.status)
+        this.props.submit(data.source_track, data.id, data.status)
         this.props.hide()
       })
       .catch(({ response }) => {

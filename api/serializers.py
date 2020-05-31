@@ -3,16 +3,26 @@ from .models import *
 from .validators import is_valid_youtube
 
 class ChoicesSerializerField(serializers.SerializerMethodField):
+    """Read-only field with representation of a model field with choices."""
     def to_representation(self, value):
         method_name = 'get_{field_name}_display'.format(field_name=self.field_name)
         method = getattr(value, method_name)
         return method()
 
-class SeparatedSongSerializer(serializers.ModelSerializer):
+class ProcessedTrackSerializer(serializers.ModelSerializer):
+    """Serializer for ProcessedTrack model."""
+    # The status of the source separation task
     status = ChoicesSerializerField()
+    # Whether to overwrite any existing processed track with the same source track and 'parts to keep'.
     overwrite = serializers.BooleanField(read_only=True)
 
     def validate(self, data):
+        """
+        Validate request data to ensure that the user does not separate a source track
+        with zero or all four parts checked.
+
+        :param data: Request data
+        """
         all_checked = data['vocals'] and data['drums'] and data['bass'] and data['other']
         none_checked = not (data['vocals'] or data['drums'] or data['bass'] or data['other'])
         if all_checked:
@@ -22,31 +32,36 @@ class SeparatedSongSerializer(serializers.ModelSerializer):
         return data
 
     class Meta:
-        model = SeparatedSong
-        fields = ('id', 'source_song', 'artist', 'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error', 'overwrite', 'date_created')
+        model = ProcessedTrack
+        fields = ('id', 'source_track', 'artist', 'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error', 'overwrite', 'date_created')
 
 class SourceFileSerializer(serializers.ModelSerializer):
+    """Serializer for SourceFile model"""
     class Meta:
         model = SourceFile
         fields = ('id', 'file', 'is_youtube', 'youtube_link', 'youtube_fetch_task')
 
 class YouTubeLinkSerializer(serializers.Serializer):
+    """Simple serializer for a valid YouTube video URL."""
     link = serializers.URLField(validators=[is_valid_youtube])
 
 class FetchTaskSerializer(serializers.ModelSerializer):
+    """Serializer for YTAudioDownloadTask model"""
     status = ChoicesSerializerField()
     class Meta:
-        model = YouTubeFetchTask
+        model = YTAudioDownloadTask
         fields = ('id', 'status', 'error')
 
-class SourceSongSerializer(serializers.ModelSerializer):
-    separated = SeparatedSongSerializer(many=True, read_only=True)
+class SourceTrackSerializer(serializers.ModelSerializer):
+    """Serializer for representing a SourceTrack along with its associated ProcessedTracks."""
+    processed = ProcessedTrackSerializer(many=True, read_only=True)
 
     class Meta:
-        model = SourceSong
-        fields = ('id', 'source_id', 'url', 'artist', 'title', 'separated', 'date_created')
+        model = SourceTrack
+        fields = ('id', 'source_file', 'url', 'artist', 'title', 'processed', 'date_created')
 
-class SourceSongYouTubeSerializer(serializers.ModelSerializer):
+class YTSourceTrackSerializer(serializers.ModelSerializer):
+    """Serializer for a SourceTrack derived from YouTube link."""
     youtube_link = serializers.URLField(write_only=True)
     artist = serializers.CharField(max_length=100)
     title = serializers.CharField(max_length=100)
@@ -56,5 +71,5 @@ class SourceSongYouTubeSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     class Meta:
-        model = SourceSong
+        model = SourceTrack
         fields = ['id', 'youtube_link', 'artist', 'title']
