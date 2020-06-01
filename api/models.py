@@ -68,7 +68,7 @@ class SourceFile(models.Model):
     # The original YouTube link, if source is from YouTube
     youtube_link = models.URLField(unique=True, blank=True, null=True, validators=[is_valid_youtube])
     # If file is from a YouTube link import, then this field refers to the task executed to download the audio file.
-    youtube_fetch_task = models.OneToOneField(YTAudioDownloadTask, on_delete=models.SET_NULL, null=True, blank=True)
+    youtube_fetch_task = models.OneToOneField(YTAudioDownloadTask, on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def metadata(self):
         """Extract artist and title information from audio
@@ -137,7 +137,7 @@ class SourceTrack(models.Model):
     # UUID to uniquely identify the source song
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Corresponding SourceFile (id)
-    source_file = models.OneToOneField(SourceFile, on_delete=models.PROTECT, unique=True)
+    source_file = models.OneToOneField(SourceFile, on_delete=models.DO_NOTHING, unique=True)
     # Artist name
     artist = models.CharField(max_length=200)
     # Title
