@@ -7,6 +7,7 @@ from django.core.files import File
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.utils import timezone
+from django.utils.text import slugify
 
 from huey import crontab
 from huey.contrib.djhuey import task, periodic_task
@@ -35,7 +36,7 @@ def separate_task(processing_track):
     try:
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, str(processing_track.id))
-        filename = processing_track.formatted_name() + '.mp3'
+        filename = slugify(processing_track.formatted_name()) + '.mp3'
         rel_media_path = os.path.join(settings.SEPARATE_DIR, str(processing_track.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
@@ -97,7 +98,7 @@ def fetch_youtube_audio(source_file, artist, title, link):
     try:
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR, str(source_file.id))
-        filename = artist + ' - ' + title + get_file_ext(link)
+        filename = slugify(artist + ' - ' + title) + get_file_ext(link)
         rel_media_path = os.path.join(settings.UPLOAD_DIR, str(fetch_task.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
