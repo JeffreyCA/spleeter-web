@@ -3,15 +3,22 @@
 
 Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or remove the vocals to get an instrumental version of a song.
 
-It is powered by [Spleeter](https://github.com/deezer/spleeter), the awesome source separation library from Deezer. Specifically, it uses the pretrained [`4stems-model`](https://github.com/deezer/spleeter/wiki/3.-Models#pretrained-model) model, which performs audio separation very well.
+It is powered by [Spleeter](https://github.com/deezer/spleeter), the awesome source separation library from Deezer that uses deep learning to separate the various components of a song. Spleeter Web uses the pretrained model [`4stems-model`](https://github.com/deezer/spleeter/wiki/3.-Models#pretrained-model), which performs very well on the [*MusDB*](https://sigsep.github.io/datasets/musdb.html) benchmark.
 
 The app uses [Django](https://www.djangoproject.com/) for the backend API, [React](https://reactjs.org/) for the frontend, [PostgreSQL](https://www.postgresql.org/) for the database, and [Huey](https://huey.readthedocs.io/en/latest/)+[Redis](https://redis.io/) for the task queue.
 
+### Features
+- Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
+- Import tracks by file (MP3, FLAC, WAV) or by YouTube link
+- Persistent audio library with ability to stream and download your source tracks and processed tracks
+- Uses background task queue to process audio and handle YouTube link conversion/imports
+- Customize number of background workers working on audio separation and YouTube importing
+- Supports third-party storage backends like S3 and Azure Blobs
+- Clean and responsive UI
+- Fully Dockerized
+
 ### [Demo site](https://jeffreyca.github.io/spleeter-web/)
-
-### Screenshot
-
-<img src="./screenshots/main.png" width="80%">
+<img src="./screenshots/main.png" width="70%">
 
 ## Getting started with Docker
 ### Requirements
@@ -27,7 +34,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 
 2. Launch **Spleeter Web**
 
-    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
+    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
 ### Requirements
@@ -75,7 +82,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
     ```
 6. Launch **Spleeter Web**
 
-    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser.
+    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
