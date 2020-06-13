@@ -34,7 +34,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
 
 2. Launch **Spleeter Web**
 
-    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
 ### Requirements
@@ -82,7 +82,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API, [Reac
     ```
 6. Launch **Spleeter Web**
 
-    Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
@@ -102,7 +102,7 @@ AZURE_ACCOUNT_NAME=<account name>
 If not using Docker, set the above values as environment variables.
 
 ## Deploying
-**Spleeter Web** can be deployed on VMs such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.
+**Spleeter Web** can be deployed on a VPS or a cloud server such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.
 
 1. Clone this git repo
     ```sh
@@ -110,27 +110,37 @@ If not using Docker, set the above values as environment variables.
     > cd spleeter-web
     ```
 
-2. In `spleeter-web`, create an `.env` file with production environment variables
+2. If you want your server to self-host the media files instead of using a cloud storage provider, then first edit `django_react/settings_docker.py` and uncomment this line:
+    ```
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    ```
+    Next, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
+
+3. In `spleeter-web`, create an `.env` file with the production environment variables
 
     `.env` file:
     ```
-    APP_HOST=<spleeter-web.com>
-    AZURE_ACCOUNT_KEY=<account key>
-    AZURE_ACCOUNT_NAME=<account name>
-    HUEY_WORKERS=<num workers>
+    APP_HOST=<domain name or public IP of server>
+    AZURE_ACCOUNT_KEY=<account key>   # Optional
+    AZURE_ACCOUNT_NAME=<account name> # Optional
+    HUEY_WORKERS=<num workers>        # Optional (default = 2)
     ```
-3. Build and start prebuilt production containers
 
-    The following pulls prebuilt Docker images from Docker Hub:
+    These values are used in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings.
+
+4. Build and start production containers
+
+    If you are self-hosting media files:
     ```sh
-    > sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+    > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build -d
     ```
 
-    Alternatively, you can build the Docker images from source.
-
+    Otherwise:
     ```sh
     > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
+
+4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
 
 ## LICENSE
 [MIT](./LICENSE)
