@@ -30,7 +30,7 @@ REST_FRAMEWORK = {
 }
 
 HUEY = {
-	'huey_class': 'huey.SqliteHuey',
+    'huey_class': 'huey.SqliteHuey',
     'results': False,
     'immediate': False,
     'consumer': {
