@@ -1,5 +1,4 @@
 import os
-import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,9 +12,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('APP_HOST')]
+ALLOWED_HOSTS = [os.getenv('APP_HOST'), '0.0.0.0', '127.0.0.1', 'localhost']
 
 DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# OR
+# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
@@ -100,7 +102,14 @@ WSGI_APPLICATION = 'django_react.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'spleeter-web',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
 }
 
 # Internationalization
@@ -120,7 +129,7 @@ HUEY = {
     'results': False,
     'immediate': False,
     'consumer': {
-        'workers': int(os.getenv('HUEY_WORKERS', '2')),
+        'workers': int(os.getenv('HUEY_WORKERS', '1')),
     },
     'url': os.getenv('REDIS_URL', 'redis://localhost:6379')
 }

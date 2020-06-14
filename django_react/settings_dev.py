@@ -1,12 +1,11 @@
 import os
-import dj_database_url
 
 SECRET_KEY = 'default'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # OR
@@ -17,7 +16,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://spleeter-web@127.0.0.1:5432/spleeter-web', conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'spleeter-web.sqlite3',
+    }
 }
 
 REST_FRAMEWORK = {
@@ -25,4 +27,13 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
+}
+
+HUEY = {
+	'huey_class': 'huey.SqliteHuey',
+    'results': False,
+    'immediate': False,
+    'consumer': {
+        'workers': int(os.getenv('HUEY_WORKERS', '1')),
+    },
 }

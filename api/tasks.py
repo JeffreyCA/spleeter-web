@@ -40,7 +40,6 @@ def separate_task(processing_track):
         rel_media_path = os.path.join(settings.SEPARATE_DIR, str(processing_track.id), filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-
         separator = SpleeterSeparator()
 
         parts = {
@@ -75,7 +74,14 @@ def separate_task(processing_track):
             processing_track.save()
         else:
             raise Exception('Error writing to file')
-    except BaseException as error:
+    except FileNotFoundError as error:
+        print(error)
+        print('Please make sure you have FFmpeg and FFprobe installed.')
+        processing_track.status = ProcessedTrack.Status.ERROR
+        processing_track.error = str(error)
+        processing_track.save()
+    except Exception as error:
+        print(error)
         processing_track.status = ProcessedTrack.Status.ERROR
         processing_track.error = str(error)
         processing_track.save()
@@ -129,7 +135,8 @@ def fetch_youtube_audio(source_file, artist, title, link):
             source_file.save()
         else:
             raise Exception('Error writing to file')
-    except BaseException as error:
+    except Exception as error:
+        print(error)
         fetch_task.status = YTAudioDownloadTask.Status.ERROR
         fetch_task.error = str(error)
         fetch_task.save()

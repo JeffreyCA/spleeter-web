@@ -13,7 +13,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('APP_HOST', '0.0.0.0')]
+ALLOWED_HOSTS = [os.getenv('APP_HOST', '0.0.0.0', '127.0.0.1', 'localhost')]
 
 DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # OR
