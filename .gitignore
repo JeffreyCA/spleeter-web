@@ -36,5 +36,6 @@ env.bak/
 venv.bak/
 
 *.sqlite3
+huey.*
 .coverage
 media/

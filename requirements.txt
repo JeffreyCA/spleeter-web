@@ -9,6 +9,7 @@ azure-storage-common==2.1.0
 certifi==2020.4.5.1
 cffi==1.14.0
 chardet==3.0.4
+colorama==0.4.3
 coverage==5.1
 cryptography==2.9.2
 decorator==4.4.2
@@ -50,7 +51,7 @@ pylint==2.5.2
 pylint-django==2.0.15
 pylint-plugin-utils==0.6
 python-dateutil==2.8.1
-python-magic==0.4.18
+python-magic-bin==0.4.14
 pytz==2019.3
 redis==3.5.3
 requests==2.23.0
@@ -73,6 +74,6 @@ urllib3==1.25.9
 Werkzeug==1.0.1
 whitenoise==5.1.0
 wrapt==1.11.2
-youtube-dl==2020.6.6
+-e git+https://github.com/JeffreyCA/youtube-dl.git@761f9a2a8f662bec01d7c67ca8a11ed96592a177#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.1.0
