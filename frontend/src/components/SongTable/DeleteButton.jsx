@@ -13,7 +13,7 @@ class DeleteButton extends React.Component {
 
   render() {
     return (
-      <Button variant="danger" className="spleet-btn ml-2" onClick={this.handleClick}>
+      <Button variant="danger" className="spleet-btn ml-2" disabled={this.props.disabled} onClick={this.handleClick}>
         <Trash />
       </Button>
     )

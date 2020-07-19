@@ -41,10 +41,12 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
  */
 const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
   const { onDeleteClick, onSpleetClick } = formatExtraData
+  const disabled = !row.url;
+
   return (
     <div className="d-flex align-items-center justify-content-center">
-      <SpleetButton onClick={onSpleetClick} song={row} />
-      <DeleteButton onClick={onDeleteClick} song={row} />
+      <SpleetButton disabled={disabled} onClick={onSpleetClick} song={row} />
+      <DeleteButton disabled={disabled} onClick={onDeleteClick} song={row} />
     </div>
   )
 }

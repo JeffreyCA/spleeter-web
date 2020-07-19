@@ -12,7 +12,7 @@ class SpleetButton extends React.Component {
 
   render() {
     return (
-      <Button className="spleet-btn ml-2" onClick={this.handleClick}>
+      <Button className="spleet-btn ml-2" disabled={this.props.disabled} onClick={this.handleClick}>
         Spleet
       </Button>
     )
