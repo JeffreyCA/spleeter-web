@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { Alert } from 'react-bootstrap'
 import MusicPlayer from './MusicPlayer'
-import MyNavBar from './MyNavBar'
-import SongTable from './SongTable/SongTable'
-import DeleteModal from './SongTable/DeleteModal'
-import SpleetModal from './SongTable/SpleetModal'
-import UploadModal from './Upload/UploadModal'
+import HomeNavBar from '../Nav/HomeNavBar'
+import SongTable from '../SongTable/SongTable'
+import DeleteModal from '../SongTable/DeleteModal'
+import SpleetModal from '../SongTable/SpleetModal'
+import UploadModal from '../Upload/UploadModal'
+import './Home.css'
 
 /**
  * Home component where main functionality happens, consisting of the main nav bar
@@ -233,7 +234,7 @@ class Home extends Component {
 
     return (
       <div>
-        <MyNavBar onUploadClick={this.onUploadClick} />
+        <HomeNavBar onUploadClick={this.onUploadClick} />
         <div className="jumbotron jumbotron-fluid bg-transparent">
           <div className="container secondary-color">
             <h2 className="display-5">Song List</h2>

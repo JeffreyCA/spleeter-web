@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Badge } from 'react-bootstrap'
+import { OriginalBadge, VocalsBadge, AccompShortBadge, DrumsBadge, BassBadge } from '../Badges'
 import ReactJkMusicPlayer from '@jeffreyca/react-jinke-music-player'
 import './MusicPlayer.css'
 
@@ -23,31 +23,17 @@ class MusicPlayer extends Component {
     // Show a colour-coded badge indicating the components that are included
     var audioTitleExtra
     if (isSource) {
-      audioTitleExtra = (
-        <Badge className="ml-2 mr-2" pill variant="primary">
-          Original
-        </Badge>
-      )
+      audioTitleExtra = <OriginalBadge />
     } else {
       const vocalBadge = song.vocals ? (
-        <Badge pill variant="vocals">
-          Vocals
-        </Badge>
+        <VocalsBadge />
       ) : null
       const accompBadge = song.other ? (
-        <Badge pill variant="accomp">
-          Accomp.
-        </Badge>
+        <AccompShortBadge />
       ) : null
-      const bassBadge = song.bass ? (
-        <Badge pill variant="bass">
-          Bass
-        </Badge>
-      ) : null
+      const bassBadge = song.bass ? <BassBadge /> : null
       const drumsBadge = song.drums ? (
-        <Badge pill variant="drums">
-          Drums
-        </Badge>
+        <DrumsBadge />
       ) : null
       audioTitleExtra = (
         <div className="badge-flex ml-2 mr-2">

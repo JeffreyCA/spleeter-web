@@ -23,3 +23,18 @@ export const toRelativeDateSpan = isoDateString => {
   }
   return <span title={longDateTimeStr}>{label}</span>
 }
+
+// Credit to @kenfehling/react-designable-audio-player
+export const zeroPadNumber = (number) => {
+  return number < 10 ? '0' + number : number
+}
+
+export const formatTime = seconds => {
+  if (typeof seconds === 'number' && seconds >= 0) {
+    const m = Math.floor(seconds / 60)
+    const s = Math.round(seconds) % 60
+    return zeroPadNumber(m) + ':' + zeroPadNumber(s)
+  } else {
+    return '0:00'
+  }
+}

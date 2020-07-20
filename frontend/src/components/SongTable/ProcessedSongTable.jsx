@@ -3,7 +3,7 @@ import { Badge, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
-
+import { VocalsBadge, AccompBadge, DrumsBadge, BassBadge } from '../Badges'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './ProcessedSongTable.css'
 
@@ -79,45 +79,12 @@ class ProcessedSongTable extends Component {
         isDummyField: true,
         text: 'Included parts',
         formatter: (cellContent, row) => {
-          const vocalBadge = row.vocals ? (
-            <Badge pill variant="vocals">
-              Vocals
-            </Badge>
-          ) : (
-            <Badge pill variant="vocals-faded">
-              Vocals
-            </Badge>
-          )
-          const accompBadge = row.other ? (
-            <Badge pill variant="accomp">
-              Accompaniment
-            </Badge>
-          ) : (
-            <Badge pill variant="accomp-faded">
-              Accompaniment
-            </Badge>
-          )
-          const drumsBadge = row.drums ? (
-            <Badge pill variant="drums">
-              Drums
-            </Badge>
-          ) : (
-            <Badge pill variant="drums-faded">
-              Drums
-            </Badge>
-          )
-          const bassBadge = row.bass ? (
-            <Badge pill variant="bass">
-              Bass
-            </Badge>
-          ) : (
-            <Badge pill variant="bass-faded">
-              Bass
-            </Badge>
-          )
           return (
             <h5 className="mb-0">
-              {vocalBadge} {accompBadge} {bassBadge} {drumsBadge}
+              <VocalsBadge faded={!row.vocals} />
+              <AccompBadge faded={!row.other} />
+              <BassBadge faded={!row.bass} />
+              <DrumsBadge faded={!row.drums} />
             </h5>
           )
         }
