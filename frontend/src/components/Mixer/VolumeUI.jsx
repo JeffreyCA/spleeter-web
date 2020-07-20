@@ -9,6 +9,7 @@ const VolumeUI = props => {
   const onMuteClick = () => {
     props.onMuteClick(props.id)
   }
+
   const onVolChange = (newVal) => {
     props.onVolChange(props.id, newVal)
   }
@@ -26,7 +27,7 @@ const VolumeUI = props => {
 
   return (
     <Row noGutters className="volume-ui">
-      {badge}
+      <div className="badge-group">{badge}</div>
       <MuteButton isMuted={props.isMuted} onClick={onMuteClick} />
       <Col xs={4}>
         <ReactSlider
@@ -35,7 +36,7 @@ const VolumeUI = props => {
           trackClassName="vol-track"
           defaultValue={100}
           onChange={onVolChange}
-          min={0}
+          min={1}
           max={100}
           renderThumb={(props, state) => (
             <div {...props}>

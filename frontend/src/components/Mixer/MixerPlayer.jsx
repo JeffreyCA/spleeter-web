@@ -7,7 +7,8 @@ class MixerPlayer extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isLoaded: false,
+      isReady: false,
+      isInit: false,
       isPlaying: false,
       durationSeconds: 0,
       secondsElapsed: 0,
@@ -15,12 +16,27 @@ class MixerPlayer extends Component {
     }
 
     this.interval = null
-    this.tonePlayers = new Tone.Players({
-      'vocals':
-        '',
-      'drums':
-        ''
-    }).toDestination()
+    this.tonePlayers = null
+  }
+
+  componentDidMount() {
+    this.tonePlayers = new Tone.Players(
+      {
+        vocals:
+          'http://0.0.0.0:8000/media/uploads/aa3d92df-8bb3-4b98-bd40-03097301fa9c/vocals.mp3',
+        accomp:
+          'http://0.0.0.0:8000/media/uploads/1459819f-4aaa-4ba1-b1d2-24ff79d48c0e/other.mp3',
+        drums:
+          'http://0.0.0.0:8000/media/uploads/1079629d-1f3f-4d5f-a27a-42efa231fb42/drums.mp3',
+        bass:
+          'http://0.0.0.0:8000/media/uploads/c091c48c-6a78-417e-82a9-dc12be8470e6/bass.mp3'
+      },
+      () => {
+        this.setState({
+          isReady: true
+        })
+      }
+    ).toDestination()
   }
 
   isPlaying = audioElement => {
@@ -40,12 +56,14 @@ class MixerPlayer extends Component {
       Tone.Transport.pause()
       clearInterval(this.interval)
     } else {
-      if (!this.state.isLoaded) {
+      if (!this.state.isInit) {
         await Tone.start()
         this.tonePlayers.player('vocals').sync().start(0, 0)
+        this.tonePlayers.player('accomp').sync().start(0, 0)
+        this.tonePlayers.player('bass').sync().start(0, 0)
         this.tonePlayers.player('drums').sync().start(0, 0)
         this.setState({
-          isLoaded: true
+          isInit: true
         })
       }
 
@@ -97,7 +115,7 @@ class MixerPlayer extends Component {
     const durationSeconds = this.tonePlayers.player('vocals').buffer.duration
     const secondsElapsed = Math.min(durationSeconds, Tone.Transport.seconds)
     const secondsRemaining = Math.max(0, durationSeconds - secondsElapsed)
-    
+
     if (secondsElapsed === durationSeconds) {
       Tone.Transport.stop()
     }
@@ -115,29 +133,30 @@ class MixerPlayer extends Component {
     }
   }
 
-  onMuteClick = (id) => {
+  onMuteClick = id => {
     const player = this.tonePlayers.player(id)
     player.mute = !player.mute
   }
 
   onVolChange = (id, val) => {
-    const db = 10 * Math.log10(val / 100.0)
-    this.tonePlayers.player(id).volume.value = db;
+    const db = 20 * Math.log10(val / 100.0)
+    this.tonePlayers.player(id).volume.value = db
   }
 
   render() {
-    const {
-      durationSeconds,
-      secondsElapsed,
-      secondsRemaining
-    } = this.state
+    const { durationSeconds, secondsElapsed, secondsRemaining } = this.state
 
-    const player1Muted = this.tonePlayers.player('vocals').mute
-    const player2Muted = this.tonePlayers.player('drums').mute
+    const vocalsMuted = this.tonePlayers ? this.tonePlayers.player('vocals').mute : false
+    const accompMuted = this.tonePlayers ? this.tonePlayers.player('accomp').mute : false
+    const bassMuted = this.tonePlayers ? this.tonePlayers.player('bass').mute : false
+    const drumsMuted = this.tonePlayers
+      ? this.tonePlayers.player('drums').mute
+      : false
 
     return (
       <div>
         <PlayerUI
+          isPlayDisabled={!this.state.isReady}
           isPlaying={this.state.isPlaying}
           onPlayClick={this.play}
           onBeforeSeek={this.onBeforeSeek}
@@ -149,13 +168,25 @@ class MixerPlayer extends Component {
         />
         <VolumeUI
           id="vocals"
-          isMuted={player1Muted}
+          isMuted={vocalsMuted}
+          onMuteClick={this.onMuteClick}
+          onVolChange={this.onVolChange}
+        />
+        <VolumeUI
+          id="accomp"
+          isMuted={accompMuted}
+          onMuteClick={this.onMuteClick}
+          onVolChange={this.onVolChange}
+        />
+        <VolumeUI
+          id="bass"
+          isMuted={bassMuted}
           onMuteClick={this.onMuteClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="drums"
-          isMuted={player2Muted}
+          isMuted={drumsMuted}
           onMuteClick={this.onMuteClick}
           onVolChange={this.onVolChange}
         />

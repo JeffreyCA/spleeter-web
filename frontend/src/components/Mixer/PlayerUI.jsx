@@ -6,6 +6,7 @@ import './PlayerUI.css'
 
 const PlayerUI = props => {
   const {
+    isPlayDisabled,
     isPlaying,
     onPlayClick,
     onBeforeSeek,
@@ -18,6 +19,7 @@ const PlayerUI = props => {
   return (
     <div className="player-ui">
       <PlayButton
+        disabled={isPlayDisabled}
         className="play-button"
         isPlaying={isPlaying}
         onClick={onPlayClick}
