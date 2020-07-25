@@ -176,7 +176,8 @@ def fetch_youtube_audio(source_file, artist, title, link):
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR,
                                  str(source_file.id))
-        filename = slugify(artist + ' - ' + title) + get_file_ext(link)
+        filename = slugify(artist + ' - ' + title,
+                           allow_unicode=True) + get_file_ext(link)
         rel_media_path = os.path.join(settings.UPLOAD_DIR, str(fetch_task.id),
                                       filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)

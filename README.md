@@ -9,11 +9,11 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ### Features
 - Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
+    - **NEW: Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time.**
 - Import tracks by file (MP3, FLAC, WAV) or by YouTube link
 - Persistent audio library with ability to stream and download your source tracks and mixes
-- Uses background task queue to process audio and handle YouTube link conversion/imports
-- Customize number of background workers working on audio separation and YouTube importing
-- Supports third-party storage backends like S3 and Azure Blobs
+- Customize number of background workers working on audio separation and YouTube imports
+- Supports third-party storage backends like S3 and Azure Blob Storage
 - Clean and responsive UI
 - Fully Dockerized
 
