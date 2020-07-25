@@ -48,7 +48,7 @@ class SpleeterSeparator:
             if parts[key]:
                 out += prediction[key]
                 part_count += 1
-        out /= part_count
+
         self.audio_adapter.save(output_path, out, self.separator._sample_rate,
                                 self.audio_format, self.audio_bitrate)
 
