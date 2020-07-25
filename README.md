@@ -10,7 +10,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 ### Features
 - Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
 - Import tracks by file (MP3, FLAC, WAV) or by YouTube link
-- Persistent audio library with ability to stream and download your source tracks and processed tracks
+- Persistent audio library with ability to stream and download your source tracks and mixes
 - Uses background task queue to process audio and handle YouTube link conversion/imports
 - Customize number of background workers working on audio separation and YouTube importing
 - Supports third-party storage backends like S3 and Azure Blobs
@@ -97,11 +97,15 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
-By default, **Spleeter Web** uses the local filesystem to store uploaded files and processed track files. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
+By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
 
 You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
 
 In the same file, set the storage backend configuration values (`AZURE_ACCOUNT_KEY` and `AZURE_ACCOUNT_NAME` if using Azure).
+
+**CORS**
+
+To play back a dynamic mix, you may need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
 
 ## Deploying
 **Spleeter Web** can be deployed on a VPS or a cloud server such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.

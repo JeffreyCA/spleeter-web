@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
-import { Badge, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap'
+import {
+  Badge,
+  Button,
+  OverlayTrigger,
+  Spinner,
+  Tooltip
+} from 'react-bootstrap'
+import { Download } from 'react-bootstrap-icons'
 import BootstrapTable from 'react-bootstrap-table-next'
-import { toRelativeDateSpan } from '../../Utils'
-import PausePlayButton from './PausePlayButton'
-import { VocalsBadge, AccompBadge, DrumsBadge, BassBadge } from '../Badges'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
-import './ProcessedSongTable.css'
+import { toRelativeDateSpan } from '../../Utils'
+import { AccompBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges'
+import PausePlayButton from './PausePlayButton'
+import './StaticMixTable.css'
 
 const statusVariantMap = {
   'Done': 'success',
@@ -39,18 +46,60 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
 
 const downloadFormatter = (cell, row, rowIndex) => {
   const { url } = row
-  if (url) {
-    return (
-      <a href={url} download>
-        Link
-      </a>
-    )
-  } else {
-    return null
-  }
+  return (
+    <Button variant="success" disabled={!url} href={url}>
+      <Download />
+    </Button>
+  )
 }
 
-class ProcessedSongTable extends Component {
+const statusFormatter = (cellValue, row) => {
+  const variant = cellValue ? statusVariantMap[cellValue] : 'secondary'
+  const badgeLabel = cellValue ? cellValue : 'Other'
+
+  if (cellValue === 'Error') {
+    function renderErrorTooltip(props) {
+      const errorText = row.error ? row.error : 'Unknown Error'
+      return (
+        <Tooltip id="button-tooltip" {...props}>
+          {errorText}
+        </Tooltip>
+      )
+    }
+    const ErrorOverlay = () => (
+      <OverlayTrigger
+        placement="right"
+        delay={{ show: 100, hide: 100 }}
+        overlay={renderErrorTooltip}>
+        <Badge variant={variant}>{badgeLabel}</Badge>
+      </OverlayTrigger>
+    )
+    return (
+      <h5 className="mb-0">
+        <ErrorOverlay />
+      </h5>
+    )
+  } else if (cellValue === 'In Progress') {
+    return (
+      <h5 className="mb-0">
+        <Badge variant={variant}>{badgeLabel}</Badge>
+        <Spinner
+          className="ml-2"
+          animation="border"
+          variant="primary"
+          size="sm"
+        />
+      </h5>
+    )
+  }
+  return (
+    <h5 className="mb-0">
+      <Badge variant={variant}>{badgeLabel}</Badge>
+    </h5>
+  )
+}
+
+class StaticMixTable extends Component {
   render() {
     const {
       data,
@@ -98,51 +147,7 @@ class ProcessedSongTable extends Component {
       {
         dataField: 'status',
         text: 'Status',
-        formatter: (cellValue, row) => {
-          const variant = cellValue ? statusVariantMap[cellValue] : 'secondary'
-          const badgeLabel = cellValue ? cellValue : 'Other'
-
-          if (cellValue === 'Error') {
-            function renderErrorTooltip(props) {
-              const errorText = row.error ? row.error : 'Unknown Error'
-              return (
-                <Tooltip id="button-tooltip" {...props}>
-                  {errorText}
-                </Tooltip>
-              )
-            }
-            const ErrorOverlay = () => (
-              <OverlayTrigger
-                placement="right"
-                delay={{ show: 100, hide: 100 }}
-                overlay={renderErrorTooltip}>
-                <Badge variant={variant}>{badgeLabel}</Badge>
-              </OverlayTrigger>
-            )
-            return (
-              <h5 className="mb-0">
-                <ErrorOverlay />
-              </h5>
-            )
-          } else if (cellValue === 'In Progress') {
-            return (
-              <h5 className="mb-0">
-                <Badge variant={variant}>{badgeLabel}</Badge>
-                <Spinner
-                  className="ml-2"
-                  animation="border"
-                  variant="primary"
-                  size="sm"
-                />
-              </h5>
-            )
-          }
-          return (
-            <h5 className="mb-0">
-              <Badge variant={variant}>{badgeLabel}</Badge>
-            </h5>
-          )
-        },
+        formatter: statusFormatter,
         sort: true
       },
       {
@@ -171,13 +176,11 @@ class ProcessedSongTable extends Component {
     } else {
       return (
         <div className="m-4 text-center">
-          <p>
-            No processed tracks. Press the "Spleet" button to separate this song.
-          </p>
+          <p>No static mixes. Click "Static Mix" to create one.</p>
         </div>
       )
     }
   }
 }
 
-export default ProcessedSongTable
+export default StaticMixTable

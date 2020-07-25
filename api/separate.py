@@ -23,18 +23,22 @@ class SpleeterSeparator:
             self.sample_rate = config['sample_rate']
             self.spleeter_stem = config['spleeter_stem']
         # Use librosa backend as it is less memory intensive
-        self.separator = Separator(self.spleeter_stem, stft_backend='librosa', multiprocess=False)
+        self.separator = Separator(self.spleeter_stem,
+                                   stft_backend='librosa',
+                                   multiprocess=False)
         self.audio_adapter = get_default_audio_adapter()
 
-    def separate(self, parts, input_path, output_path):
-        """Performs source separation by adding together the parts to be kept.
+    def create_static_mix(self, parts, input_path, output_path):
+        """Creates a static mix by performing source separation and adding the
+           parts to be kept into a single track.
 
         :param parts: List of parts to keep ('vocals', 'drums', 'bass', 'other')
         :param input_path: Path to source file
         :param output_path: Path to output file
         :raises e: FFMPEG error
         """
-        waveform, _ = self.audio_adapter.load(input_path, sample_rate=self.sample_rate)
+        waveform, _ = self.audio_adapter.load(input_path,
+                                              sample_rate=self.sample_rate)
         prediction = self.separator.separate(waveform)
         out = np.zeros_like(prediction['vocals'])
         part_count = 0
@@ -45,4 +49,22 @@ class SpleeterSeparator:
                 out += prediction[key]
                 part_count += 1
         out /= part_count
-        self.audio_adapter.save(output_path, out, self.separator._sample_rate, self.audio_format, self.audio_bitrate)
+        self.audio_adapter.save(output_path, out, self.separator._sample_rate,
+                                self.audio_format, self.audio_bitrate)
+
+    def separate_into_parts(self, input_path, output_path):
+        """Creates a dynamic mix
+
+        :param input_path: [description]
+        :type input_path: [type]
+        :param output_path: [description]
+        :type output_path: [type]
+        """
+        self.separator.separate_to_file(input_path,
+                                        output_path,
+                                        self.audio_adapter,
+                                        codec='mp3',
+                                        bitrate=self.audio_bitrate,
+                                        filename_format='{instrument}.{codec}',
+                                        synchronous=False)
+        self.separator.join(600)

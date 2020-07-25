@@ -14,7 +14,7 @@ def get_file_ext(url):
     :param url: YouTube video URL
     """
     opts = {
-        # Always use the best audio quality available
+    # Always use the best audio quality available
         'format': 'bestaudio/best',
         'forcefilename': True,
         'noplaylist': True
@@ -60,15 +60,20 @@ def get_meta_info(url):
                     parsed_artist, parsed_title = result
 
                 metadata = {
-                    'title': info['title'],            # YT video title
-                    'uploader': info['uploader'],      # YT video uploader
-                    'embedded_artist': info['artist'], # YT video's embedded track artist (some official songs)
-                    'embedded_title': info['track'],   # YT video's embedded track title (some official songs)
-                    'parsed_artist': parsed_artist,    # Artist name parsed from the YouTube video title
-                    'parsed_title': parsed_title,      # Title parsed from the YouTube video title
-                    'duration': info['duration'],      # Duration of YouTube video in seconds
-                    'url': info['webpage_url'],        # YouTube video URL
-                    'filename': filename               # Filename (including extension)
+                    'title': info['title'],    # YT video title
+                    'uploader': info['uploader'],    # YT video uploader
+                    'embedded_artist': info[
+                        'artist'],    # YT video's embedded track artist (some official songs)
+                    'embedded_title': info[
+                        'track'],    # YT video's embedded track title (some official songs)
+                    'parsed_artist':
+                    parsed_artist,    # Artist name parsed from the YouTube video title
+                    'parsed_title':
+                    parsed_title,    # Title parsed from the YouTube video title
+                    'duration':
+                    info['duration'],    # Duration of YouTube video in seconds
+                    'url': info['webpage_url'],    # YouTube video URL
+                    'filename': filename    # Filename (including extension)
                 }
                 return metadata
         except DownloadError:

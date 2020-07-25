@@ -12,7 +12,10 @@ export const OriginalBadge = () => {
 export const VocalsBadge = props => {
   const { faded } = props
   return (
-    <Badge pill variant={faded ? "vocals-faded" : "vocals"}>
+    <Badge
+      pill
+      className={props.className}
+      variant={faded ? 'vocals-faded' : 'vocals'}>
       Vocals
     </Badge>
   )
@@ -21,7 +24,10 @@ export const VocalsBadge = props => {
 export const AccompBadge = props => {
   const { faded } = props
   return (
-    <Badge pill variant={faded ? 'accomp-faded' : 'accomp'}>
+    <Badge
+      pill
+      className={props.className}
+      variant={faded ? 'accomp-faded' : 'accomp'}>
       Accompaniment
     </Badge>
   )
@@ -30,7 +36,10 @@ export const AccompBadge = props => {
 export const AccompShortBadge = props => {
   const { faded } = props
   return (
-    <Badge pill variant={faded ? 'accomp-faded' : 'accomp'}>
+    <Badge
+      pill
+      className={props.className}
+      variant={faded ? 'accomp-faded' : 'accomp'}>
       Accomp.
     </Badge>
   )
@@ -39,7 +48,10 @@ export const AccompShortBadge = props => {
 export const DrumsBadge = props => {
   const { faded } = props
   return (
-    <Badge pill variant={faded ? 'drums-faded' : 'drums'}>
+    <Badge
+      pill
+      className={props.className}
+      variant={faded ? 'drums-faded' : 'drums'}>
       Drums
     </Badge>
   )
@@ -48,7 +60,10 @@ export const DrumsBadge = props => {
 export const BassBadge = props => {
   const { faded } = props
   return (
-    <Badge pill variant={faded ? 'bass-faded' : 'bass'}>
+    <Badge
+      pill
+      className={props.className}
+      variant={faded ? 'bass-faded' : 'bass'}>
       Bass
     </Badge>
   )

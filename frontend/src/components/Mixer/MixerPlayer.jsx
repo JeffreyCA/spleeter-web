@@ -4,6 +4,8 @@ import VolumeUI from './VolumeUI'
 import * as Tone from 'tone'
 
 class MixerPlayer extends Component {
+  isMounted = false
+
   constructor(props) {
     super(props)
     this.state = {
@@ -20,23 +22,28 @@ class MixerPlayer extends Component {
   }
 
   componentDidMount() {
+    this.isMounted = true
+    const { data } = this.props
     this.tonePlayers = new Tone.Players(
       {
-        vocals:
-          'http://0.0.0.0:8000/media/uploads/aa3d92df-8bb3-4b98-bd40-03097301fa9c/vocals.mp3',
-        accomp:
-          'http://0.0.0.0:8000/media/uploads/1459819f-4aaa-4ba1-b1d2-24ff79d48c0e/other.mp3',
-        drums:
-          'http://0.0.0.0:8000/media/uploads/1079629d-1f3f-4d5f-a27a-42efa231fb42/drums.mp3',
-        bass:
-          'http://0.0.0.0:8000/media/uploads/c091c48c-6a78-417e-82a9-dc12be8470e6/bass.mp3'
+        vocals: data.vocals_file,
+        accomp: data.other_file,
+        drums: data.drums_file,
+        bass: data.bass_file
       },
       () => {
-        this.setState({
-          isReady: true
-        })
+        if (this.isMounted) {
+          this.setState({
+            isReady: true
+          })
+        }
       }
     ).toDestination()
+  }
+
+  componentWillUnmount() {
+    this.isMounted = false
+    clearInterval(this.interval)
   }
 
   isPlaying = audioElement => {
@@ -146,9 +153,15 @@ class MixerPlayer extends Component {
   render() {
     const { durationSeconds, secondsElapsed, secondsRemaining } = this.state
 
-    const vocalsMuted = this.tonePlayers ? this.tonePlayers.player('vocals').mute : false
-    const accompMuted = this.tonePlayers ? this.tonePlayers.player('accomp').mute : false
-    const bassMuted = this.tonePlayers ? this.tonePlayers.player('bass').mute : false
+    const vocalsMuted = this.tonePlayers
+      ? this.tonePlayers.player('vocals').mute
+      : false
+    const accompMuted = this.tonePlayers
+      ? this.tonePlayers.player('accomp').mute
+      : false
+    const bassMuted = this.tonePlayers
+      ? this.tonePlayers.player('bass').mute
+      : false
     const drumsMuted = this.tonePlayers
       ? this.tonePlayers.player('drums').mute
       : false

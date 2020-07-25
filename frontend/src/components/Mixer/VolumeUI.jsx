@@ -5,6 +5,9 @@ import { Col, Row } from 'react-bootstrap'
 import { VocalsBadge, AccompShortBadge, DrumsBadge, BassBadge } from '../Badges'
 import './VolumeUI.css'
 
+/**
+ * Volume slider with mute button component.
+ */
 const VolumeUI = props => {
   const onMuteClick = () => {
     props.onMuteClick(props.id)
@@ -16,13 +19,13 @@ const VolumeUI = props => {
 
   let badge = null
   if (props.id === 'vocals') {
-    badge = <VocalsBadge />
+    badge = <VocalsBadge className="vol-badge" />
   } else if (props.id === 'accomp') {
-    badge = <AccompShortBadge />
+    badge = <AccompShortBadge className="vol-badge" />
   } else if (props.id === 'bass') {
-    badge = <BassBadge />
+    badge = <BassBadge className="vol-badge" />
   } else if (props.id === 'drums') {
-    badge = <DrumsBadge />
+    badge = <DrumsBadge className="vol-badge" />
   }
 
   return (

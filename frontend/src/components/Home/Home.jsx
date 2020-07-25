@@ -5,7 +5,8 @@ import MusicPlayer from './MusicPlayer'
 import HomeNavBar from '../Nav/HomeNavBar'
 import SongTable from '../SongTable/SongTable'
 import DeleteModal from '../SongTable/DeleteModal'
-import SpleetModal from '../SongTable/SpleetModal'
+import DynamicMixModal from '../SongTable/DynamicMixModal'
+import StaticMixModal from '../SongTable/StaticMixModal'
 import UploadModal from '../Upload/UploadModal'
 import './Home.css'
 
@@ -18,16 +19,17 @@ class Home extends Component {
     super(props)
     this.state = {
       showDeleteModal: false, // Whether to show delete track modal
-      showSpleetModal: false, // Whether to show source separation modal
+      showDynamicMixModal: false,    // Whether to show mix modal
+      showStaticMixModal: false, // Whether to show source separation modal
       showUploadModal: false, // Whether to show upload modal
-      songList: [],           // List of songs seen in the song table
-      audioInstance: null,    // Reference audio player instance
-      currentSrcSong: null,   // Current song, if it is a source song
-      currentSepSong: null,   // Current song, if it is a processed song
+      songList: [], // List of songs seen in the song table
+      audioInstance: null, // Reference audio player instance
+      currentSrcSong: null, // Current song, if it is a source song
+      currentSepSong: null, // Current song, if it is a static mixed song
       currentModalSong: null, // Current song displayed in the separation modal
-      isPlaying: false,       // Whether audio is playing
-      task: null,             // The separation task that was just submitted
-      expandedIds: []         // List of IDs of expanded rows
+      isPlaying: false, // Whether audio is playing
+      task: null, // The separation task that was just submitted
+      expandedIds: [] // List of IDs of expanded rows
     }
   }
 
@@ -88,7 +90,10 @@ class Home extends Component {
   }
 
   onSepSongPlayClick = song => {
-    if (this.state.currentSepSong && this.state.currentSepSong.url === song.url) {
+    if (
+      this.state.currentSepSong &&
+      this.state.currentSepSong.url === song.url
+    ) {
       this.setState({
         isPlaying: true
       })
@@ -104,7 +109,13 @@ class Home extends Component {
     }
   }
 
-  onSpleetTaskSubmit = (src_id, id, status) => {
+  onMixTaskSubmit = (id) => {
+    setTimeout(() => {
+      this.props.history.push(`/mixer/${id}`)
+    }, 500)
+  }
+
+  onStaticMixSubmit = (src_id, id, status) => {
     this.setState({
       task: {
         src_id: src_id,
@@ -160,8 +171,18 @@ class Home extends Component {
     this.setState({ showDeleteModal: true, currentModalSong: song })
   }
 
-  onSpleetClick = song => {
-    this.setState({ showSpleetModal: true, currentModalSong: song })
+  onDynamicMixClick = song => {
+    if (song.mixed && song.mixed.status !== 'Error') {
+      setTimeout(() => {
+        this.props.history.push(`/mixer/${song.mixed.id}`)
+      }, 500)
+    } else {
+      this.setState({ showDynamicMixModal: true, currentModalSong: song })
+    }
+  }
+
+  onStaticMixClick = song => {
+    this.setState({ showStaticMixModal: true, currentModalSong: song })
   }
 
   onUploadClick = () => {
@@ -176,11 +197,19 @@ class Home extends Component {
     this.setState({ currentModalSong: null })
   }
 
-  handleSpleetModalHide = () => {
-    this.setState({ showSpleetModal: false })
+  handleDynamicMixModalHide = () => {
+    this.setState({ showDynamicMixModal: false })
   }
 
-  handleSpleetModalExited = () => {
+  handleDynamicMixModalExited = () => {
+    this.setState({ currentModalSong: null })
+  }
+
+  handleStaticMixModalHide = () => {
+    this.setState({ showStaticMixModal: false })
+  }
+
+  handleStaticMixModalExited = () => {
     this.setState({ currentModalSong: null })
   }
 
@@ -204,15 +233,20 @@ class Home extends Component {
 
   componentDidMount() {
     this.loadData()
-    // Auto-refresh data every 30 seconds
-    setInterval(this.loadData, 30000)
+    // Auto-refresh data every 15 seconds
+    this.interval = setInterval(this.loadData, 15000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
   }
 
   render() {
     const {
       songList,
       showDeleteModal,
-      showSpleetModal,
+      showStaticMixModal,
+      showDynamicMixModal,
       showUploadModal,
       currentSrcSong,
       currentSepSong,
@@ -223,14 +257,14 @@ class Home extends Component {
     } = this.state
     const currentSong = currentSrcSong
       ? currentSrcSong
-      : (currentSepSong
+      : currentSepSong
       ? currentSepSong
-      : null)
+      : null
     const currentSongUrl = currentSrcSong
       ? currentSrcSong.url
-      : (currentSepSong
+      : currentSepSong
       ? currentSepSong.url
-      : null)
+      : null
 
     return (
       <div>
@@ -238,12 +272,25 @@ class Home extends Component {
         <div className="jumbotron jumbotron-fluid bg-transparent">
           <div className="container secondary-color">
             <h2 className="display-5">Song List</h2>
-            <p className="lead">Get started by uploading a song or separating an existing song.</p>
+            <p className="lead">
+              Get started by uploading a song or separating an existing song.
+            </p>
+            <Alert variant="info" style={{ fontSize: '0.9em' }}>
+              <p className="mb-0">
+                <b>Static mix </b>only keeps the selected parts and completely
+                discards the other parts. No individual volume controls.
+                <br />
+                <b>Dynamic mix</b> gives you a playback interface with controls
+                to individually adjust the volume levels of all the parts.
+              </p>
+            </Alert>
             {task && (
               <Alert variant="success">
                 <span>
-                  <a target="_blank" href={`/api/separate/${task.id}`}>{task.id}</a>:{' '}
-                  {task.status}
+                  <a target="_blank" href={`/api/mix/static/${task.id}`}>
+                    {task.id}
+                  </a>
+                  : {task.status}
                 </span>
               </Alert>
             )}
@@ -255,7 +302,8 @@ class Home extends Component {
               onExpandRow={this.onExpandRow}
               onExpandAll={this.onExpandAll}
               onDeleteClick={this.onDeleteClick}
-              onSpleetClick={this.onSpleetClick}
+              onDynamicMixClick={this.onDynamicMixClick}
+              onStaticMixClick={this.onStaticMixClick}
               onSepSongPauseClick={this.onSepSongPauseClick}
               onSepSongPlayClick={this.onSepSongPlayClick}
               onSrcSongPauseClick={this.onSrcSongPauseClick}
@@ -275,11 +323,19 @@ class Home extends Component {
           hide={this.handleUploadModalHide}
           refresh={this.loadData}
         />
-        <SpleetModal
-          show={showSpleetModal}
-          hide={this.handleSpleetModalHide}
-          exit={this.handleSpleetModalExited}
-          submit={this.onSpleetTaskSubmit}
+        <DynamicMixModal
+          show={showDynamicMixModal}
+          hide={this.handleDynamicMixModalHide}
+          submit={this.onMixTaskSubmit}
+          exit={this.handleDynamicMixModalExited}
+          refresh={this.loadData}
+          song={currentModalSong}
+        />
+        <StaticMixModal
+          show={showStaticMixModal}
+          hide={this.handleStaticMixModalHide}
+          exit={this.handleStaticMixModalExited}
+          submit={this.onStaticMixSubmit}
           refresh={this.loadData}
           song={currentModalSong}
         />
