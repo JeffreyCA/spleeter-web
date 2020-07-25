@@ -1,20 +1,20 @@
-from io import BytesIO
 import os
-import requests
 import sys
 import uuid
+from io import BytesIO
+import requests
 
 from django.conf import settings
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 
 from .validators import *
 from .youtubedl import get_meta_info
+
 
 def source_file_path(instance, filename):
     """
@@ -26,29 +26,32 @@ def source_file_path(instance, filename):
     """
     return os.path.join(settings.UPLOAD_DIR, str(instance.id), filename)
 
-def processed_track_path(instance, filename):
+def mix_track_path(instance, filename):
     """
-    Get path to processed track file, using instance ID as subdirectory.
+    Get path to mix track file, using instance ID as subdirectory.
 
-    :param instance: ProcessedTrack instance
+    :param instance: StaticMix/DynamicMix instance
     :param filename: File name
-    :return: Path to processed track file
+    :return: Path to mix track file
     """
     return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
 
+class TaskStatus(models.IntegerChoices):
+    """
+    Enum for status of a task.
+    """
+    QUEUED = 0
+    IN_PROGRESS = 1
+    DONE = 2
+    ERROR = -1
+
 class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
-    class Status(models.IntegerChoices):
-        """Enum for status types."""
-        QUEUED = 0
-        IN_PROGRESS = 1
-        DONE = 2
-        ERROR = -1
-
     # UUID to uniquely identify task
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Status of task
-    status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
+    status = models.IntegerField(choices=TaskStatus.choices,
+                                 default=TaskStatus.QUEUED)
     # Error message in case of error
     error = models.TextField(blank=True)
 
@@ -62,13 +65,23 @@ class SourceFile(models.Model):
     # UUID to uniquely identify file
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # File object
-    file = models.FileField(upload_to=source_file_path, blank=True, null=True, max_length=255, validators=[is_valid_size, is_valid_audio_file])
+    file = models.FileField(upload_to=source_file_path,
+                            blank=True,
+                            null=True,
+                            max_length=255,
+                            validators=[is_valid_size, is_valid_audio_file])
     # Whether the audio track is from a YouTube link import
     is_youtube = models.BooleanField(default=False)
     # The original YouTube link, if source is from YouTube
-    youtube_link = models.URLField(unique=True, blank=True, null=True, validators=[is_valid_youtube])
+    youtube_link = models.URLField(unique=True,
+                                   blank=True,
+                                   null=True,
+                                   validators=[is_valid_youtube])
     # If file is from a YouTube link import, then this field refers to the task executed to download the audio file.
-    youtube_fetch_task = models.OneToOneField(YTAudioDownloadTask, on_delete=models.DO_NOTHING, null=True, blank=True)
+    youtube_fetch_task = models.OneToOneField(YTAudioDownloadTask,
+                                              on_delete=models.DO_NOTHING,
+                                              null=True,
+                                              blank=True)
 
     def metadata(self):
         """Extract artist and title information from audio
@@ -137,14 +150,16 @@ class SourceTrack(models.Model):
     # UUID to uniquely identify the source song
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Corresponding SourceFile (id)
-    source_file = models.OneToOneField(SourceFile, on_delete=models.DO_NOTHING, unique=True)
+    source_file = models.OneToOneField(SourceFile,
+                                       on_delete=models.DO_NOTHING,
+                                       unique=True)
     # Artist name
     artist = models.CharField(max_length=200)
     # Title
     title = models.CharField(max_length=200)
     # DateTime when user added the song
     date_created = models.DateTimeField(auto_now_add=True)
-    
+
     def url(self):
         """Get the URL of the source file."""
         if self.source_file.file:
@@ -163,22 +178,14 @@ class SourceTrack(models.Model):
         """String representation."""
         return self.artist + ' - ' + self.title
 
-class ProcessedTrack(models.Model):
-    """Model representing a track that has undergone source separation (using Spleeter)."""
-    class Status(models.IntegerChoices):
-        """
-        Enum for status of source separation task.
-        FIXME: Make a dedicated source separation task model.
-        """
-        QUEUED = 0
-        IN_PROGRESS = 1
-        DONE = 2
-        ERROR = -1
-
+class StaticMix(models.Model):
+    """Model representing a statically mixed track (certain parts are excluded)."""
     # UUID to uniquely identify track
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Source track on which it is based
-    source_track = models.ForeignKey(SourceTrack, related_name='processed', on_delete=models.CASCADE)
+    source_track = models.ForeignKey(SourceTrack,
+                                     related_name='static',
+                                     on_delete=models.CASCADE)
     # Whether track contains vocals
     vocals = models.BooleanField()
     # Whether track contains drums
@@ -188,9 +195,12 @@ class ProcessedTrack(models.Model):
     # Whether track contains accompaniment ('other' is the term used by Spleeter API)
     other = models.BooleanField()
     # Status of source separation task
-    status = models.IntegerField(choices=Status.choices, default=Status.QUEUED)
+    status = models.IntegerField(choices=TaskStatus.choices,
+                                 default=TaskStatus.QUEUED)
     # Underlying file
-    file = models.FileField(upload_to=processed_track_path, max_length=255, blank=True)
+    file = models.FileField(upload_to=mix_track_path,
+                            max_length=255,
+                            blank=True)
     # Error message
     error = models.TextField(blank=True)
     # DateTime when source separation task was started
@@ -231,16 +241,98 @@ class ProcessedTrack(models.Model):
         return formatted
 
     def source_path(self):
-        """
-        
-        """
+        """Get the path to the source file."""
         return self.source_track.source_file.file.path
 
     def source_url(self):
-        """
-
-        """
+        """Get the URL of the source file."""
         return self.source_track.source_file.file.url
 
     class Meta:
-        unique_together = [['source_track', 'vocals', 'drums', 'bass', 'other']]
+        unique_together = [[
+            'source_track', 'vocals', 'drums', 'bass', 'other'
+        ]]
+
+class DynamicMix(models.Model):
+    """Model representing a track that has been split into individually components."""
+    # UUID to uniquely identify track
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Source track on which it is based
+    source_track = models.OneToOneField(SourceTrack,
+                                        related_name='dynamic',
+                                        on_delete=models.CASCADE)
+    # Path to vocals file
+    vocals_file = models.FileField(upload_to=mix_track_path,
+                                   max_length=255,
+                                   blank=True)
+    # Path to accompaniment file
+    other_file = models.FileField(upload_to=mix_track_path,
+                                  max_length=255,
+                                  blank=True)
+    # Path to bass file
+    bass_file = models.FileField(upload_to=mix_track_path,
+                                 max_length=255,
+                                 blank=True)
+    # Path to drums file
+    drums_file = models.FileField(upload_to=mix_track_path,
+                                  max_length=255,
+                                  blank=True)
+    # Status of source separation task
+    status = models.IntegerField(choices=TaskStatus.choices,
+                                 default=TaskStatus.QUEUED)
+    # Error message
+    error = models.TextField(blank=True)
+    # DateTime when source separation task was started
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def artist(self):
+        """Get the artist name."""
+        return self.source_track.artist
+
+    def title(self):
+        """Get the title."""
+        return self.source_track.title
+
+    def formatted_name(self, part):
+        """
+        Produce a string with the format like:
+        "Artist - Title (part)"
+        """
+        prefix = self.source_track.artist + ' - ' + self.source_track.title
+        formatted = prefix + ' (' + part + ')'
+        return formatted
+
+    def vocals_url(self):
+        """Get the URL of the vocals file."""
+        if self.vocals_file:
+            return self.vocals_file.url
+        return ''
+
+    def other_url(self):
+        """Get the URL of the accompaniment file."""
+        if self.other_file:
+            return self.other_file.url
+        return ''
+
+    def bass_url(self):
+        """Get the URL of the bass file."""
+        if self.bass_file:
+            return self.bass_file.url
+        return ''
+
+    def drums_url(self):
+        """Get the URL of the drums file."""
+        if self.drums_file:
+            return self.drums_file.url
+        return ''
+
+    def source_path(self):
+        """Get the path to the source file."""
+        return self.source_track.source_file.file.path
+
+    def source_url(self):
+        """Get the URL of the source file."""
+        return self.source_track.source_file.file.url
+
+    class Meta:
+        unique_together = [['source_track']]

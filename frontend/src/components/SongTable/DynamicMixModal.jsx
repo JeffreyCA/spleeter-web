@@ -3,9 +3,9 @@ import { Alert, Button, Modal } from 'react-bootstrap'
 import axios from 'axios'
 
  /**
-  * Component of the delete track modal.
+  * Modal for creating dynamic mix.
   */
-class DeleteModal extends React.Component {
+class DynamicMixModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -14,26 +14,10 @@ class DeleteModal extends React.Component {
   }
 
   /**
-   * Reset errors
-   */
-  resetErrors = () => {
-    this.setState({
-      errors: []
-    })
-  }
-
-  /**
    * Called when modal hidden without finishing
    */
   onHide = () => {
     this.props.hide()
-  }
-
-  /**
-   * Called when modal finishes exit animation
-   */
-  onExited = () => {
-    this.resetErrors()
     this.props.exit()
   }
 
@@ -41,18 +25,21 @@ class DeleteModal extends React.Component {
    * Called when primary modal button is clicked
    */
   onSubmit = () => {
-    // DELETE request to delete the source track.
-    const songId = this.props.song.id
+    const data = {
+      source_track: this.props.song.id,
+      overwrite: true
+    }
+    // Make API request to create the mix
     axios
-      .delete(`/api/source-track/${songId}/`)
-      .then(() => {
-        this.props.refresh()
+      .post('/api/mix/dynamic/', data)
+      .then(({ data }) => {
         this.props.hide()
+        this.props.submit(data.id)
       })
       .catch(({ response }) => {
         const { data } = response
         this.setState({
-          errors: [ data.error ]
+          errors: data.errors
         })
       })
   }
@@ -65,11 +52,12 @@ class DeleteModal extends React.Component {
     }
 
     return (
-      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={this.onHide}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Track Deletion</Modal.Title>
+          <Modal.Title>Create dynamic mix</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          Are you sure you want to create the mix? This will take a couple of minutes.
           {errors.length > 0 && (
             <Alert variant="danger">
               {errors.map((val, idx) => (
@@ -77,18 +65,13 @@ class DeleteModal extends React.Component {
               ))}
             </Alert>
           )}
-          <div>
-            Are you sure you want to delete "{song.artist} - {song.title}" and all of its mixes?
-          </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={this.onHide}>
+          <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button
-            variant="danger"
-            onClick={this.onSubmit}>
-            Delete
+          <Button variant="success" onClick={this.onSubmit}>
+            Create Mix
           </Button>
         </Modal.Footer>
       </Modal>
@@ -96,4 +79,4 @@ class DeleteModal extends React.Component {
   }
 }
 
-export default DeleteModal
+export default DynamicMixModal

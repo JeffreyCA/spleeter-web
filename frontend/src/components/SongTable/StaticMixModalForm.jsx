@@ -1,11 +1,11 @@
 import React from 'react'
 import { Alert, Col, Form, Row } from 'react-bootstrap'
-import './SpleetModalForm.css'
+import './StaticMixModalForm.css'
 
 /**
  * Source separation form portion of the modal.
  */
-class SpleetModalForm extends React.Component {
+class StaticMixModalForm extends React.Component {
   constructor(props) {
     super(props)
   }
@@ -17,7 +17,7 @@ class SpleetModalForm extends React.Component {
       allChecked,
       noneChecked,
       errors,
-      handleCheckboxChange
+      handleCheckboxChange,
     } = this.props
     // Map part names to checkboxes
     const checkboxes = Object.keys(parts).map(key => {
@@ -53,18 +53,18 @@ class SpleetModalForm extends React.Component {
           </Col>
         </Form.Group>
         <Form.Group>
-          <Form.Label>Parts to keep:</Form.Label>
-          <div className="ml-3">{checkboxes}</div>
-        </Form.Group>
-        <Form.Group controlId="overwrite-checkbox">
-          <Form.Check
-            type="checkbox"
-            inline
-            name="overwrite"
-            label="Overwrite if exists"
-            onChange={handleCheckboxChange}
-          />
-        </Form.Group>
+              <Form.Label>Parts to keep:</Form.Label>
+              <div className="ml-3">{checkboxes}</div>
+            </Form.Group>
+            <Form.Group controlId="overwrite-checkbox">
+              <Form.Check
+                type="checkbox"
+                inline
+                name="overwrite"
+                label="Overwrite existing mix?"
+                onChange={handleCheckboxChange}
+              />
+            </Form.Group>
         {allChecked && (
           <Alert variant="warning">
             You must leave at least one part unchecked.
@@ -85,4 +85,4 @@ class SpleetModalForm extends React.Component {
   }
 }
 
-export default SpleetModalForm
+export default StaticMixModalForm

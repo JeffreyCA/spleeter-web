@@ -9,11 +9,11 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ### Features
 - Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
+    - **NEW: Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time.**
 - Import tracks by file (MP3, FLAC, WAV) or by YouTube link
-- Persistent audio library with ability to stream and download your source tracks and processed tracks
-- Uses background task queue to process audio and handle YouTube link conversion/imports
-- Customize number of background workers working on audio separation and YouTube importing
-- Supports third-party storage backends like S3 and Azure Blobs
+- Persistent audio library with ability to stream and download your source tracks and mixes
+- Customize number of background workers working on audio separation and YouTube imports
+- Supports third-party storage backends like S3 and Azure Blob Storage
 - Clean and responsive UI
 - Fully Dockerized
 
@@ -34,7 +34,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 2. Launch **Spleeter Web**
 
-    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
 ### Requirements
@@ -93,15 +93,19 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
 6. Launch **Spleeter Web**
 
-    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
-By default, **Spleeter Web** uses the local filesystem to store uploaded files and processed track files. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
+By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
 
 You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
 
 In the same file, set the storage backend configuration values (`AZURE_ACCOUNT_KEY` and `AZURE_ACCOUNT_NAME` if using Azure).
+
+**CORS**
+
+To play back a dynamic mix, you may need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
 
 ## Deploying
 **Spleeter Web** can be deployed on a VPS or a cloud server such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.

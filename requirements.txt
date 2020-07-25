@@ -14,8 +14,7 @@ coverage==5.1
 cryptography==2.9.2
 decorator==4.4.2
 dj-database-url==0.5.0
-Django==3.0.7
-django-cors-headers==3.3.0
+Django==3.0.8
 django-storages==1.9.1
 django-webpack-loader==0.7.0
 djangorestframework==3.11.0
@@ -38,7 +37,7 @@ librosa==0.7.2
 llvmlite==0.31.0
 Markdown==3.2.2
 mccabe==0.6.1
-mutagen==1.44.0
+mutagen==1.45.0
 norbert==0.2.1
 numba==0.48.0
 numpy==1.18.5
@@ -47,21 +46,21 @@ pandas==0.25.1
 protobuf==3.11.3
 psycopg2==2.8.5
 pycparser==2.20
-pylint==2.5.2
-pylint-django==2.0.15
+pylint==2.5.3
+pylint-django==2.2.0
 pylint-plugin-utils==0.6
 python-dateutil==2.8.1
 python-magic==0.4.18; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
 pytz==2019.3
 redis==3.5.3
-requests==2.23.0
+requests==2.24.0
 resampy==0.2.2
 scikit-learn==0.23.1
 scipy==1.4.1
 six==1.15.0
 SoundFile==0.10.3.post1
-spleeter==1.5.2
+spleeter==1.5.4
 sqlparse==0.3.1
 tensorboard==1.15.0
 tensorflow==1.15.2
@@ -71,10 +70,11 @@ threadpoolctl==2.1.0
 toml==0.10.1
 typed-ast==1.4.1
 uritemplate==3.0.1
-urllib3==1.25.9
+urllib3==1.25.10
 Werkzeug==1.0.1
 whitenoise==5.1.0
 wrapt==1.11.2
--e git+https://github.com/JeffreyCA/youtube-dl.git@761f9a2a8f662bec01d7c67ca8a11ed96592a177#egg=youtube_dl
+yapf==0.30.0
+-e git+https://github.com/JeffreyCA/youtube-dl.git@d6c472fecf059a00ced417f81c99eb287e07c608#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.1.0

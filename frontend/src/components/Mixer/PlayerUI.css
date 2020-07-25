@@ -1,0 +1,66 @@
+.time-slider {
+  width: 100%;
+  max-width: 500px;
+  height: 50px;
+  border-width: 1px;
+  border-image: initial;
+}
+
+.time-slider .player-thumb {
+  top: 10px;
+  width: 10px;
+  height: 30px;
+}
+
+.player-thumb {
+  font-size: 1.0em;
+  text-align: center;
+  background-color: grey;
+  color: grey;
+  cursor: grab;
+}
+
+.player-track {
+  position: relative;
+  background: rgb(221, 221, 221);
+  cursor: pointer;
+}
+
+.time-slider .player-track {
+  top: 20px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.player-track.player-track-0 {
+  background: #007bff;
+}
+
+.player-ui {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-elapsed {
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 5px;
+  width: 50px;
+  width: 50px;
+}
+
+.time-remaining {
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 5px;
+  width: 50px;
+  width: 50px;
+}
+
+.time-slider.disabled,
+.time-slider.disabled > .player-track,
+.time-slider.disabled > .player-thumb {
+  cursor: not-allowed;
+}

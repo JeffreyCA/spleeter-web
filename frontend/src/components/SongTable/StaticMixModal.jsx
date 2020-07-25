@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import axios from 'axios'
-import SpleetModalForm from './SpleetModalForm'
+import StaticMixModalForm from './StaticMixModalForm'
 
 /**
  * Mapping of song components from backend-supported keys to user-friendly names.
@@ -15,15 +15,15 @@ const PARTS = {
  /**
   * Component of the source separation modal.
   */
-class SpleetModal extends React.Component {
+class StaticMixModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      vocals: false,    // Include vocals
-      drums: false,     // Include drums
-      bass: false,      // Include bass
-      other: false,     // Include accompaniment
-      overwrite: false, // Whether to overwrite existing processed song, if exists
+      vocals: false, // Include vocals
+      drums: false, // Include drums
+      bass: false, // Include bass
+      other: false, // Include accompaniment
+      overwrite: false, // Whether to overwrite existing static mix, if exists
       errors: []
     }
   }
@@ -71,10 +71,10 @@ class SpleetModal extends React.Component {
     }
     // Make request to add Song
     axios
-      .post('/api/separate/', data)
+      .post('/api/mix/static/', data)
       .then(({ data }) => {
-        this.props.submit(data.source_track, data.id, data.status)
         this.props.hide()
+        this.props.submit(data.source_track, data.id, data.status)
       })
       .catch(({ response }) => {
         const { data } = response
@@ -103,10 +103,10 @@ class SpleetModal extends React.Component {
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Separate Source</Modal.Title>
+          <Modal.Title>Create static mix</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <SpleetModalForm
+          <StaticMixModalForm
             parts={PARTS}
             song={song}
             allChecked={allChecked}
@@ -123,7 +123,7 @@ class SpleetModal extends React.Component {
             variant="primary"
             disabled={allChecked || noneChecked}
             onClick={this.onSubmit}>
-            Finish
+            Create Mix
           </Button>
         </Modal.Footer>
       </Modal>
@@ -131,4 +131,4 @@ class SpleetModal extends React.Component {
   }
 }
 
-export default SpleetModal
+export default StaticMixModal

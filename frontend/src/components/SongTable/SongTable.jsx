@@ -1,11 +1,11 @@
 import React from 'react'
-import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons'
+import { CaretDownFill, CaretUpFill, Plus } from 'react-bootstrap-icons'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
-import ProcessedSongTable from './ProcessedSongTable'
+import StaticMixTable from './StaticMixTable'
 import DeleteButton from './DeleteButton'
-import SpleetButton from './SpleetButton'
+import TextButton from './TextButton'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './SongTable.css'
 
@@ -40,17 +40,36 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
  * Formatter function for separate button column. 
  */
 const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
-  const { onDeleteClick, onSpleetClick } = formatExtraData
+  const { onDeleteClick, onDynamicMixClick, onStaticMixClick } = formatExtraData
+  const disabled = !row.url
+  const hasDynamicMix = row.dynamic
+
   return (
     <div className="d-flex align-items-center justify-content-center">
-      <SpleetButton onClick={onSpleetClick} song={row} />
-      <DeleteButton onClick={onDeleteClick} song={row} />
+      <TextButton
+        className={hasDynamicMix ? '' : 'pl-1'}
+        variant="info"
+        disabled={disabled}
+        onClick={onDynamicMixClick}
+        song={row}>
+        {!hasDynamicMix && <Plus className="align-middle" size={24} />}
+        <span className="align-middle">Dynamic Mix</span>
+      </TextButton>
+      <TextButton
+        className="pl-1"
+        disabled={disabled}
+        onClick={onStaticMixClick}
+        song={row}>
+        <Plus className="align-middle" size={24} />
+        <span className="align-middle">Static Mix</span>
+      </TextButton>
+      <DeleteButton disabled={disabled} onClick={onDeleteClick} song={row} />
     </div>
   )
 }
 
 /**
- * Component for the song table, containing the uploaded songs and their processed tracks.
+ * Component for the song table, containing the uploaded songs and their static mixes.
  */
 class SongTable extends React.Component {
   constructor(props) {
@@ -64,25 +83,26 @@ class SongTable extends React.Component {
       isPlaying,
       expandedIds,
       onDeleteClick,
-      onSpleetClick,
-      onSepSongPauseClick,
-      onSepSongPlayClick,
+      onDynamicMixClick,
+      onStaticMixClick,
+      onStaticMixPauseClick,
+      onStaticMixPlayClick,
       onSrcSongPauseClick,
       onSrcSongPlayClick,
       onExpandRow,
       onExpandAll
     } = this.props
 
-    // Show processed song details inside expand row
+    // Show static mix details inside expand row
     const expandRow = {
       renderer: row => {
         return (
-          <ProcessedSongTable
-            data={row.processed}
+          <StaticMixTable
+            data={row.static}
             currentSongUrl={currentSongUrl}
             isPlaying={isPlaying}
-            onPauseClick={onSepSongPauseClick}
-            onPlayClick={onSepSongPlayClick}
+            onPauseClick={onStaticMixPauseClick}
+            onPlayClick={onStaticMixPlayClick}
           />
         )
       },
@@ -143,7 +163,8 @@ class SongTable extends React.Component {
         formatter: spleetColFormatter,
         formatExtraData: {
           onDeleteClick: onDeleteClick,
-          onSpleetClick: onSpleetClick
+          onDynamicMixClick: onDynamicMixClick,
+          onStaticMixClick: onStaticMixClick
         }
       }
     ]

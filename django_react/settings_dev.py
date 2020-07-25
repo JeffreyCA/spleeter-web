@@ -34,6 +34,6 @@ HUEY = {
     'results': False,
     'immediate': False,
     'consumer': {
-        'workers': int(os.getenv('HUEY_WORKERS', '1')),
+        'workers': int(os.getenv('HUEY_WORKERS', '2')),
     },
 }
