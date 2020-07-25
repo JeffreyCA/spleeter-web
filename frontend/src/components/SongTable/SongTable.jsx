@@ -1,5 +1,5 @@
 import React from 'react'
-import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons'
+import { CaretDownFill, CaretUpFill, Plus } from 'react-bootstrap-icons'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { toRelativeDateSpan } from '../../Utils'
 import PausePlayButton from './PausePlayButton'
@@ -41,19 +41,27 @@ const playColFormatter = (cell, row, rowIndex, formatExtraData) => {
  */
 const spleetColFormatter = (cell, row, rowIndex, formatExtraData) => {
   const { onDeleteClick, onDynamicMixClick, onStaticMixClick } = formatExtraData
-  const disabled = !row.url;
+  const disabled = !row.url
+  const hasDynamicMix = row.dynamic
 
   return (
     <div className="d-flex align-items-center justify-content-center">
       <TextButton
+        className={hasDynamicMix ? '' : 'pl-1'}
         variant="info"
         disabled={disabled}
         onClick={onDynamicMixClick}
         song={row}>
-        Dynamic Mix
+        {!hasDynamicMix && <Plus className="align-middle" size={24} />}
+        <span className="align-middle">Dynamic Mix</span>
       </TextButton>
-      <TextButton disabled={disabled} onClick={onStaticMixClick} song={row}>
-        Static Mix
+      <TextButton
+        className="pl-1"
+        disabled={disabled}
+        onClick={onStaticMixClick}
+        song={row}>
+        <Plus className="align-middle" size={24} />
+        <span className="align-middle">Static Mix</span>
       </TextButton>
       <DeleteButton disabled={disabled} onClick={onDeleteClick} song={row} />
     </div>

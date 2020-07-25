@@ -84,8 +84,7 @@ class SourceFileView(viewsets.ModelViewSet):
             return JsonResponse({
                 'status': 'error',
                 'errors': errors
-            },
-                                status=400)
+            }, status=400)
 
         source_file = serializer.save()
         # Create response containing SourceFile ID and suggested artist/title metadata

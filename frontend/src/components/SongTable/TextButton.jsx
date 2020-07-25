@@ -10,7 +10,7 @@ class TextButton extends React.Component {
   render() {
     return (
       <Button
-        className="text-btn ml-2"
+        className={`text-btn ml-2 ${this.props.className}`}
         variant={this.props.variant}
         disabled={this.props.disabled}
         onClick={this.handleClick}>
