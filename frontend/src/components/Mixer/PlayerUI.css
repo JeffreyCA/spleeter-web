@@ -58,3 +58,9 @@
   width: 50px;
   width: 50px;
 }
+
+.time-slider.disabled,
+.time-slider.disabled > .player-track,
+.time-slider.disabled > .player-thumb {
+  cursor: not-allowed;
+}

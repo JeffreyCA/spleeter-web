@@ -77,8 +77,8 @@ class SongTable extends React.Component {
       onDeleteClick,
       onDynamicMixClick,
       onStaticMixClick,
-      onSepSongPauseClick,
-      onSepSongPlayClick,
+      onStaticMixPauseClick,
+      onStaticMixPlayClick,
       onSrcSongPauseClick,
       onSrcSongPlayClick,
       onExpandRow,
@@ -93,8 +93,8 @@ class SongTable extends React.Component {
             data={row.static}
             currentSongUrl={currentSongUrl}
             isPlaying={isPlaying}
-            onPauseClick={onSepSongPauseClick}
-            onPlayClick={onSepSongPlayClick}
+            onPauseClick={onStaticMixPauseClick}
+            onPlayClick={onStaticMixPlayClick}
           />
         )
       },

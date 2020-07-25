@@ -31,12 +31,17 @@ const VolumeUI = props => {
   return (
     <Row noGutters className="volume-ui">
       <div className="badge-group">{badge}</div>
-      <MuteButton isMuted={props.isMuted} onClick={onMuteClick} />
+      <MuteButton
+        disabled={props.disabled}
+        isMuted={props.isMuted}
+        onClick={onMuteClick}
+      />
       <Col xs={4}>
         <ReactSlider
           className="vol-slider"
           thumbClassName="vol-thumb"
           trackClassName="vol-track"
+          disabled={props.disabled}
           defaultValue={100}
           onChange={onVolChange}
           min={1}

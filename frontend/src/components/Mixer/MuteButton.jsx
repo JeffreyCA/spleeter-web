@@ -6,6 +6,7 @@ const MuteButton = props => {
   return (
     <Button
       onClick={props.onClick}
+      disabled={props.disabled}
       className="btn-circle p-1"
       variant="secondary"
       size="lg">

@@ -78,7 +78,7 @@ class DeleteModal extends React.Component {
             </Alert>
           )}
           <div>
-            Are you sure you want to delete "{song.artist} - {song.title}" and all of its separated tracks?
+            Are you sure you want to delete "{song.artist} - {song.title}" and all of its mixes?
           </div>
         </Modal.Body>
         <Modal.Footer>

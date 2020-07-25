@@ -34,7 +34,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 2. Launch **Spleeter Web**
 
-    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
 ### Requirements
@@ -93,7 +93,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
 6. Launch **Spleeter Web**
 
-    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and separated tracks will appear in `media/uploads` and `media/separate` respectively.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 

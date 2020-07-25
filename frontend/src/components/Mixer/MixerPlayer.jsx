@@ -3,6 +3,14 @@ import PlayerUI from './PlayerUI'
 import VolumeUI from './VolumeUI'
 import * as Tone from 'tone'
 
+/**
+ * Audio player interface that plays the vocals, accomp, bass, and drum parts in sync
+ * with individual adjustable volume controls.
+ *
+ * It uses the Tone.js framework (built on the Web Audio API) to perform timing-sensitive
+ * audio playback. Simply using HTMLAudioElement introduces a lot of latency/lag causing
+ * the four tracks to be out-of-sync easily.
+ */
 class MixerPlayer extends Component {
   isMounted = false
 
@@ -14,7 +22,13 @@ class MixerPlayer extends Component {
       isPlaying: false,
       durationSeconds: 0,
       secondsElapsed: 0,
-      secondsRemaining: 0
+      secondsRemaining: 0,
+      volume: {
+        vocals: 0,
+        accomp: 0,
+        drums: 0,
+        bass: 0
+      }
     }
 
     this.interval = null
@@ -24,6 +38,7 @@ class MixerPlayer extends Component {
   componentDidMount() {
     this.isMounted = true
     const { data } = this.props
+    // Initialize Player objects pointing to the four track files
     this.tonePlayers = new Tone.Players(
       {
         vocals: data.vocals_file,
@@ -46,23 +61,17 @@ class MixerPlayer extends Component {
     clearInterval(this.interval)
   }
 
-  isPlaying = audioElement => {
-    if (audioElement) {
-      return audioElement.duration > 0 && !audioElement.paused
-    }
-    return false
-  }
-
-  isStopped = audioElement => {
-    return !audioElement.currentTime
-  }
-
+  /**
+   * Handle play/pause button click.
+   */
   play = async () => {
     const { isPlaying } = this.state
     if (isPlaying) {
+      // Pause playback and refresh interval
       Tone.Transport.pause()
       clearInterval(this.interval)
     } else {
+      // If playing for first time, ask browser to start audio context
       if (!this.state.isInit) {
         await Tone.start()
         this.tonePlayers.player('vocals').sync().start(0, 0)
@@ -74,8 +83,10 @@ class MixerPlayer extends Component {
         })
       }
 
+      // Resume/start playback
       Tone.Transport.start()
 
+      // Set regular refresh interval (twice a second)
       this.interval = setInterval(() => {
         this.onUpdate()
       }, 500)
@@ -87,6 +98,7 @@ class MixerPlayer extends Component {
   }
 
   onBeforeSeek = () => {
+    // Disable refresh while seeking
     clearInterval(this.interval)
   }
 
@@ -98,27 +110,17 @@ class MixerPlayer extends Component {
 
   onAfterSeek = seconds => {
     Tone.Transport.seconds = seconds
+    // Resume refresh after seek
     this.interval = setInterval(() => {
       this.onUpdate()
     }, 500)
   }
 
-  onEnded = () => {
-    this.audioElements.forEach(element => {
-      element.pause()
-    })
-    const firstAudioElement = this.audioElements[0]
-    if (firstAudioElement) {
-      this.setState({
-        isPlaying: false,
-        durationSeconds: firstAudioElement.duration,
-        secondsElapsed: firstAudioElement.duration,
-        secondsRemaining: 0
-      })
-    }
-  }
-
+  /**
+   * Called to update playback progress.
+   */
   onUpdate = () => {
+    // Arbitrarily use vocals track as source of truth (they should all have same duration anyways)
     const durationSeconds = this.tonePlayers.player('vocals').buffer.duration
     const secondsElapsed = Math.min(durationSeconds, Tone.Transport.seconds)
     const secondsRemaining = Math.max(0, durationSeconds - secondsElapsed)
@@ -140,36 +142,67 @@ class MixerPlayer extends Component {
     }
   }
 
+  /**
+   * Handle when mute button click.
+   * @param id Track ID
+   */
   onMuteClick = id => {
     const player = this.tonePlayers.player(id)
-    player.mute = !player.mute
+
+    if (player.volume.value === -Infinity) {
+      // Restore volume level to previous value
+      player.volume.value = this.state.volume[id]
+    } else {
+      // Mute the player volume
+      player.volume.value = -Infinity
+    }
+    this.forceUpdate()
   }
 
-  onVolChange = (id, val) => {
-    const db = 20 * Math.log10(val / 100.0)
+  /**
+   * Handle when volume slider changes.
+   * @param id Track ID
+   * @param val New volume in dB
+   */
+  onVolChange = (id, pct) => {
+    // Convert percentage to dB
+    const db = 20 * Math.log10(pct / 100.0)
+    // Change player volume
     this.tonePlayers.player(id).volume.value = db
+
+    // Save volume level in state so that if it's muted, the previous volume level is saved
+    const currentVolumes = this.state.volume
+    currentVolumes[id] = db
+    this.setState({
+      volume: currentVolumes
+    })
   }
 
   render() {
-    const { durationSeconds, secondsElapsed, secondsRemaining } = this.state
+    const {
+      durationSeconds,
+      secondsElapsed,
+      secondsRemaining,
+      isReady
+    } = this.state
 
     const vocalsMuted = this.tonePlayers
-      ? this.tonePlayers.player('vocals').mute
+      ? this.tonePlayers.player('vocals').volume.value === -Infinity
       : false
     const accompMuted = this.tonePlayers
-      ? this.tonePlayers.player('accomp').mute
+      ? this.tonePlayers.player('accomp').volume.value === -Infinity
       : false
     const bassMuted = this.tonePlayers
-      ? this.tonePlayers.player('bass').mute
+      ? this.tonePlayers.player('bass').volume.value === -Infinity
       : false
     const drumsMuted = this.tonePlayers
-      ? this.tonePlayers.player('drums').mute
+      ? this.tonePlayers.player('drums').volume.value === -Infinity
       : false
 
     return (
       <div>
         <PlayerUI
-          isPlayDisabled={!this.state.isReady}
+          isPlayDisabled={!isReady}
           isPlaying={this.state.isPlaying}
           onPlayClick={this.play}
           onBeforeSeek={this.onBeforeSeek}
@@ -181,24 +214,28 @@ class MixerPlayer extends Component {
         />
         <VolumeUI
           id="vocals"
+          disabled={!isReady}
           isMuted={vocalsMuted}
           onMuteClick={this.onMuteClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="accomp"
+          disabled={!isReady}
           isMuted={accompMuted}
           onMuteClick={this.onMuteClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="bass"
+          disabled={!isReady}
           isMuted={bassMuted}
           onMuteClick={this.onMuteClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="drums"
+          disabled={!isReady}
           isMuted={drumsMuted}
           onMuteClick={this.onMuteClick}
           onVolChange={this.onVolChange}

@@ -4,7 +4,7 @@ import ReactSlider from 'react-slider'
 import { formatTime } from '../../Utils'
 import './PlayerUI.css'
 
-const PlayerUI = props => {
+const PlayerUI = (props) => {
   const {
     isPlayDisabled,
     isPlaying,
@@ -29,6 +29,7 @@ const PlayerUI = props => {
         className="time-slider"
         thumbClassName="player-thumb"
         trackClassName="player-track"
+        disabled={isPlayDisabled}
         onBeforeChange={onBeforeSeek}
         onChange={onSeeking}
         onAfterChange={onAfterSeek}

@@ -14,7 +14,7 @@
 }
 
 .vol-thumb {
-  font-size: 1.0em;
+  font-size: 1em;
   text-align: center;
   background-color: grey;
   color: grey;
@@ -59,4 +59,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+}
+
+.vol-slider.disabled,
+.vol-slider.disabled > .vol-track,
+.vol-slider.disabled > .vol-thumb {
+  cursor: not-allowed;
 }

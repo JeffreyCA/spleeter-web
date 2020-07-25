@@ -19,13 +19,13 @@ class Home extends Component {
     super(props)
     this.state = {
       showDeleteModal: false, // Whether to show delete track modal
-      showDynamicMixModal: false,    // Whether to show mix modal
+      showDynamicMixModal: false, // Whether to show mix modal
       showStaticMixModal: false, // Whether to show source separation modal
       showUploadModal: false, // Whether to show upload modal
       songList: [], // List of songs seen in the song table
       audioInstance: null, // Reference audio player instance
       currentSrcSong: null, // Current song, if it is a source song
-      currentSepSong: null, // Current song, if it is a static mixed song
+      currentStaticMix: null, // Current song, if it is a static mixed song
       currentModalSong: null, // Current song displayed in the separation modal
       isPlaying: false, // Whether audio is playing
       task: null, // The separation task that was just submitted
@@ -74,13 +74,13 @@ class Home extends Component {
     } else {
       this.setState({
         currentSrcSong: song,
-        currentSepSong: null,
+        currentStaticMix: null,
         isPlaying: true
       })
     }
   }
 
-  onSepSongPauseClick = song => {
+  onStaticMixPauseClick = song => {
     this.setState({
       isPlaying: false
     })
@@ -89,10 +89,10 @@ class Home extends Component {
     }
   }
 
-  onSepSongPlayClick = song => {
+  onStaticMixPlayClick = song => {
     if (
-      this.state.currentSepSong &&
-      this.state.currentSepSong.url === song.url
+      this.state.currentStaticMix &&
+      this.state.currentStaticMix.url === song.url
     ) {
       this.setState({
         isPlaying: true
@@ -103,13 +103,13 @@ class Home extends Component {
     } else {
       this.setState({
         currentSrcSong: null,
-        currentSepSong: song,
+        currentStaticMix: song,
         isPlaying: true
       })
     }
   }
 
-  onMixTaskSubmit = (id) => {
+  onMixTaskSubmit = id => {
     setTimeout(() => {
       this.props.history.push(`/mixer/${id}`)
     }, 500)
@@ -172,9 +172,9 @@ class Home extends Component {
   }
 
   onDynamicMixClick = song => {
-    if (song.mixed && song.mixed.status !== 'Error') {
+    if (song.dynamic && song.dynamic.status !== 'Error') {
       setTimeout(() => {
-        this.props.history.push(`/mixer/${song.mixed.id}`)
+        this.props.history.push(`/mixer/${song.dynamic.id}`)
       }, 500)
     } else {
       this.setState({ showDynamicMixModal: true, currentModalSong: song })
@@ -249,7 +249,7 @@ class Home extends Component {
       showDynamicMixModal,
       showUploadModal,
       currentSrcSong,
-      currentSepSong,
+      currentStaticMix,
       currentModalSong,
       isPlaying,
       task,
@@ -257,13 +257,13 @@ class Home extends Component {
     } = this.state
     const currentSong = currentSrcSong
       ? currentSrcSong
-      : currentSepSong
-      ? currentSepSong
+      : currentStaticMix
+      ? currentStaticMix
       : null
     const currentSongUrl = currentSrcSong
       ? currentSrcSong.url
-      : currentSepSong
-      ? currentSepSong.url
+      : currentStaticMix
+      ? currentStaticMix.url
       : null
 
     return (
@@ -304,8 +304,8 @@ class Home extends Component {
               onDeleteClick={this.onDeleteClick}
               onDynamicMixClick={this.onDynamicMixClick}
               onStaticMixClick={this.onStaticMixClick}
-              onSepSongPauseClick={this.onSepSongPauseClick}
-              onSepSongPlayClick={this.onSepSongPlayClick}
+              onStaticMixPauseClick={this.onStaticMixPauseClick}
+              onStaticMixPlayClick={this.onStaticMixPlayClick}
               onSrcSongPauseClick={this.onSrcSongPauseClick}
               onSrcSongPlayClick={this.onSrcSongPlayClick}
             />
