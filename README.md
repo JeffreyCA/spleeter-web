@@ -63,7 +63,16 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     > cd frontend
     > npm install
     ```
-4. Start frontend (from `spleeter-web` directory):
+4. Apply migrations
+    ```sh
+    # Unix/macOS:
+    (env) > export DJANGO_DEVELOPMENT=true
+    # Windows:
+    (env) > set DJANGO_DEVELOPMENT=true
+
+    (env) > python manage.py migrate
+    ````
+5. Start frontend (from `spleeter-web` directory):
     ```sh
     # Unix/macOS:
     > export DJANGO_DEVELOPMENT=true
@@ -72,7 +81,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     > npm run dev --prefix frontend
     ```
-5. Start backend in separate terminal (from `spleeter-web` directory):
+6. Start backend in separate terminal (from `spleeter-web` directory):
     ```sh
     # Unix/macOS:
     (env) > export DJANGO_DEVELOPMENT=true
@@ -82,7 +91,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     (env) > python manage.py runserver 0.0.0.0:8000
     ````
 
-6. Start Huey worker in separate terminal (from `spleeter-web` directory):
+7. Start Huey worker in separate terminal (from `spleeter-web` directory):
     ```sh
     # Unix/macOS:
     (env) > export DJANGO_DEVELOPMENT=true
@@ -91,7 +100,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     (env) > python manage.py run_huey
     ```
-6. Launch **Spleeter Web**
+8. Launch **Spleeter Web**
 
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
@@ -147,6 +156,9 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     ```
 
 4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
+
+## Issues
+If you encounter issues relating to the database, you may need to delete the database (or delete the Docker volume) and re-migrate.
 
 ## LICENSE
 [MIT](./LICENSE)
