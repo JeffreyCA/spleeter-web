@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import axios from 'axios'
-import { Alert, Button } from 'react-bootstrap'
 import HomeNavBar from './Nav/HomeNavBar'
 
 class NotFound extends Component {
