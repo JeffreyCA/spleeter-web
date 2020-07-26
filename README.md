@@ -18,7 +18,14 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - Fully Dockerized
 
 ### [Demo site](https://jeffreyca.github.io/spleeter-web/)
-<img src="./screenshots/main.png" width="70%">
+
+**Homepage**
+
+<img src="./screenshots/main.png" width="80%">
+
+**Mixer**
+
+<img src="./screenshots/mixer.png" width="80%">
 
 ## Getting started with Docker
 ### Requirements
