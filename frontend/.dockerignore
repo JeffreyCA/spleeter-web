@@ -1,6 +1,0 @@
-*Dockerfile*
-*docker-compose*
-
-node_modules
-assets
-webpack-stats.json
