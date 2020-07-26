@@ -58,6 +58,10 @@ class MixerPlayer extends Component {
 
   componentWillUnmount() {
     this.isMounted = false
+    if (this.tonePlayers) {
+      this.tonePlayers.stopAll()
+      this.tonePlayers.dispose()
+    }
     clearInterval(this.interval)
   }
 
