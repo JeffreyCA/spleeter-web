@@ -273,7 +273,7 @@ class Home extends Component {
           <div className="container secondary-color">
             <h2 className="display-5">Song List</h2>
             <p className="lead">
-              Get started by uploading a song or separating an existing song.
+              Get started by uploading a song or creating a new mix.
             </p>
             <Alert variant="info" style={{ fontSize: '0.9em' }}>
               <p className="mb-0">
