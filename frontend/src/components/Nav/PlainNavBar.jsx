@@ -10,7 +10,6 @@ function PlainNavBar(props) {
     <Navbar bg="light" variant="light" expand="lg">
       <Container>
         <Navbar.Brand href="/">Spleeter Web</Navbar.Brand>
-        <Navbar.Toggle />
       </Container>
     </Navbar>
   )
