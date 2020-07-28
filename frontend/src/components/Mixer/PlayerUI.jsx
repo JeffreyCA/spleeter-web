@@ -13,8 +13,7 @@ const PlayerUI = (props) => {
     onSeeking,
     onAfterSeek,
     durationSeconds,
-    secondsElapsed,
-    secondsRemaining
+    secondsElapsed
   } = props
   return (
     <div className="player-ui">
@@ -34,10 +33,10 @@ const PlayerUI = (props) => {
         onChange={onSeeking}
         onAfterChange={onAfterSeek}
         min={0}
-        value={secondsElapsed}
+        value={Math.floor(secondsElapsed)}
         max={isNaN(durationSeconds) ? 0 : durationSeconds}
       />
-      <span className="time-remaining">{formatTime(secondsRemaining)}</span>
+      <span className="time-duration">{formatTime(durationSeconds)}</span>
     </div>
   )
 }

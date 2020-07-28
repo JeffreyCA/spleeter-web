@@ -22,7 +22,6 @@ class MixerPlayer extends Component {
       isPlaying: false,
       durationSeconds: 0,
       secondsElapsed: 0,
-      secondsRemaining: 0,
       volume: {
         vocals: 0,
         accomp: 0,
@@ -93,7 +92,7 @@ class MixerPlayer extends Component {
       // Set regular refresh interval (twice a second)
       this.interval = setInterval(() => {
         this.onUpdate()
-      }, 500)
+      }, 200)
     }
 
     this.setState({
@@ -117,7 +116,7 @@ class MixerPlayer extends Component {
     // Resume refresh after seek
     this.interval = setInterval(() => {
       this.onUpdate()
-    }, 500)
+    }, 200)
   }
 
   /**
@@ -127,7 +126,6 @@ class MixerPlayer extends Component {
     // Arbitrarily use vocals track as source of truth (they should all have same duration anyways)
     const durationSeconds = this.tonePlayers.player('vocals').buffer.duration
     const secondsElapsed = Math.min(durationSeconds, Tone.Transport.seconds)
-    const secondsRemaining = Math.max(0, durationSeconds - secondsElapsed)
 
     if (secondsElapsed === durationSeconds) {
       Tone.Transport.stop()
@@ -138,7 +136,6 @@ class MixerPlayer extends Component {
       isPlaying: isPlaying,
       durationSeconds: durationSeconds,
       secondsElapsed: secondsElapsed,
-      secondsRemaining: secondsRemaining
     })
 
     if (!isPlaying) {
@@ -186,7 +183,6 @@ class MixerPlayer extends Component {
     const {
       durationSeconds,
       secondsElapsed,
-      secondsRemaining,
       isReady
     } = this.state
 
@@ -213,7 +209,6 @@ class MixerPlayer extends Component {
           onSeeking={this.onSeeking}
           onAfterSeek={this.onAfterSeek}
           secondsElapsed={secondsElapsed}
-          secondsRemaining={secondsRemaining}
           durationSeconds={durationSeconds}
         />
         <VolumeUI
