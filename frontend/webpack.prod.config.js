@@ -1,5 +1,5 @@
-const path = require("path")
-const webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/index',
   output: {
     path: path.resolve('./assets/dist/'),
-    filename: "[name].js",
+    filename: '[name].js'
   },
   module: {
     rules: [
@@ -24,7 +24,7 @@ module.exports = {
         }
       },
       {
-        test: /\.jsx?$/,
+        test: /\.(ts|js)x?$/,
         loader: 'babel-loader',
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/
@@ -33,12 +33,14 @@ module.exports = {
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin({
-      cache: true,
-      parallel: true
-    })],
+    minimizer: [
+      new TerserPlugin({
+        cache: true,
+        parallel: true
+      })
+    ],
     moduleIds: 'hashed',
-    runtimeChunk:'single',
+    runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
         vendor: {
@@ -53,6 +55,6 @@ module.exports = {
     hints: false
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   }
-}
+};
