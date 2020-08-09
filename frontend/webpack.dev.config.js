@@ -1,7 +1,7 @@
-const path = require("path")
-const webpack = require('webpack')
-const BundleTracker = require('webpack-bundle-tracker')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const BundleTracker = require('webpack-bundle-tracker');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -10,14 +10,14 @@ module.exports = {
   entry: './src/index',
   output: {
     path: path.resolve('./assets/dist/'),
-    filename: "[name]-[hash].js",
+    filename: '[name]-[hash].js'
   },
   plugins: [
     new BundleTracker({
       path: path.resolve('./assets/'),
       filename: 'webpack-stats.json'
     }),
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin()
   ],
   module: {
     rules: [
@@ -33,7 +33,7 @@ module.exports = {
         }
       },
       {
-        test: /\.jsx?$/,
+        test: /\.(ts|js)x?$/,
         loader: 'babel-loader',
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/
@@ -42,7 +42,7 @@ module.exports = {
   },
   optimization: {
     moduleIds: 'hashed',
-    runtimeChunk:'single',
+    runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
         vendor: {
@@ -50,10 +50,10 @@ module.exports = {
           name: 'vendors',
           chunks: 'all'
         }
-      },
+      }
     }
   },
   resolve: {
-    extensions: ['.js', '.jsx']
-  },
-}
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
+  }
+};
