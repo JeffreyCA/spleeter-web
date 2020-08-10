@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as Tone from 'tone';
 import { DynamicMix } from '../../models/DynamicMix';
 import { PartId } from '../../models/PartId';
-import { PlayerUI } from './PlayerUI';
-import { VolumeUI } from './VolumeUI';
+import PlayerUI from './PlayerUI';
+import VolumeUI from './VolumeUI';
 
 interface VolumeLevels {
   vocals: number;
