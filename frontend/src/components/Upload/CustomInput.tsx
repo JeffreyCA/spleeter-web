@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
-import { getDroppedOrSelectedFiles } from 'html5-file-selector';
-import { CloudUpload } from 'react-bootstrap-icons';
 import { IInputProps } from '@jeffreyca/react-dropzone-uploader';
+import { getDroppedOrSelectedFiles } from 'html5-file-selector';
+import * as React from 'react';
+import { CloudUpload } from 'react-bootstrap-icons';
 
 /**
  * Custom file input component for the dropzone uploader.

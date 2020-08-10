@@ -2,8 +2,8 @@ import axios from 'axios';
 import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { SongData } from '../../models/SongData';
-import StaticMixModalForm from './StaticMixModalForm';
 import { StaticMix } from '../../models/StaticMix';
+import StaticMixModalForm from './StaticMixModalForm';
 
 interface Props {
   song?: SongData;
