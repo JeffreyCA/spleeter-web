@@ -1,8 +1,8 @@
+import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
-import { SongData } from '../../models/SongData';
 import { DynamicMix } from '../../models/DynamicMix';
+import { SongData } from '../../models/SongData';
 
 interface Props {
   song?: SongData;

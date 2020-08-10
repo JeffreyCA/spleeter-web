@@ -1,7 +1,7 @@
 import * as React from 'react';
-import PlayButton from './PlayButton';
 import ReactSlider from 'react-slider';
 import { formatTime } from '../../Utils';
+import PlayButton from './PlayButton';
 import './PlayerUI.css';
 
 interface Props {

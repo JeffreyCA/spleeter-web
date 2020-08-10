@@ -1,7 +1,6 @@
+import { formatBytes, formatDuration, IPreviewProps } from '@jeffreyca/react-dropzone-uploader';
 import * as React from 'react';
 import { ProgressBar } from 'react-bootstrap';
-import { formatBytes, formatDuration, IPreviewProps } from '@jeffreyca/react-dropzone-uploader';
-
 import cancelImg from '../../svg/cancel.svg';
 import removeImg from '../../svg/remove.svg';
 import restartImg from '../../svg/restart.svg';

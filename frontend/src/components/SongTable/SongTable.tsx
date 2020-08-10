@@ -10,13 +10,13 @@ import BootstrapTable, {
 } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { SongData } from '../../models/SongData';
+import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import DeleteButton from './DeleteButton';
 import PausePlayButton from './PausePlayButton';
 import './SongTable.css';
 import StaticMixTable from './StaticMixTable';
 import TextButton from './TextButton';
-import { StaticMix } from '../../models/StaticMix';
 
 /**
  * Formatter function for play column
