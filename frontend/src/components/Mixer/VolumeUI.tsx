@@ -17,7 +17,7 @@ interface Props {
 /**
  * Volume slider with mute button component.
  */
-export const VolumeUI = (props: Props): JSX.Element => {
+const VolumeUI = (props: Props): JSX.Element => {
   const onMuteClick = () => {
     props.onMuteClick(props.id);
   };
@@ -63,3 +63,5 @@ export const VolumeUI = (props: Props): JSX.Element => {
     </Row>
   );
 };
+
+export default VolumeUI;

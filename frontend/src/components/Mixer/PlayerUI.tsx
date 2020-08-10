@@ -15,7 +15,7 @@ interface Props {
   onAfterSeek: (seconds: number | number[] | undefined | null) => void;
 }
 
-export const PlayerUI = (props: Props): JSX.Element => {
+const PlayerUI = (props: Props): JSX.Element => {
   const {
     isPlayDisabled,
     isPlaying,
@@ -46,3 +46,5 @@ export const PlayerUI = (props: Props): JSX.Element => {
     </div>
   );
 };
+
+export default PlayerUI;
