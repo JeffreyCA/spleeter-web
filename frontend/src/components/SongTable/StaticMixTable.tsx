@@ -3,6 +3,7 @@ import { Badge, Button, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap
 import { Download } from 'react-bootstrap-icons';
 import BootstrapTable, { ColumnFormatter, SortOrder } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import { AccompBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
@@ -48,7 +49,7 @@ const statusFormatter: ColumnFormatter<StaticMix> = (cellValue, row) => {
   const badgeLabel = cellValue ? cellValue : 'Other';
 
   if (cellValue === 'Error') {
-    const renderErrorTooltip = (props: Props): JSX.Element => {
+    const renderErrorTooltip = (props: OverlayInjectedProps): JSX.Element => {
       const errorText = row.error ? row.error : 'Unknown Error';
       return (
         <Tooltip id="button-tooltip" {...props}>

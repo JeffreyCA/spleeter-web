@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { PauseFill, PlayFill } from 'react-bootstrap-icons';
+import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
 
@@ -25,7 +26,7 @@ class PausePlayButton extends React.Component<Props> {
   render(): JSX.Element {
     const { playing, disabled, disabledText } = this.props;
 
-    function renderTooltip(props: Props) {
+    function renderTooltip(props: OverlayInjectedProps) {
       return (
         <Tooltip id="button-tooltip" {...props}>
           {disabledText}
@@ -33,7 +34,7 @@ class PausePlayButton extends React.Component<Props> {
       );
     }
 
-    const customButtonStyle = disabled
+    const customButtonStyle: React.CSSProperties = disabled
       ? {
           pointerEvents: 'none',
         }
