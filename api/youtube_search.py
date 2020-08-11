@@ -3,6 +3,9 @@ import googleapiclient.errors
 from django.conf import settings
 from youtube_title_parse import get_artist_title
 
+class YouTubeSearchError(Exception):
+    pass
+
 def perform_search(query: str, page_token=None):
     """
     Executes YouTube search request using YouTube Data API v3 and returns
@@ -13,6 +16,9 @@ def perform_search(query: str, page_token=None):
     """
     api_service_name = "youtube"
     api_version = "v3"
+
+    if not settings.YOUTUBE_API_KEY:
+        raise YouTubeSearchError('Missing YouTube Data API key. Please set the YOUTUBE_API_KEY env variable or update settings.py.')
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=settings.YOUTUBE_API_KEY)

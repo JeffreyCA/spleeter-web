@@ -28,8 +28,28 @@ class YouTubeSearchView(APIView):
         data = serializer.validated_data
         query = data['query']
         page_token = data['page_token'] if 'page_token' in data else None
-        next_page_token, result = perform_search(query, page_token)
-        return JsonResponse({'next_page_token': next_page_token, 'results': result})
+        try:
+            next_page_token, result = perform_search(query, page_token)
+            return JsonResponse({'next_page_token': next_page_token, 'results': result})
+        except YouTubeSearchError as e:
+            return JsonResponse(
+                {
+                    'status':
+                    'error',
+                    'errors': [
+                        str(e)
+                    ]
+                },
+                status=400)
+        except Exception as e:
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'errors': [
+                        'Could not perform search. Did you set the YOUTUBE_API_KEY env variable correctly?'
+                    ]
+                },
+                status=400)
 
 class YTLinkInfoView(APIView):
     """View that handles importing an audio track from a YouTube link."""
@@ -249,7 +269,7 @@ class YTSourceTrackView(generics.CreateAPIView):
         except:
             # YouTube library is flaky, so Huey will retry up to 2 additional times
             pass
-        
+
         return JsonResponse({
             'song_id': source_track.id,
             'youtube_link': source_track.youtube_link(),
