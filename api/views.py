@@ -38,10 +38,11 @@ class YTLinkInfoView(APIView):
         """Parse YouTube link and metadata."""
         serializer = YTLinkSerializer(data=request.query_params)
         if not serializer.is_valid():
+            errors = list(map(str, serializer.errors['link']))
             return JsonResponse(
                 {
                     'status': 'error',
-                    'errors': ['Invalid YouTube link']
+                    'errors': errors
                 },
                 status=400)
 
@@ -248,7 +249,7 @@ class YTSourceTrackView(generics.CreateAPIView):
         except:
             # YouTube library is flaky, so Huey will retry up to 2 additional times
             pass
-
+        
         return JsonResponse({
             'song_id': source_track.id,
             'youtube_link': source_track.youtube_link(),

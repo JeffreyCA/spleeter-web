@@ -1,6 +1,7 @@
 import googleapiclient.discovery
 import googleapiclient.errors
 from django.conf import settings
+from youtube_title_parse import get_artist_title
 
 def perform_search(query: str, page_token=None):
     """
@@ -40,15 +41,31 @@ def perform_search(query: str, page_token=None):
     }
 
     # Merge results into single, simplified list
-    videos = [{
-        'id': item['id']['videoId'],
-        'title': item['snippet']['title'],
-        'channel': item['snippet']['channelTitle'],
-        'thumbnail': item['snippet']['thumbnails']['default']['url'],
-        'duration': duration_dict[item['id']['videoId']]
-    } for item in search_items
-              if item['id']['kind'] == 'youtube#video' and item['snippet']
-              ['liveBroadcastContent'] == 'none' and item['id']['videoId'] in duration_dict]
-    next_page_token = search_result['nextPageToken']
+    videos = []
+    for item in search_items:
+        if item['id']['kind'] == 'youtube#video' and item['snippet']['liveBroadcastContent'] == 'none' and item['id']['videoId'] in duration_dict:
+            parsed_artist = None
+            parsed_title = None
+            result = get_artist_title(item['snippet']['title'])
+
+            if result:
+                parsed_artist, parsed_title = result
+            else:
+                parsed_artist = item['snippet']['channelTitle']
+                parsed_title = item['snippet']['title']
+
+            videos.append(
+                {
+                    'id': item['id']['videoId'],
+                    'title': item['snippet']['title'],
+                    'parsed_artist': parsed_artist,
+                    'parsed_title': parsed_title,
+                    'channel': item['snippet']['channelTitle'],
+                    'thumbnail': item['snippet']['thumbnails']['default']['url'],
+                    'duration': duration_dict[item['id']['videoId']]
+                }
+            )
+
+    next_page_token = search_result['nextPageToken'] if 'nextPageToken' in search_result else None
     # Return next page token and video result
     return next_page_token, videos

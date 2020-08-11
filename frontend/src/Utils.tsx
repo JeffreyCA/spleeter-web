@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 const SEC_PER_MIN = 60;
 const DAYS_PER_WEEK = 7;
@@ -24,6 +24,20 @@ export const toRelativeDateSpan = (isoDateString: string): JSX.Element => {
   return <span title={longDateTimeStr ?? undefined}>{label}</span>;
 };
 
+/**
+ * Convert ISO duration string to (hh):mm:ss.
+ * @param isoDuration ISO duration string
+ */
+export const toDurationTimestamp = (isoDuration: string): string => {
+  const duration = Duration.fromISO(isoDuration);
+
+  if (duration.as('hour') < 1) {
+    return Duration.fromISO(isoDuration).toFormat('mm:ss');
+  } else {
+    return Duration.fromISO(isoDuration).toFormat('hh:mm:ss');
+  }
+};
+
 // Credit to @kenfehling/react-designable-audio-player
 export const zeroPadNumber = (number: number): string => {
   return number < 10 ? '0' + number : number.toString();
@@ -37,4 +51,12 @@ export const formatTime = (seconds: number): string => {
   } else {
     return '00:00';
   }
+};
+
+/**
+ * Returns full YouTube URL for given video ID.
+ * @param id Video ID
+ */
+export const getYouTubeLinkForId = (id: string): string => {
+  return `https://www.youtube.com/watch?v=${id}`;
 };
