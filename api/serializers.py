@@ -66,6 +66,11 @@ class YTLinkSerializer(serializers.Serializer):
     """Simple serializer for a valid YouTube video URL."""
     link = serializers.URLField(validators=[is_valid_youtube])
 
+class YTSearchQuerySerializer(serializers.Serializer):
+    """Simple serializer for a YouTube search query."""
+    query = serializers.CharField()
+    page_token = serializers.CharField(allow_blank=True, required=False)
+
 class YTAudioDownloadTaskSerializer(serializers.ModelSerializer):
     """Serializer for YTAudioDownloadTask model"""
     status = ChoicesSerializerField()

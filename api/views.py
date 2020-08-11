@@ -11,6 +11,25 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 from .tasks import *
+from .youtube_search import *
+
+class YouTubeSearchView(APIView):
+    """View that processes YouTube video search queries."""
+    @method_decorator(cache_page(60 * 60 * 2))
+    def get(self, request):
+        serializer = YTSearchQuerySerializer(data=request.query_params)
+        if not serializer.is_valid():
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'errors': ['Invalid YouTube search query']
+                },
+                status=400)
+        data = serializer.validated_data
+        query = data['query']
+        page_token = data['page_token'] if 'page_token' in data else None
+        next_page_token, result = perform_search(query, page_token)
+        return JsonResponse({'next_page_token': next_page_token, 'results': result})
 
 class YTLinkInfoView(APIView):
     """View that handles importing an audio track from a YouTube link."""
