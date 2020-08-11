@@ -13,3 +13,27 @@
 .form-control::-ms-input-placeholder {
   color: rgb(175, 175, 175) !important;
 }
+
+.yt-search-result {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: center;
+}
+
+.yt-search-extlink {
+  align-self: center;
+}
+
+.yt-search-title {
+  font-weight: bold;
+}
+
+.yt-search-channel {
+  font-size: smaller;
+}
+
+.yt-search-duration {
+  font-size: smaller;
+  color: grey;
+}

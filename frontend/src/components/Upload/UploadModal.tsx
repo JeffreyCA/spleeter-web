@@ -1,17 +1,25 @@
 import { Dropzone, IFileWithMeta, StatusValue } from '@jeffreyca/react-dropzone-uploader';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import axios from 'axios';
+import he from 'he';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
 import { SongData } from '../../models/SongData';
 import { YouTubeFetchStatus } from '../../models/YouTubeFetchStatus';
+import { YouTubeSearchResponse } from '../../models/YouTubeSearchResponse';
+import { YouTubeVideo } from '../../models/YouTubeVideo';
+import { getYouTubeLinkForId } from '../../Utils';
 import CustomInput from './CustomInput';
 import CustomPreview from './CustomPreview';
 import './UploadModal.css';
 import UploadModalForm from './UploadModalForm';
-import { YouTubeLinkField } from './YouTubeLinkField';
+import { YouTubeForm } from './YouTubeForm';
 
 // This value is the same on the server-side (settings.py)
 const MAX_FILE_BYTES = 30 * 1024 * 1024;
+const ALLOWED_EXT = '.mp3,.flac,.wav';
+
+const DEBOUNCE_MS = 400;
 
 const ERROR_MAP = new Map([
   ['aborted', 'Operation aborted.'],
@@ -40,7 +48,9 @@ interface State {
   fileId: number;
   artist: string;
   title: string;
-  link: string;
+  link?: string;
+  query?: string;
+  searchResponse?: YouTubeSearchResponse;
   errors: string[];
 }
 
@@ -55,7 +65,6 @@ class UploadModal extends React.Component<Props, State> {
       fileId: -1,
       artist: '',
       title: '',
-      link: '',
       errors: [],
     };
   }
@@ -72,7 +81,9 @@ class UploadModal extends React.Component<Props, State> {
       fileId: -1,
       artist: '',
       title: '',
-      link: '',
+      link: undefined,
+      query: undefined,
+      searchResponse: undefined,
     });
   };
 
@@ -119,7 +130,18 @@ class UploadModal extends React.Component<Props, State> {
   };
 
   /**
-   * Called when primary modal button is clicked
+   * Called when back button is clicked.
+   */
+  onBack = (): void => {
+    if (this.state.detailsStep) {
+      this.setState({
+        detailsStep: false,
+      });
+    }
+  };
+
+  /**
+   * Called when primary button is clicked.
    */
   onNext = (): void => {
     if (!this.state.detailsStep) {
@@ -151,6 +173,7 @@ class UploadModal extends React.Component<Props, State> {
         artist: this.state.artist,
         title: this.state.title,
       };
+      // Submit YouTube song
       axios
         .post('/api/source-track/youtube/', details)
         .then(() => {
@@ -166,7 +189,122 @@ class UploadModal extends React.Component<Props, State> {
     }
   };
 
-  handleChangeStatus = ({ meta, remove, xhr }: IFileWithMeta, status: StatusValue): void => {
+  /**
+   * Query backend YouTube search API for video search results.
+   * @param query Query string
+   */
+  youtubeSearch = (query: string): void => {
+    this.setState({
+      fetchStatus: YouTubeFetchStatus.IS_FETCHING,
+    });
+
+    axios
+      .get<YouTubeSearchResponse>('/api/search/', {
+        params: {
+          query,
+        },
+      })
+      .then(({ data }) => {
+        console.log(data);
+        this.setState({
+          searchResponse: data,
+          fetchStatus: YouTubeFetchStatus.DONE,
+        });
+      })
+      .catch(({ response }) => {
+        const { data } = response;
+        this.setState({
+          errors: data.errors,
+          fetchStatus: YouTubeFetchStatus.ERROR,
+        });
+      });
+  };
+
+  /**
+   * Debounced version of youtubeSearch.
+   */
+  youtubeSearchDebounced = AwesomeDebouncePromise(this.youtubeSearch, DEBOUNCE_MS);
+
+  /**
+   * Called when artist or title fields change.
+   */
+  onDetailFieldChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    event.preventDefault();
+    const { name, value } = event.target;
+
+    if (name === 'artist' || name === 'title') {
+      this.resetErrors();
+      this.setState({ [name]: value } as any);
+    }
+  };
+
+  /**
+   * Called when value of YouTube search text field changes.
+   */
+  onYouTubeFieldChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    event.preventDefault();
+    const { name, value } = event.target;
+
+    if (name !== 'link') {
+      return;
+    }
+    this.resetErrors();
+
+    if (!value) {
+      // Clear state if input field was cleared
+      this.resetFetchState();
+      this.setState({
+        link: undefined,
+        query: undefined,
+        searchResponse: undefined,
+      });
+    } else if (!isValidYouTubeLink(value)) {
+      // User entered a search query
+      this.setState({
+        query: value,
+      });
+      this.youtubeSearchDebounced(value);
+    } else {
+      // User entered a valid YouTube link
+      this.setState({
+        fetchStatus: YouTubeFetchStatus.IS_FETCHING,
+        link: value,
+      });
+
+      axios
+        .get('/api/source-file/youtube/', {
+          params: {
+            link: value,
+          },
+        })
+        .then(({ data }) => {
+          const { artist, title } = data;
+          this.setState({
+            fetchStatus: YouTubeFetchStatus.DONE,
+            artist: artist,
+            title: title,
+          });
+        })
+        .catch(({ response }) => {
+          const { data } = response;
+          if (data.status === 'duplicate') {
+            this.setState({
+              fetchStatus: YouTubeFetchStatus.ERROR,
+            });
+          } else {
+            this.setState({
+              errors: response.data.errors,
+              fetchStatus: YouTubeFetchStatus.ERROR,
+            });
+          }
+        });
+    }
+  };
+
+  /**
+   * Called when file upload status changes.
+   */
+  onFileUploadStatusChange = ({ meta, remove, xhr }: IFileWithMeta, status: StatusValue): void => {
     const aborted =
       status === 'aborted' ||
       status === 'rejected_file_type' ||
@@ -202,7 +340,7 @@ class UploadModal extends React.Component<Props, State> {
       this.setState({
         droppedFile: true,
         isUploading: true,
-        link: '',
+        link: undefined,
       });
     } else if (status === 'done') {
       // File upload completed successfully, get returned ID and metadata info
@@ -218,65 +356,36 @@ class UploadModal extends React.Component<Props, State> {
     }
   };
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    event.preventDefault();
-    const { name, value } = event.target;
-    this.resetErrors();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.setState({ [name]: value } as any);
-
-    // YouTube link input was changed
-    if (name === 'link') {
-      // Clear state if input field was cleared
-      if (!value) {
-        this.resetFetchState();
-      } else if (value && !isValidYouTubeLink(value)) {
-        // Invalid link
-        this.resetFetchState();
-        this.setState({ errors: ['Invalid YouTube link.'] });
-      } else {
-        // Wait for results from backend
-        this.setState({
-          fetchStatus: YouTubeFetchStatus.IS_FETCHING,
-        });
-
-        axios
-          .get('/api/source-file/youtube/', {
-            params: {
-              link: value,
-            },
-          })
-          .then(({ data }) => {
-            const { artist, title } = data;
-            this.setState({
-              fetchStatus: YouTubeFetchStatus.DONE,
-              artist: artist,
-              title: title,
-            });
-          })
-          .catch(({ response }) => {
-            console.log(response);
-            const { data } = response;
-            if (data.status === 'duplicate') {
-              this.setState({
-                fetchStatus: YouTubeFetchStatus.ERROR,
-              });
-            } else {
-              this.setState({
-                errors: response.data.errors,
-                fetchStatus: YouTubeFetchStatus.ERROR,
-              });
-            }
-          });
-      }
-    }
+  /**
+   * Called when search result is clicked.
+   * @param video Video that was clicked
+   */
+  onSearchResultClick = (video: YouTubeVideo): void => {
+    this.setState({
+      artist: he.decode(video.parsed_artist),
+      title: he.decode(video.parsed_title),
+      link: getYouTubeLinkForId(video.id),
+      detailsStep: true,
+    });
   };
 
   render(): JSX.Element {
-    const { droppedFile, fetchStatus, isUploading, detailsStep, artist, title, link, errors } = this.state;
+    const {
+      droppedFile,
+      fetchStatus,
+      isUploading,
+      detailsStep,
+      artist,
+      title,
+      link,
+      query,
+      searchResponse,
+      errors,
+    } = this.state;
     const { show } = this.props;
     const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song or provide YouTube link';
     const primaryText = detailsStep ? 'Finish' : 'Next';
+
     let buttonEnabled;
     if (!detailsStep) {
       if (droppedFile) {
@@ -302,7 +411,7 @@ class UploadModal extends React.Component<Props, State> {
             </Alert>
           )}
           {detailsStep ? (
-            <UploadModalForm artist={artist} title={title} handleChange={this.handleChange} />
+            <UploadModalForm artist={artist} title={title} handleChange={this.onDetailFieldChange} />
           ) : (
             <div>
               <Dropzone
@@ -310,18 +419,20 @@ class UploadModal extends React.Component<Props, State> {
                 maxFiles={1}
                 maxSizeBytes={MAX_FILE_BYTES}
                 multiple={false}
-                accept=".mp3,.flac,.wav"
-                onChangeStatus={this.handleChangeStatus}
+                accept={ALLOWED_EXT}
+                onChangeStatus={this.onFileUploadStatusChange}
                 getUploadParams={() => ({ url: '/api/source-file/file/' })}
                 InputComponent={CustomInput}
                 PreviewComponent={CustomPreview}
               />
               <hr className="hr-text" data-content="OR" />
-              <YouTubeLinkField
+              <YouTubeForm
                 fetchStatus={fetchStatus}
                 disabled={droppedFile}
-                link={link}
-                handleChange={this.handleChange}
+                value={query || link}
+                searchResponse={searchResponse}
+                handleChange={this.onYouTubeFieldChange}
+                onSearchResultClick={this.onSearchResultClick}
               />
             </div>
           )}
@@ -330,6 +441,11 @@ class UploadModal extends React.Component<Props, State> {
           <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
+          {detailsStep && (
+            <Button variant="outline-secondary" onClick={this.onBack}>
+              Back
+            </Button>
+          )}
           <Button variant={detailsStep ? 'success' : 'primary'} disabled={!buttonEnabled} onClick={this.onNext}>
             {primaryText}
           </Button>

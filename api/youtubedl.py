@@ -83,7 +83,7 @@ def get_meta_info(url):
         except DownloadError:
             # Allow for retry
             pass
-    raise Exception('get_meta_info failed')
+    raise DownloadError('Unable to parse YouTube link')
 
 def download_audio(url, dir_path):
     """
