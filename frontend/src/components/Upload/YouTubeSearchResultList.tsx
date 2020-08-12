@@ -11,6 +11,10 @@ interface Props {
   onSearchResultClick: (video: YouTubeVideo) => void;
 }
 
+const onExtLinkClick = (event: React.SyntheticEvent<HTMLAnchorElement>) => {
+  event.stopPropagation();
+};
+
 export const YouTubeSearchResultList = (props: Props): JSX.Element | null => {
   if (!props.searchResponse) {
     return null;
@@ -33,7 +37,11 @@ export const YouTubeSearchResultList = (props: Props): JSX.Element | null => {
               <span className="yt-search-duration">{toDurationTimestamp(video.duration)}</span>
             </Col>
             <Col xs={1} className="yt-search-extlink p-0">
-              <a target="_blank" rel="noopener noreferrer" href={getYouTubeLinkForId(video.id)}>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={getYouTubeLinkForId(video.id)}
+                onClick={onExtLinkClick}>
                 <BoxArrowUpRight size={20} />
               </a>
             </Col>
