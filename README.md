@@ -9,8 +9,9 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ### Features
 - Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
-    - **NEW: Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time.**
-- Import tracks by file (MP3, FLAC, WAV) or by YouTube link
+    - **New: Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time.**
+- Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
+    - **New: You can now search YouTube directly in the Import modal (YouTube Data API key required)**
 - Persistent audio library with ability to stream and download your source tracks and mixes
 - Customize number of background workers working on audio separation and YouTube imports
 - Supports third-party storage backends like S3 and Azure Blob Storage
@@ -33,10 +34,19 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### Instructions
+0. (Optional) Set the YouTube Data API key (for YouTube search functionality):
+
+    You can skip this step, but you would not be able to import songs by searching with a query. You would still be able to import songs via YouTube links though.
+
+    Create an `.env` file at the project root with the following contents:
+    ```
+    YOUTUBE_API_KEY=<YouTube Data API key>
+    ```
+
 1. Build and start containers using the development Docker config:
 
     ```sh
-    > docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
+    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
     ```
 
 2. Launch **Spleeter Web**
@@ -53,63 +63,77 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     * On Windows, you can follow [this guide](http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
 
 ### Instructions
-1. Create Python virtual environment
-    ```sh
-    > python -m venv env
-    # Unix/macOS:
-    > source env/bin/activate
-    # Windows:
-    > .\env\Scripts\activate
-    ```
-2. Install Python dependencies
-    ```sh
-    (env) > pip install -r requirements.txt
-    ```
-3. Install Node dependencies
-    ```sh
-    > cd frontend
-    > npm install
-    ```
-4. Apply migrations
-    ```sh
-    # Unix/macOS:
-    (env) > export DJANGO_DEVELOPMENT=true
-    # Windows:
-    (env) > set DJANGO_DEVELOPMENT=true
+1. Set environment variables
 
-    (env) > python manage.py migrate
+    **Make sure these variables are set when running all subsequent commands.**
+
+    ```sh
+    # Unix/macOS:
+    (env) spleeter-web$ export DJANGO_DEVELOPMENT=true
+    (env) spleeter-web$ export YOUTUBE_API_KEY=<api key>
+    # Windows:
+    (env) spleeter-web$ set DJANGO_DEVELOPMENT=true
+    (env) spleeter-web$ set YOUTUBE_API_KEY=<api key>
+    ```
+
+2. Create Python virtual environment
+    ```sh
+    spleeter-web$ python -m venv env
+    # Unix/macOS:
+    spleeter-web$ source env/bin/activate
+    # Windows:
+    spleeter-web$ .\env\Scripts\activate
+    ```
+3. Install Python dependencies
+    ```sh
+    (env) spleeter-web$ pip install -r requirements.txt
+    ```
+4. Install Node dependencies
+    ```sh
+    spleeter-web$ cd frontend
+    spleeter-web/frontend$ npm install
+    ```
+5. Apply migrations
+    ```sh
+    (env) spleeter-web$ python manage.py migrate
     ````
-5. Start frontend (from `spleeter-web` directory):
+6. Start frontend
     ```sh
-    # Unix/macOS:
-    > export DJANGO_DEVELOPMENT=true
-    # Windows:
-    > set DJANGO_DEVELOPMENT=true
-
-    > npm run dev --prefix frontend
+    spleeter-web$ npm run dev --prefix frontend
     ```
-6. Start backend in separate terminal (from `spleeter-web` directory):
+7. Start backend in separate terminal
     ```sh
-    # Unix/macOS:
-    (env) > export DJANGO_DEVELOPMENT=true
-    # Windows:
-    (env) > set DJANGO_DEVELOPMENT=true
-
-    (env) > python manage.py runserver 0.0.0.0:8000
+    (env) spleeter-web$ python manage.py runserver 0.0.0.0:8000
     ````
 
-7. Start Huey worker in separate terminal (from `spleeter-web` directory):
+8. Start Huey worker in separate terminal
     ```sh
-    # Unix/macOS:
-    (env) > export DJANGO_DEVELOPMENT=true
-    # Windows:
-    (env) > set DJANGO_DEVELOPMENT=true
-
-    (env) > python manage.py run_huey
+    (env) spleeter-web$ python manage.py run_huey
     ```
-8. Launch **Spleeter Web**
+9. Launch **Spleeter Web**
 
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
+
+## Configuration
+
+### Django settings
+
+| Settings file | Description |
+|---|---|
+| `django_react/settings.py` | The base Django settings used when launched in non-Docker context. |
+| `django_react/settings_dev.py` | Contains the **override** settings used when run in development mode (i.e. `DJANGO_DEVELOPMENT` is set). |
+| `django_react/settings_docker.py` | The base Django settings used when launched using Docker. |
+| `django_react/settings_docker_dev.py` | Contains the **override** settings used when run in development mode using Docker (i.e. `docker-compose.dev.yml`). |
+
+### Environment variables
+
+| Name | Description |
+|---|---|
+| `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
+| `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
+| `HUEY_WORKERS` | Number of Huey workers used for source separation and YouTube import tasks. |
+| `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
+| `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
@@ -128,8 +152,8 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 1. Clone this git repo
     ```sh
-    > git clone https://github.com/JeffreyCA/spleeter-web.git
-    > cd spleeter-web
+    $ git clone https://github.com/JeffreyCA/spleeter-web.git
+    $ cd spleeter-web
     ```
 
 2. If you want your server to self-host the media files instead of using a cloud storage provider, then first edit `django_react/settings_docker.py` and uncomment this line:
@@ -146,6 +170,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     AZURE_ACCOUNT_KEY=<account key>   # Optional
     AZURE_ACCOUNT_NAME=<account name> # Optional
     HUEY_WORKERS=<num workers>        # Optional (default = 2)
+    YOUTUBE_API_KEY=<youtube api key> # Optional
     ```
 
     These values are used in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings.
@@ -154,12 +179,12 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
     If you are self-hosting media files:
     ```sh
-    > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build -d
+    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build -d
     ```
 
     Otherwise if using a storage provider:
     ```sh
-    > sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
+    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
 
 4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
