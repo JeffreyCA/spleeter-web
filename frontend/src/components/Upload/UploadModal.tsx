@@ -383,7 +383,7 @@ class UploadModal extends React.Component<Props, State> {
       errors,
     } = this.state;
     const { show } = this.props;
-    const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song or provide YouTube link';
+    const modalTitle = detailsStep ? 'Fill in the details' : 'Upload song or provide YouTube video';
     const primaryText = detailsStep ? 'Finish' : 'Next';
 
     let buttonEnabled;

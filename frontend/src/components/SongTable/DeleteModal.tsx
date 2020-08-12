@@ -85,7 +85,7 @@ class DeleteModal extends React.Component<Props, State> {
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Track Deletion</Modal.Title>
+          <Modal.Title>Confirm track deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {errors.length > 0 && (
