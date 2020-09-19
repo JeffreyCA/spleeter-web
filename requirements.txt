@@ -73,7 +73,7 @@ scikit-learn==0.23.1
 scipy==1.4.1
 six==1.15.0
 SoundFile==0.10.3.post1
-spleeter==1.5.4
+-e git+https://github.com/deezer/spleeter.git@b9d96e1697c178c6035a45c389e3c1b36071c5dd#egg=spleeter
 sqlparse==0.3.1
 tensorboard==1.15.0
 tensorflow==1.15.2
@@ -88,6 +88,6 @@ Werkzeug==1.0.1
 whitenoise==5.1.0
 wrapt==1.11.2
 yapf==0.30.0
--e git+https://github.com/JeffreyCA/youtube-dl.git@d6c472fecf059a00ced417f81c99eb287e07c608#egg=youtube_dl
+-e git+https://github.com/JeffreyCA/youtube-dl.git@f1d2e567275fd2a3fef42840e86fd6425fc6d00d#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.1.0
