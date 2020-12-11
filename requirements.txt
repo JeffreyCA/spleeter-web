@@ -94,6 +94,6 @@ whitenoise==5.2.0
 wrapt==1.12.1
 yapf==0.30.0
 yarl==1.6.0
--e git+https://github.com/JeffreyCA/youtube-dl.git@3afecd1a8c3c4371369984137389d580210c3d15#egg=youtube_dl
+-e git+https://github.com/JeffreyCA/youtube-dl.git@080882269a7117d512baca30ea274b98965a5a40#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.2.0
