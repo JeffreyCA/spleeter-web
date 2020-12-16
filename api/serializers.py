@@ -96,12 +96,16 @@ class SourceTrackSerializer(serializers.ModelSerializer):
         source='source_file.youtube_fetch_task.get_status_display',
         read_only=True,
         default=None)
+    fetch_task_error = serializers.CharField(
+        source='source_file.youtube_fetch_task.error',
+        read_only=True,
+        default=None)
 
     class Meta:
         model = SourceTrack
         fields = ('id', 'source_file', 'url', 'artist', 'title', 'static',
                   'dynamic', 'is_youtube', 'youtube_link', 'fetch_task',
-                  'fetch_task_status', 'date_created')
+                  'fetch_task_status', 'fetch_task_error', 'date_created')
 
 class YTSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for a SourceTrack derived from YouTube link."""
