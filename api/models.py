@@ -40,10 +40,10 @@ class TaskStatus(models.IntegerChoices):
     """
     Enum for status of a task.
     """
-    QUEUED = 0
-    IN_PROGRESS = 1
-    DONE = 2
-    ERROR = -1
+    QUEUED = 0, 'Queued'
+    IN_PROGRESS = 1, 'In Progress'
+    DONE = 2, 'Done'
+    ERROR = -1, 'Error'
 
 class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
