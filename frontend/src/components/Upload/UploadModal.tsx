@@ -5,7 +5,7 @@ import he from 'he';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
 import { SongData } from '../../models/SongData';
-import { YouTubeFetchStatus } from '../../models/YouTubeFetchStatus';
+import { YouTubeLinkFetchStatus } from '../../models/YouTubeLinkFetchStatus';
 import { YouTubeSearchResponse } from '../../models/YouTubeSearchResponse';
 import { YouTubeVideo } from '../../models/YouTubeVideo';
 import { getYouTubeLinkForId } from '../../Utils';
@@ -42,7 +42,7 @@ interface Props {
 
 interface State {
   droppedFile: boolean;
-  fetchStatus: YouTubeFetchStatus;
+  fetchStatus: YouTubeLinkFetchStatus;
   isUploading: boolean;
   detailsStep: boolean;
   fileId: number;
@@ -59,7 +59,7 @@ class UploadModal extends React.Component<Props, State> {
     super(props);
     this.state = {
       droppedFile: false,
-      fetchStatus: YouTubeFetchStatus.IDLE,
+      fetchStatus: YouTubeLinkFetchStatus.IDLE,
       isUploading: false,
       detailsStep: false,
       fileId: -1,
@@ -75,7 +75,7 @@ class UploadModal extends React.Component<Props, State> {
   resetState = (): void => {
     this.setState({
       droppedFile: false,
-      fetchStatus: YouTubeFetchStatus.IDLE,
+      fetchStatus: YouTubeLinkFetchStatus.IDLE,
       isUploading: false,
       detailsStep: false,
       fileId: -1,
@@ -98,7 +98,7 @@ class UploadModal extends React.Component<Props, State> {
 
   resetFetchState = (): void => {
     this.setState({
-      fetchStatus: YouTubeFetchStatus.IDLE,
+      fetchStatus: YouTubeLinkFetchStatus.IDLE,
     });
   };
 
@@ -195,7 +195,7 @@ class UploadModal extends React.Component<Props, State> {
    */
   youtubeSearch = (query: string): void => {
     this.setState({
-      fetchStatus: YouTubeFetchStatus.IS_FETCHING,
+      fetchStatus: YouTubeLinkFetchStatus.IS_FETCHING,
     });
 
     axios
@@ -208,14 +208,14 @@ class UploadModal extends React.Component<Props, State> {
         console.log(data);
         this.setState({
           searchResponse: data,
-          fetchStatus: YouTubeFetchStatus.DONE,
+          fetchStatus: YouTubeLinkFetchStatus.DONE,
         });
       })
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
           errors: data.errors,
-          fetchStatus: YouTubeFetchStatus.ERROR,
+          fetchStatus: YouTubeLinkFetchStatus.ERROR,
         });
       });
   };
@@ -267,7 +267,7 @@ class UploadModal extends React.Component<Props, State> {
     } else {
       // User entered a valid YouTube link
       this.setState({
-        fetchStatus: YouTubeFetchStatus.IS_FETCHING,
+        fetchStatus: YouTubeLinkFetchStatus.IS_FETCHING,
         link: value,
       });
 
@@ -280,7 +280,7 @@ class UploadModal extends React.Component<Props, State> {
         .then(({ data }) => {
           const { artist, title } = data;
           this.setState({
-            fetchStatus: YouTubeFetchStatus.DONE,
+            fetchStatus: YouTubeLinkFetchStatus.DONE,
             artist: artist,
             title: title,
           });
@@ -289,12 +289,12 @@ class UploadModal extends React.Component<Props, State> {
           const { data } = response;
           if (data.status === 'duplicate') {
             this.setState({
-              fetchStatus: YouTubeFetchStatus.ERROR,
+              fetchStatus: YouTubeLinkFetchStatus.ERROR,
             });
           } else {
             this.setState({
               errors: response.data.errors,
-              fetchStatus: YouTubeFetchStatus.ERROR,
+              fetchStatus: YouTubeLinkFetchStatus.ERROR,
             });
           }
         });
@@ -391,7 +391,7 @@ class UploadModal extends React.Component<Props, State> {
       if (droppedFile) {
         buttonEnabled = !isUploading;
       } else {
-        buttonEnabled = errors.length === 0 && link && fetchStatus === YouTubeFetchStatus.DONE;
+        buttonEnabled = errors.length === 0 && link && fetchStatus === YouTubeLinkFetchStatus.DONE;
       }
     } else {
       buttonEnabled = artist && title;

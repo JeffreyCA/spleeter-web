@@ -1,7 +1,7 @@
 /**
  * Fetch status model.
  */
-export enum YouTubeFetchStatus {
+export enum YouTubeLinkFetchStatus {
   IDLE = 0,
   IS_FETCHING = 1,
   DONE = 2,
