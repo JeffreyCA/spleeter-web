@@ -1,5 +1,6 @@
 import { DynamicMix } from './DynamicMix';
 import { StaticMix } from './StaticMix';
+import { YouTubeAudioFetchTaskStatus } from './YouTubeAudioFetchTaskStatus';
 
 /**
  * Represents a "SourceTrack" from the backend.
@@ -10,7 +11,10 @@ export interface SongData {
   artist: string;
   title: string;
   url: string;
-  date_created: string;
   dynamic: DynamicMix | null;
   static: StaticMix[];
+  is_youtube: boolean;
+  youtube_link: string | null;
+  fetch_task_status: YouTubeAudioFetchTaskStatus | null;
+  date_created: string;
 }
