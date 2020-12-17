@@ -35,3 +35,7 @@ td.expand-cell {
 .inner-table > tbody > tr:nth-child(even) > td {
   background-color: white;
 }
+
+.react-bootstrap-table th[data-row-selection] {
+  width: 16px;
+}

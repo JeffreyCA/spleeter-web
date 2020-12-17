@@ -4,15 +4,15 @@ import { Trash } from 'react-bootstrap-icons';
 import { SongData } from '../../models/SongData';
 
 interface Props {
-  disabled: boolean;
+  disabled?: boolean;
   song: SongData;
   onClick: (song: SongData) => void;
 }
 
 /**
- * Delete button component.
+ * Delete track button component.
  */
-class DeleteButton extends React.Component<Props> {
+class DeleteTrackButton extends React.Component<Props> {
   handleClick = (): void => {
     this.props.onClick(this.props.song);
   };
@@ -23,6 +23,7 @@ class DeleteButton extends React.Component<Props> {
         variant="danger"
         className="ml-2"
         style={{ whiteSpace: 'nowrap' }}
+        title="Delete"
         disabled={this.props.disabled}
         onClick={this.handleClick}>
         <Trash />
@@ -31,4 +32,4 @@ class DeleteButton extends React.Component<Props> {
   }
 }
 
-export default DeleteButton;
+export default DeleteTrackButton;

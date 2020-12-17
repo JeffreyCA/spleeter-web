@@ -157,8 +157,8 @@ class SourceFileView(viewsets.ModelViewSet):
                 },
                 status=400)
 
-class SourceTrackDestroyView(generics.DestroyAPIView):
-    """View that handles SourceTrack deletion."""
+class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+    """View that handles SourceTrack deletion and retrieval."""
     queryset = SourceTrack.objects.all()
     serializer_class = SourceTrackSerializer
     lookup_field = 'id'
@@ -385,11 +385,17 @@ class StaticMixCreateView(generics.ListCreateAPIView):
         # Kick off separation task in background
         create_static_mix(instance)
 
-class StaticMixRetrieveView(generics.RetrieveAPIView):
-    """View for handling StaticMix lookup by ID."""
+class StaticMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+    """View for handling StaticMix deletion and retrieval."""
     serializer_class = StaticMixSerializer
     queryset = StaticMix.objects.all()
     lookup_field = 'id'
+
+    def delete(self, request, *args, **kwargs):
+        """Handle request to delete StaticMix."""
+        # instance_id = kwargs['id']
+        # instance = self.get_object()
+        return super().destroy(request, *args, **kwargs)
 
 class YTAudioDownloadTaskRetrieveView(generics.RetrieveAPIView):
     """View for handling YTAudioDownloadTask lookup by ID."""

@@ -19,7 +19,7 @@ interface State {
 /**
  * Component of the delete track modal.
  */
-class DeleteModal extends React.Component<Props, State> {
+class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -112,4 +112,4 @@ class DeleteModal extends React.Component<Props, State> {
   }
 }
 
-export default DeleteModal;
+export default DeleteTrackModal;

@@ -7,8 +7,10 @@ import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import { AccompBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
+import DeleteStaticMixButton from './DeleteStaticMixButton';
 import PausePlayButton from './PausePlayButton';
 import './StaticMixTable.css';
+import StatusIcon from './StatusIcon';
 
 const statusVariantMap = new Map([
   ['Done', 'success'],
@@ -17,12 +19,26 @@ const statusVariantMap = new Map([
   ['Queued', 'secondary'],
 ]);
 
+/**
+ * Formatter function for status column
+ */
+const statusColFormatter: ColumnFormatter<StaticMix> = (cell, row, rowIndex) => {
+  return (
+    <div className="d-flex align-items-center justify-content-start">
+      <StatusIcon status={row.status} overlayText={row.error} />
+    </div>
+  );
+};
+
+/**
+ * Formatter function for play column
+ */
 const playColFormatter: ColumnFormatter<StaticMix> = (cell, row, rowIndex, formatExtraData) => {
   const { currentSongUrl, isPlaying, onPauseClick, onPlayClick } = formatExtraData;
   const isPlayingCurrent = isPlaying && currentSongUrl === row.url;
 
   return (
-    <div className="d-flex align-items-center justify-content-center">
+    <div className="d-flex align-items-center justify-content-start">
       <PausePlayButton
         playing={isPlayingCurrent}
         disabled={!row.url}
@@ -35,12 +51,16 @@ const playColFormatter: ColumnFormatter<StaticMix> = (cell, row, rowIndex, forma
   );
 };
 
-const downloadFormatter: ColumnFormatter<any> = (cell, row, rowIndex) => {
+const downloadFormatter: ColumnFormatter<StaticMix> = (cell, row, rowIndex, formatExtraData) => {
+  const { onDeleteStaticMixClick } = formatExtraData;
   const { url } = row;
   return (
-    <Button variant="success" disabled={!url} href={url}>
-      <Download />
-    </Button>
+    <div className="d-flex align-items-center justify-content-end">
+      <Button variant="success" disabled={!url} href={url}>
+        <Download />
+      </Button>
+      <DeleteStaticMixButton onClick={onDeleteStaticMixClick} mix={row} />
+    </div>
   );
 };
 
@@ -97,14 +117,27 @@ interface Props {
   data: StaticMix[];
   currentSongUrl?: string;
   isPlaying: boolean;
+  onDeleteStaticMixClick: (song: StaticMix) => void;
   onPauseClick: (song: StaticMix) => void;
   onPlayClick: (song: StaticMix) => void;
 }
 
 class StaticMixTable extends React.Component<Props> {
   render(): JSX.Element {
-    const { data, currentSongUrl, isPlaying, onPauseClick, onPlayClick } = this.props;
+    const { data, currentSongUrl, isPlaying, onDeleteStaticMixClick, onPauseClick, onPlayClick } = this.props;
     const columns = [
+      {
+        dataField: 'status_dummy',
+        isDummyField: true,
+        text: '',
+        formatter: statusColFormatter,
+        headerStyle: () => {
+          return { width: '40px' };
+        },
+        style: () => {
+          return { width: '40px' };
+        }
+      },
       {
         dataField: 'url',
         text: '',
@@ -132,15 +165,15 @@ class StaticMixTable extends React.Component<Props> {
         sort: true,
       },
       {
-        dataField: 'status',
-        text: 'Status',
-        formatter: statusFormatter,
-        sort: true,
-      },
-      {
         dataField: 'file',
-        text: 'Download',
+        text: '',
         formatter: downloadFormatter,
+        formatExtraData: {
+          onDeleteStaticMixClick: onDeleteStaticMixClick
+        },
+        style: () => {
+          return { paddingRight: 28 };
+        }
       },
     ];
 
