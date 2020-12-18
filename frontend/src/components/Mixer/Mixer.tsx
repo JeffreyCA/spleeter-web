@@ -48,10 +48,12 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       .get<DynamicMix>(`/api/mix/dynamic/${mixId}/`)
       .then(({ data }) => {
         if (data) {
-          this.setState({ isLoaded: true, data: data, showCancelTaskModal: false });
+          this.setState({ isLoaded: true, data: data });
         }
         if (data.status === 'Queued' || data.status === 'In Progress') {
-          this.timeout = setTimeout(() => this.loadData(), 10000);
+          this.timeout = setTimeout(() => this.loadData(), 5000);
+        } else if (data.status === 'Done') {
+          this.setState({ showCancelTaskModal: false });
         }
       })
       .catch(() => {

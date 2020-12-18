@@ -31,11 +31,8 @@ class CancelTaskModal extends React.Component<Props, {}> {
           <div>Are you sure you want to cancel this task?</div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={this.props.hide}>
-            Cancel
-          </Button>
           <Button variant="danger" onClick={this.submit}>
-            Delete
+            Cancel
           </Button>
         </Modal.Footer>
       </Modal>
