@@ -59,7 +59,7 @@ class MixerPlayer extends React.Component<Props, State> {
     this.isMounted = true;
     const { data } = this.props;
     // Initialize Player objects pointing to the four track files
-    this.tonePlayers = new Tone.Players(
+    const players = new Tone.Players(
       {
         vocals: data?.vocals_file ?? '',
         accomp: data?.other_file ?? '',
@@ -67,13 +67,15 @@ class MixerPlayer extends React.Component<Props, State> {
         bass: data?.bass_file ?? '',
       },
       () => {
+        players.toDestination();
+        this.tonePlayers = players;
         if (this.isMounted) {
           this.setState({
             isReady: true,
           });
         }
       }
-    ).toDestination();
+    );
   }
 
   componentWillUnmount(): void {
