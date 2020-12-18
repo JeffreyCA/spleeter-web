@@ -1,56 +1,46 @@
-from datetime import timedelta
 import os
 import os.path
 import pathlib
 
-from django.core.files import File
-from django.core.files.base import ContentFile
+from billiard.exceptions import SoftTimeLimitExceeded
 from django.conf import settings
-from django.utils import timezone
+from django.core.files.base import ContentFile
 from django.utils.text import slugify
 
-from huey import crontab
-from huey.contrib.djhuey import task, periodic_task
-
-from .models import TaskStatus, DynamicMix, StaticMix
+from .celery import app
+from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
+                     YTAudioDownloadTask)
 from .separate import SpleeterSeparator
-from .youtubedl import *
+from .youtubedl import download_audio, get_file_ext
 
-@periodic_task(crontab(minute='*/30'))
-def check_in_progress_tasks():
-    """Periodic task that checks for stale separation tasks and marks them as erroneous."""
-    time_threshold = timezone.now() - timedelta(
-        minutes=settings.STALE_TASK_MIN_THRESHOLD)
-    in_progress_static_mixes = StaticMix.objects.filter(
-        status=TaskStatus.IN_PROGRESS, date_created__lte=time_threshold)
-    in_progress_dynamic_mixes = DynamicMix.objects.filter(
-        status=TaskStatus.IN_PROGRESS, date_created__lte=time_threshold)
-    in_progress_static_mixes.update(status=TaskStatus.ERROR,
-                                    error='Operation timed out')
-    in_progress_dynamic_mixes.update(status=TaskStatus.ERROR,
-                                     error='Operation timed out')
 
-@task()
-def create_static_mix(static_mix):
+@app.task()
+def create_static_mix(static_mix_id):
     """
     Task to create static mix by first using Spleeter to separate the requested parts
     and then mixing them into a single track.
 
-    :param static_mix: The audio track model (StaticMix) to be processed
+    :param static_mix_id: The id of the audio track model (StaticMix) to be processed
     """
     # Mark as in progress
+    try:
+        static_mix = StaticMix.objects.get(id=static_mix_id)
+    except StaticMix.DoesNotExist:
+        # Does not exist, perhaps due to stale task
+        return
     static_mix.status = TaskStatus.IN_PROGRESS
     static_mix.save()
+
     try:
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR,
-                                 str(static_mix.id))
+                                 static_mix_id)
         filename = slugify(static_mix.formatted_name()) + '.mp3'
-        rel_media_path = os.path.join(settings.SEPARATE_DIR,
-                                      str(static_mix.id), filename)
+        rel_media_path = os.path.join(settings.SEPARATE_DIR, static_mix_id,
+                                      filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         rel_path_dir = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR,
-                                    str(static_mix.id))
+                                    static_mix_id)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
         separator = SpleeterSeparator()
@@ -93,29 +83,36 @@ def create_static_mix(static_mix):
         static_mix.status = TaskStatus.ERROR
         static_mix.error = str(error)
         static_mix.save()
+    except SoftTimeLimitExceeded:
+        print('Aborted!')
     except Exception as error:
         print(error)
         static_mix.status = TaskStatus.ERROR
         static_mix.error = str(error)
         static_mix.save()
 
-@task()
-def create_dynamic_mix(dynamic_mix):
+@app.task()
+def create_dynamic_mix(dynamic_mix_id):
     """
     Task to create dynamic mix by using Spleeter to separate the track into
     vocals, accompaniment, bass, and drum parts.
 
-    :param dynamic_mix: The audio track model (StaticMix) to be processed
+    :param dynamic_mix_id: The id of the audio track model (StaticMix) to be processed
     """
     # Mark as in progress
+    try:
+        dynamic_mix = DynamicMix.objects.get(id=dynamic_mix_id)
+    except DynamicMix.DoesNotExist:
+        # Does not exist, perhaps due to stale task
+        return
     dynamic_mix.status = TaskStatus.IN_PROGRESS
     dynamic_mix.save()
+
     try:
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR,
-                                 str(dynamic_mix.id))
-        rel_media_path = os.path.join(settings.SEPARATE_DIR,
-                                      str(dynamic_mix.id))
+                                 dynamic_mix_id)
+        rel_media_path = os.path.join(settings.SEPARATE_DIR, dynamic_mix_id)
         rel_media_path_vocals = os.path.join(rel_media_path, 'vocals.mp3')
         rel_media_path_other = os.path.join(rel_media_path, 'other.mp3')
         rel_media_path_bass = os.path.join(rel_media_path, 'bass.mp3')
@@ -151,23 +148,33 @@ def create_dynamic_mix(dynamic_mix):
         dynamic_mix.status = TaskStatus.ERROR
         dynamic_mix.error = str(error)
         dynamic_mix.save()
+    except SoftTimeLimitExceeded:
+        print('Aborted!')
     except Exception as error:
         print(error)
         dynamic_mix.status = TaskStatus.ERROR
         dynamic_mix.error = str(error)
         dynamic_mix.save()
 
-@task(retries=settings.YOUTUBE_MAX_RETRIES)
-def fetch_youtube_audio(source_file, artist, title, link):
+@app.task(autoretry_for=(Exception, ),
+          default_retry_delay=3,
+          retry_kwargs={'max_retries': settings.YOUTUBE_MAX_RETRIES})
+def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
     """
     Task that uses youtubedl to extract the audio from a YouTube link.
 
-    :param source_file: SourceFile model
+    :param source_file_id: SourceFile id
+    :param fetch_task_id: YouTube audio fetch task model id
     :param artist: Track artist
     :param title: Track title
     :param link: YouTube link
     """
-    fetch_task = source_file.youtube_fetch_task
+    try:
+        source_file = SourceFile.objects.get(id=source_file_id)
+    except SourceFile.DoesNotExist:
+        # Does not exist, perhaps due to stale task
+        return
+    fetch_task = YTAudioDownloadTask.objects.get(id=fetch_task_id)
     # Mark as in progress
     fetch_task.status = TaskStatus.IN_PROGRESS
     fetch_task.save()
@@ -175,10 +182,10 @@ def fetch_youtube_audio(source_file, artist, title, link):
     try:
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR,
-                                 str(source_file.id))
+                                 str(source_file_id))
         filename = slugify(artist + ' - ' + title,
                            allow_unicode=True) + get_file_ext(link)
-        rel_media_path = os.path.join(settings.UPLOAD_DIR, str(fetch_task.id),
+        rel_media_path = os.path.join(settings.UPLOAD_DIR, str(source_file_id),
                                       filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
@@ -202,7 +209,7 @@ def fetch_youtube_audio(source_file, artist, title, link):
                 source_file.file = content_file
                 rel_dir_path = os.path.join(settings.MEDIA_ROOT,
                                             settings.UPLOAD_DIR,
-                                            str(source_file.id))
+                                            source_file_id)
                 # Remove local file
                 os.remove(rel_path)
                 # Remove empty directory
@@ -211,6 +218,8 @@ def fetch_youtube_audio(source_file, artist, title, link):
             source_file.save()
         else:
             raise Exception('Error writing to file')
+    except SoftTimeLimitExceeded:
+        print('Aborted!')
     except Exception as error:
         print(error)
         fetch_task.status = TaskStatus.ERROR

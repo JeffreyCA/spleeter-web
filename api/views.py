@@ -1,17 +1,18 @@
-from django.http import JsonResponse
 from django.db.models import Q
 from django.db.models.deletion import ProtectedError
 from django.db.utils import IntegrityError
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 
+from .celery import app
 from .models import *
 from .serializers import *
 from .tasks import *
 from .youtube_search import *
+
 
 class YouTubeSearchView(APIView):
     """View that processes YouTube video search queries."""
@@ -30,21 +31,21 @@ class YouTubeSearchView(APIView):
         page_token = data['page_token'] if 'page_token' in data else None
         try:
             next_page_token, result = perform_search(query, page_token)
-            return JsonResponse({'next_page_token': next_page_token, 'results': result})
+            return JsonResponse({
+                'next_page_token': next_page_token,
+                'results': result
+            })
         except YouTubeSearchError as e:
+            return JsonResponse({
+                'status': 'error',
+                'errors': [str(e)]
+            },
+                                status=400)
+        except Exception as e:
             return JsonResponse(
                 {
                     'status':
                     'error',
-                    'errors': [
-                        str(e)
-                    ]
-                },
-                status=400)
-        except Exception as e:
-            return JsonResponse(
-                {
-                    'status': 'error',
                     'errors': [
                         'Could not perform search. Did you set the YOUTUBE_API_KEY env variable correctly?'
                     ]
@@ -59,12 +60,11 @@ class YTLinkInfoView(APIView):
         serializer = YTLinkSerializer(data=request.query_params)
         if not serializer.is_valid():
             errors = list(map(str, serializer.errors['link']))
-            return JsonResponse(
-                {
-                    'status': 'error',
-                    'errors': errors
-                },
-                status=400)
+            return JsonResponse({
+                'status': 'error',
+                'errors': errors
+            },
+                                status=400)
 
         data = serializer.validated_data
         info = get_meta_info(data['link'])
@@ -124,7 +124,8 @@ class SourceFileView(viewsets.ModelViewSet):
             return JsonResponse({
                 'status': 'error',
                 'errors': errors
-            }, status=400)
+            },
+                                status=400)
 
         source_file = serializer.save()
         # Create response containing SourceFile ID and suggested artist/title metadata
@@ -153,7 +154,7 @@ class SourceFileView(viewsets.ModelViewSet):
             return JsonResponse(
                 {
                     'status': 'error',
-                    'error': 'A Song currently references this file'
+                    'error': 'A Track currently references this file'
                 },
                 status=400)
 
@@ -166,30 +167,36 @@ class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         """Handle request to delete SourceTrack."""
         instance_id = kwargs['id']
+        instance = self.get_object()
 
-        # Check if there are separation tasks currently enqueued or in progress
-        has_in_progress_tasks = StaticMix.objects.filter(
+        if instance is not None and not instance.url() and instance.source_file.is_youtube:
+            # Empty URL
+            celery_id = instance.source_file.youtube_fetch_task.celery_id
+            print('Revoking celery task:', celery_id)
+            app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+            return super().destroy(request, *args, **kwargs)
+
+        pending_dynamic_mixes = DynamicMix.objects.filter(
             Q(source_track=instance_id)
             & (Q(status=TaskStatus.IN_PROGRESS)
-               | Q(status=TaskStatus.QUEUED))).exists()
+            | Q(status=TaskStatus.QUEUED)))
 
-        has_in_progress_tasks = has_in_progress_tasks or DynamicMix.objects.filter(
+        pending_static_mixes = StaticMix.objects.filter(
             Q(source_track=instance_id)
             & (Q(status=TaskStatus.IN_PROGRESS)
-               | Q(status=TaskStatus.QUEUED))).exists()
+            | Q(status=TaskStatus.QUEUED)))
 
-        if has_in_progress_tasks:
-            # Prevent deletion if above is true
-            return JsonResponse(
-                {
-                    'status':
-                    'error',
-                    'error':
-                    'Cannot delete track because it has separation tasks enqueued or in progress.'
-                },
-                status=400)
+        for dynamic_mix in pending_dynamic_mixes:
+            celery_id = dynamic_mix.celery_id
+            print('Revoking celery task:', celery_id)
+            app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
 
-        # Otherwise, proceed with deleting StaticMixs first
+        for static_mix in pending_static_mixes:
+            celery_id = static_mix.celery_id
+            print('Revoking celery task:', celery_id)
+            app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+
+        # Delete mixes
         static_mixes = StaticMix.objects.filter(source_track=instance_id)
         for track in static_mixes:
             track.delete()
@@ -239,8 +246,7 @@ class YTSourceTrackView(generics.CreateAPIView):
         # Create download task and source file models
         fetch_task = YTAudioDownloadTask()
         fetch_task.save()
-        source_file = SourceFile(id=fetch_task.id,
-                                 is_youtube=True,
+        source_file = SourceFile(is_youtube=True,
                                  youtube_link=data['youtube_link'],
                                  youtube_fetch_task=fetch_task)
 
@@ -264,17 +270,21 @@ class YTSourceTrackView(generics.CreateAPIView):
 
         try:
             # Kick off download task in background
-            fetch_youtube_audio(source_file, data['artist'], data['title'],
-                                data['youtube_link'])
-        except:
-            # YouTube library is flaky, so Huey will retry up to 2 additional times
-            pass
+            result = fetch_youtube_audio.delay(source_file.id, fetch_task.id,
+                                               data['artist'], data['title'],
+                                               data['youtube_link'])
+            # Set the celery task ID in the model
+            YTAudioDownloadTask.objects.filter(id=fetch_task.id).update(
+                celery_id=result.id)
 
-        return JsonResponse({
-            'song_id': source_track.id,
-            'youtube_link': source_track.youtube_link(),
-            'fetch_task': source_track.youtube_fetch_task()
-        })
+            return JsonResponse({
+                'song_id': source_track.id,
+                'youtube_link': source_track.youtube_link(),
+                'fetch_task': result.id
+            })
+        except Exception as error:
+            # YouTube library is flaky, so Celery will retry up to 2 additional times
+            print(error)
 
 class DynamicMixCreateView(generics.ListCreateAPIView):
     """View that handles creating a DynamicMix instance."""
@@ -310,13 +320,26 @@ class DynamicMixCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         instance = serializer.save()
         # Kick off task in background
-        create_dynamic_mix(instance)
+        result = create_dynamic_mix.delay(instance.id)
+        # Set the celery task ID in the model
+        DynamicMix.objects.filter(id=instance.id).update(celery_id=result.id)
 
-class DynamicMixRetrieveView(generics.RetrieveAPIView):
+
+class DynamicMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     """View for handling DynamicMix lookup by ID."""
     serializer_class = DynamicMixSerializer
     queryset = DynamicMix.objects.all()
     lookup_field = 'id'
+
+    def delete(self, request, *args, **kwargs):
+        dynamic_mix = self.get_object()
+        celery_id = dynamic_mix.celery_id
+        # Revoke the celery task
+        print('Revoking celery task:', celery_id)
+        app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+
+        return super().destroy(request, *args, **kwargs)
+
 
 class StaticMixCreateView(generics.ListCreateAPIView):
     """View that handles creating StaticMix"""
@@ -383,7 +406,10 @@ class StaticMixCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         instance = serializer.save()
         # Kick off separation task in background
-        create_static_mix(instance)
+        result = create_static_mix.delay(instance.id)
+        # Set the celery task ID in the model
+        StaticMix.objects.filter(id=instance.id).update(celery_id=result.id)
+
 
 class StaticMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     """View for handling StaticMix deletion and retrieval."""
@@ -392,9 +418,11 @@ class StaticMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     lookup_field = 'id'
 
     def delete(self, request, *args, **kwargs):
-        """Handle request to delete StaticMix."""
-        # instance_id = kwargs['id']
-        # instance = self.get_object()
+        static_mix = self.get_object()
+        celery_id = static_mix.celery_id
+        # Revoke the celery task
+        print('Revoking celery task:', celery_id)
+        app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
         return super().destroy(request, *args, **kwargs)
 
 class YTAudioDownloadTaskRetrieveView(generics.RetrieveAPIView):
@@ -402,3 +430,8 @@ class YTAudioDownloadTaskRetrieveView(generics.RetrieveAPIView):
     serializer_class = YTAudioDownloadTaskSerializer
     queryset = YTAudioDownloadTask.objects.all()
     lookup_field = 'id'
+
+class YTAudioDownloadTaskListView(generics.ListAPIView):
+    """View that handles listing YouTube download tasks."""
+    queryset = YTAudioDownloadTask.objects.all()
+    serializer_class = YTAudioDownloadTaskSerializer

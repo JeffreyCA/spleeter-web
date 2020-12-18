@@ -49,6 +49,7 @@ class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
     # UUID to uniquely identify task
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Status of task
     status = models.IntegerField(choices=TaskStatus.choices,
                                  default=TaskStatus.QUEUED)
@@ -182,6 +183,8 @@ class StaticMix(models.Model):
     """Model representing a statically mixed track (certain parts are excluded)."""
     # UUID to uniquely identify track
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # 
+    celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -257,6 +260,8 @@ class DynamicMix(models.Model):
     """Model representing a track that has been split into individually components."""
     # UUID to uniquely identify track
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    #
+    celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Source track on which it is based
     source_track = models.OneToOneField(SourceTrack,
                                         related_name='dynamic',

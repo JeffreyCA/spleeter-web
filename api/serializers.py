@@ -25,7 +25,7 @@ class YTAudioDownloadTaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = YTAudioDownloadTask
-        fields = ('id', 'status', 'error')
+        fields = ('id', 'celery_id', 'status', 'error')
 
 class DynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model."""
@@ -36,7 +36,7 @@ class DynamicMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'source_track', 'artist', 'title', 'vocals_file',
+        fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals_file',
                   'other_file', 'bass_file', 'drums_file', 'status', 'error',
                   'overwrite', 'date_created')
 

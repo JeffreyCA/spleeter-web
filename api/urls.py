@@ -20,9 +20,12 @@ urlpatterns = [
     path('api/source-track/file/', views.FileSourceTrackView.as_view()),
     path('api/source-track/youtube/', views.YTSourceTrackView.as_view()),
     path('api/mix/static/', views.StaticMixCreateView.as_view()),
-    path('api/mix/static/<uuid:id>/', views.StaticMixRetrieveDestroyView.as_view()),
+    path('api/mix/static/<uuid:id>/',
+         views.StaticMixRetrieveDestroyView.as_view()),
     path('api/mix/dynamic/', views.DynamicMixCreateView.as_view()),
-    path('api/mix/dynamic/<uuid:id>/', views.DynamicMixRetrieveView.as_view()),
+    path('api/mix/dynamic/<uuid:id>/',
+         views.DynamicMixRetrieveDestroyView.as_view()),
+    path('api/task/', views.YTAudioDownloadTaskListView.as_view()),
     path('api/task/<uuid:id>/',
          views.YTAudioDownloadTaskRetrieveView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
