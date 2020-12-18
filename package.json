@@ -8,7 +8,7 @@
         "dev-prod": "npm run prod --prefix frontend & python3 manage.py runserver 0.0.0.0:8000",
         "prod": "npm run build --prefix frontend && python3 manage.py collectstatic && python3 manage.py runserver",
         "migrate": "python3 manage.py makemigrations api && python3 manage.py migrate",
-        "huey": "celery -A api worker -l INFO",
+        "celery": "celery -A api worker -l INFO",
         "clean": "rm -r media/separate/* && rm -r media/uploads/*",
         "flush": "python3 manage.py flush --no-input"
     }

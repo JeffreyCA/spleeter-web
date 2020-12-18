@@ -25,6 +25,7 @@ instance/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+celery.state.db
 
 # Environments
 .env
@@ -36,6 +37,5 @@ env.bak/
 venv.bak/
 
 *.sqlite3
-huey.*
 .coverage
 media/

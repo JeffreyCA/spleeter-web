@@ -17,7 +17,7 @@ services:
     volumes:
       - ./frontend/src:/webapp/frontend/src
     restart: always
-  huey:
+  celery:
     environment:
       - DJANGO_DEVELOPMENT=true
     volumes:
