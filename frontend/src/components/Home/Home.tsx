@@ -179,9 +179,9 @@ class Home extends React.Component<RouteComponentProps, State> {
   };
 
   onMixTaskSubmit = (id: string): void => {
-    setTimeout(() => {
-      this.props.history.push(`/mixer/${id}`);
-    }, 500);
+    const win = window.open(`/mixer/${id}`, '_blank');
+    win?.focus();
+    this.loadData();
   };
 
   onStaticMixSubmit = (srcId: string, id: string, status: string): void => {
@@ -246,9 +246,8 @@ class Home extends React.Component<RouteComponentProps, State> {
 
   onDynamicMixClick = (song: SongData): void => {
     if (song.dynamic && song.dynamic.status !== 'Error') {
-      setTimeout(() => {
-        this.props.history.push(`/mixer/${song.dynamic?.id}`);
-      }, 500);
+      const win = window.open(`/mixer/${song.dynamic?.id}`, '_blank');
+      win?.focus();
     } else {
       this.setState({ showDynamicMixModal: true, currentModalSrcSong: song });
     }
@@ -346,7 +345,7 @@ class Home extends React.Component<RouteComponentProps, State> {
         <HomeNavBar onUploadClick={this.onUploadClick} />
         <div className="jumbotron jumbotron-fluid bg-transparent">
           <div className="container secondary-color">
-            <h2 className="display-5">Song List</h2>
+            <h2 className="display-5">Track List</h2>
             <p className="lead">Get started by uploading a song or creating a new mix.</p>
             <Alert variant="info" style={{ fontSize: '0.9em' }}>
               <p className="mb-0">
