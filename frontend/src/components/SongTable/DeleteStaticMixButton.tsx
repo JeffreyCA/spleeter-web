@@ -14,7 +14,6 @@ interface Props {
  */
 class DeleteStaticMixButton extends React.Component<Props> {
   handleClick = (): void => {
-    console.log(this.props.mix)
     this.props.onClick(this.props.mix);
   };
 
