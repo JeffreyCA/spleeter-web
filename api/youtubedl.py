@@ -100,7 +100,7 @@ def download_audio(url, dir_path):
         'noplaylist': True
     }
 
-    # Retry mechanism is handled on Huey's side
+    # Retry mechanism is handled on Celery's side
     with YoutubeDL(opts) as ydl:
         info = ydl.extract_info(url, download=False)
         if info['duration'] > settings.YOUTUBE_LENGTH_LIMIT:
