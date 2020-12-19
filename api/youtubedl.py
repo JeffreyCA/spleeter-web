@@ -6,6 +6,10 @@ from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from youtube_title_parse import get_artist_title
 
+"""
+This module contains functions related to downloading/parsing YouTube links with youtubedl.
+"""
+
 def get_file_ext(url):
     """
     Get the file extension of the audio file that would be extracted from the
@@ -100,7 +104,7 @@ def download_audio(url, dir_path):
         'noplaylist': True
     }
 
-    # Retry mechanism is handled on Huey's side
+    # Retry mechanism is handled on Celery's side
     with YoutubeDL(opts) as ydl:
         info = ydl.extract_info(url, download=False)
         if info['duration'] > settings.YOUTUBE_LENGTH_LIMIT:

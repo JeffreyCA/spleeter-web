@@ -3,6 +3,10 @@ import googleapiclient.errors
 from django.conf import settings
 from youtube_title_parse import get_artist_title
 
+"""
+This module handles YouTube search API functionality.
+"""
+
 class YouTubeSearchError(Exception):
     pass
 

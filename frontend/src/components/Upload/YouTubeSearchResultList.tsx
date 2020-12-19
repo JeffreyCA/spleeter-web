@@ -1,6 +1,6 @@
 import he from 'he';
 import React from 'react';
-import { Alert, Col, Image, ListGroup, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Image, ListGroup, Row } from 'react-bootstrap';
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
 import { YouTubeSearchResponse } from '../../models/YouTubeSearchResponse';
 import { YouTubeVideo } from '../../models/YouTubeVideo';
@@ -11,7 +11,7 @@ interface Props {
   onSearchResultClick: (video: YouTubeVideo) => void;
 }
 
-const onExtLinkClick = (event: React.SyntheticEvent<HTMLAnchorElement>) => {
+const onExtLinkClick = (event: React.SyntheticEvent<HTMLElement>) => {
   event.stopPropagation();
 };
 
@@ -37,13 +37,14 @@ export const YouTubeSearchResultList = (props: Props): JSX.Element | null => {
               <span className="yt-search-duration">{toDurationTimestamp(video.duration)}</span>
             </Col>
             <Col xs={1} className="yt-search-extlink p-0">
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
+              <Button
+                size="sm"
+                variant="outline-primary"
                 href={getYouTubeLinkForId(video.id)}
+                target="_blank"
                 onClick={onExtLinkClick}>
-                <BoxArrowUpRight size={20} />
-              </a>
+                <BoxArrowUpRight size={12} />
+              </Button>
             </Col>
           </Row>
         </ListGroup.Item>

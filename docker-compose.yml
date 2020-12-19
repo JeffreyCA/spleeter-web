@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: postgres:12
+    image: postgres:12-alpine
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -12,7 +12,7 @@ services:
       - pg-data:/var/lib/postgresql/data
     restart: always
   redis:
-    image: redis:5.0.9-buster
+    image: redis:6.0-buster
     hostname: redis
     ports:
       - "6379:6379"
@@ -35,12 +35,14 @@ services:
     tty: true
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
-      - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - APP_HOST
       - YOUTUBE_API_KEY
       - AZURE_ACCOUNT_KEY
       - AZURE_ACCOUNT_NAME
+      - AZURE_CONTAINER
     depends_on:
       - db
       - redis
@@ -52,19 +54,21 @@ services:
       - assets:/webapp/frontend/assets
     stdin_open: true
     tty: true
-  huey:
-    image: jeffreyca/spleeter-web-huey:latest
-    entrypoint: ./huey-entrypoint.sh
+  celery:
+    image: jeffreyca/spleeter-web-celery:latest
+    entrypoint: ./celery-entrypoint.sh
     volumes:
       - pretrained-models:/webapp/pretrained_models
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
-      - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - APP_HOST
       - AZURE_ACCOUNT_KEY
       - AZURE_ACCOUNT_NAME
-      - HUEY_WORKERS
+      - AZURE_CONTAINER
+      - CELERY_WORKER_CONCURRENCY
     depends_on:
       - db
       - redis

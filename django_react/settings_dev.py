@@ -1,9 +1,7 @@
-import os
-
-SECRET_KEY = 'default'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+SECRET_KEY = 'default'
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
 
@@ -27,13 +25,4 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
-}
-
-HUEY = {
-    'huey_class': 'huey.SqliteHuey',
-    'results': False,
-    'immediate': False,
-    'consumer': {
-        'workers': int(os.getenv('HUEY_WORKERS', '2')),
-    },
 }

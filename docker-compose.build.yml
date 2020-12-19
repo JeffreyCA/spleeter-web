@@ -6,6 +6,6 @@ services:
     build: .
   frontend:
     build: ./frontend
-  huey:
+  celery:
     build:
       context: .

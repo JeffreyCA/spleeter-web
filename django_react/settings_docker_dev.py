@@ -1,9 +1,9 @@
 import dj_database_url
 
-SECRET_KEY = 'default'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+SECRET_KEY = 'default'
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
 

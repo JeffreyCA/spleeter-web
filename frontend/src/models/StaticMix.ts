@@ -1,3 +1,5 @@
+import { TaskStatus } from './TaskStatus';
+
 /**
  * Static mix model from backend.
  */
@@ -7,7 +9,7 @@ export interface StaticMix {
   artist: string;
   title: string;
   url: string;
-  status: string;
+  status: TaskStatus;
   error: string;
   date_created: string;
   vocals: boolean;

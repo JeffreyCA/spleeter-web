@@ -1,24 +1,41 @@
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-SECRET_KEY = os.getenv('SECRET_KEY', 'default')
-YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SECRET_KEY = os.getenv('SECRET_KEY', 'sekrit')
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
+
 ALLOWED_HOSTS = [os.getenv('APP_HOST'), '0.0.0.0', '127.0.0.1', 'localhost']
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 # OR
-# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
 AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', '')
-AZURE_CONTAINER = 'media'
+AZURE_CONTAINER = os.getenv('AZURE_CONTAINER', '')
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+CELERY_WORKER_CONCURRENCY = int(os.getenv('CELERY_WORKER_CONCURRENCY', '1'))
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'spleeter-web',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
 
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
@@ -29,7 +46,7 @@ VALID_MIME_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg-3', 
                     'video/x-mpeg', 'audio/flac', 'audio/x-flac', 'audio/wav', 'audio/x-wav']
 VALID_FILE_EXT = ['.mp3', '.flac', '.wav']
 UPLOAD_FILE_SIZE_LIMIT = 30 * 1024 * 1024
-YOUTUBE_LENGTH_LIMIT = 10 * 60
+YOUTUBE_LENGTH_LIMIT = 20 * 60
 YOUTUBE_MAX_RETRIES = 3
 STALE_TASK_MIN_THRESHOLD = 15
 
@@ -45,8 +62,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'frontend.apps.FrontendConfig',
     'rest_framework',
-    'webpack_loader',
-    'huey.contrib.djhuey'
+    'webpack_loader'
 ]
 
 WEBPACK_LOADER = {
@@ -94,20 +110,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django_react.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'spleeter-web',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -120,15 +122,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-HUEY = {
-    'results': False,
-    'immediate': False,
-    'consumer': {
-        'workers': int(os.getenv('HUEY_WORKERS', '1')),
-    },
-    'url': os.getenv('REDIS_URL', 'redis://localhost:6379')
-}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

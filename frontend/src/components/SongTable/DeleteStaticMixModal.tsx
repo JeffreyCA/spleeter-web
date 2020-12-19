@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
-import { SongData } from '../../models/SongData';
+import { StaticMix } from '../../models/StaticMix';
 
 interface Props {
-  song?: SongData;
+  song?: StaticMix;
   show: boolean;
   exit: () => void;
   hide: () => void;
@@ -17,9 +17,9 @@ interface State {
 }
 
 /**
- * Component of the delete track modal.
+ * Component for the delete track modal.
  */
-class DeleteModal extends React.Component<Props, State> {
+class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -60,9 +60,11 @@ class DeleteModal extends React.Component<Props, State> {
     }
 
     // DELETE request to delete the source track.
-    const songId = this.props.song.id;
+    const mixId = this.props.song.id;
+    console.log(mixId);
+
     axios
-      .delete(`/api/source-track/${songId}/`)
+      .delete(`/api/mix/static/${mixId}/`)
       .then(() => {
         this.props.refresh();
         this.props.hide();
@@ -82,10 +84,26 @@ class DeleteModal extends React.Component<Props, State> {
       return null;
     }
 
+    const parts: string[] = [];
+    if (song.vocals) {
+      parts.push('vocals');
+    }
+    if (song.other) {
+      parts.push('accompaniment');
+    }
+    if (song.bass) {
+      parts.push('bass');
+    }
+    if (song.drums) {
+      parts.push('drums');
+    }
+
+    const description = parts.join(', ');
+
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm track deletion</Modal.Title>
+          <Modal.Title>Confirm static mix deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {errors.length > 0 && (
@@ -96,7 +114,8 @@ class DeleteModal extends React.Component<Props, State> {
             </Alert>
           )}
           <div>
-            Are you sure you want to delete &ldquo;{song.artist} - {song.title}&rdquo; and all of its mixes?
+            Are you sure you want to delete the static mix &ldquo;{song.artist} - {song.title}&rdquo; with {description}
+            ?
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -112,4 +131,4 @@ class DeleteModal extends React.Component<Props, State> {
   }
 }
 
-export default DeleteModal;
+export default DeleteTrackModal;

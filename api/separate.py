@@ -5,11 +5,14 @@ from spleeter.audio.adapter import get_default_audio_adapter
 from spleeter.separator import Separator
 from spleeter.utils import *
 
+"""
+This module defines a wrapper interface over the Spleeter API.
+"""
+
 class SpleeterSeparator:
     """Performs source separation using Spleeter API."""
     def __init__(self, config=None):
         """Default constructor.
-
         :param config: Separator config, defaults to None
         """
         if config is None:
@@ -55,10 +58,8 @@ class SpleeterSeparator:
     def separate_into_parts(self, input_path, output_path):
         """Creates a dynamic mix
 
-        :param input_path: [description]
-        :type input_path: [type]
-        :param output_path: [description]
-        :type output_path: [type]
+        :param input_path: Input path
+        :param output_path: Output path
         """
         self.separator.separate_to_file(input_path,
                                         output_path,

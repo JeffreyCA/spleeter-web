@@ -1,4 +1,4 @@
-FROM node:12-buster
+FROM node:14-buster
 
 RUN mkdir -p /webapp/frontend/assets
 WORKDIR /webapp/frontend
