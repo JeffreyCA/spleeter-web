@@ -204,6 +204,9 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 ## Common issues & FAQs
 
+### How do I update Spleeter Web?
+First, do a `git pull` to fetch the latest changes. Then, if you are using Docker, just re-run `docker-compose` with the `--build` flag to re-build the containers. If you are not using Docker, you will need to re-run `pip install -r requirements` and `python manage.py migrate` and `npm install` (in the `frontend` directory).
+
 ### I get a CORS error when trying to play a dynamic mix.
 
 To play a dynamic mix, you will need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
@@ -220,5 +223,14 @@ If you are using Azure Blob storage, you need to increase the API version to `20
 ### Why is Redis needed?
 The main advantage of using Redis with Celery is so that the user can revoke/terminate in-progress tasks. This is only possible with Redis or amqp brokers.
 
-## LICENSE
+## Credits
+Special thanks to:
+
+* [spleeter](https://github.com/deezer/spleeter)
+* [tone.js](https://github.com/Tonejs/Tone.js/)
+* [youtube-dl](https://github.com/ytdl-org/youtube-dl)
+* [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
+* [react-music-player](https://github.com/lijinke666/react-music-player)
+
+## License
 [MIT](./LICENSE)
