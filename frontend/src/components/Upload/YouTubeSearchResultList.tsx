@@ -37,7 +37,12 @@ export const YouTubeSearchResultList = (props: Props): JSX.Element | null => {
               <span className="yt-search-duration">{toDurationTimestamp(video.duration)}</span>
             </Col>
             <Col xs={1} className="yt-search-extlink p-0">
-              <Button size="sm" href={getYouTubeLinkForId(video.id)} target="_blank" onClick={onExtLinkClick}>
+              <Button
+                size="sm"
+                variant="outline-primary"
+                href={getYouTubeLinkForId(video.id)}
+                target="_blank"
+                onClick={onExtLinkClick}>
                 <BoxArrowUpRight size={12} />
               </Button>
             </Col>
