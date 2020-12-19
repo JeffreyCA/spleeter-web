@@ -6,6 +6,6 @@ services:
   api:
     volumes:
       - /path/to/media:/webapp/media
-  huey:
+  celery:
     volumes:
       - /path/to/media:/webapp/media
