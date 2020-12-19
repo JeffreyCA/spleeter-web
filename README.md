@@ -1,17 +1,17 @@
 # Spleeter Web
 [![Docker Compose push](https://github.com/JeffreyCA/spleeter-web/workflows/Docker%20Compose%20push/badge.svg)](https://github.com/JeffreyCA/spleeter-web/actions?query=workflow%3A%22Docker+Compose+push%22)
 
-Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or remove the vocals to get an instrumental version of a song.
+Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or you can use it remove the vocals to get an instrumental version of a song.
 
-It is powered by [Spleeter](https://github.com/deezer/spleeter), the awesome source separation library from Deezer that uses deep learning to separate the various components of a song. Spleeter Web uses the pretrained model [`4stems-model`](https://github.com/deezer/spleeter/wiki/3.-Models#pretrained-model), which performs very well on the [*MusDB*](https://sigsep.github.io/datasets/musdb.html) benchmark.
+It is powered by [Spleeter](https://github.com/deezer/spleeter), an awesome source separation library from Deezer that uses deep learning to separate the various components of a song. Spleeter Web uses the pretrained model [`4stems-model`](https://github.com/deezer/spleeter/wiki/3.-Models#pretrained-model), which performs very well on the [*MusDB*](https://sigsep.github.io/datasets/musdb.html) benchmark.
 
-The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Huey](https://huey.readthedocs.io/en/latest/) is used for the task queue.
+The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue.
 
 ### Features
 - Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
-    - **New: Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time.**
+    - Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
-    - **New: You can now search YouTube directly in the Upload modal (YouTube Data API key required)**
+    - Includes built-in YouTube search functionality (YouTube Data API key required)
 - Persistent audio library with ability to stream and download your source tracks and mixes
 - Customize number of background workers working on audio separation and YouTube imports
 - Supports third-party storage backends like S3 and Azure Blob Storage
@@ -55,13 +55,14 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 2. Launch **Spleeter Web**
 
-    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively on your host machine.
+    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded tracks and generated mixes will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
 ### Requirements
 * 4 GB+ of memory (source separation is memory-intensive)
-* Python 3.6 or 3.7 ([link](https://www.python.org/downloads/))
-* Node.JS 12 ([link](https://nodejs.org/en/download/))
+* Python 3.6+ ([link](https://www.python.org/downloads/))
+* Node.js 12+ ([link](https://nodejs.org/en/download/))
+* Redis ([link](https://redis.io/))
 * ffmpeg and ffprobe ([link](https://www.ffmpeg.org/download.html))
     * On macOS, you can install using Homebrew or MacPorts
     * On Windows, you can follow [this guide](http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
@@ -79,7 +80,6 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     (env) spleeter-web$ set DJANGO_DEVELOPMENT=true
     (env) spleeter-web$ set YOUTUBE_API_KEY=<api key>
     ```
-
 2. Create Python virtual environment
     ```sh
     spleeter-web$ python -m venv env
@@ -97,6 +97,10 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     spleeter-web$ cd frontend
     spleeter-web/frontend$ npm install
     ```
+5. Ensure Redis server is running on `localhost:6379` (needed for Celery)
+
+    You can run it on a different host or port, but make sure to update `CELERY_BROKER_URL` and `CELERY_RESULT_BACKEND` in `settings.py`. It must be follow the format: `redis://host:port/db`.
+
 5. Apply migrations
     ```sh
     (env) spleeter-web$ python manage.py migrate
@@ -110,12 +114,11 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     (env) spleeter-web$ python manage.py runserver 0.0.0.0:8000
     ````
 
-8. Start Huey worker in separate terminal
+8. Start Celery worker in separate terminal
     ```sh
-    (env) spleeter-web$ python manage.py run_huey
+    (env) spleeter-web$ celery -A api worker -l WARNING --statedb=celery.state
     ```
 9. Launch **Spleeter Web**
-
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Configuration
@@ -135,9 +138,14 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 |---|---|
 | `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
 | `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
-| `HUEY_WORKERS` | Number of Huey workers used for source separation and YouTube import tasks. |
 | `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
 | `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
+| `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
+| `CELERY_BROKER_URL` | Broker URL for Celery (e.g. `redis://localhost:6379/0`). |
+| `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
+| `CELERY_WORKER_CONCURRENCY` | Number of concurrent tasks Celery can process (for source separation and YouTube import tasks). |
+| `YOUTUBE_API_KEY` | YouTube Data API key. |
+
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
@@ -171,13 +179,14 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     `.env` file:
     ```
     APP_HOST=<domain name or public IP of server>
-    AZURE_ACCOUNT_KEY=<account key>   # Optional
-    AZURE_ACCOUNT_NAME=<account name> # Optional
-    HUEY_WORKERS=<num workers>        # Optional (default = 2)
-    YOUTUBE_API_KEY=<youtube api key> # Optional
+    AZURE_ACCOUNT_KEY=<account key>                      # Optional
+    AZURE_ACCOUNT_NAME=<account name>                    # Optional
+    AZURE_CONTAINER=<container name>                     # Optional
+    CELERY_WORKER_CONCURRENCY=<num concurrent processes> # Optional (default = 1)
+    YOUTUBE_API_KEY=<youtube api key>                    # Optional
     ```
 
-    These values are used in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings.
+    These values are read in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings.
 
 4. Build and start production containers
 
@@ -193,8 +202,23 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
 
-## Issues
-If you encounter issues relating to the database, you may need to delete the database (or delete the Docker volume) and re-migrate.
+## Common issues & FAQs
+
+### I get a CORS error when trying to play a dynamic mix.
+
+To play a dynamic mix, you will need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
+
+For more information on how to do this on Azure, see [this](https://docs.microsoft.com/en-us/rest/api/storageservices/cross-origin-resource-sharing--cors--support-for-the-azure-storage-services).
+
+### When playing a track I cannot perform seeks.
+The server that is hosting your media files has to support [**byte-range requests**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) in order for you to be able to perform seeks.
+
+If you are running Spleeter Web locally and storing your media files locally as well, this is expected behaviour as the development Django webserver does not support byte-range requests. You can try to configure it to use nginx + gunicorn instead.
+
+If you are using Azure Blob storage, you need to increase the API version to `2011-01-18` or newer, as the default API version does not support it. See [this](https://stackoverflow.com/questions/17408927/do-http-range-headers-work-with-azure-blob-storage-shared-access-signatures)  StackOverflow post for more details. Or just run [this](https://gist.github.com/JeffreyCA/d5c544df36a0f61737f8a435f897de5e) simple C# program.
+
+### Why is Redis needed?
+The main advantage of using Redis with Celery is so that the user can revoke/terminate in-progress tasks. This is only possible with Redis or amqp brokers.
 
 ## LICENSE
 [MIT](./LICENSE)
