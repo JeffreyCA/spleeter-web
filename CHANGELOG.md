@@ -44,5 +44,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 [Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...HEAD
-[v1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0
-[Pre-release]: https://github.com/JeffreyCA/spleeter-web/compare/pre
+[v1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/pre...v1.0.0
+[Pre-release]: https://github.com/JeffreyCA/spleeter-web/releases/tag/pre
