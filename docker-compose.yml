@@ -1,16 +1,5 @@
 version: '3.3'
 services:
-  db:
-    image: postgres:12-alpine
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - pg-data:/var/lib/postgresql/data
-    restart: always
   redis:
     image: redis:6.0-buster
     hostname: redis
@@ -29,13 +18,13 @@ services:
   api:
     image: jeffreyca/spleeter-web-api:latest
     volumes:
+      - sqlite-data:/webapp/sqlite
       - assets:/webapp/frontend/assets
       - staticfiles:/webapp/staticfiles
     stdin_open: true
     tty: true
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - APP_HOST
@@ -44,7 +33,6 @@ services:
       - AZURE_ACCOUNT_NAME
       - AZURE_CONTAINER
     depends_on:
-      - db
       - redis
       - frontend
     restart: always
@@ -58,10 +46,10 @@ services:
     image: jeffreyca/spleeter-web-celery:latest
     entrypoint: ./celery-entrypoint.sh
     volumes:
+      - sqlite-data:/webapp/sqlite
       - pretrained-models:/webapp/pretrained_models
     environment:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - APP_HOST
@@ -70,11 +58,10 @@ services:
       - AZURE_CONTAINER
       - CELERY_WORKER_CONCURRENCY
     depends_on:
-      - db
       - redis
     restart: always
 volumes:
-  pg-data:
+  sqlite-data:
   redis-data:
   pretrained-models:
   assets:

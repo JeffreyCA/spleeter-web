@@ -30,6 +30,7 @@ def create_static_mix(static_mix_id):
         static_mix = StaticMix.objects.get(id=static_mix_id)
     except StaticMix.DoesNotExist:
         # Does not exist, perhaps due to stale task
+        print('StaticMix does not exist')
         return
     static_mix.status = TaskStatus.IN_PROGRESS
     static_mix.save()
@@ -107,6 +108,7 @@ def create_dynamic_mix(dynamic_mix_id):
         dynamic_mix = DynamicMix.objects.get(id=dynamic_mix_id)
     except DynamicMix.DoesNotExist:
         # Does not exist, perhaps due to stale task
+        print('DynamicMix does not exist')
         return
     dynamic_mix.status = TaskStatus.IN_PROGRESS
     dynamic_mix.save()
@@ -176,6 +178,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         source_file = SourceFile.objects.get(id=source_file_id)
     except SourceFile.DoesNotExist:
         # Does not exist, perhaps due to stale task
+        print('SourceFile does not exist')
         return
     fetch_task = YTAudioDownloadTask.objects.get(id=fetch_task_id)
     # Mark as in progress

@@ -49,14 +49,11 @@ class DynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model."""
     # The status of the source separation task
     status = ChoicesSerializerField()
-    # Whether to overwrite any existing dynamic mix with the same source track
-    overwrite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals_file',
-                  'other_file', 'bass_file', 'drums_file', 'status', 'error',
-                  'overwrite', 'date_created')
+                  'other_file', 'bass_file', 'drums_file', 'status', 'error', 'date_created')
 
 class StaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model."""
@@ -86,7 +83,7 @@ class StaticMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StaticMix
-        fields = ('id', 'source_track', 'artist', 'title', 'vocals', 'drums',
+        fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals', 'drums',
                   'bass', 'other', 'status', 'url', 'error', 'overwrite',
                   'date_created')
 
