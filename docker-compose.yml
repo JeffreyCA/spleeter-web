@@ -12,7 +12,7 @@ services:
       - pg-data:/var/lib/postgresql/data
     restart: always
   redis:
-    image: redis:5.0.9-buster
+    image: redis:6.0-buster
     hostname: redis
     ports:
       - "6379:6379"
