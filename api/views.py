@@ -13,6 +13,9 @@ from .serializers import *
 from .tasks import *
 from .youtube_search import *
 
+"""
+This module defines Django views.
+"""
 
 class YouTubeSearchView(APIView):
     """View that processes YouTube video search queries."""
@@ -215,11 +218,11 @@ class SourceTrackListView(generics.ListAPIView):
     serializer_class = SourceTrackSerializer
 
 class FileSourceTrackView(generics.CreateAPIView):
-    """View that handles SourceTrack creation from user-uploaded file."""
+    """View that handles SourceTrack creation from user-uploaded files."""
     serializer_class = SourceTrackSerializer
 
 class YTSourceTrackView(generics.CreateAPIView):
-    """View that handles SourceTrack creation from user-imported YouTube link."""
+    """View that handles SourceTrack creation from user-imported YouTube links."""
     queryset = SourceTrack.objects.all()
     serializer_class = YTSourceTrackSerializer
 

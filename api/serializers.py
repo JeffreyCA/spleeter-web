@@ -2,6 +2,10 @@ from rest_framework import serializers
 from .models import *
 from .validators import is_valid_youtube
 
+"""
+This module defines Django serializers.
+"""
+
 class ChoicesSerializerField(serializers.SerializerMethodField):
     """Read-only field with representation of a model field with choices."""
     def to_representation(self, value):
@@ -26,6 +30,20 @@ class YTAudioDownloadTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = YTAudioDownloadTask
         fields = ('id', 'celery_id', 'status', 'error')
+
+class YTSourceTrackSerializer(serializers.ModelSerializer):
+    """Serializer for a SourceTrack derived from YouTube link."""
+    youtube_link = serializers.URLField(write_only=True)
+    artist = serializers.CharField(max_length=100)
+    title = serializers.CharField(max_length=100)
+
+    def create(self, validated_data):
+        validated_data.pop('youtube_link', None)
+        return super().create(validated_data)
+
+    class Meta:
+        model = SourceTrack
+        fields = ['id', 'youtube_link', 'artist', 'title']
 
 class DynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model."""
@@ -74,9 +92,7 @@ class StaticMixSerializer(serializers.ModelSerializer):
 
 class SourceFileSerializer(serializers.ModelSerializer):
     """Serializer for SourceFile model"""
-    youtube_fetch_task = YTAudioDownloadTaskSerializer(many=False,
-                                                       read_only=True)
-
+    youtube_fetch_task = YTAudioDownloadTaskSerializer(many=False, read_only=True)
     class Meta:
         model = SourceFile
         fields = ('id', 'file', 'is_youtube', 'youtube_link',
@@ -106,17 +122,3 @@ class SourceTrackSerializer(serializers.ModelSerializer):
         fields = ('id', 'source_file', 'url', 'artist', 'title', 'static',
                   'dynamic', 'is_youtube', 'youtube_link', 'fetch_task',
                   'fetch_task_status', 'fetch_task_error', 'date_created')
-
-class YTSourceTrackSerializer(serializers.ModelSerializer):
-    """Serializer for a SourceTrack derived from YouTube link."""
-    youtube_link = serializers.URLField(write_only=True)
-    artist = serializers.CharField(max_length=100)
-    title = serializers.CharField(max_length=100)
-
-    def create(self, validated_data):
-        validated_data.pop('youtube_link', None)
-        return super().create(validated_data)
-
-    class Meta:
-        model = SourceTrack
-        fields = ['id', 'youtube_link', 'artist', 'title']

@@ -13,6 +13,9 @@ from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
 from .separate import SpleeterSeparator
 from .youtubedl import download_audio, get_file_ext
 
+"""
+This module defines various Celery tasks used for Spleeter Web.
+"""
 
 @app.task()
 def create_static_mix(static_mix_id):

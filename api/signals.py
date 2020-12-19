@@ -7,6 +7,9 @@ from django.dispatch import receiver
 
 from .models import DynamicMix, SourceFile, SourceTrack, StaticMix
 
+"""
+This module defines pre- and post-delete signals to ensure files are deleted when a model is deleted from the DB.
+"""
 
 @receiver(pre_delete,
           sender=SourceFile,

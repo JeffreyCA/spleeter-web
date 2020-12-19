@@ -1,20 +1,19 @@
 import os
-import sys
 import uuid
 from io import BytesIO
-import requests
 
+import requests
 from django.conf import settings
-from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.db import models
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 
 from .validators import *
 from .youtubedl import get_meta_info
 
+"""
+This module defines Django models.
+"""
 
 def source_file_path(instance, filename):
     """
@@ -49,6 +48,7 @@ class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
     # UUID to uniquely identify task
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Status of task
     status = models.IntegerField(choices=TaskStatus.choices,
@@ -183,7 +183,7 @@ class StaticMix(models.Model):
     """Model representing a statically mixed track (certain parts are excluded)."""
     # UUID to uniquely identify track
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # 
+    # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
@@ -260,7 +260,7 @@ class DynamicMix(models.Model):
     """Model representing a track that has been split into individually components."""
     # UUID to uniquely identify track
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    #
+    # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Source track on which it is based
     source_track = models.OneToOneField(SourceTrack,

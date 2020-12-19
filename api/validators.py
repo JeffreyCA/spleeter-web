@@ -1,9 +1,15 @@
+import os
+
+import magic
 from django.conf import settings
 from django.core.exceptions import ValidationError
-import os
-import magic
-from .youtubedl import get_meta_info
 from youtube_dl.utils import DownloadError
+
+from .youtubedl import get_meta_info
+
+"""
+This module contains validation functions.
+"""
 
 def is_valid_size(value):
     """
