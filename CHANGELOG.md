@@ -1,8 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [Unreleased]
+### **Breaking Changes**
+- Docker: switch default database backend from PostgreSQL to SQLite
+    - **Please make a backup of your data before updating!**
+
+### Added
+- Dynamic mix pages show the track name in the tab title
+
+### Changed
+- Correct service name in `docker-compose.prod.selfhost.yml`
+
 
 ## [1.0.0] - 2020-12-19
 ### Added
@@ -32,5 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Pre-release] - before 2020-12
 Undocumented
 
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0
 [Pre-release]: https://github.com/JeffreyCA/spleeter-web/compare/pre
