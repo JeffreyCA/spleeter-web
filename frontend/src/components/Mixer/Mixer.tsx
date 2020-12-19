@@ -52,6 +52,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       .then(({ data }) => {
         if (data) {
           this.setState({ isLoaded: true, data: data });
+          document.title = `${data.artist} - ${data.title} · Spleeter Web`;
         }
         if (data.status === 'Queued' || data.status === 'In Progress') {
           this.timeout = setTimeout(() => this.loadData(), 5000);
