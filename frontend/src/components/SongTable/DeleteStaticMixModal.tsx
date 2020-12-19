@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
 import { StaticMix } from '../../models/StaticMix';
 
 interface Props {
@@ -17,7 +17,7 @@ interface State {
 }
 
 /**
- * Component of the delete track modal.
+ * Component for the delete track modal.
  */
 class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -84,7 +84,7 @@ class DeleteTrackModal extends React.Component<Props, State> {
       return null;
     }
 
-    let parts: string[] = [];
+    const parts: string[] = [];
     if (song.vocals) {
       parts.push('vocals');
     }
@@ -114,7 +114,8 @@ class DeleteTrackModal extends React.Component<Props, State> {
             </Alert>
           )}
           <div>
-            Are you sure you want to delete the static mix &ldquo;{song.artist} - {song.title}&rdquo; with {description}?
+            Are you sure you want to delete the static mix &ldquo;{song.artist} - {song.title}&rdquo; with {description}
+            ?
           </div>
         </Modal.Body>
         <Modal.Footer>

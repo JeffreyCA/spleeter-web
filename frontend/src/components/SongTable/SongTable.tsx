@@ -118,7 +118,7 @@ class SongTable extends React.Component<Props> {
     } = this.props;
 
     // Show static mix details inside expand row
-    const expandRow: ExpandRowProps<SongData> = {
+    const expandRow: ExpandRowProps<SongData, string> = {
       renderer: (row: SongData) => {
         return (
           <StaticMixTable
@@ -156,7 +156,7 @@ class SongTable extends React.Component<Props> {
         },
         style: () => {
           return { width: '40px' };
-        }
+        },
       },
       {
         dataField: 'url',

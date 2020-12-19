@@ -5,6 +5,9 @@ interface Props {
   onClick: () => void;
 }
 
+/**
+ * Component for the cancel dynamic mix task button.
+ */
 class CancelButton extends React.Component<Props> {
   render(): JSX.Element {
     return (

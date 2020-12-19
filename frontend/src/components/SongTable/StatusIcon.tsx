@@ -6,15 +6,15 @@ import { TaskStatus } from '../../models/TaskStatus';
 
 interface Props {
   status: TaskStatus | null;
-  overlayText?: string
+  overlayText?: string;
 }
 
 const StatusComponentMap = {
   'Queued': <ClockFill color="#6c757d" />,
   'In Progress': <ClockFill color="#007bff" />,
   'Done': <CheckCircleFill color="#28a745" />,
-  'Error': <XCircleFill color="#dc3545" />
-}
+  'Error': <XCircleFill color="#dc3545" />,
+};
 
 /**
  * Status icon component.
@@ -30,7 +30,7 @@ class StatusIcon extends React.Component<Props> {
           {overlayText || status}
         </Tooltip>
       );
-    }
+    };
 
     return (
       <OverlayTrigger placement="left" delay={{ show: 100, hide: 100 }} overlay={renderTooltip}>

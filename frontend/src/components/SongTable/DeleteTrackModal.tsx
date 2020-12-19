@@ -17,7 +17,7 @@ interface State {
 }
 
 /**
- * Component of the delete track modal.
+ * Component for the delete track modal.
  */
 class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {

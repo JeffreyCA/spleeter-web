@@ -24,7 +24,7 @@ interface State {
 }
 
 /**
- * Component of the source separation modal.
+ * Component for the source separation modal.
  */
 class StaticMixModal extends React.Component<Props, State> {
   constructor(props: Props) {

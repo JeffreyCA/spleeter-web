@@ -20,6 +20,9 @@ interface State {
   errors: string[];
 }
 
+/**
+ * Component for playing dynamic mixes.
+ */
 class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
   timeout?: number;
 
@@ -66,7 +69,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
 
   cancelTask = (): void => {
     const mixId = this.getMixId();
-    console.log('Cancelling ', mixId);
+    // Cancel dynamic mix task
     axios
       .delete(`/api/mix/dynamic/${mixId}/`)
       .then(() => {
@@ -76,9 +79,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
         clearTimeout(this.timeout);
       })
       .catch(({ response }) => {
-        console.log('Resp: ', response);
         const { data } = response;
-        console.log('data.error: ', data);
         this.setState({
           errors: [data.error],
         });
@@ -114,8 +115,10 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
     const isDone = data && data.status === 'Done';
 
     if (isAborted) {
+      // Dynamic mix task was aborted
       alert = <Alert variant="danger">Aborted.</Alert>;
     } else if (errors.length > 0) {
+      // Some other error has occurred
       alert = (
         <Alert variant="danger">
           {errors.map((val, idx) => (
@@ -124,6 +127,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
         </Alert>
       );
     } else if (isQueued) {
+      // Task is queued
       alert = (
         <Alert className="mt-3" variant="secondary">
           <Row className="align-items-center pl-2">
@@ -133,6 +137,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
         </Alert>
       );
     } else if (isProcessing) {
+      // Task is in progress
       alert = (
         <Alert className="mt-3" variant="warning">
           <Row className="align-items-center pl-2">

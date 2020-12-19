@@ -120,7 +120,6 @@ class Home extends React.Component<RouteComponentProps, State> {
   };
 
   onAudioPlay = (): void => {
-    console.log('audio play')
     this.setState({
       isPlaying: true,
     });
@@ -179,6 +178,7 @@ class Home extends React.Component<RouteComponentProps, State> {
   };
 
   onMixTaskSubmit = (id: string): void => {
+    // Open Mixer page in new tab
     const win = window.open(`/mixer/${id}`, '_blank');
     win?.focus();
     this.loadData();
@@ -246,6 +246,7 @@ class Home extends React.Component<RouteComponentProps, State> {
 
   onDynamicMixClick = (song: SongData): void => {
     if (song.dynamic && song.dynamic.status !== 'Error') {
+      // Open Mixer page in new tab
       const win = window.open(`/mixer/${song.dynamic?.id}`, '_blank');
       win?.focus();
     } else {
@@ -313,8 +314,8 @@ class Home extends React.Component<RouteComponentProps, State> {
 
   componentDidMount(): void {
     this.loadData();
-    // Auto-refresh data every 15 seconds
-    this.refreshInterval = setInterval(this.loadData, 15000);
+    // Auto-refresh data every 5 seconds
+    this.refreshInterval = setInterval(this.loadData, 5000);
   }
 
   componentWillUnmount(): void {

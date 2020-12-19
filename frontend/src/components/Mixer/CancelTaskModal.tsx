@@ -9,7 +9,7 @@ interface Props {
 }
 
 /**
- * Component of the cancel dynamic mix modal.
+ * Component for the cancel dynamic mix modal.
  */
 class CancelTaskModal extends React.Component<Props, {}> {
   constructor(props: Props) {

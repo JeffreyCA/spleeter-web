@@ -69,6 +69,7 @@ class MixerPlayer extends React.Component<Props, State> {
       () => {
         players.toDestination();
         this.tonePlayers = players;
+        // Tracks are now ready to be played
         if (this.isMounted) {
           this.setState({
             isReady: true,

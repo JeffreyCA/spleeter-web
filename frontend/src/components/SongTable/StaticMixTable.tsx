@@ -136,7 +136,7 @@ class StaticMixTable extends React.Component<Props> {
         },
         style: () => {
           return { width: '40px' };
-        }
+        },
       },
       {
         dataField: 'url',
@@ -169,11 +169,11 @@ class StaticMixTable extends React.Component<Props> {
         text: '',
         formatter: downloadFormatter,
         formatExtraData: {
-          onDeleteStaticMixClick: onDeleteStaticMixClick
+          onDeleteStaticMixClick: onDeleteStaticMixClick,
         },
         style: () => {
           return { paddingRight: 28 };
-        }
+        },
       },
     ];
 
