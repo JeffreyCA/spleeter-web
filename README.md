@@ -101,24 +101,24 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     You can run it on a different host or port, but make sure to update `CELERY_BROKER_URL` and `CELERY_RESULT_BACKEND` in `settings.py`. It must be follow the format: `redis://host:port/db`.
 
-5. Apply migrations
+6. Apply migrations
     ```sh
     (env) spleeter-web$ python manage.py migrate
     ````
-6. Start frontend
+7. Start frontend
     ```sh
     spleeter-web$ npm run dev --prefix frontend
     ```
-7. Start backend in separate terminal
+8. Start backend in separate terminal
     ```sh
     (env) spleeter-web$ python manage.py runserver 0.0.0.0:8000
     ````
 
-8. Start Celery worker in separate terminal
+9. Start Celery worker in separate terminal
     ```sh
     (env) spleeter-web$ celery -A api worker -l WARNING --statedb=celery.state
     ```
-9. Launch **Spleeter Web**
+10. Launch **Spleeter Web**
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Configuration
