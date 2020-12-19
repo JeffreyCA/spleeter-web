@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Correct service name in `docker-compose.prod.selfhost.yml`
 
 
-## [1.0.0] - 2020-12-19
+## [v1.0.0] - 2020-12-19
 ### Added
 - Ability to delete individual static mixes
 - Ability to delete source tracks and mixes while task is still in-progress
@@ -44,5 +44,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 [Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0
+[v1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0
 [Pre-release]: https://github.com/JeffreyCA/spleeter-web/compare/pre
