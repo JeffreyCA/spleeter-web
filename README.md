@@ -140,7 +140,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     The above command launches two Celery workers: **fast** and **slow**. **fast** processes YouTube imports and **slow** processes source separation. **fast** can work on 3 tasks concurrently, while **slow** can only work on 1 task concurrently. Feel free to adjust these values to your fitting.
 
     To stop the workers, run:
-    ``sh
+    ```sh
     (env) spleeter-web$ celery multi stop fast slow --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log
     ```
 
