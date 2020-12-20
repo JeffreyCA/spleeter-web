@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dynamic mix pages show the track name in the tab title
 
 ### Changed
+- Dynamic mix files are now saved as: `artist-title-part.mp3` instead of `part.mp3`
 - Correct service name in `docker-compose.prod.selfhost.yml`
 - Use separate Celery queues for fast (YouTube imports) and slow (source separation) tasks
     - For Docker, the fast and slow Celery workers run in separate containers
