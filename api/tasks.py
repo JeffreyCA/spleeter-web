@@ -1,6 +1,7 @@
 import os
 import os.path
 import pathlib
+import shutil
 
 from billiard.exceptions import SoftTimeLimitExceeded
 from django.conf import settings
@@ -118,10 +119,7 @@ def create_dynamic_mix(dynamic_mix_id):
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR,
                                  dynamic_mix_id)
         rel_media_path = os.path.join(settings.SEPARATE_DIR, dynamic_mix_id)
-        rel_media_path_vocals = os.path.join(rel_media_path, 'vocals.mp3')
-        rel_media_path_other = os.path.join(rel_media_path, 'other.mp3')
-        rel_media_path_bass = os.path.join(rel_media_path, 'bass.mp3')
-        rel_media_path_drums = os.path.join(rel_media_path, 'drums.mp3')
+        file_prefix = slugify(dynamic_mix.formatted_name())
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
@@ -129,22 +127,19 @@ def create_dynamic_mix(dynamic_mix_id):
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
-        path = dynamic_mix.source_path(
-        ) if is_local else dynamic_mix.source_url()
+        path = dynamic_mix.source_path() if is_local else dynamic_mix.source_url()
+
+        # Do separation
         separator.separate_into_parts(path, rel_path)
 
         # Check all parts exist
         if exists_all_parts(rel_path):
+            rename_all_parts(rel_path, file_prefix)
             dynamic_mix.status = TaskStatus.DONE
             if is_local:
-                # File is already on local filesystem
-                dynamic_mix.vocals_file.name = rel_media_path_vocals
-                dynamic_mix.other_file.name = rel_media_path_other
-                dynamic_mix.bass_file.name = rel_media_path_bass
-                dynamic_mix.drums_file.name = rel_media_path_drums
+                save_to_local_storage(dynamic_mix, rel_media_path, file_prefix)
             else:
-                save_to_ext_storage(dynamic_mix, rel_path)
-            dynamic_mix.save()
+                save_to_ext_storage(dynamic_mix, rel_path, file_prefix)
         else:
             raise Exception('Error writing to file')
     except FileNotFoundError as error:
@@ -235,37 +230,72 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
 
 def exists_all_parts(rel_path):
     """Returns whether all of the individual parts exist on filesystem."""
-    rel_path_vocals = os.path.join(rel_path, 'vocals.mp3')
-    rel_path_other = os.path.join(rel_path, 'other.mp3')
-    rel_path_bass = os.path.join(rel_path, 'bass.mp3')
-    rel_path_drums = os.path.join(rel_path, 'drums.mp3')
-    return os.path.exists(rel_path_vocals) and os.path.exists(
-        rel_path_other) and os.path.exists(rel_path_bass) and os.path.exists(
-            rel_path_drums)
+    parts = ['vocals', 'other', 'bass', 'drums']
+    for part in parts:
+        rel_part_path = os.path.join(rel_path, f'{part}.mp3')
+        if not os.path.exists(rel_part_path):
+            print(f'{rel_part_path} does not exist')
+            return False
+    return True
 
-def save_to_ext_storage(dynamic_mix, rel_path_dir):
+def rename_all_parts(rel_path, file_prefix: str):
+    """Renames individual parts files to names with track artist and title."""
+    parts = ['vocals', 'other', 'bass', 'drums']
+    for part in parts:
+        old_rel_path = os.path.join(rel_path, f'{part}.mp3')
+        new_rel_path = os.path.join(rel_path, f'{file_prefix}-{part}.mp3')
+        print(f'renaming {old_rel_path} to {new_rel_path}')
+        os.rename(old_rel_path, new_rel_path)
+
+def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix):
+    """Saves individual parts to the local file system
+
+    :param dynamic_mix: DynamicMix model
+    :param rel_media_path: Relative path from media/ to DynamicMix ID directory
+    :param file_prefix: Filename prefix
+    """
+    rel_media_path_vocals = os.path.join(rel_media_path,
+                                         file_prefix + '-vocals.mp3')
+    rel_media_path_other = os.path.join(rel_media_path,
+                                        file_prefix + '-other.mp3')
+    rel_media_path_bass = os.path.join(rel_media_path,
+                                        file_prefix + '-bass.mp3')
+    rel_media_path_drums = os.path.join(rel_media_path,
+                                        file_prefix + '-drums.mp3')
+    # File is already on local filesystem
+    dynamic_mix.vocals_file.name = rel_media_path_vocals
+    dynamic_mix.other_file.name = rel_media_path_other
+    dynamic_mix.bass_file.name = rel_media_path_bass
+    dynamic_mix.drums_file.name = rel_media_path_drums
+    dynamic_mix.save()
+
+def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix):
     """Saves individual parts to external file storage (S3, Azure, etc.)
 
     :param dynamic_mix: DynamicMix model
     :param rel_path_dir: Relative path to DynamicMix ID directory
+    :param file_prefix: Filename prefix
     """
-    filenames = ['vocals.mp3', 'other.mp3', 'bass.mp3', 'drums.mp3']
-    for filename in filenames:
+    parts = ['vocals', 'other', 'bass', 'drums']
+    filenames = {
+        'vocals': file_prefix + '-vocals.mp3',
+        'other': file_prefix + '-other.mp3',
+        'bass': file_prefix + '-bass.mp3',
+        'drums': file_prefix + '-drums.mp3'
+    }
+    content_files = {}
+
+    for part in parts:
+        filename = filenames[part]
         rel_path = os.path.join(rel_path_dir, filename)
         raw_file = open(rel_path, 'rb')
-        content_file = ContentFile(raw_file.read())
-        content_file.name = filename
+        content_files[part] = ContentFile(raw_file.read())
+        content_files[part].name = filename
 
-        if filename == 'vocals.mp3':
-            dynamic_mix.vocals_file = content_file
-        elif filename == 'other.mp3':
-            dynamic_mix.other_file = content_file
-        elif filename == 'bass.mp3':
-            dynamic_mix.bass_file = content_file
-        elif filename == 'drums.mp3':
-            dynamic_mix.drums_file = content_file
+    dynamic_mix.vocals_file = content_files['vocals']
+    dynamic_mix.other_file = content_files['other']
+    dynamic_mix.bass_file = content_files['bass']
+    dynamic_mix.drums_file = content_files['drums']
+    dynamic_mix.save()
 
-        # Remove local file
-        os.remove(rel_path)
-    # Remove empty directory
-    os.rmdir(rel_path_dir)
+    shutil.rmtree(rel_path_dir, ignore_errors=True)
