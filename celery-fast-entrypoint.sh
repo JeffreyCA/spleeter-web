@@ -6,6 +6,6 @@ echo "Starting Celery (fast)"
 
 mkdir -p celery
 
-celery -A api worker -l WARNING -Q fast_queue \
+celery -A api worker -l INFO -Q fast_queue \
     --concurrency $CELERY_FAST_QUEUE_CONCURRENCY \
     --statedb=./celery/celery-fast.state

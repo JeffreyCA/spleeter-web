@@ -135,7 +135,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 9. Start Celery workers in separate terminal
     ```sh
-    (env) spleeter-web$ celery multi start fast slow -l WARNING -Q:fast fast_queue -Q:slow slow_queue,fast_queue -c:fast 3 -c:slow 1 -A api --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log --statedb=celery.state
+    (env) spleeter-web$ celery multi start fast slow -l INFO -Q:fast fast_queue -Q:slow slow_queue,fast_queue -c:fast 3 -c:slow 1 -A api --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log --statedb=celery.state
     ```
     The above command launches two Celery workers: **fast** and **slow**. **fast** processes YouTube imports and **slow** processes source separation. **fast** can work on 3 tasks concurrently, while **slow** can only work on 1 task concurrently. Feel free to adjust these values to your fitting.
 
