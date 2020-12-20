@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
-### **Breaking Changes**
-- Docker: switch default database backend from PostgreSQL to SQLite
-    - **Please make a backup of your data before updating!**
+
+## [v1.1.0] - 2020-12-20
+### **Breaking Changes for Docker**
+- Change database backend from PostgreSQL to SQLite
+    - **If you are updating from a previous version, please backup your track list as the data in the DB will not carry over after updating! Your media files will not be impacted.**
 
 ### Added
-- Dynamic mix pages show the track name in the tab title
+- On dynamic mix pages, the tab title shows the current track information
 
 ### Changed
 - Dynamic mix files are now saved as: `artist-title-part.mp3` instead of `part.mp3`
@@ -46,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Pre-release] - before 2020-12
 Undocumented
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...HEAD
+[v1.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/pre...v1.0.0
 [Pre-release]: https://github.com/JeffreyCA/spleeter-web/releases/tag/pre
