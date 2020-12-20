@@ -298,13 +298,12 @@ class DynamicMix(models.Model):
         """Get the title."""
         return self.source_track.title
 
-    def formatted_name(self, part):
+    def formatted_name(self):
         """
         Produce a string with the format like:
-        "Artist - Title (part)"
+        "Artist - Title"
         """
-        prefix = self.source_track.artist + ' - ' + self.source_track.title
-        formatted = prefix + ' (' + part + ')'
+        formatted = self.source_track.artist + ' - ' + self.source_track.title
         return formatted
 
     def vocals_url(self):
