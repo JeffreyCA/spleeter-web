@@ -4,8 +4,9 @@ services:
     build: ./nginx
   api:
     build: .
+  celery-fast:
+    build: .
+  celery-slow:
+    build: .
   frontend:
     build: ./frontend
-  celery:
-    build:
-      context: .

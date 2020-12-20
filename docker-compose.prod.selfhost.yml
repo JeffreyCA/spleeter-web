@@ -6,6 +6,9 @@ services:
   api:
     volumes:
       - /path/to/media:/webapp/media
-  celery:
+  celery-fast:
+    volumes:
+      - /path/to/media:/webapp/media
+  celery-slow:
     volumes:
       - /path/to/media:/webapp/media

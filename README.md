@@ -114,10 +114,12 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     (env) spleeter-web$ python manage.py runserver 0.0.0.0:8000
     ````
 
-9. Start Celery worker in separate terminal
+9. Start Celery workers in separate terminal
     ```sh
-    (env) spleeter-web$ celery -A api worker -l WARNING --statedb=celery.state
+    (env) spleeter-web$ celery multi start fast slow -l WARNING -Q:fast fast_queue -Q:slow slow_queue,fast_queue -c:fast 3 -c:slow 1 -A api --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log --statedb=celery.state
     ```
+    The above command launches two Celery workers: **fast** and **slow**. **fast** processes YouTube imports and **slow** processes source separation. **fast** can work on 3 tasks concurrently, while **slow** can only work on 1 task concurrently. Feel free to adjust these values to your fitting.
+
 10. Launch **Spleeter Web**
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
@@ -143,7 +145,8 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 | `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
 | `CELERY_BROKER_URL` | Broker URL for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
-| `CELERY_WORKER_CONCURRENCY` | Number of concurrent tasks Celery can process (for source separation and YouTube import tasks). |
+| `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process (used only if run using Docker). |
+| `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process (used only if run using Docker).|
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 
 
@@ -179,14 +182,15 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     `.env` file:
     ```
     APP_HOST=<domain name or public IP of server>
-    AZURE_ACCOUNT_KEY=<account key>                      # Optional
-    AZURE_ACCOUNT_NAME=<account name>                    # Optional
-    AZURE_CONTAINER=<container name>                     # Optional
-    CELERY_WORKER_CONCURRENCY=<num concurrent processes> # Optional (default = 1)
-    YOUTUBE_API_KEY=<youtube api key>                    # Optional
+    AZURE_ACCOUNT_KEY=<account key>                   # Optional
+    AZURE_ACCOUNT_NAME=<account name>                 # Optional
+    AZURE_CONTAINER=<container name>                  # Optional
+    CELERY_FAST_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 3)
+    CELERY_SLOW_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 1)
+    YOUTUBE_API_KEY=<youtube api key>                 # Optional
     ```
 
-    These values are read in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings.
+    These values are read in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings. The `CELERY_QUEUE_CONCURRENCY` variables are referenced in `celery-entrypoint.sh`.
 
 4. Build and start production containers
 
