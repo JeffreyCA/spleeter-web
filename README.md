@@ -7,7 +7,26 @@ It is powered by [Spleeter](https://github.com/deezer/spleeter), an awesome sour
 
 The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue.
 
-### Features
+## Table of Contents
+
+- [Features](#features)
+- [Demo site](#demo-site)
+- [Getting started with Docker](#getting-started-with-docker)
+- [Getting started without Docker](#getting-started-without-docker)
+- [Configuration](#configuration)
+    - [Django settings](#django-settings)
+    - [Environment variables](#environment-variables)
+- [Using cloud storage](#using-cloud-storage-azure-storage-aws-s3-etc)
+- [Deployment](#deployment)
+- [Common issues & FAQs](#common-issues--faqs)
+    - [How do I update Spleeter Web?](#how-do-i-update-spleeter-web)
+    - [I get a CORS error when trying to play a dynamic mix.](#i-get-a-cors-error-when-trying-to-play-a-dynamic-mix)
+    - [When playing a track I cannot perform seeks.](#when-playing-a-track-i-cannot-perform-seeks)
+    - [Why is Redis needed?](#why-is-redis-needed)
+- [Credits](#credits)
+- [License](#license)
+
+## Features
 - Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
     - Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
@@ -18,7 +37,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - Clean and responsive UI
 - Fully Dockerized
 
-### [Demo site](https://jeffreyca.github.io/spleeter-web/)
+## [Demo site](https://jeffreyca.github.io/spleeter-web/)
 
 **Homepage**
 
@@ -120,6 +139,11 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
     The above command launches two Celery workers: **fast** and **slow**. **fast** processes YouTube imports and **slow** processes source separation. **fast** can work on 3 tasks concurrently, while **slow** can only work on 1 task concurrently. Feel free to adjust these values to your fitting.
 
+    To stop the workers, run:
+    ``sh
+    (env) spleeter-web$ celery multi stop fast slow --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log
+    ```
+
 10. Launch **Spleeter Web**
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
@@ -149,7 +173,6 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 | `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process (used only if run using Docker).|
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 
-
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
 By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
@@ -162,7 +185,7 @@ In the same file, set the storage backend configuration values (`AZURE_ACCOUNT_K
 
 To play back a dynamic mix, you may need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
 
-## Deploying
+## Deployment
 **Spleeter Web** can be deployed on a VPS or a cloud server such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.
 
 1. Clone this git repo
@@ -190,7 +213,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     YOUTUBE_API_KEY=<youtube api key>                 # Optional
     ```
 
-    These values are read in `django_react/settings_docker.py`, so you can also edit that file directly with your production settings. The `CELERY_QUEUE_CONCURRENCY` variables are referenced in `celery-entrypoint.sh`.
+    These values are referenced in `django_react/settings_docker.py` and `docker-compose.yml`, so you can also edit those files directly to set your production settings.
 
 4. Build and start production containers
 
@@ -209,6 +232,8 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 ## Common issues & FAQs
 
 ### How do I update Spleeter Web?
+**If you are updating to v1.1.0 or later and you use Docker to run Spleeter Web, please note that the database backend has changed from PostgreSQL to SQLite. Please backup your track list as the data in the DB will not carry over when updating. Your media files will not be impacted.**
+
 First, do a `git pull` to fetch the latest changes. Then, if you are using Docker, just re-run `docker-compose` with the `--build` flag to re-build the containers. If you are not using Docker, you will need to re-run `pip install -r requirements` and `python manage.py migrate` and `npm install` (in the `frontend` directory).
 
 ### I get a CORS error when trying to play a dynamic mix.

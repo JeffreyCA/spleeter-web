@@ -13,7 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Correct service name in `docker-compose.prod.selfhost.yml`
-- Make separate Celery queues for fast (YouTube imports) and slow (source separation) tasks
+- Use separate Celery queues for fast (YouTube imports) and slow (source separation) tasks
+    - For Docker, the fast and slow Celery workers run in separate containers
 - Update dependencies
 
 ## [v1.0.0] - 2020-12-19
