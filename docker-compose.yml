@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.4'
 x-celery-env: &celery-env
   - DJANGO_SETTINGS_MODULE=django_react.settings_docker
   - CELERY_BROKER_URL=redis://redis:6379/0
