@@ -26,6 +26,8 @@ instance/
 celerybeat-schedule
 celerybeat.pid
 celery.state.db
+*.log
+*.pid
 
 # Environments
 .env
