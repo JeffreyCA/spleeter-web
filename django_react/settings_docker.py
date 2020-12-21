@@ -46,7 +46,7 @@ AWS_QUERYSTRING_AUTH = False
 # Make uploaded files publicly accessible and downloadable
 AWS_S3_OBJECT_PARAMETERS = {'ACL': 'public-read', 'ContentDisposition': 'attachment'}
 # S3 region
-AWS_S3_REGION_NAME = 'ca-central-1'
+AWS_S3_REGION_NAME = 'us-east-1'
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
