@@ -151,7 +151,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     **Windows:**
 
-    On Windows you'll first need to install `gevent`.
+    You'll first need to install `gevent`. Note however that you will not be able to abort in-progress tasks if using Celery on Windows.
 
     ```sh
     (env) spleeter-web$ pip install gevent
