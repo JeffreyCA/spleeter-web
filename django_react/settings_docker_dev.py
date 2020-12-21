@@ -5,13 +5,11 @@ SECRET_KEY = 'default'
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
 
-# DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
-# OR
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [

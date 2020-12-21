@@ -164,6 +164,9 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 |---|---|
 | `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
 | `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
+| `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.s3boto3.S3Boto3Storage`. |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.s3boto3.S3Boto3Storage`. |
+| `AWS_STORAGE_BUCKET_NAME` | AWS S3 storage bucket name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.s3boto3.S3Boto3Storage`. |
 | `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
 | `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
 | `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
@@ -175,13 +178,23 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 
-By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It supports many other storage backends like Azure Storage or S3 using [django-storages](https://django-storages.readthedocs.io/en/latest/).
+By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It uses [django-storages](https://django-storages.readthedocs.io/en/latest/), so you can also configure it to use other storage backends like Azure Storage or AWS S3.
 
-You can edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings_dev.py` and set `DEFAULT_FILE_STORAGE` to another backend like `'storages.backends.azure_storage.AzureStorage'`.
+To do this, edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings.py` and set `DEFAULT_FILE_STORAGE` to another backend like `storages.backends.s3boto3.S3Boto3Storage` or `storages.backends.azure_storage.AzureStorage`.
 
-In the same file, set the storage backend configuration values (`AZURE_ACCOUNT_KEY` and `AZURE_ACCOUNT_NAME` if using Azure).
+Then, set the following environment variables (`.env` if using Docker), depending on which backend you're using:
 
-**CORS**
+**S3:**
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_STORAGE_BUCKET_NAME`
+
+**Azure:**
+- `AZURE_ACCOUNT_KEY`
+- `AZURE_ACCOUNT_NAME`
+- `AZURE_CONTAINER`
+
+### CORS
 
 To play back a dynamic mix, you may need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
 
@@ -205,6 +218,9 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     `.env` file:
     ```
     APP_HOST=<domain name or public IP of server>
+    AWS_ACCESS_KEY_ID=<access key id>                 # Optional
+    AWS_SECRET_ACCESS_KEY=<secret key>                # Optional
+    AWS_STORAGE_BUCKET_NAME=<bucket name>             # Optional
     AZURE_ACCOUNT_KEY=<account key>                   # Optional
     AZURE_ACCOUNT_NAME=<account name>                 # Optional
     AZURE_CONTAINER=<container name>                  # Optional

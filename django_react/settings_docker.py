@@ -17,9 +17,36 @@ DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+##################################
+# Azure storage backend settings #
+##################################
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
 AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', '')
 AZURE_CONTAINER = os.getenv('AZURE_CONTAINER', '')
+AZURE_OBJECT_PARAMETERS = {'ContentDisposition': 'attachment'}
+
+################################
+# AWS storage backend settings #
+################################
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', '')
+
+# A path prefix that will be prepended to all uploads
+AWS_LOCATION = 'media'
+# Disable query parameter authentication (for public reads)
+AWS_QUERYSTRING_AUTH = False
+# Make uploaded files publicly accessible and downloadable
+AWS_S3_OBJECT_PARAMETERS = {'ACL': 'public-read', 'ContentDisposition': 'attachment'}
+# S3 region
+AWS_S3_REGION_NAME = 'ca-central-1'
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
