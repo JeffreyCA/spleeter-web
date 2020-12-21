@@ -1,3 +1,5 @@
+from sys import platform
+
 from django.db.models import Q
 from django.db.models.deletion import ProtectedError
 from django.db.utils import IntegrityError
@@ -16,6 +18,8 @@ from .youtube_search import *
 """
 This module defines Django views.
 """
+
+KILL_SIGNAL = 'SIGTERM' if platform == 'win32' else 'SIGUSR1'
 
 class YouTubeSearchView(APIView):
     """View that processes YouTube video search queries."""
@@ -176,7 +180,7 @@ class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
             # Empty URL
             celery_id = instance.source_file.youtube_fetch_task.celery_id
             print('Revoking celery task:', celery_id)
-            app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+            app.control.revoke(celery_id, terminate=True, signal=KILL_SIGNAL)
             return super().destroy(request, *args, **kwargs)
 
         pending_dynamic_mixes = DynamicMix.objects.filter(
@@ -192,12 +196,12 @@ class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         for dynamic_mix in pending_dynamic_mixes:
             celery_id = dynamic_mix.celery_id
             print('Revoking celery task:', celery_id)
-            app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+            app.control.revoke(celery_id, terminate=True, signal=KILL_SIGNAL)
 
         for static_mix in pending_static_mixes:
             celery_id = static_mix.celery_id
             print('Revoking celery task:', celery_id)
-            app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+            app.control.revoke(celery_id, terminate=True, signal=KILL_SIGNAL)
 
         # Delete mixes
         static_mixes = StaticMix.objects.filter(source_track=instance_id)
@@ -339,7 +343,7 @@ class DynamicMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         celery_id = dynamic_mix.celery_id
         # Revoke the celery task
         print('Revoking celery task:', celery_id)
-        app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+        app.control.revoke(celery_id, terminate=True, signal=KILL_SIGNAL)
 
         return super().destroy(request, *args, **kwargs)
 
@@ -425,7 +429,7 @@ class StaticMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         celery_id = static_mix.celery_id
         # Revoke the celery task
         print('Revoking celery task:', celery_id)
-        app.control.revoke(celery_id, terminate=True, signal='SIGUSR1')
+        app.control.revoke(celery_id, terminate=True, signal=KILL_SIGNAL)
         return super().destroy(request, *args, **kwargs)
 
 class YTAudioDownloadTaskRetrieveView(generics.RetrieveAPIView):

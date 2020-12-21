@@ -77,7 +77,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded tracks and generated mixes will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
-**If you are on Windows, it's recommended to follow the Docker instructions above. Celery is not supported on Windows.**
+**If you are on Windows, it's recommended to follow the Docker instructions above. Celery is not well-supported on Windows.**
 
 ### Requirements
 * 4 GB+ of memory (source separation is memory-intensive)
@@ -137,7 +137,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 9. Start Celery workers in separate terminal
 
-    **macOS/Linux:**
+    **Unix/macOS:**
 
     ```sh
     (env) spleeter-web$ celery multi start fast slow -l INFO -Q:fast fast_queue -Q:slow slow_queue,fast_queue -c:fast 3 -c:slow 1 -A api --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log --statedb=celery.state
@@ -160,7 +160,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```sh
     # Start fast worker
     (env) spleeter-web$ celery -A api fast_worker -l INFO -Q fast_queue -c 3 --statedb=celery_fast.state --pool=gevent
-    
+
     # Start slow worker
     (env) spleeter-web$ celery -A api slow_worker -l INFO -Q slow_queue -c 1 --statedb=celery_slow.state --pool=gevent
     ```
