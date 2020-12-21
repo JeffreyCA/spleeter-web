@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Files uploaded to Azure Storage have `Content-Disposition` always set to `attachment`
 
+### Removed
+- `psycopg2` Python dependency
+
 ## [v1.1.0] - 2020-12-20
 ### **Breaking Changes for Docker**
 - Change database backend from PostgreSQL to SQLite
