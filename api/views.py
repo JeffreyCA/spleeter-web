@@ -19,6 +19,8 @@ from .youtube_search import *
 This module defines Django views.
 """
 
+# Windows users would need to use Celery with 'gevent', but 'gevent' does not support aborting in-progress tasks,
+# so the SIGTERM would still fail...
 KILL_SIGNAL = 'SIGTERM' if platform == 'win32' else 'SIGUSR1'
 
 class YouTubeSearchView(APIView):
