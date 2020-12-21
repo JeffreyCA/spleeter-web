@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- New configurable settings for using AWS S3 as backend for serving media files
+
+### Changed
+- Files uploaded to Azure Storage have `Content-Disposition` always set to `attachment`
 
 ## [v1.1.0] - 2020-12-20
 ### **Breaking Changes for Docker**
