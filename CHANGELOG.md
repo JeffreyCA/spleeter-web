@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - New configurable settings for using AWS S3 as backend for serving media files
+- A favicon
 
 ### Changed
 - Files uploaded to Azure Storage have `Content-Disposition` always set to `attachment`
