@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: 'production',
@@ -10,6 +11,14 @@ module.exports = {
     path: path.resolve('./assets/dist/'),
     filename: '[name].js'
   },
+  plugins: [
+    new CopyWebpackPlugin({ 
+      patterns: [ 
+        { from: './src/favicon.ico' },
+        { from: './src/favicon.svg' },
+      ]
+    }),
+  ],
   module: {
     rules: [
       {

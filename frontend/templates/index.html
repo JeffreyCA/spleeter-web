@@ -1,5 +1,6 @@
 {% if DJANGO_DEVELOPMENT %}
   {% load render_bundle from webpack_loader %}
+  {% load webpack_static from webpack_loader %}
 {% else %}
   {% load static %}
 {% endif %}
@@ -8,6 +9,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Spleeter Web</title>
+  {% if DJANGO_DEVELOPMENT %}
+  <link rel="icon" type="image/svg+xml" href="{% webpack_static "favicon.svg" %}">
+  <link rel="alternate icon" href="{% webpack_static "favicon.ico" %}">
+  {% else %}
+  <link rel="icon" type="image/svg+xml" href="{% static "dist/favicon.svg" %}">
+  <link rel="alternate icon" href="{% static "dist/favicon.ico" %}">
+  {% endif %}
 </head>
 <body>
   <div id="react"></div>
