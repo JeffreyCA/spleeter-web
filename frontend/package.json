@@ -27,7 +27,7 @@
     "@types/react-bootstrap-table-next": "^4.0.10",
     "@types/react-dom": "^16.9.10",
     "@types/react-router-dom": "^5.1.6",
-    "@types/react-slider": "^1.0.0",
+    "@types/react-slider": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
     "bootstrap": "^4.5.3",
@@ -70,7 +70,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-slider": "^1.1.2",
-    "tone": "^14.7.58",
+    "tone": "^14.7.74",
     "typescript": "^3.9.7"
   }
 }
