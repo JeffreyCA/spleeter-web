@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const BundleTracker = require('webpack-bundle-tracker');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: 'development',
@@ -10,12 +11,19 @@ module.exports = {
   entry: './src/index',
   output: {
     path: path.resolve('./assets/dist/'),
-    filename: '[name]-[hash].js'
+    filename: '[name]-[hash].js',
+    publicPath: '/static/dist/',
   },
   plugins: [
     new BundleTracker({
       path: path.resolve('./assets/'),
       filename: 'webpack-stats.json'
+    }),
+    new CopyWebpackPlugin({ 
+      patterns: [ 
+        { from: './src/favicon.ico' },
+        { from: './src/favicon.svg' },
+      ]
     }),
     new CleanWebpackPlugin()
   ],
