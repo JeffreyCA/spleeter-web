@@ -166,6 +166,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
 
 10. Launch **Spleeter Web**
+
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded and mixed tracks will appear in `media/uploads` and `media/separate` respectively.
 
 ## Configuration
