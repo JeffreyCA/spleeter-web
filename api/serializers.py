@@ -52,8 +52,10 @@ class DynamicMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals_file',
-                  'other_file', 'bass_file', 'drums_file', 'status', 'error', 'date_created')
+        fields = ('id', 'celery_id', 'source_track', 'separator',
+                  'demucs_shifts', 'artist', 'title', 'vocals_file',
+                  'other_file', 'bass_file', 'drums_file', 'status', 'error',
+                  'date_created')
 
 class StaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model."""
@@ -83,7 +85,8 @@ class StaticMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StaticMix
-        fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals', 'drums',
+        fields = ('id', 'celery_id', 'source_track', 'separator',
+                  'demucs_shifts', 'artist', 'title', 'vocals', 'drums',
                   'bass', 'other', 'status', 'url', 'error', 'overwrite',
                   'date_created')
 

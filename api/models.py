@@ -1,3 +1,4 @@
+from enum import Enum
 import os
 import uuid
 from io import BytesIO
@@ -34,6 +35,27 @@ def mix_track_path(instance, filename):
     :return: Path to mix track file
     """
     return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
+
+class Separator(str, Enum):
+    SPLEETER = 'spleeter'
+    DEMUCS = 'demucs'
+    DEMUCS_EXTRA = 'demucs_extra'
+    DEMUCS_LIGHT = 'light'
+    DEMUCS_LIGHT_EXTRA = 'light_extra'
+    TASNET = 'tasnet'
+    TASNET_EXTRA = 'tasnet_extra'
+
+SEP_CHOICES = [
+    (Separator.SPLEETER, 'Spleeter'),
+    ('demucs', (
+        (Separator.DEMUCS, 'Demucs'),
+        (Separator.DEMUCS_EXTRA, 'Demucs (extra)'),
+        (Separator.DEMUCS_LIGHT, 'Demucs Light'),
+        (Separator.DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
+        (Separator.TASNET, 'Tasnet'),
+        (Separator.TASNET_EXTRA, 'Tasnet (extra)'),
+    )),
+]
 
 class TaskStatus(models.IntegerChoices):
     """
@@ -185,6 +207,12 @@ class StaticMix(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
+    # Separation model
+    separator = models.CharField(max_length=20,
+                                 choices=SEP_CHOICES,
+                                 default=Separator.SPLEETER)
+    # Shift value (for Demucs)
+    demucs_shifts = models.PositiveSmallIntegerField(default=0)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -253,7 +281,7 @@ class StaticMix(models.Model):
 
     class Meta:
         unique_together = [[
-            'source_track', 'vocals', 'drums', 'bass', 'other'
+            'source_track', 'separator', 'vocals', 'drums', 'bass', 'other'
         ]]
 
 class DynamicMix(models.Model):
@@ -262,6 +290,12 @@ class DynamicMix(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
+    # Separation model
+    separator = models.CharField(max_length=20,
+                                 choices=SEP_CHOICES,
+                                 default=Separator.SPLEETER)
+    # Shift value (for Demucs)
+    demucs_shifts = models.PositiveSmallIntegerField(default=0)
     # Source track on which it is based
     source_track = models.OneToOneField(SourceTrack,
                                         related_name='dynamic',

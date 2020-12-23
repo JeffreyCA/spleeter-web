@@ -394,7 +394,7 @@ class StaticMixCreateView(generics.ListCreateAPIView):
                         'status':
                         'error',
                         'errors': [
-                            'A static mix already exists with these parts, or task is still in progress.'
+                            'A static mix for this model already exists with these parts, or the task is still in progress.'
                         ]
                     },
                     status=400)
