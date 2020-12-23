@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [v1.2.0] - 2020-12-22
 ### Added
 - New configurable settings for using AWS S3 as backend for serving media files
 - A favicon
@@ -58,7 +58,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Pre-release] - before 2020-12
 Undocumented
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/pre...v1.0.0
 [Pre-release]: https://github.com/JeffreyCA/spleeter-web/releases/tag/pre
