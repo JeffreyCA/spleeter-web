@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Files uploaded to Azure Storage have `Content-Disposition` always set to `attachment`
+- Fix issue with Dynamic Mixes where seeking occurs after long delay
 
 ### Removed
 - `psycopg2` Python dependency
