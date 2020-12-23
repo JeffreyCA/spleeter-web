@@ -11,12 +11,19 @@ from django.utils.text import slugify
 from .celery import app
 from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
-from .separate import SpleeterSeparator
+from .separators.spleeter_separator import SpleeterSeparator
+from .separators.demucs_separator import DemucsSeparator
 from .youtubedl import download_audio, get_file_ext
 
 """
 This module defines various Celery tasks used for Spleeter Web.
 """
+
+def get_separator(mix):
+    if mix.model == 'spleeter':
+        return SpleeterSeparator()
+    else:
+        return DemucsSeparator()
 
 @app.task()
 def create_static_mix(static_mix_id):
@@ -48,7 +55,7 @@ def create_static_mix(static_mix_id):
                                     static_mix_id)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = SpleeterSeparator()
+        separator = get_separator(static_mix)
 
         parts = {
             'vocals': static_mix.vocals,
@@ -123,7 +130,7 @@ def create_dynamic_mix(dynamic_mix_id):
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = SpleeterSeparator()
+        separator = get_separator(dynamic_mix)
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
