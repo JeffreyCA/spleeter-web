@@ -1,8 +1,9 @@
 import axios from 'axios';
 import * as React from 'react';
-import { Alert, Container, Row, Spinner } from 'react-bootstrap';
+import { Alert, Badge, Container, Row, Spinner } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router';
 import { DynamicMix } from '../../models/DynamicMix';
+import { separatorLabelMap } from '../../models/Separator';
 import PlainNavBar from '../Nav/PlainNavBar';
 import CancelButton from './CancelButton';
 import CancelTaskModal from './CancelTaskModal';
@@ -160,9 +161,15 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
         <Container>
           <h2 className="mt-3">Mixer</h2>
           {data ? (
-            <h4 className="mt-3">
-              {data.artist} - {data.title}
-            </h4>
+            <div>
+              <h4 className="mt-3">
+                {data.artist} - {data.title}
+              </h4>
+              <h5 className="mt-1">
+                <Badge variant="secondary">{separatorLabelMap[data.separator]}</Badge>{' '}
+                {data.separator !== 'spleeter' && <Badge variant="light">Random shifts: {data.random_shifts}</Badge>}
+              </h5>
+            </div>
           ) : null}
           {alert}
           {(isQueued || isProcessing) && !isAborted && <CancelButton onClick={this.onCancelTaskClick} />}

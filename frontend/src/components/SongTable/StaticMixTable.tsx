@@ -4,6 +4,7 @@ import { Download } from 'react-bootstrap-icons';
 import BootstrapTable, { ColumnFormatter, SortOrder } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
+import { separatorLabelMap } from '../../models/Separator';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import { AccompBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
@@ -11,17 +12,6 @@ import DeleteStaticMixButton from './DeleteStaticMixButton';
 import PausePlayButton from './PausePlayButton';
 import './StaticMixTable.css';
 import StatusIcon from './StatusIcon';
-
-// Map of separator IDs to labels
-const separatorLabelMap = {
-  spleeter: 'Spleeter',
-  demucs: 'Demucs',
-  demucs_extra: 'Demucs (extra)',
-  light: 'Demucs Light',
-  light_extra: 'Demucs Light (extra)',
-  tasnet: 'Tasnet',
-  tasnet_extra: 'Tasnet (extra)',
-};
 
 /**
  * Formatter function for status column
@@ -70,11 +60,10 @@ const downloadFormatter: ColumnFormatter<StaticMix> = (cell, row, rowIndex, form
 
 const modelFormatter: ColumnFormatter<StaticMix> = (cellContent, row) => {
   const separator = row.separator;
-  const variant = separator === 'spleeter' ? 'secondary' : 'secondary';
   const shouldShowTooltip = separator !== 'spleeter';
 
   const badge = (
-    <Badge variant={variant} style={shouldShowTooltip ? { cursor: 'pointer' } : {}}>
+    <Badge variant="secondary" style={shouldShowTooltip ? { cursor: 'pointer' } : {}}>
       {separatorLabelMap[separator]}
     </Badge>
   );
