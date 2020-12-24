@@ -16,7 +16,7 @@ class SpleeterSeparator:
         :param config: Separator config, defaults to None
         """
         if config is None:
-            self.audio_bitrate = '256k'
+            self.audio_bitrate = '320k'
             self.audio_format = 'mp3'
             self.sample_rate = 44100
             self.spleeter_stem = 'config/4stems-16kHz.json'
