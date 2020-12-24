@@ -69,6 +69,8 @@ class MixerPlayer extends React.Component<Props, State> {
       () => {
         players.toDestination();
         this.tonePlayers = players;
+        this.tonePlayers.fadeIn = 0.2;
+        this.tonePlayers.fadeOut = 0.2;
         // Tracks are now ready to be played
         if (this.isMounted) {
           this.setState({
