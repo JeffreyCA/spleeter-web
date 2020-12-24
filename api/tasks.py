@@ -130,7 +130,7 @@ def create_dynamic_mix(dynamic_mix_id):
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = get_separator(dynamic_mix)
+        separator = get_separator(dynamic_mix.separator, dynamic_mix.random_shifts)
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
-import StaticMixModalForm from './StaticMixModalForm';
+import StaticMixModalForm from './Form/StaticMixModalForm';
 
 interface Props {
   song?: SongData;
@@ -55,6 +55,7 @@ class StaticMixModal extends React.Component<Props, State> {
       bass: false,
       other: false,
       overwrite: false,
+      errors: [],
     });
   };
 
