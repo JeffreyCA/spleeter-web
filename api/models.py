@@ -1,10 +1,10 @@
-from enum import Enum
 import os
 import uuid
 from io import BytesIO
 
 import requests
 from django.conf import settings
+from django.core.validators import MaxValueValidator
 from django.db import models
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
@@ -36,24 +36,23 @@ def mix_track_path(instance, filename):
     """
     return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
 
-class Separator(str, Enum):
-    SPLEETER = 'spleeter'
-    DEMUCS = 'demucs'
-    DEMUCS_EXTRA = 'demucs_extra'
-    DEMUCS_LIGHT = 'light'
-    DEMUCS_LIGHT_EXTRA = 'light_extra'
-    TASNET = 'tasnet'
-    TASNET_EXTRA = 'tasnet_extra'
+SPLEETER = 'spleeter'
+DEMUCS = 'demucs'
+DEMUCS_EXTRA = 'demucs_extra'
+DEMUCS_LIGHT = 'light'
+DEMUCS_LIGHT_EXTRA = 'light_extra'
+TASNET = 'tasnet'
+TASNET_EXTRA = 'tasnet_extra'
 
 SEP_CHOICES = [
-    (Separator.SPLEETER, 'Spleeter'),
+    (SPLEETER, 'Spleeter'),
     ('demucs', (
-        (Separator.DEMUCS, 'Demucs'),
-        (Separator.DEMUCS_EXTRA, 'Demucs (extra)'),
-        (Separator.DEMUCS_LIGHT, 'Demucs Light'),
-        (Separator.DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
-        (Separator.TASNET, 'Tasnet'),
-        (Separator.TASNET_EXTRA, 'Tasnet (extra)'),
+        (DEMUCS, 'Demucs'),
+        (DEMUCS_EXTRA, 'Demucs (extra)'),
+        (DEMUCS_LIGHT, 'Demucs Light'),
+        (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
+        (TASNET, 'Tasnet'),
+        (TASNET_EXTRA, 'Tasnet (extra)'),
     )),
 ]
 
@@ -210,9 +209,10 @@ class StaticMix(models.Model):
     # Separation model
     separator = models.CharField(max_length=20,
                                  choices=SEP_CHOICES,
-                                 default=Separator.SPLEETER)
-    # Shift value (for Demucs)
-    demucs_shifts = models.PositiveSmallIntegerField(default=0)
+                                 default=SPLEETER)
+    # Random shift value (for Demucs)
+    random_shifts = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(10)])
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -281,7 +281,7 @@ class StaticMix(models.Model):
 
     class Meta:
         unique_together = [[
-            'source_track', 'separator', 'vocals', 'drums', 'bass', 'other'
+            'source_track', 'separator', 'random_shifts', 'vocals', 'drums', 'bass', 'other'
         ]]
 
 class DynamicMix(models.Model):
@@ -293,9 +293,10 @@ class DynamicMix(models.Model):
     # Separation model
     separator = models.CharField(max_length=20,
                                  choices=SEP_CHOICES,
-                                 default=Separator.SPLEETER)
-    # Shift value (for Demucs)
-    demucs_shifts = models.PositiveSmallIntegerField(default=0)
+                                 default=SPLEETER)
+    # Random shift value (for Demucs)
+    random_shifts = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(10)])
     # Source track on which it is based
     source_track = models.OneToOneField(SourceTrack,
                                         related_name='dynamic',

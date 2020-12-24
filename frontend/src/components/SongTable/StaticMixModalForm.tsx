@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Alert, Col, Form, Row } from 'react-bootstrap';
+import { Alert, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
+import { QuestionCircle } from 'react-bootstrap-icons';
 import { MusicPartMap } from '../../models/MusicParts';
 import { SongData } from '../../models/SongData';
 import './StaticMixModalForm.css';
@@ -10,14 +12,50 @@ interface Props {
   noneChecked: boolean;
   errors: string[];
   handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleModelChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleRandomShiftsChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+interface State {
+  selectedModel: string;
 }
 
 /**
  * Source separation form portion of the modal.
  */
-class StaticMixModalForm extends React.Component<Props> {
+class StaticMixModalForm extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      selectedModel: 'spleeter',
+    };
+  }
+
+  onModelSelectChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+    this.setState({
+      selectedModel: event.target.value,
+    });
+    this.props.handleModelChange(event);
+  };
+
   render(): JSX.Element {
     const { song, allChecked, noneChecked, errors, handleCheckboxChange } = this.props;
+
+    const renderTooltip = (props: OverlayInjectedProps) => {
+      return (
+        <Tooltip id="status-tooltip" {...props}>
+          Number of random shifts for equivariant stabilization. Higher values improve quality at the cost of longer
+          processing times.
+        </Tooltip>
+      );
+    };
+
+    const randomShiftsOverlay = (
+      <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={renderTooltip}>
+        <QuestionCircle className="ml-1" id="random-shifts-question" size={14} />
+      </OverlayTrigger>
+    );
+
     // Map part names to checkboxes
     const checkboxes = Array.from(MusicPartMap.keys()).map(
       (key: string): JSX.Element => {
@@ -52,6 +90,48 @@ class StaticMixModalForm extends React.Component<Props> {
           <Col>
             <Form.Control name="artist" disabled value={song.artist} />
           </Col>
+        </Form.Group>
+        <Form.Group className="mt-3" controlId="separator">
+          <Form.Row>
+            <Col xs={6}>
+              <Form.Label>Model:</Form.Label>
+              <Form.Control as="select" onChange={this.onModelSelectChange}>
+                <optgroup label="Spleeter">
+                  <option value="spleeter" selected>
+                    Spleeter
+                  </option>
+                </optgroup>
+                <optgroup label="Demucs">
+                  <option value="demucs">Demucs</option>
+                  <option value="demucs_extra">Demucs (extra)</option>
+                  <option value="light">Demucs Light</option>
+                  <option value="light_extra">Demucs Light (extra)</option>
+                  <option value="tasnet">Tasnet</option>
+                  <option value="tasnet_extra">Tasnet (extra)</option>
+                </optgroup>
+              </Form.Control>
+            </Col>
+            {this.state.selectedModel !== 'spleeter' && (
+              <Col xs={6}>
+                <Form.Label id="random-shifts">Random shifts: {randomShiftsOverlay}</Form.Label>
+                <Form.Control as="select" onChange={this.props.handleRandomShiftsChange}>
+                  <option value="0" selected>
+                    0 (fastest)
+                  </option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10 (slowest)</option>
+                </Form.Control>
+              </Col>
+            )}
+          </Form.Row>
         </Form.Group>
         <Form.Group>
           <Form.Label>Parts to keep:</Form.Label>

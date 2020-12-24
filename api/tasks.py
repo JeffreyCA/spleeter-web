@@ -19,11 +19,11 @@ from .youtubedl import download_audio, get_file_ext
 This module defines various Celery tasks used for Spleeter Web.
 """
 
-def get_separator(mix):
-    if mix.model == 'spleeter':
+def get_separator(separator: str, random_shifts: int):
+    if separator == 'spleeter':
         return SpleeterSeparator()
     else:
-        return DemucsSeparator()
+        return DemucsSeparator(separator, random_shifts)
 
 @app.task()
 def create_static_mix(static_mix_id):
@@ -55,7 +55,7 @@ def create_static_mix(static_mix_id):
                                     static_mix_id)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = get_separator(static_mix)
+        separator = get_separator(static_mix.separator, static_mix.random_shifts)
 
         parts = {
             'vocals': static_mix.vocals,
