@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge, Button, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
+import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Download } from 'react-bootstrap-icons';
 import BootstrapTable, { ColumnFormatter, SortOrder } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -12,12 +12,16 @@ import PausePlayButton from './PausePlayButton';
 import './StaticMixTable.css';
 import StatusIcon from './StatusIcon';
 
-const statusVariantMap = new Map([
-  ['Done', 'success'],
-  ['Error', 'danger'],
-  ['In Progress', 'primary'],
-  ['Queued', 'secondary'],
-]);
+// Map of separator IDs to labels
+const separatorLabelMap = {
+  spleeter: 'Spleeter',
+  demucs: 'Demucs',
+  demucs_extra: 'Demucs (extra)',
+  light: 'Demucs Light',
+  light_extra: 'Demucs Light (extra)',
+  tasnet: 'Tasnet',
+  tasnet_extra: 'Tasnet (extra)',
+};
 
 /**
  * Formatter function for status column
@@ -64,40 +68,34 @@ const downloadFormatter: ColumnFormatter<StaticMix> = (cell, row, rowIndex, form
   );
 };
 
-const statusFormatter: ColumnFormatter<StaticMix> = (cellValue, row) => {
-  const variant = cellValue ? statusVariantMap.get(cellValue) : 'secondary';
-  const badgeLabel = cellValue ? cellValue : 'Other';
+const modelFormatter: ColumnFormatter<StaticMix> = (cellContent, row) => {
+  const separator = row.separator;
+  const variant = separator === 'spleeter' ? 'secondary' : 'secondary';
+  const shouldShowTooltip = separator !== 'spleeter';
 
-  if (cellValue === 'Error') {
-    const renderErrorTooltip = (props: OverlayInjectedProps): JSX.Element => {
-      const errorText = row.error ? row.error : 'Unknown Error';
-      return (
-        <Tooltip id="button-tooltip" {...props}>
-          {errorText}
-        </Tooltip>
-      );
-    };
-    const ErrorOverlay = () => (
-      <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={renderErrorTooltip}>
-        <Badge variant={variant}>{badgeLabel}</Badge>
-      </OverlayTrigger>
-    );
+  const badge = (
+    <Badge variant={variant} style={shouldShowTooltip ? { cursor: 'pointer' } : {}}>
+      {separatorLabelMap[separator]}
+    </Badge>
+  );
+
+  const demucsRenderTooltip = (props: OverlayInjectedProps) => {
     return (
-      <h5 className="mb-0">
-        <ErrorOverlay />
-      </h5>
+      <Tooltip id="status-tooltip" {...props}>
+        Random shifts: {row.random_shifts}
+      </Tooltip>
     );
-  } else if (cellValue === 'In Progress') {
-    return (
-      <h5 className="mb-0">
-        <Badge variant={variant}>{badgeLabel}</Badge>
-        <Spinner className="ml-2" animation="border" variant="primary" size="sm" />
-      </h5>
-    );
-  }
+  };
+
   return (
     <h5 className="mb-0">
-      <Badge variant={variant}>{badgeLabel}</Badge>
+      {shouldShowTooltip ? (
+        <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={demucsRenderTooltip}>
+          {badge}
+        </OverlayTrigger>
+      ) : (
+        badge
+      )}
     </h5>
   );
 };
@@ -105,10 +103,10 @@ const statusFormatter: ColumnFormatter<StaticMix> = (cellValue, row) => {
 const partsFormatter: ColumnFormatter<StaticMix> = (cellContent, row) => {
   return (
     <h5 className="mb-0">
-      <VocalsBadge faded={!row.vocals} />
-      <AccompBadge faded={!row.other} />
-      <BassBadge faded={!row.bass} />
-      <DrumsBadge faded={!row.drums} />
+      {row.vocals && <VocalsBadge />}
+      {row.other && <AccompBadge />}
+      {row.bass && <BassBadge />}
+      {row.drums && <DrumsBadge />}
     </h5>
   );
 };
@@ -153,6 +151,18 @@ class StaticMixTable extends React.Component<Props> {
         },
       },
       {
+        dataField: 'separator',
+        text: 'Model',
+        formatter: modelFormatter,
+        sort: true,
+        style: () => {
+          return { width: '200px' };
+        },
+        headerStyle: () => {
+          return { width: '200px' };
+        },
+      },
+      {
         dataField: 'parts',
         isDummyField: true,
         text: 'Included parts',
@@ -188,7 +198,7 @@ class StaticMixTable extends React.Component<Props> {
             keyField="id"
             data={data}
             columns={columns}
-            sort={sort}
+            defaultSorted={[sort]}
             defaultSortDirection="asc"
             bordered={false}
           />

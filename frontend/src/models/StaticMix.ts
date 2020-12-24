@@ -1,3 +1,4 @@
+import { Separator } from './Separator';
 import { TaskStatus } from './TaskStatus';
 
 /**
@@ -6,6 +7,8 @@ import { TaskStatus } from './TaskStatus';
 export interface StaticMix {
   id: string;
   source_track: string;
+  separator: Separator;
+  random_shifts: number;
   artist: string;
   title: string;
   url: string;
