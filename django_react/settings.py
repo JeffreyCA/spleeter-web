@@ -10,9 +10,9 @@ YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
 
 ALLOWED_HOSTS = [os.getenv('APP_HOST'), '0.0.0.0', '127.0.0.1', 'localhost']
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DEFAULT_FILE_STORAGE = 'api.storage.AzureStorage'
+# DEFAULT_FILE_STORAGE = 'api.storage.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -22,9 +22,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
 AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', '')
 AZURE_CONTAINER = os.getenv('AZURE_CONTAINER', '')
-AZURE_OBJECT_PARAMETERS = {
-    'ContentDisposition': 'attachment'
-}
+AZURE_OBJECT_PARAMETERS = {'content_disposition': 'attachment'}
 
 ################################
 # AWS storage backend settings #

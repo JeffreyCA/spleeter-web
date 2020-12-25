@@ -132,7 +132,7 @@ class SourceFile(models.Model):
                 title = info['title']
         else:
             try:
-                if settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage':
+                if settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage':
                     audio = EasyID3(self.file.path)
                 else:
                     r = requests.get(self.file.url)
@@ -268,8 +268,7 @@ class StaticMix(models.Model):
             parts_lst.append('other')
         prefix = ''.join(prefix_lst)
         parts = ', '.join(parts_lst)
-        formatted = prefix + ' (' + parts + ')'
-        return formatted
+        return f'{prefix} ({parts}) [{self.separator}, {self.random_shifts}]'
 
     def source_path(self):
         """Get the path to the source file."""
@@ -333,13 +332,19 @@ class DynamicMix(models.Model):
         """Get the title."""
         return self.source_track.title
 
-    def formatted_name(self):
+    def formatted_prefix(self):
         """
         Produce a string with the format like:
         "Artist - Title"
         """
-        formatted = self.source_track.artist + ' - ' + self.source_track.title
-        return formatted
+        return f'{self.source_track.artist} - {self.source_track.title}'
+
+    def formatted_suffix(self):
+        """
+        Produce a string describing the separator model and random shift value:
+        "[Demucs, 0]"
+        """
+        return f'[{self.separator}, {self.random_shifts}]'
 
     def vocals_url(self):
         """Get the URL of the vocals file."""
