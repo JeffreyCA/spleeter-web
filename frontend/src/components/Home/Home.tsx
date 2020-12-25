@@ -245,13 +245,7 @@ class Home extends React.Component<RouteComponentProps, State> {
   };
 
   onDynamicMixClick = (song: SongData): void => {
-    if (song.dynamic && song.dynamic.status !== 'Error') {
-      // Open Mixer page in new tab
-      const win = window.open(`/mixer/${song.dynamic?.id}`, '_blank');
-      win?.focus();
-    } else {
-      this.setState({ showDynamicMixModal: true, currentModalSrcSong: song });
-    }
+    this.setState({ showDynamicMixModal: true, currentModalSrcSong: song });
   };
 
   onStaticMixClick = (song: SongData): void => {
@@ -396,8 +390,8 @@ class Home extends React.Component<RouteComponentProps, State> {
         <DynamicMixModal
           show={showDynamicMixModal}
           hide={this.handleDynamicMixModalHide}
-          submit={this.onMixTaskSubmit}
           exit={this.handleDynamicMixModalExited}
+          submit={this.onMixTaskSubmit}
           refresh={this.loadData}
           song={currentModalSrcSong}
         />

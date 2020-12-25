@@ -56,17 +56,11 @@ const playColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex, format
 const spleetColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex, formatExtraData) => {
   const { onDeleteTrackClick, onDynamicMixClick, onStaticMixClick } = formatExtraData;
   const disabled = !row.url;
-  const hasDynamicMix = row.dynamic;
 
   return (
     <div className="d-flex align-items-center justify-content-end">
-      <TextButton
-        className={hasDynamicMix ? '' : 'pl-1'}
-        variant="info"
-        disabled={disabled}
-        onClick={onDynamicMixClick}
-        song={row}>
-        {!hasDynamicMix && <Plus className="align-middle" size={24} />}
+      <TextButton className="pl-1" variant="info" disabled={disabled} onClick={onDynamicMixClick} song={row}>
+        <Plus className="align-middle" size={24} />
         <span className="align-middle">Dynamic Mix</span>
       </TextButton>
       <TextButton className="pl-1" disabled={disabled} onClick={onStaticMixClick} song={row}>

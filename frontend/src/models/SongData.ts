@@ -11,7 +11,7 @@ export interface SongData {
   artist: string;
   title: string;
   url: string;
-  dynamic: DynamicMix | null;
+  dynamic: DynamicMix[];
   static: StaticMix[];
   is_youtube: boolean;
   youtube_link: string | null;

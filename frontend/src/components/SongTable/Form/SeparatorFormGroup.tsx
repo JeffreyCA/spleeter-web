@@ -56,11 +56,9 @@ class SeparatorFormGroup extends React.Component<Props, State> {
         <Form.Row>
           <Col xs={6}>
             <Form.Label>Model:</Form.Label>
-            <Form.Control as="select" onChange={this.onModelSelectChange}>
+            <Form.Control as="select" defaultValue="spleeter" onChange={this.onModelSelectChange}>
               <optgroup label="Spleeter">
-                <option value="spleeter" selected>
-                  Spleeter
-                </option>
+                <option value="spleeter">Spleeter</option>
               </optgroup>
               <optgroup label="Demucs">
                 <option value="demucs">Demucs</option>

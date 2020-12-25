@@ -49,7 +49,6 @@ class DynamicMixModal extends React.Component<Props, State> {
    */
   onHide = (): void => {
     this.props.hide();
-    this.props.exit();
   };
 
   /**

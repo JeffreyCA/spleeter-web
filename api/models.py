@@ -297,9 +297,9 @@ class DynamicMix(models.Model):
     random_shifts = models.PositiveSmallIntegerField(
         default=0, validators=[MaxValueValidator(10)])
     # Source track on which it is based
-    source_track = models.OneToOneField(SourceTrack,
-                                        related_name='dynamic',
-                                        on_delete=models.CASCADE)
+    source_track = models.ForeignKey(SourceTrack,
+                                     related_name='dynamic',
+                                     on_delete=models.CASCADE)
     # Path to vocals file
     vocals_file = models.FileField(upload_to=mix_track_path,
                                    max_length=255,
@@ -379,4 +379,4 @@ class DynamicMix(models.Model):
         return self.source_track.source_file.file.url
 
     class Meta:
-        unique_together = [['source_track']]
+        unique_together = [['source_track', 'separator', 'random_shifts']]

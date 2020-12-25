@@ -315,12 +315,20 @@ class DynamicMixCreateView(generics.ListCreateAPIView):
         if serializer.is_valid():
             return super().create(request, *args, **kwargs)
 
-        print(serializer.errors)
-        if request.data['overwrite']:
-            self.delete_existing(request.data)
-            serializer = self.get_serializer(data=request.data)
-            if serializer.is_valid():
-                return super().create(request, *args, **kwargs)
+        if 'non_field_errors' in serializer.errors:
+            # Check if there already exists a static mix with same requested parts
+            # If that is the case, and the user did not check 'overwrite' option, then return error
+            errors = list(map(str, serializer.errors['non_field_errors']))
+            if len(errors) == 1 and 'unique set' in errors[0]:
+                return JsonResponse(
+                    {
+                        'status':
+                        'error',
+                        'errors': [
+                            'A dynamic mix for this model already exists with the specified model and parameters.'
+                        ]
+                    },
+                    status=400)
         return JsonResponse({
             'status': 'error',
             'errors': ['Unknown error']

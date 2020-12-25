@@ -101,7 +101,7 @@ class SourceFileSerializer(serializers.ModelSerializer):
 class SourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for representing a SourceTrack along with its associated StaticMixes."""
     static = StaticMixSerializer(many=True, read_only=True)
-    dynamic = DynamicMixSerializer(many=False, read_only=True)
+    dynamic = DynamicMixSerializer(many=True, read_only=True)
     is_youtube = serializers.BooleanField(source='source_file.is_youtube',
                                           read_only=True)
     youtube_link = serializers.CharField(source='source_file.youtube_link',
