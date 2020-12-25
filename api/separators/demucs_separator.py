@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import requests
-import tqdm
 from demucs.separate import *
 
 """
@@ -44,12 +42,6 @@ class DemucsSeparator:
 
     def apply_model(self, input_path: Path):
         model = load_model(self.model_file_path).to(self.device)
-
-        if not input_path.exists():
-            raise Exception(
-                f"File {input_path} does not exist. If the path contains spaces, please try again after surrounding the entire path with quotes."
-            )
-
         print(f"Separating track {input_path}")
         wav = AudioFile(input_path).read(streams=0,
                                          samplerate=44100,
@@ -113,3 +105,4 @@ class DemucsSeparator:
             encode_mp3(source,
                        str(output_path / filename),
                        verbose=self.verbose)
+            print(f'Finished {name}')
