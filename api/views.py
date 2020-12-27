@@ -170,7 +170,7 @@ class SourceFileView(viewsets.ModelViewSet):
 class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     """View that handles SourceTrack deletion and retrieval."""
     queryset = SourceTrack.objects.all()
-    serializer_class = SourceTrackSerializer
+    serializer_class = LiteSourceTrackSerializer
     lookup_field = 'id'
 
     def delete(self, request, *args, **kwargs):
@@ -221,11 +221,11 @@ class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
 class SourceTrackListView(generics.ListAPIView):
     """View that handles listing SourceTracks."""
     queryset = SourceTrack.objects.all()
-    serializer_class = SourceTrackSerializer
+    serializer_class = LiteSourceTrackSerializer
 
 class FileSourceTrackView(generics.CreateAPIView):
     """View that handles SourceTrack creation from user-uploaded files."""
-    serializer_class = SourceTrackSerializer
+    serializer_class = FullSourceTrackSerializer
 
 class YTSourceTrackView(generics.CreateAPIView):
     """View that handles SourceTrack creation from user-imported YouTube links."""
@@ -297,7 +297,7 @@ class YTSourceTrackView(generics.CreateAPIView):
 
 class DynamicMixCreateView(generics.ListCreateAPIView):
     """View that handles creating a DynamicMix instance."""
-    serializer_class = DynamicMixSerializer
+    serializer_class = FullDynamicMixSerializer
     queryset = DynamicMix.objects.all()
 
     def delete_existing(self, data):
@@ -344,7 +344,7 @@ class DynamicMixCreateView(generics.ListCreateAPIView):
 
 class DynamicMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     """View for handling DynamicMix lookup by ID."""
-    serializer_class = DynamicMixSerializer
+    serializer_class = LiteDynamicMixSerializer
     queryset = DynamicMix.objects.all()
     lookup_field = 'id'
 
@@ -360,7 +360,7 @@ class DynamicMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
 
 class StaticMixCreateView(generics.ListCreateAPIView):
     """View that handles creating StaticMix"""
-    serializer_class = StaticMixSerializer
+    serializer_class = FullStaticMixSerializer
     queryset = StaticMix.objects.all()
 
     def delete_existing(self, data):
@@ -430,7 +430,7 @@ class StaticMixCreateView(generics.ListCreateAPIView):
 
 class StaticMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     """View for handling StaticMix deletion and retrieval."""
-    serializer_class = StaticMixSerializer
+    serializer_class = LiteStaticMixSerializer
     queryset = StaticMix.objects.all()
     lookup_field = 'id'
 
