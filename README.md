@@ -280,6 +280,10 @@ To play a dynamic mix, you will need to configure your storage service's CORS se
 
 For more information on how to do this on Azure, see [this](https://docs.microsoft.com/en-us/rest/api/storageservices/cross-origin-resource-sharing--cors--support-for-the-azure-storage-services).
 
+### Tracks don't play on Safari.
+
+I recommended using Chrome or Firefox. Safari is not well-supported at the moment. If you imported a track through YouTube, chances are that it downloaded the audio track as WebM, which Safari cannot play.
+
 ### When playing a track I cannot perform seeks.
 The server that is hosting your media files has to support [**byte-range requests**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) in order for you to be able to perform seeks.
 
