@@ -14,13 +14,15 @@ import DeleteStaticMixButton from './DeleteStaticMixButton';
 import './MixTable.css';
 import PausePlayButton from './PausePlayButton';
 import PlayMixButton from './PlayMixButton';
-import { RecordPlayer } from './RecordPlayer';
 import StatusIcon from './StatusIcon';
 
+/**
+ * Represents a dynamic or static mix.
+ */
 interface MixItem {
   id: string;
   static: boolean;
-  mix: StaticMix | DynamicMix;
+  mix: DynamicMix | StaticMix;
   date_created: string;
 }
 
@@ -36,10 +38,11 @@ const statusColFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex) => {
 };
 
 /**
- * Formatter function for play column
+ * Formatter function for play/mix column
  */
 const playColFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatExtraData) => {
   if (row.static) {
+    // Button acts as play/pause for static mixes
     const { currentSongUrl, isPlaying, onPauseClick, onPlayClick } = formatExtraData;
     const mix = row.mix as StaticMix;
     const isPlayingCurrent = isPlaying && currentSongUrl === mix.url;
@@ -57,6 +60,7 @@ const playColFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatE
       </div>
     );
   } else {
+    // Button acts as link to mixer for dynamic mixes
     const mix = row.mix as DynamicMix;
     return (
       <div className="d-flex align-items-center justify-content-start">
@@ -66,31 +70,9 @@ const playColFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatE
   }
 };
 
-const downloadFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatExtraData) => {
-  const { onDeleteDynamicMixClick, onDeleteStaticMixClick } = formatExtraData;
-
-  if (row.static) {
-    const mix = row.mix as StaticMix;
-    const { url } = mix;
-
-    return (
-      <div className="d-flex align-items-center justify-content-end">
-        <Button variant="success" disabled={!url} href={url}>
-          <Download />
-        </Button>
-        <DeleteStaticMixButton onClick={onDeleteStaticMixClick} mix={mix} />
-      </div>
-    );
-  } else {
-    const mix = row.mix as DynamicMix;
-    return (
-      <div className="d-flex align-items-center justify-content-end">
-        <DeleteDynamicMixButton onClick={onDeleteDynamicMixClick} mix={mix} />
-      </div>
-    );
-  }
-};
-
+/**
+ * Formatter function for model column.
+ */
 const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   const separator = row.mix.separator;
   const shouldShowTooltip = row.mix.extra_info.length > 0;
@@ -102,7 +84,7 @@ const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   );
 
   const renderTooltip = (props: OverlayInjectedProps) => {
-    // Show tooltip of extra info separated by linebreaks
+    // Show tooltip of extra info separated by line breaks
     return (
       <Tooltip id="status-tooltip" {...props}>
         {row.mix.extra_info
@@ -131,8 +113,12 @@ const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   );
 };
 
+/**
+ * Formatter function for included parts column.
+ */
 const partsFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   if (row.static) {
+    // For static mixes, show included parts as separate badges
     const mix = row.mix as StaticMix;
     return (
       <h5 className="mb-0">
@@ -143,10 +129,39 @@ const partsFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
       </h5>
     );
   } else {
+    // For dynamic mixes, show single 'All' badge
     return (
       <h5 className="mb-0">
         <AllBadge />
       </h5>
+    );
+  }
+};
+
+/**
+ * Formatter for download/delete column.
+ */
+const actionFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatExtraData) => {
+  const { onDeleteDynamicMixClick, onDeleteStaticMixClick } = formatExtraData;
+
+  if (row.static) {
+    const mix = row.mix as StaticMix;
+    const { url } = mix;
+
+    return (
+      <div className="d-flex align-items-center justify-content-end">
+        <Button variant="success" disabled={!url} href={url}>
+          <Download />
+        </Button>
+        <DeleteStaticMixButton onClick={onDeleteStaticMixClick} mix={mix} />
+      </div>
+    );
+  } else {
+    const mix = row.mix as DynamicMix;
+    return (
+      <div className="d-flex align-items-center justify-content-end">
+        <DeleteDynamicMixButton onClick={onDeleteDynamicMixClick} mix={mix} />
+      </div>
     );
   }
 };
@@ -162,6 +177,9 @@ interface Props {
   onPlayClick: (song: StaticMix) => void;
 }
 
+/**
+ * Component for table showing all of a source track's dynamic and static mixes.
+ */
 class MixTable extends React.Component<Props> {
   render(): JSX.Element {
     const {
@@ -200,6 +218,7 @@ class MixTable extends React.Component<Props> {
         },
         sort: true,
         sortFunc: (_a: boolean, b: boolean, order: SortOrder, _dataField: unknown, rowA: MixItem, rowB: MixItem) => {
+          // Custom sort function to sort based on static and dynamic mix types.
           if (rowA.static && !rowB.static) {
             return order === 'asc' ? 1 : -1;
           } else if (!rowA.static && rowB.static) {
@@ -249,7 +268,7 @@ class MixTable extends React.Component<Props> {
       {
         dataField: 'file',
         text: '',
-        formatter: downloadFormatter,
+        formatter: actionFormatter,
         formatExtraData: {
           onDeleteDynamicMixClick: onDeleteDynamicMixClick,
           onDeleteStaticMixClick: onDeleteStaticMixClick,
@@ -260,8 +279,10 @@ class MixTable extends React.Component<Props> {
       },
     ];
 
-    let data: MixItem[] = [];
     const defaultSort = { dataField: 'date_created', order: 'desc' as SortOrder };
+
+    // Merge static and dynamic mixes into single list
+    let data: MixItem[] = [];
 
     data = data.concat(
       staticMixes.map(mix => {
