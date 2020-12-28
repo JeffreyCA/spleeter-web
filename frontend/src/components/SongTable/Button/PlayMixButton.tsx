@@ -6,6 +6,9 @@ interface Props {
   mixId: string;
 }
 
+/**
+ * Component for the 'play mix' button shown in the MixTable.
+ */
 class PlayMixButton extends React.Component<Props> {
   render(): JSX.Element {
     const { mixId } = this.props;

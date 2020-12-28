@@ -9,12 +9,12 @@ import { separatorLabelMap } from '../../models/Separator';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import { AccompBadge, AllBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
-import DeleteDynamicMixButton from './DeleteDynamicMixButton';
-import DeleteStaticMixButton from './DeleteStaticMixButton';
-import './MixTable.css';
-import PausePlayButton from './PausePlayButton';
-import PlayMixButton from './PlayMixButton';
+import DeleteDynamicMixButton from './Button/DeleteDynamicMixButton';
+import DeleteStaticMixButton from './Button/DeleteStaticMixButton';
+import PausePlayButton from './Button/PausePlayButton';
+import PlayMixButton from './Button/PlayMixButton';
 import StatusIcon from './StatusIcon';
+import './MixTable.css';
 
 /**
  * Represents a dynamic or static mix.

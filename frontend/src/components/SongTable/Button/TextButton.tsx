@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
-import { SongData } from '../../models/SongData';
+import { SongData } from '../../../models/SongData';
 import './TextButton.css';
 
 interface Props {

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { DynamicMix } from '../../models/DynamicMix';
+import axios from 'axios';
+import { SongData } from '../../../models/SongData';
 
 interface Props {
-  mix?: DynamicMix;
+  song?: SongData;
   show: boolean;
   exit: () => void;
   hide: () => void;
@@ -19,7 +19,7 @@ interface State {
 /**
  * Component for the delete track modal.
  */
-class DeleteDynamicMixModal extends React.Component<Props, State> {
+class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -55,16 +55,14 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
    * Called when primary modal button is clicked
    */
   onSubmit = (): void => {
-    if (!this.props.mix) {
+    if (!this.props.song) {
       return;
     }
 
     // DELETE request to delete the source track.
-    const mixId = this.props.mix.id;
-    console.log(mixId);
-
+    const songId = this.props.song.id;
     axios
-      .delete(`/api/mix/dynamic/${mixId}/`)
+      .delete(`/api/source-track/${songId}/`)
       .then(() => {
         this.props.refresh();
         this.props.hide();
@@ -79,18 +77,15 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
 
   render(): JSX.Element | null {
     const { errors } = this.state;
-    const { show, mix } = this.props;
-    if (!mix) {
+    const { show, song } = this.props;
+    if (!song) {
       return null;
     }
-
-    const extraInfo =
-      mix.separator === 'spleeter' ? 'spleeter' : `${mix.separator} with random shift ${mix.random_shifts}`;
 
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm dynamic mix deletion</Modal.Title>
+          <Modal.Title>Confirm track deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {errors.length > 0 && (
@@ -101,7 +96,7 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
             </Alert>
           )}
           <div>
-            Are you sure you want to delete the dynamic mix &ldquo;{mix.artist} - {mix.title}&rdquo; ({extraInfo})?
+            Are you sure you want to delete &ldquo;{song.artist} - {song.title}&rdquo; and all of its mixes?
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -117,4 +112,4 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
   }
 }
 
-export default DeleteDynamicMixModal;
+export default DeleteTrackModal;

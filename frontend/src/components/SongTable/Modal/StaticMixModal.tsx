@@ -1,34 +1,44 @@
 import axios from 'axios';
 import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { DynamicMix } from '../../models/DynamicMix';
-import { SongData } from '../../models/SongData';
-import DynamicMixModalForm from './Form/DynamicMixModalForm';
+import { SongData } from '../../../models/SongData';
+import { StaticMix } from '../../../models/StaticMix';
+import StaticMixModalForm from '../Form/StaticMixModalForm';
 
 interface Props {
   song?: SongData;
   show: boolean;
-  exit: () => void;
   hide: () => void;
+  exit: () => void;
   refresh: () => void;
-  submit: (id: string) => void;
+  submit: (srcId: string, id: string, status: string) => void;
 }
 
 interface State {
   model: string;
   randomShifts: number;
+  vocals: boolean;
+  drums: boolean;
+  bass: boolean;
+  other: boolean;
+  overwrite: boolean;
   errors: string[];
 }
 
 /**
- * Modal for creating dynamic mix.
+ * Component for the source separation modal.
  */
-class DynamicMixModal extends React.Component<Props, State> {
+class StaticMixModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       model: 'spleeter',
       randomShifts: 0,
+      vocals: false, // Include vocals
+      drums: false, // Include drums
+      bass: false, // Include bass
+      other: false, // Include accompaniment
+      overwrite: false, // Whether to overwrite existing static mix, if exists
       errors: [],
     };
   }
@@ -40,6 +50,11 @@ class DynamicMixModal extends React.Component<Props, State> {
     this.setState({
       model: 'spleeter',
       randomShifts: 0,
+      vocals: false,
+      drums: false,
+      bass: false,
+      other: false,
+      overwrite: false,
       errors: [],
     });
   };
@@ -72,15 +87,19 @@ class DynamicMixModal extends React.Component<Props, State> {
       source_track: this.props.song.id,
       separator: this.state.model,
       random_shifts: this.state.randomShifts,
-      overwrite: true,
+      vocals: this.state.vocals,
+      drums: this.state.drums,
+      bass: this.state.bass,
+      other: this.state.other,
+      overwrite: this.state.overwrite,
     };
 
-    // Make API request to create the mix
+    // Make request to add Song
     axios
-      .post<DynamicMix>('/api/mix/dynamic/', data)
+      .post<StaticMix>('/api/mix/static/', data)
       .then(({ data }) => {
         this.props.hide();
-        this.props.submit(data.id);
+        this.props.submit(data.source_track, data.id, data.status);
       })
       .catch(({ response }) => {
         const { data } = response;
@@ -88,6 +107,11 @@ class DynamicMixModal extends React.Component<Props, State> {
           errors: data.errors,
         });
       });
+  };
+
+  handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, checked } = event.target;
+    this.setState({ [name]: checked, errors: [] } as any);
   };
 
   handleModelChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -103,21 +127,28 @@ class DynamicMixModal extends React.Component<Props, State> {
   };
 
   render(): JSX.Element | null {
-    const { errors } = this.state;
+    const { vocals, drums, bass, other, errors } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
     }
 
+    // Display error if all or no parts are checked
+    const allChecked = vocals && drums && bass && other;
+    const noneChecked = !(vocals || drums || bass || other);
+
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Create dynamic mix</Modal.Title>
+          <Modal.Title>Create static mix</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <DynamicMixModalForm
+          <StaticMixModalForm
             song={song}
+            allChecked={allChecked}
+            noneChecked={noneChecked}
             errors={errors}
+            handleCheckboxChange={this.handleCheckboxChange}
             handleModelChange={this.handleModelChange}
             handleRandomShiftsChange={this.handleRandomShiftsChange}
           />
@@ -126,7 +157,7 @@ class DynamicMixModal extends React.Component<Props, State> {
           <Button variant="outline-danger" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="success" onClick={this.onSubmit}>
+          <Button variant="primary" disabled={allChecked || noneChecked} onClick={this.onSubmit}>
             Create Mix
           </Button>
         </Modal.Footer>
@@ -135,4 +166,4 @@ class DynamicMixModal extends React.Component<Props, State> {
   }
 }
 
-export default DynamicMixModal;
+export default StaticMixModal;

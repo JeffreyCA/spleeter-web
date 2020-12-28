@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { StaticMix } from '../../models/StaticMix';
+import { StaticMix } from '../../../models/StaticMix';
 
 interface Props {
   mix?: StaticMix;

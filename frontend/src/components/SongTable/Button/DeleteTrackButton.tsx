@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
 import { Trash } from 'react-bootstrap-icons';
-import { DynamicMix } from '../../models/DynamicMix';
+import { SongData } from '../../../models/SongData';
 
 interface Props {
   disabled?: boolean;
-  mix: DynamicMix;
-  onClick: (song: DynamicMix) => void;
+  song: SongData;
+  onClick: (song: SongData) => void;
 }
 
 /**
- * Delete dynamic mix button component.
+ * Delete track button component.
  */
-class DeleteDynamicMixButton extends React.Component<Props> {
+class DeleteTrackButton extends React.Component<Props> {
   handleClick = (): void => {
-    this.props.onClick(this.props.mix);
+    this.props.onClick(this.props.song);
   };
 
   render(): JSX.Element {
@@ -32,4 +32,4 @@ class DeleteDynamicMixButton extends React.Component<Props> {
   }
 }
 
-export default DeleteDynamicMixButton;
+export default DeleteTrackButton;

@@ -11,12 +11,12 @@ import { DynamicMix } from '../../models/DynamicMix';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
-import DeleteTrackButton from './DeleteTrackButton';
+import DeleteTrackButton from './Button/DeleteTrackButton';
+import PausePlayButton from './Button/PausePlayButton';
+import TextButton from './Button/TextButton';
 import MixTable from './MixTable';
-import PausePlayButton from './PausePlayButton';
 import './SongTable.css';
 import StatusIcon from './StatusIcon';
-import TextButton from './TextButton';
 
 /**
  * Formatter function for status column
