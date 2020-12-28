@@ -9,6 +9,7 @@ export interface DynamicMix {
   source_track: string;
   separator: Separator;
   random_shifts: number;
+  extra_info: string[];
   artist: string;
   title: string;
   status: TaskStatus;

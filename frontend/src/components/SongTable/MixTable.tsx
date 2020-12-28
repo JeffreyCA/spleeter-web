@@ -93,7 +93,7 @@ const downloadFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, format
 
 const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   const separator = row.mix.separator;
-  const shouldShowTooltip = separator !== 'spleeter';
+  const shouldShowTooltip = row.mix.extra_info.length > 0;
 
   const badge = (
     <Badge variant="dark" style={shouldShowTooltip ? { cursor: 'pointer' } : {}}>
@@ -101,10 +101,19 @@ const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
     </Badge>
   );
 
-  const demucsRenderTooltip = (props: OverlayInjectedProps) => {
+  const renderTooltip = (props: OverlayInjectedProps) => {
+    // Show tooltip of extra info separated by linebreaks
     return (
       <Tooltip id="status-tooltip" {...props}>
-        Random shifts: {row.mix.random_shifts}
+        {row.mix.extra_info
+          .map(item => <>{item}</>)
+          .reduce((result, item) => (
+            <>
+              {result}
+              <br />
+              {item}
+            </>
+          ))}
       </Tooltip>
     );
   };
@@ -112,7 +121,7 @@ const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   return (
     <h5 className="mb-0">
       {shouldShowTooltip ? (
-        <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={demucsRenderTooltip}>
+        <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={renderTooltip}>
           {badge}
         </OverlayTrigger>
       ) : (

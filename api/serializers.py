@@ -45,10 +45,14 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model with minimal information."""
     # The status of the source separation task
     status = ChoicesSerializerField()
+    # Extra information about mix
+    extra_info = serializers.ListField(child=serializers.CharField(),
+                                       source='get_extra_info',
+                                       read_only=True)
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'separator', 'random_shifts', 'artist', 'title',
+        fields = ('id', 'separator', 'extra_info', 'artist', 'title',
                   'vocals_file', 'other_file', 'bass_file', 'drums_file',
                   'status', 'error', 'date_created')
 
@@ -56,10 +60,14 @@ class LiteStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model with minimal information."""
     # The status of the source separation task
     status = ChoicesSerializerField()
+    # Extra information about mix
+    extra_info = serializers.ListField(child=serializers.CharField(),
+                                       source='get_extra_info',
+                                       read_only=True)
 
     class Meta:
         model = StaticMix
-        fields = ('id', 'separator', 'random_shifts', 'artist', 'title',
+        fields = ('id', 'separator', 'extra_info', 'artist', 'title',
                   'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error',
                   'date_created')
 

@@ -278,6 +278,12 @@ class StaticMix(models.Model):
         """Get the URL of the source file."""
         return self.source_track.source_file.file.url
 
+    def get_extra_info(self):
+        if self.separator == SPLEETER:
+            return ['320 kbps', '4 stems (16 kHz)']
+        else:
+            return ['320 kbps', f'Random shifts: {self.random_shifts}']
+
     class Meta:
         unique_together = [[
             'source_track', 'separator', 'random_shifts', 'vocals', 'drums', 'bass', 'other'
@@ -377,6 +383,12 @@ class DynamicMix(models.Model):
     def source_url(self):
         """Get the URL of the source file."""
         return self.source_track.source_file.file.url
+
+    def get_extra_info(self):
+        if self.separator == SPLEETER:
+            return ['320 kbps', '4 stems (16 kHz)']
+        else:
+            return ['320 kbps', f'Random shifts: {self.random_shifts}']
 
     class Meta:
         unique_together = [['source_track', 'separator', 'random_shifts']]

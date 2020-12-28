@@ -192,6 +192,14 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       );
     }
 
+    const extraBadges = !data
+      ? null
+      : data.extra_info.map((extra, idx) => (
+          <Badge variant="light" key={idx}>
+            {extra}
+          </Badge>
+        ));
+
     return (
       <div>
         <PlainNavBar />
@@ -203,8 +211,8 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
                 {data.artist} - {data.title}
               </h4>
               <h5 className="mt-1">
-                <Badge variant="dark">{separatorLabelMap[data.separator]}</Badge>{' '}
-                {data.separator !== 'spleeter' && <Badge variant="light">Random shifts: {data.random_shifts}</Badge>}
+                <Badge variant="dark">{separatorLabelMap[data.separator]}</Badge>
+                {extraBadges}
               </h5>
             </div>
           ) : null}
