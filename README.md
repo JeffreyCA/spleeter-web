@@ -299,5 +299,7 @@ Special thanks to:
 * [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
 * [react-music-player](https://github.com/lijinke666/react-music-player)
 
+Turntable icon made from [Icon Fonts](https://www.onlinewebfonts.com/icon/497039) is licensed by CC BY 3.0.
+
 ## License
 [MIT](./LICENSE)

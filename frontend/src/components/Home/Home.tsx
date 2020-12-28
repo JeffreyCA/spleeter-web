@@ -2,9 +2,11 @@ import axios from 'axios';
 import * as React from 'react';
 import { Alert } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
+import { DynamicMix } from '../../models/DynamicMix';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
 import HomeNavBar from '../Nav/HomeNavBar';
+import DeleteDynamicMixModal from '../SongTable/DeleteDynamicMixModal';
 import DeleteStaticMixModal from '../SongTable/DeleteStaticMixModal';
 import DeleteTrackModal from '../SongTable/DeleteTrackModal';
 import DynamicMixModal from '../SongTable/DynamicMixModal';
@@ -21,6 +23,10 @@ interface SeparationTask {
 }
 
 interface State {
+  /**
+   * Whether to show delete dynamic mix modal
+   */
+  showDeleteDynamicMixModal: boolean;
   /**
    * Whether to show delete static mix modal
    */
@@ -62,6 +68,10 @@ interface State {
    */
   currentModalSrcSong?: SongData;
   /**
+   * Current dynamic mix displayed in modal
+   */
+  currentModalDynamicMix?: DynamicMix;
+  /**
    * Current static mix displayed in modal
    */
   currentModalStaticMix?: StaticMix;
@@ -90,6 +100,7 @@ class Home extends React.Component<RouteComponentProps, State> {
   constructor(props: RouteComponentProps) {
     super(props);
     this.state = {
+      showDeleteDynamicMixModal: false,
       showDeleteStaticMixModal: false,
       showDeleteTrackModal: false,
       showDynamicMixModal: false,
@@ -100,6 +111,7 @@ class Home extends React.Component<RouteComponentProps, State> {
       currentSrcSong: undefined,
       currentStaticMix: undefined,
       currentModalSrcSong: undefined,
+      currentModalDynamicMix: undefined,
       currentModalStaticMix: undefined,
       isPlaying: false,
       task: undefined,
@@ -236,8 +248,12 @@ class Home extends React.Component<RouteComponentProps, State> {
     }
   };
 
-  onDeleteStaticMixClick = (song: StaticMix): void => {
-    this.setState({ showDeleteStaticMixModal: true, currentModalStaticMix: song });
+  onDeleteDynamicMixClick = (mix: DynamicMix): void => {
+    this.setState({ showDeleteDynamicMixModal: true, currentModalDynamicMix: mix });
+  };
+
+  onDeleteStaticMixClick = (mix: StaticMix): void => {
+    this.setState({ showDeleteStaticMixModal: true, currentModalStaticMix: mix });
   };
 
   onDeleteTrackClick = (song: SongData): void => {
@@ -254,6 +270,14 @@ class Home extends React.Component<RouteComponentProps, State> {
 
   onUploadClick = (): void => {
     this.setState({ showUploadModal: true });
+  };
+
+  handleDeleteDynamicMixModalHide = (): void => {
+    this.setState({ showDeleteDynamicMixModal: false });
+  };
+
+  handleDeleteDynamicMixModalExited = (): void => {
+    this.setState({ currentModalDynamicMix: undefined });
   };
 
   handleDeleteStaticMixModalHide = (): void => {
@@ -320,6 +344,7 @@ class Home extends React.Component<RouteComponentProps, State> {
   render(): JSX.Element {
     const {
       songList,
+      showDeleteDynamicMixModal,
       showDeleteStaticMixModal,
       showDeleteTrackModal,
       showStaticMixModal,
@@ -328,6 +353,7 @@ class Home extends React.Component<RouteComponentProps, State> {
       currentSrcSong,
       currentStaticMix,
       currentModalSrcSong,
+      currentModalDynamicMix,
       currentModalStaticMix,
       isPlaying,
       task,
@@ -368,6 +394,7 @@ class Home extends React.Component<RouteComponentProps, State> {
               expandedIds={expandedIds}
               onExpandRow={this.onExpandRow}
               onExpandAll={this.onExpandAll}
+              onDeleteDynamicMixClick={this.onDeleteDynamicMixClick}
               onDeleteStaticMixClick={this.onDeleteStaticMixClick}
               onDeleteTrackClick={this.onDeleteTrackClick}
               onDynamicMixClick={this.onDynamicMixClick}
@@ -403,12 +430,19 @@ class Home extends React.Component<RouteComponentProps, State> {
           refresh={this.loadData}
           song={currentModalSrcSong}
         />
+        <DeleteDynamicMixModal
+          show={showDeleteDynamicMixModal}
+          hide={this.handleDeleteDynamicMixModalHide}
+          exit={this.handleDeleteDynamicMixModalExited}
+          refresh={this.loadData}
+          mix={currentModalDynamicMix}
+        />
         <DeleteStaticMixModal
           show={showDeleteStaticMixModal}
           hide={this.handleDeleteStaticMixModalHide}
           exit={this.handleDeleteStaticMixModalExited}
           refresh={this.loadData}
-          song={currentModalStaticMix}
+          mix={currentModalStaticMix}
         />
         <DeleteTrackModal
           show={showDeleteTrackModal}

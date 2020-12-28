@@ -10,7 +10,7 @@ interface Props {
 
 const MuteButton = (props: Props): JSX.Element => {
   return (
-    <Button onClick={props.onClick} disabled={props.disabled} className="btn-circle p-1" variant="secondary" size="lg">
+    <Button onClick={props.onClick} disabled={props.disabled} className="p-1" variant="secondary" size="lg">
       {props.isMuted ? <VolumeMuteFill size={28} /> : <VolumeUpFill size={28} />}
     </Button>
   );

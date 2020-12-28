@@ -2,10 +2,10 @@
 import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { StaticMix } from '../../models/StaticMix';
+import { DynamicMix } from '../../models/DynamicMix';
 
 interface Props {
-  mix?: StaticMix;
+  mix?: DynamicMix;
   show: boolean;
   exit: () => void;
   hide: () => void;
@@ -17,9 +17,9 @@ interface State {
 }
 
 /**
- * Component for the delete static mix modal.
+ * Component for the delete track modal.
  */
-class DeleteStaticMixModal extends React.Component<Props, State> {
+class DeleteDynamicMixModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -64,7 +64,7 @@ class DeleteStaticMixModal extends React.Component<Props, State> {
     console.log(mixId);
 
     axios
-      .delete(`/api/mix/static/${mixId}/`)
+      .delete(`/api/mix/dynamic/${mixId}/`)
       .then(() => {
         this.props.refresh();
         this.props.hide();
@@ -84,26 +84,13 @@ class DeleteStaticMixModal extends React.Component<Props, State> {
       return null;
     }
 
-    const parts: string[] = [];
-    if (mix.vocals) {
-      parts.push('vocals');
-    }
-    if (mix.other) {
-      parts.push('accompaniment');
-    }
-    if (mix.bass) {
-      parts.push('bass');
-    }
-    if (mix.drums) {
-      parts.push('drums');
-    }
-
-    const description = parts.join(', ');
+    const extraInfo =
+      mix.separator === 'spleeter' ? 'spleeter' : `${mix.separator} with random shift ${mix.random_shifts}`;
 
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm static mix deletion</Modal.Title>
+          <Modal.Title>Confirm dynamic mix deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {errors.length > 0 && (
@@ -114,7 +101,7 @@ class DeleteStaticMixModal extends React.Component<Props, State> {
             </Alert>
           )}
           <div>
-            Are you sure you want to delete the static mix &ldquo;{mix.artist} - {mix.title}&rdquo; with {description}?
+            Are you sure you want to delete the dynamic mix &ldquo;{mix.artist} - {mix.title}&rdquo; ({extraInfo})?
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -130,4 +117,4 @@ class DeleteStaticMixModal extends React.Component<Props, State> {
   }
 }
 
-export default DeleteStaticMixModal;
+export default DeleteDynamicMixModal;

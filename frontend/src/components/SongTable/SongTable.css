@@ -39,3 +39,7 @@ td.expand-cell {
 .react-bootstrap-table th[data-row-selection] {
   width: 16px;
 }
+
+.btn-light {
+  border-color: #676767 !important;
+}

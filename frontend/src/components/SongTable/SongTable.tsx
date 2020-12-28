@@ -7,15 +7,16 @@ import BootstrapTable, {
   SortOrder,
 } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { DynamicMix } from '../../models/DynamicMix';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import DeleteTrackButton from './DeleteTrackButton';
+import MixTable from './MixTable';
 import PausePlayButton from './PausePlayButton';
 import './SongTable.css';
-import StaticMixTable from './StaticMixTable';
-import TextButton from './TextButton';
 import StatusIcon from './StatusIcon';
+import TextButton from './TextButton';
 
 /**
  * Formatter function for status column
@@ -59,11 +60,11 @@ const spleetColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex, form
 
   return (
     <div className="d-flex align-items-center justify-content-end">
-      <TextButton className="pl-1" variant="info" disabled={disabled} onClick={onDynamicMixClick} song={row}>
+      <TextButton className="pl-1" variant="primary" disabled={disabled} onClick={onDynamicMixClick} song={row}>
         <Plus className="align-middle" size={24} />
         <span className="align-middle">Dynamic Mix</span>
       </TextButton>
-      <TextButton className="pl-1" disabled={disabled} onClick={onStaticMixClick} song={row}>
+      <TextButton className="pl-1" variant="light" disabled={disabled} onClick={onStaticMixClick} song={row}>
         <Plus className="align-middle" size={24} />
         <span className="align-middle">Static Mix</span>
       </TextButton>
@@ -79,6 +80,7 @@ interface Props {
   expandedIds: string[];
   onExpandRow: (row: SongData, isExpand: boolean) => void;
   onExpandAll: (isExpandAll: boolean, results: SongData[], e: React.SyntheticEvent) => void;
+  onDeleteDynamicMixClick: (dynamicMix: DynamicMix) => void;
   onDeleteStaticMixClick: (staticMix: StaticMix) => void;
   onDeleteTrackClick: (song: SongData) => void;
   onDynamicMixClick: (song: SongData) => void;
@@ -99,6 +101,7 @@ class SongTable extends React.Component<Props> {
       currentSongUrl,
       isPlaying,
       expandedIds,
+      onDeleteDynamicMixClick,
       onDeleteStaticMixClick,
       onDeleteTrackClick,
       onDynamicMixClick,
@@ -115,10 +118,12 @@ class SongTable extends React.Component<Props> {
     const expandRow: ExpandRowProps<SongData, string> = {
       renderer: (row: SongData) => {
         return (
-          <StaticMixTable
-            data={row.static}
+          <MixTable
+            dynamicMixes={row.dynamic}
+            staticMixes={row.static}
             currentSongUrl={currentSongUrl}
             isPlaying={isPlaying}
+            onDeleteDynamicMixClick={onDeleteDynamicMixClick}
             onDeleteStaticMixClick={onDeleteStaticMixClick}
             onPauseClick={onStaticMixPauseClick}
             onPlayClick={onStaticMixPlayClick}

@@ -203,7 +203,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
                 {data.artist} - {data.title}
               </h4>
               <h5 className="mt-1">
-                <Badge variant="secondary">{separatorLabelMap[data.separator]}</Badge>{' '}
+                <Badge variant="dark">{separatorLabelMap[data.separator]}</Badge>{' '}
                 {data.separator !== 'spleeter' && <Badge variant="light">Random shifts: {data.random_shifts}</Badge>}
               </h5>
             </div>

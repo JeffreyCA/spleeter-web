@@ -73,10 +73,8 @@ class SeparatorFormGroup extends React.Component<Props, State> {
           {selectedModel !== 'spleeter' && (
             <Col xs={6}>
               <Form.Label id="random-shifts">Random shifts: {randomShiftsOverlay}</Form.Label>
-              <Form.Control as="select" onChange={handleRandomShiftsChange}>
-                <option value="0" selected>
-                  0 (fastest)
-                </option>
+              <Form.Control as="select" defaultValue="0" onChange={handleRandomShiftsChange}>
+                <option value="0">0 (fastest)</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>

@@ -14,6 +14,14 @@ export const OriginalBadge = (): JSX.Element => {
   );
 };
 
+export const AllBadge = (): JSX.Element => {
+  return (
+    <Badge pill variant="primary">
+      All (Dynamic Mix)
+    </Badge>
+  );
+};
+
 export const VocalsBadge = (props: BadgeProps): JSX.Element => {
   const { faded } = props;
   return (

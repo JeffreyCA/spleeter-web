@@ -19,7 +19,7 @@ const PlayButton = (props: Props): JSX.Element => {
   }
 
   return (
-    <Button disabled={props.disabled} onClick={props.onClick} className="btn-circle p-1" variant="secondary" size="lg">
+    <Button disabled={props.disabled} onClick={props.onClick} className="p-1" variant="secondary" size="lg">
       {content}
     </Button>
   );
