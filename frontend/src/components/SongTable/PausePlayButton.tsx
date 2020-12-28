@@ -25,8 +25,18 @@ class PausePlayButton extends React.Component<Props> {
   render(): JSX.Element {
     const { playing, disabled } = this.props;
     const customButton = (
-      <Button disabled={disabled} onClick={this.handlePlay} className="p-1" variant="secondary" size="lg">
-        {playing && !disabled ? <PauseFill size={28} /> : <PlayFill size={28} />}
+      <Button
+        disabled={disabled}
+        onClick={this.handlePlay}
+        className="p-1"
+        variant="secondary"
+        size="lg"
+        style={{ borderRadius: '50%' }}>
+        {playing && !disabled ? (
+          <PauseFill size={28} />
+        ) : (
+          <PlayFill size={28} style={{ marginLeft: 1.25, marginRight: -1.25 }} />
+        )}
       </Button>
     );
 

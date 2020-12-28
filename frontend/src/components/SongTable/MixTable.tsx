@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Download, Sliders } from 'react-bootstrap-icons';
+import { Download } from 'react-bootstrap-icons';
 import BootstrapTable, { ColumnDescription, ColumnFormatter, SortOrder } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import { DynamicMix } from '../../models/DynamicMix';
-import { Separator, separatorLabelMap } from '../../models/Separator';
+import { separatorLabelMap } from '../../models/Separator';
 import { StaticMix } from '../../models/StaticMix';
 import { toRelativeDateSpan } from '../../Utils';
 import { AccompBadge, AllBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
@@ -13,8 +13,9 @@ import DeleteDynamicMixButton from './DeleteDynamicMixButton';
 import DeleteStaticMixButton from './DeleteStaticMixButton';
 import './MixTable.css';
 import PausePlayButton from './PausePlayButton';
-import StatusIcon from './StatusIcon';
+import PlayMixButton from './PlayMixButton';
 import { RecordPlayer } from './RecordPlayer';
+import StatusIcon from './StatusIcon';
 
 interface MixItem {
   id: string;
@@ -59,9 +60,7 @@ const playColFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatE
     const mix = row.mix as DynamicMix;
     return (
       <div className="d-flex align-items-center justify-content-start">
-        <Button variant="secondary" className="btn-circle p-2" href={`/mixer/${mix.id}/`}>
-          <RecordPlayer width={20} height={20} />
-        </Button>
+        <PlayMixButton mixId={mix.id} />
       </div>
     );
   }
@@ -190,6 +189,15 @@ class MixTable extends React.Component<Props> {
           onPauseClick: onPauseClick,
           onPlayClick: onPlayClick,
         },
+        sort: true,
+        sortFunc: (_a: boolean, b: boolean, order: SortOrder, _dataField: unknown, rowA: MixItem, rowB: MixItem) => {
+          if (rowA.static && !rowB.static) {
+            return order === 'asc' ? 1 : -1;
+          } else if (!rowA.static && rowB.static) {
+            return order === 'asc' ? -1 : 1;
+          }
+          return 0;
+        },
         headerStyle: () => {
           return { width: '65px' };
         },
@@ -201,12 +209,6 @@ class MixTable extends React.Component<Props> {
         formatter: modelFormatter,
         sort: true,
         sortFunc: (a: string, b: string, order: SortOrder, _dataField: unknown, rowA: MixItem, rowB: MixItem) => {
-          if (rowA.static && !rowB.static) {
-            return 1;
-          } else if (!rowA.static && rowB.static) {
-            return -1;
-          }
-
           a = rowA.mix.separator;
           b = rowB.mix.separator;
 
@@ -234,19 +236,6 @@ class MixTable extends React.Component<Props> {
         text: 'Created',
         formatter: toRelativeDateSpan,
         sort: true,
-        sortFunc: (a: string, b: string, order: SortOrder, _dataField: unknown, rowA: MixItem, rowB: MixItem) => {
-          if (rowA.static && !rowB.static) {
-            return 1;
-          } else if (!rowA.static && rowB.static) {
-            return -1;
-          }
-
-          if (order === 'asc') {
-            return a.localeCompare(b);
-          } else {
-            return b.localeCompare(a);
-          }
-        },
       },
       {
         dataField: 'file',
@@ -263,7 +252,7 @@ class MixTable extends React.Component<Props> {
     ];
 
     let data: MixItem[] = [];
-    const sort = { dataField: 'date_created', order: 'desc' as SortOrder };
+    const defaultSort = { dataField: 'date_created', order: 'desc' as SortOrder };
 
     data = data.concat(
       staticMixes.map(mix => {
@@ -296,7 +285,7 @@ class MixTable extends React.Component<Props> {
             keyField="id"
             data={data}
             columns={columns}
-            defaultSorted={[sort]}
+            defaultSorted={[defaultSort]}
             defaultSortDirection="asc"
             bordered={false}
           />
