@@ -13,6 +13,7 @@ import DynamicMixModal from '../SongTable/Modal/DynamicMixModal';
 import StaticMixModal from '../SongTable/Modal/StaticMixModal';
 import SongTable from '../SongTable/SongTable';
 import UploadModal from '../Upload/UploadModal';
+import AutoRefreshButton from './AutoRefreshButton';
 import './Home.css';
 import MusicPlayer from './MusicPlayer';
 
@@ -94,7 +95,6 @@ interface State {
  * and the song table.
  */
 class Home extends React.Component<RouteComponentProps, State> {
-  refreshInterval?: number;
   taskInterval?: number;
 
   constructor(props: RouteComponentProps) {
@@ -320,7 +320,7 @@ class Home extends React.Component<RouteComponentProps, State> {
    * Fetch song data from backend
    */
   loadData = async (): Promise<void> => {
-    axios
+    return axios
       .get<SongData[]>('/api/source-track/')
       .then(({ data }) => {
         if (data) {
@@ -332,12 +332,9 @@ class Home extends React.Component<RouteComponentProps, State> {
 
   componentDidMount(): void {
     this.loadData();
-    // Auto-refresh data every 5 seconds
-    this.refreshInterval = setInterval(this.loadData, 5000);
   }
 
   componentWillUnmount(): void {
-    clearInterval(this.refreshInterval);
     clearInterval(this.taskInterval);
   }
 
@@ -387,6 +384,9 @@ class Home extends React.Component<RouteComponentProps, State> {
                 </span>
               </Alert>
             )}
+            <div className="mb-3 refresher">
+              <AutoRefreshButton period={10} onRefresh={this.loadData} />
+            </div>
             <SongTable
               data={songList}
               currentSongUrl={currentSongUrl}
