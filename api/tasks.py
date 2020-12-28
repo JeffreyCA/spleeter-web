@@ -20,6 +20,7 @@ This module defines various Celery tasks used for Spleeter Web.
 """
 
 def get_separator(separator: str, random_shifts: int):
+    """Returns separator object for corresponding source separation model."""
     if separator == 'spleeter':
         return SpleeterSeparator()
     else:
@@ -28,10 +29,8 @@ def get_separator(separator: str, random_shifts: int):
 @app.task()
 def create_static_mix(static_mix_id):
     """
-    Task to create static mix by first using Spleeter to separate the requested parts
-    and then mixing them into a single track.
-
-    :param static_mix_id: The id of the audio track model (StaticMix) to be processed
+    Task to create static mix and write to appropriate storage backend.
+    :param static_mix_id: The id of the StaticMix to be processed
     """
     # Mark as in progress
     try:
@@ -106,9 +105,7 @@ def create_static_mix(static_mix_id):
 @app.task()
 def create_dynamic_mix(dynamic_mix_id):
     """
-    Task to create dynamic mix by using Spleeter to separate the track into
-    vocals, accompaniment, bass, and drum parts.
-
+    Task to create dynamic mix and write to appropriate storage backend.
     :param dynamic_mix_id: The id of the audio track model (StaticMix) to be processed
     """
     # Mark as in progress
@@ -236,7 +233,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         raise error
 
 def exists_all_parts(rel_path):
-    """Returns whether all of the individual parts exist on filesystem."""
+    """Returns whether all of the individual component tracks exist on filesystem."""
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         rel_part_path = os.path.join(rel_path, f'{part}.mp3')
@@ -246,12 +243,12 @@ def exists_all_parts(rel_path):
     return True
 
 def rename_all_parts(rel_path, file_prefix: str, file_suffix: str):
-    """Renames individual parts files to names with track artist and title."""
+    """Renames individual part files to names with track artist and title."""
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         old_rel_path = os.path.join(rel_path, f'{part}.mp3')
         new_rel_path = os.path.join(rel_path, f'{file_prefix} ({part}) {file_suffix}.mp3')
-        print(f'renaming {old_rel_path} to {new_rel_path}')
+        print(f'Renaming {old_rel_path} to {new_rel_path}')
         os.rename(old_rel_path, new_rel_path)
 
 def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix: str, file_suffix: str):

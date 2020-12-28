@@ -7,7 +7,8 @@ from storages.backends.s3boto3 import S3Boto3Storage as BaseS3Boto3Storage
 from .util import get_valid_filename
 
 """
-Simple wrappers over base storage backends that allow characters like spaces, commas, brackets in the filename.
+Simple wrappers of the base storage backends except that characters like spaces, commas, brackets
+are allowed in the filename.
 """
 
 @deconstructible

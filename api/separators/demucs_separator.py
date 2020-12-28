@@ -9,7 +9,7 @@ This module defines a wrapper interface over the Demucs API.
 VALID_MODELS = ['demucs', 'demucs_extra', 'light', 'light_extra', 'tasnet', 'tasnet_extra']
 
 class DemucsSeparator:
-    """Performs source separation using Spleeter API."""
+    """Performs source separation using Demucs API."""
     def __init__(self, model_name='light_extra', shifts=5):
         assert(model_name in VALID_MODELS)
         self.device = 'cpu'
@@ -41,6 +41,7 @@ class DemucsSeparator:
             verify_file(self.model_file_path, sha256)
 
     def apply_model(self, input_path: Path):
+        """Applies model to waveform file"""
         model = load_model(self.model_file_path).to(self.device)
         print(f"Separating track {input_path}")
         wav = AudioFile(input_path).read(streams=0,
@@ -65,7 +66,6 @@ class DemucsSeparator:
         :param parts: List of parts to keep ('vocals', 'drums', 'bass', 'other')
         :param input_path: Path to source file
         :param output_path: Path to output file
-        :raises e: FFMPEG error
         """
         input_path = Path(input_path)
         self.download_and_verify()

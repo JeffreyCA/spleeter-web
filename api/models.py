@@ -279,6 +279,7 @@ class StaticMix(models.Model):
         return self.source_track.source_file.file.url
 
     def get_extra_info(self):
+        """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return ['320 kbps', '4 stems (16 kHz)']
         else:
@@ -385,6 +386,7 @@ class DynamicMix(models.Model):
         return self.source_track.source_file.file.url
 
     def get_extra_info(self):
+        """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return ['320 kbps', '4 stems (16 kHz)']
         else:
