@@ -17,7 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Minor touch-ups to overall interface
 - Fix bug where sort order of mix table gets reset after a few seconds
 - Fix "'ContentDisposition' is an invalid key" error when writing to Azure storage
-
+- Fix bug where music player timestamp would show "00:60" instead of "01:00"
+- Fix blank status badge
 
 ## [v1.2.0] - 2020-12-22
 ### Added
