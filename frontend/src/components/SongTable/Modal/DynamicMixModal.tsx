@@ -11,7 +11,7 @@ interface Props {
   exit: () => void;
   hide: () => void;
   refresh: () => void;
-  submit: (id: string) => void;
+  submit: (srcId: string, id: string) => void;
 }
 
 interface State {
@@ -80,7 +80,7 @@ class DynamicMixModal extends React.Component<Props, State> {
       .post<DynamicMix>('/api/mix/dynamic/', data)
       .then(({ data }) => {
         this.props.hide();
-        this.props.submit(data.id);
+        this.props.submit(data.source_track, data.id);
       })
       .catch(({ response }) => {
         const { data } = response;

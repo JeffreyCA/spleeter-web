@@ -189,7 +189,11 @@ class Home extends React.Component<RouteComponentProps, State> {
     }
   };
 
-  onMixTaskSubmit = (id: string): void => {
+  onDynamicMixSubmit = (srcId: string, id: string): void => {
+    this.setState({
+      expandedIds: [...this.state.expandedIds, srcId],
+    });
+
     // Open Mixer page in new tab
     const win = window.open(`/mixer/${id}`, '_blank');
     win?.focus();
@@ -418,7 +422,7 @@ class Home extends React.Component<RouteComponentProps, State> {
           show={showDynamicMixModal}
           hide={this.handleDynamicMixModalHide}
           exit={this.handleDynamicMixModalExited}
-          submit={this.onMixTaskSubmit}
+          submit={this.onDynamicMixSubmit}
           refresh={this.loadData}
           song={currentModalSrcSong}
         />

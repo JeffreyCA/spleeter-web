@@ -8,7 +8,7 @@ export interface StaticMix {
   id: string;
   source_track: string;
   separator: Separator;
-  random_shifts: number;
+  random_shifts?: number;
   extra_info: string[];
   artist: string;
   title: string;

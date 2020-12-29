@@ -83,9 +83,6 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
       return null;
     }
 
-    const extraInfo =
-      mix.separator === 'spleeter' ? 'spleeter' : `${mix.separator} with random shift ${mix.random_shifts}`;
-
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
@@ -100,7 +97,8 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
             </Alert>
           )}
           <div>
-            Are you sure you want to delete the dynamic mix &ldquo;{mix.artist} - {mix.title}&rdquo; ({extraInfo})?
+            Are you sure you want to delete this dynamic mix of &ldquo;{mix.artist} - {mix.title}&rdquo; (
+            {mix.separator})?
           </div>
         </Modal.Body>
         <Modal.Footer>
