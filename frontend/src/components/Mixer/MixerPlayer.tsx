@@ -83,6 +83,7 @@ class MixerPlayer extends React.Component<Props, State> {
 
   componentWillUnmount(): void {
     this.isMounted = false;
+    Tone.Transport.stop();
     if (this.tonePlayers) {
       this.tonePlayers.stopAll();
       this.tonePlayers.dispose();
