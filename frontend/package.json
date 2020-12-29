@@ -53,7 +53,7 @@
   "dependencies": {
     "@iconify/react": "^1.1.3",
     "@jeffreyca/react-dropzone-uploader": "^2.11.10",
-    "@jeffreyca/react-jinke-music-player": "^4.12.5",
+    "@jeffreyca/react-jinke-music-player": "^4.12.6",
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^0.19.2",
     "babel-loader": "^8.2.2",
