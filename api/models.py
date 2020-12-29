@@ -281,9 +281,9 @@ class StaticMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return ['320 kbps', '4 stems (16 kHz)']
+            return ['256 kbps', '4 stems (16 kHz)']
         else:
-            return ['320 kbps', f'Random shifts: {self.random_shifts}']
+            return ['256 kbps', f'Random shifts: {self.random_shifts}']
 
     class Meta:
         unique_together = [[
@@ -388,9 +388,9 @@ class DynamicMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return ['320 kbps', '4 stems (16 kHz)']
+            return ['256 kbps', '4 stems (16 kHz)']
         else:
-            return ['320 kbps', f'Random shifts: {self.random_shifts}']
+            return ['256 kbps', f'Random shifts: {self.random_shifts}']
 
     class Meta:
         unique_together = [['source_track', 'separator', 'random_shifts']]

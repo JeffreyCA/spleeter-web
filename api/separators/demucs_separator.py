@@ -83,7 +83,7 @@ class DemucsSeparator:
         final_source = (final_source * 2**15).clamp_(-2**15, 2**15 - 1).short()
         final_source = final_source.cpu().transpose(0, 1).numpy()
 
-        encode_mp3(final_source, str(output_path), verbose=self.verbose)
+        encode_mp3(final_source, str(output_path), 256, verbose=self.verbose)
 
     def separate_into_parts(self, input_path: str, output_path: str):
         """Creates a dynamic mix
