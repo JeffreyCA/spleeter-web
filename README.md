@@ -3,7 +3,7 @@
 
 Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or you can use it remove the vocals to get an instrumental version of a song.
 
-It is powered by [Spleeter](https://github.com/deezer/spleeter), an awesome source separation library from Deezer that uses deep learning to separate the various components of a song. Spleeter Web uses the pretrained model [`4stems-model`](https://github.com/deezer/spleeter/wiki/3.-Models#pretrained-model), which performs very well on the [*MusDB*](https://sigsep.github.io/datasets/musdb.html) benchmark.
+It supports a number of different source separation models, including: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model`), [Demucs](https://github.com/facebookresearch/demucs), and [Tasnet](https://github.com/facebookresearch/demucs).
 
 The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue.
 
@@ -27,8 +27,8 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [License](#license)
 
 ## Features
-- Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
-    - Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time
+- Uses deep neural networks (Spleeter, Demucs, Tasnet) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
+    - Dynamic Mixes lets you control the outputs of each component while playing back the track in real-time
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
     - Includes built-in YouTube search functionality (YouTube Data API key required)
 - Persistent audio library with ability to stream and download your source tracks and mixes
@@ -289,7 +289,7 @@ The server that is hosting your media files has to support [**byte-range request
 
 If you are running Spleeter Web locally and storing your media files locally as well, this is expected behaviour as the development Django webserver does not support byte-range requests. You can try to configure it to use nginx + gunicorn instead.
 
-If you are using Azure Blob storage, you need to increase the API version to `2011-01-18` or newer, as the default API version does not support it. See [this](https://stackoverflow.com/questions/17408927/do-http-range-headers-work-with-azure-blob-storage-shared-access-signatures)  StackOverflow post for more details. Or just run [this](https://gist.github.com/JeffreyCA/d5c544df36a0f61737f8a435f897de5e) simple C# program.
+If you are using Azure Blob storage, you need to increase the API version to `2011-01-18` or newer, as the default API version does not support it. See [this](https://stackoverflow.com/questions/17408927/do-http-range-headers-work-with-azure-blob-storage-shared-access-signatures)  StackOverflow post for more details. Or you can check out [this](https://gist.github.com/JeffreyCA/d5c544df36a0f61737f8a435f897de5e) simple C# program.
 
 ### Why is Redis needed?
 The main advantage of using Redis with Celery is so that the user can revoke/terminate in-progress tasks. This is only possible with Redis or amqp brokers.
