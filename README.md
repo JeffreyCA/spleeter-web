@@ -21,6 +21,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [Common issues & FAQs](#common-issues--faqs)
     - [How do I update Spleeter Web?](#how-do-i-update-spleeter-web)
     - [I get a CORS error when trying to play a dynamic mix.](#i-get-a-cors-error-when-trying-to-play-a-dynamic-mix)
+    - [Tracks don't play on Safari.](#tracks-dont-play-on-safari)
     - [When playing a track I cannot perform seeks.](#when-playing-a-track-i-cannot-perform-seeks)
     - [Why is Redis needed?](#why-is-redis-needed)
 - [Credits](#credits)
