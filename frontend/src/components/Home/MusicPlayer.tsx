@@ -4,6 +4,8 @@ import ReactJkMusicPlayer, {
   ReactJkMusicPlayerCustomLocale,
 } from '@jeffreyca/react-jinke-music-player';
 import * as React from 'react';
+import { Badge } from 'react-bootstrap';
+import { separatorLabelMap } from '../../models/Separator';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
 import { AccompShortBadge, BassBadge, DrumsBadge, OriginalBadge, VocalsBadge } from '../Badges';
@@ -41,13 +43,17 @@ class MusicPlayer extends React.Component<Props> {
         },
       ];
     } else if (staticMix) {
+      const separatorBadge = (
+        // Remove everything in brackets to save space
+        <Badge variant="dark">{separatorLabelMap[staticMix.separator].replace(/ *\([^)]*\) */g, '')}</Badge>
+      );
       const vocalBadge = staticMix.vocals ? <VocalsBadge /> : null;
       const accompBadge = staticMix.other ? <AccompShortBadge /> : null;
       const bassBadge = staticMix.bass ? <BassBadge /> : null;
       const drumsBadge = staticMix.drums ? <DrumsBadge /> : null;
       audioTitleExtra = (
         <div className="badge-flex ml-2 mr-2">
-          {vocalBadge} {accompBadge} {bassBadge} {drumsBadge}
+          {separatorBadge} {vocalBadge} {accompBadge} {bassBadge} {drumsBadge}
         </div>
       );
       audioList = [
