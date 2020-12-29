@@ -27,7 +27,7 @@ class StatusIcon extends React.Component<Props> {
     const renderTooltip = (props: OverlayInjectedProps) => {
       return (
         <Tooltip id="status-tooltip" {...props}>
-          {overlayText || status}
+          {overlayText || (status ?? 'Done')}
         </Tooltip>
       );
     };
