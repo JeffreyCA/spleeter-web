@@ -1,0 +1,12 @@
+.capitalize {
+  text-transform: capitalize;
+}
+
+#random-shifts {
+  display: inline-flex;
+  align-items: center;
+}
+
+#random-shifts-question {
+  cursor: pointer;
+}

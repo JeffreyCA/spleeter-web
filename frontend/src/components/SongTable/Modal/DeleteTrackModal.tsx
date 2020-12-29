@@ -1,8 +1,8 @@
-import axios from 'axios';
+/* eslint-disable @typescript-eslint/ban-types */
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { DynamicMix } from '../../models/DynamicMix';
-import { SongData } from '../../models/SongData';
+import axios from 'axios';
+import { SongData } from '../../../models/SongData';
 
 interface Props {
   song?: SongData;
@@ -10,7 +10,6 @@ interface Props {
   exit: () => void;
   hide: () => void;
   refresh: () => void;
-  submit: (id: string) => void;
 }
 
 interface State {
@@ -18,9 +17,9 @@ interface State {
 }
 
 /**
- * Modal for creating dynamic mix.
+ * Component for the delete track modal.
  */
-class DynamicMixModal extends React.Component<Props, State> {
+class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -29,10 +28,26 @@ class DynamicMixModal extends React.Component<Props, State> {
   }
 
   /**
+   * Reset errors
+   */
+  resetErrors = (): void => {
+    this.setState({
+      errors: [],
+    });
+  };
+
+  /**
    * Called when modal hidden without finishing
    */
   onHide = (): void => {
     this.props.hide();
+  };
+
+  /**
+   * Called when modal finishes exit animation
+   */
+  onExited = (): void => {
+    this.resetErrors();
     this.props.exit();
   };
 
@@ -44,21 +59,18 @@ class DynamicMixModal extends React.Component<Props, State> {
       return;
     }
 
-    const data = {
-      source_track: this.props.song.id,
-      overwrite: true,
-    };
-    // Make API request to create the mix
+    // DELETE request to delete the source track.
+    const songId = this.props.song.id;
     axios
-      .post<DynamicMix>('/api/mix/dynamic/', data)
-      .then(({ data }) => {
+      .delete(`/api/source-track/${songId}/`)
+      .then(() => {
+        this.props.refresh();
         this.props.hide();
-        this.props.submit(data.id);
       })
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
-          errors: data.errors,
+          errors: [data.error],
         });
       });
   };
@@ -71,12 +83,11 @@ class DynamicMixModal extends React.Component<Props, State> {
     }
 
     return (
-      <Modal show={show} onHide={this.onHide}>
+      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
-          <Modal.Title>Create dynamic mix</Modal.Title>
+          <Modal.Title>Confirm track deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to create the mix? This will take a couple of minutes.
           {errors.length > 0 && (
             <Alert variant="danger">
               {errors.map((val, idx) => (
@@ -84,13 +95,16 @@ class DynamicMixModal extends React.Component<Props, State> {
               ))}
             </Alert>
           )}
+          <div>
+            Are you sure you want to delete &ldquo;{song.artist} - {song.title}&rdquo; and all of its mixes?
+          </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-danger" onClick={this.onHide}>
+          <Button variant="outline-secondary" onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="success" onClick={this.onSubmit}>
-            Create Mix
+          <Button variant="danger" onClick={this.onSubmit}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
@@ -98,4 +112,4 @@ class DynamicMixModal extends React.Component<Props, State> {
   }
 }
 
-export default DynamicMixModal;
+export default DeleteTrackModal;

@@ -6,25 +6,31 @@ import shutil
 from billiard.exceptions import SoftTimeLimitExceeded
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.utils.text import slugify
 
 from .celery import app
 from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
-from .separate import SpleeterSeparator
+from .separators.demucs_separator import DemucsSeparator
+from .separators.spleeter_separator import SpleeterSeparator
+from .util import get_valid_filename
 from .youtubedl import download_audio, get_file_ext
 
 """
 This module defines various Celery tasks used for Spleeter Web.
 """
 
+def get_separator(separator: str, random_shifts: int):
+    """Returns separator object for corresponding source separation model."""
+    if separator == 'spleeter':
+        return SpleeterSeparator()
+    else:
+        return DemucsSeparator(separator, random_shifts)
+
 @app.task()
 def create_static_mix(static_mix_id):
     """
-    Task to create static mix by first using Spleeter to separate the requested parts
-    and then mixing them into a single track.
-
-    :param static_mix_id: The id of the audio track model (StaticMix) to be processed
+    Task to create static mix and write to appropriate storage backend.
+    :param static_mix_id: The id of the StaticMix to be processed
     """
     # Mark as in progress
     try:
@@ -40,7 +46,7 @@ def create_static_mix(static_mix_id):
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR,
                                  static_mix_id)
-        filename = slugify(static_mix.formatted_name()) + '.mp3'
+        filename = get_valid_filename(static_mix.formatted_name()) + '.mp3'
         rel_media_path = os.path.join(settings.SEPARATE_DIR, static_mix_id,
                                       filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
@@ -48,7 +54,7 @@ def create_static_mix(static_mix_id):
                                     static_mix_id)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = SpleeterSeparator()
+        separator = get_separator(static_mix.separator, static_mix.random_shifts)
 
         parts = {
             'vocals': static_mix.vocals,
@@ -58,7 +64,7 @@ def create_static_mix(static_mix_id):
         }
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
-        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
+        is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
         path = static_mix.source_path() if is_local else static_mix.source_url(
         )
         separator.create_static_mix(parts, path, rel_path)
@@ -99,9 +105,7 @@ def create_static_mix(static_mix_id):
 @app.task()
 def create_dynamic_mix(dynamic_mix_id):
     """
-    Task to create dynamic mix by using Spleeter to separate the track into
-    vocals, accompaniment, bass, and drum parts.
-
+    Task to create dynamic mix and write to appropriate storage backend.
     :param dynamic_mix_id: The id of the audio track model (StaticMix) to be processed
     """
     # Mark as in progress
@@ -119,14 +123,15 @@ def create_dynamic_mix(dynamic_mix_id):
         directory = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR,
                                  dynamic_mix_id)
         rel_media_path = os.path.join(settings.SEPARATE_DIR, dynamic_mix_id)
-        file_prefix = slugify(dynamic_mix.formatted_name())
+        file_prefix = get_valid_filename(dynamic_mix.formatted_prefix())
+        file_suffix = dynamic_mix.formatted_suffix()
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = SpleeterSeparator()
+        separator = get_separator(dynamic_mix.separator, dynamic_mix.random_shifts)
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
-        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
+        is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
         path = dynamic_mix.source_path() if is_local else dynamic_mix.source_url()
 
         # Do separation
@@ -134,12 +139,12 @@ def create_dynamic_mix(dynamic_mix_id):
 
         # Check all parts exist
         if exists_all_parts(rel_path):
-            rename_all_parts(rel_path, file_prefix)
+            rename_all_parts(rel_path, file_prefix, file_suffix)
             dynamic_mix.status = TaskStatus.DONE
             if is_local:
-                save_to_local_storage(dynamic_mix, rel_media_path, file_prefix)
+                save_to_local_storage(dynamic_mix, rel_media_path, file_prefix, file_suffix)
             else:
-                save_to_ext_storage(dynamic_mix, rel_path, file_prefix)
+                save_to_ext_storage(dynamic_mix, rel_path, file_prefix, file_suffix)
         else:
             raise Exception('Error writing to file')
     except FileNotFoundError as error:
@@ -184,8 +189,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR,
                                  str(source_file_id))
-        filename = slugify(artist + ' - ' + title,
-                           allow_unicode=True) + get_file_ext(link)
+        filename = get_valid_filename(artist + ' - ' + title) + get_file_ext(link)
         rel_media_path = os.path.join(settings.UPLOAD_DIR, str(source_file_id),
                                       filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
@@ -194,7 +198,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         # Start download
         download_audio(link, rel_path)
 
-        is_local = settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage'
+        is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
 
         # Check file exists
         if os.path.exists(rel_path):
@@ -229,7 +233,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         raise error
 
 def exists_all_parts(rel_path):
-    """Returns whether all of the individual parts exist on filesystem."""
+    """Returns whether all of the individual component tracks exist on filesystem."""
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         rel_part_path = os.path.join(rel_path, f'{part}.mp3')
@@ -238,30 +242,30 @@ def exists_all_parts(rel_path):
             return False
     return True
 
-def rename_all_parts(rel_path, file_prefix: str):
-    """Renames individual parts files to names with track artist and title."""
+def rename_all_parts(rel_path, file_prefix: str, file_suffix: str):
+    """Renames individual part files to names with track artist and title."""
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         old_rel_path = os.path.join(rel_path, f'{part}.mp3')
-        new_rel_path = os.path.join(rel_path, f'{file_prefix}-{part}.mp3')
-        print(f'renaming {old_rel_path} to {new_rel_path}')
+        new_rel_path = os.path.join(rel_path, f'{file_prefix} ({part}) {file_suffix}.mp3')
+        print(f'Renaming {old_rel_path} to {new_rel_path}')
         os.rename(old_rel_path, new_rel_path)
 
-def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix):
+def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix: str, file_suffix: str):
     """Saves individual parts to the local file system
 
     :param dynamic_mix: DynamicMix model
     :param rel_media_path: Relative path from media/ to DynamicMix ID directory
     :param file_prefix: Filename prefix
     """
-    rel_media_path_vocals = os.path.join(rel_media_path,
-                                         file_prefix + '-vocals.mp3')
-    rel_media_path_other = os.path.join(rel_media_path,
-                                        file_prefix + '-other.mp3')
-    rel_media_path_bass = os.path.join(rel_media_path,
-                                        file_prefix + '-bass.mp3')
-    rel_media_path_drums = os.path.join(rel_media_path,
-                                        file_prefix + '-drums.mp3')
+    rel_media_path_vocals = os.path.join(
+        rel_media_path, f'{file_prefix} (vocals) {file_suffix}.mp3')
+    rel_media_path_other = os.path.join(
+        rel_media_path, f'{file_prefix} (other) {file_suffix}.mp3')
+    rel_media_path_bass = os.path.join(
+        rel_media_path, f'{file_prefix} (bass) {file_suffix}.mp3')
+    rel_media_path_drums = os.path.join(
+        rel_media_path, f'{file_prefix} (drums) {file_suffix}.mp3')
     # File is already on local filesystem
     dynamic_mix.vocals_file.name = rel_media_path_vocals
     dynamic_mix.other_file.name = rel_media_path_other
@@ -269,7 +273,7 @@ def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix):
     dynamic_mix.drums_file.name = rel_media_path_drums
     dynamic_mix.save()
 
-def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix):
+def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix: str, file_suffix: str):
     """Saves individual parts to external file storage (S3, Azure, etc.)
 
     :param dynamic_mix: DynamicMix model
@@ -278,10 +282,10 @@ def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix):
     """
     parts = ['vocals', 'other', 'bass', 'drums']
     filenames = {
-        'vocals': file_prefix + '-vocals.mp3',
-        'other': file_prefix + '-other.mp3',
-        'bass': file_prefix + '-bass.mp3',
-        'drums': file_prefix + '-drums.mp3'
+        'vocals': f'{file_prefix} (vocals) {file_suffix}.mp3',
+        'other': f'{file_prefix} (other) {file_suffix}.mp3',
+        'bass': f'{file_prefix} (bass) {file_suffix}.mp3',
+        'drums': f'{file_prefix} (drums) {file_suffix}.mp3'
     }
     content_files = {}
 

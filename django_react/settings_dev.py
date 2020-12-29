@@ -5,9 +5,9 @@ SECRET_KEY = 'default'
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
 
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
+# DEFAULT_FILE_STORAGE = 'api.storage.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'api.storage.AzureStorage'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

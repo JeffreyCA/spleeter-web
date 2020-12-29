@@ -4,6 +4,7 @@ from io import BytesIO
 
 import requests
 from django.conf import settings
+from django.core.validators import MaxValueValidator
 from django.db import models
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
@@ -34,6 +35,26 @@ def mix_track_path(instance, filename):
     :return: Path to mix track file
     """
     return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
+
+SPLEETER = 'spleeter'
+DEMUCS = 'demucs'
+DEMUCS_EXTRA = 'demucs_extra'
+DEMUCS_LIGHT = 'light'
+DEMUCS_LIGHT_EXTRA = 'light_extra'
+TASNET = 'tasnet'
+TASNET_EXTRA = 'tasnet_extra'
+
+SEP_CHOICES = [
+    (SPLEETER, 'Spleeter'),
+    ('demucs', (
+        (DEMUCS, 'Demucs'),
+        (DEMUCS_EXTRA, 'Demucs (extra)'),
+        (DEMUCS_LIGHT, 'Demucs Light'),
+        (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
+        (TASNET, 'Tasnet'),
+        (TASNET_EXTRA, 'Tasnet (extra)'),
+    )),
+]
 
 class TaskStatus(models.IntegerChoices):
     """
@@ -111,7 +132,7 @@ class SourceFile(models.Model):
                 title = info['title']
         else:
             try:
-                if settings.DEFAULT_FILE_STORAGE == 'django.core.files.storage.FileSystemStorage':
+                if settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage':
                     audio = EasyID3(self.file.path)
                 else:
                     r = requests.get(self.file.url)
@@ -185,6 +206,13 @@ class StaticMix(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
+    # Separation model
+    separator = models.CharField(max_length=20,
+                                 choices=SEP_CHOICES,
+                                 default=SPLEETER)
+    # Random shift value (for Demucs)
+    random_shifts = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(10)])
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -240,8 +268,7 @@ class StaticMix(models.Model):
             parts_lst.append('other')
         prefix = ''.join(prefix_lst)
         parts = ', '.join(parts_lst)
-        formatted = prefix + ' (' + parts + ')'
-        return formatted
+        return f'{prefix} ({parts}) [{self.separator}, {self.random_shifts}]'
 
     def source_path(self):
         """Get the path to the source file."""
@@ -251,9 +278,16 @@ class StaticMix(models.Model):
         """Get the URL of the source file."""
         return self.source_track.source_file.file.url
 
+    def get_extra_info(self):
+        """Get extra information about the mix"""
+        if self.separator == SPLEETER:
+            return ['256 kbps', '4 stems (16 kHz)']
+        else:
+            return ['256 kbps', f'Random shifts: {self.random_shifts}']
+
     class Meta:
         unique_together = [[
-            'source_track', 'vocals', 'drums', 'bass', 'other'
+            'source_track', 'separator', 'random_shifts', 'vocals', 'drums', 'bass', 'other'
         ]]
 
 class DynamicMix(models.Model):
@@ -262,10 +296,17 @@ class DynamicMix(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
+    # Separation model
+    separator = models.CharField(max_length=20,
+                                 choices=SEP_CHOICES,
+                                 default=SPLEETER)
+    # Random shift value (for Demucs)
+    random_shifts = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(10)])
     # Source track on which it is based
-    source_track = models.OneToOneField(SourceTrack,
-                                        related_name='dynamic',
-                                        on_delete=models.CASCADE)
+    source_track = models.ForeignKey(SourceTrack,
+                                     related_name='dynamic',
+                                     on_delete=models.CASCADE)
     # Path to vocals file
     vocals_file = models.FileField(upload_to=mix_track_path,
                                    max_length=255,
@@ -298,13 +339,19 @@ class DynamicMix(models.Model):
         """Get the title."""
         return self.source_track.title
 
-    def formatted_name(self):
+    def formatted_prefix(self):
         """
         Produce a string with the format like:
         "Artist - Title"
         """
-        formatted = self.source_track.artist + ' - ' + self.source_track.title
-        return formatted
+        return f'{self.source_track.artist} - {self.source_track.title}'
+
+    def formatted_suffix(self):
+        """
+        Produce a string describing the separator model and random shift value:
+        "[Demucs, 0]"
+        """
+        return f'[{self.separator}, {self.random_shifts}]'
 
     def vocals_url(self):
         """Get the URL of the vocals file."""
@@ -338,5 +385,12 @@ class DynamicMix(models.Model):
         """Get the URL of the source file."""
         return self.source_track.source_file.file.url
 
+    def get_extra_info(self):
+        """Get extra information about the mix"""
+        if self.separator == SPLEETER:
+            return ['256 kbps', '4 stems (16 kHz)']
+        else:
+            return ['256 kbps', f'Random shifts: {self.random_shifts}']
+
     class Meta:
-        unique_together = [['source_track']]
+        unique_together = [['source_track', 'separator', 'random_shifts']]

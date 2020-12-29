@@ -31,31 +31,59 @@ class YTAudioDownloadTaskSerializer(serializers.ModelSerializer):
         model = YTAudioDownloadTask
         fields = ('id', 'celery_id', 'status', 'error')
 
-class YTSourceTrackSerializer(serializers.ModelSerializer):
-    """Serializer for a SourceTrack derived from YouTube link."""
-    youtube_link = serializers.URLField(write_only=True)
-    artist = serializers.CharField(max_length=100)
-    title = serializers.CharField(max_length=100)
-
-    def create(self, validated_data):
-        validated_data.pop('youtube_link', None)
-        return super().create(validated_data)
+class SourceFileSerializer(serializers.ModelSerializer):
+    """Serializer for SourceFile model"""
+    youtube_fetch_task = YTAudioDownloadTaskSerializer(many=False,
+                                                       read_only=True)
 
     class Meta:
-        model = SourceTrack
-        fields = ['id', 'youtube_link', 'artist', 'title']
+        model = SourceFile
+        fields = ('id', 'file', 'is_youtube', 'youtube_link',
+                  'youtube_fetch_task')
 
-class DynamicMixSerializer(serializers.ModelSerializer):
+class LiteDynamicMixSerializer(serializers.ModelSerializer):
+    """Serializer for DynamicMix model with minimal information."""
+    # The status of the source separation task
+    status = ChoicesSerializerField()
+    # Extra information about mix
+    extra_info = serializers.ListField(child=serializers.CharField(),
+                                       source='get_extra_info',
+                                       read_only=True)
+
+    class Meta:
+        model = DynamicMix
+        fields = ('id', 'separator', 'extra_info', 'artist', 'title',
+                  'vocals_file', 'other_file', 'bass_file', 'drums_file',
+                  'status', 'error', 'date_created')
+
+class LiteStaticMixSerializer(serializers.ModelSerializer):
+    """Serializer for StaticMix model with minimal information."""
+    # The status of the source separation task
+    status = ChoicesSerializerField()
+    # Extra information about mix
+    extra_info = serializers.ListField(child=serializers.CharField(),
+                                       source='get_extra_info',
+                                       read_only=True)
+
+    class Meta:
+        model = StaticMix
+        fields = ('id', 'separator', 'extra_info', 'artist', 'title',
+                  'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error',
+                  'date_created')
+
+class FullDynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model."""
     # The status of the source separation task
     status = ChoicesSerializerField()
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals_file',
-                  'other_file', 'bass_file', 'drums_file', 'status', 'error', 'date_created')
+        fields = ('id', 'celery_id', 'source_track', 'separator',
+                  'random_shifts', 'artist', 'title', 'vocals_file',
+                  'other_file', 'bass_file', 'drums_file', 'status', 'error',
+                  'date_created')
 
-class StaticMixSerializer(serializers.ModelSerializer):
+class FullStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model."""
     # The status of the source separation task
     status = ChoicesSerializerField()
@@ -83,22 +111,33 @@ class StaticMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StaticMix
-        fields = ('id', 'celery_id', 'source_track', 'artist', 'title', 'vocals', 'drums',
+        fields = ('id', 'celery_id', 'source_track', 'separator',
+                  'random_shifts', 'artist', 'title', 'vocals', 'drums',
                   'bass', 'other', 'status', 'url', 'error', 'overwrite',
                   'date_created')
 
-class SourceFileSerializer(serializers.ModelSerializer):
-    """Serializer for SourceFile model"""
-    youtube_fetch_task = YTAudioDownloadTaskSerializer(many=False, read_only=True)
-    class Meta:
-        model = SourceFile
-        fields = ('id', 'file', 'is_youtube', 'youtube_link',
-                  'youtube_fetch_task')
+class LiteSourceTrackSerializer(serializers.ModelSerializer):
+    """Serializer for representing a SourceTrack along with its associated mixes. Minimal information."""
+    static = LiteStaticMixSerializer(many=True, read_only=True)
+    dynamic = LiteDynamicMixSerializer(many=True, read_only=True)
+    fetch_task_status = serializers.CharField(
+        source='source_file.youtube_fetch_task.get_status_display',
+        read_only=True,
+        default=None)
+    fetch_task_error = serializers.CharField(
+        source='source_file.youtube_fetch_task.error',
+        read_only=True,
+        default=None)
 
-class SourceTrackSerializer(serializers.ModelSerializer):
-    """Serializer for representing a SourceTrack along with its associated StaticMixes."""
-    static = StaticMixSerializer(many=True, read_only=True)
-    dynamic = DynamicMixSerializer(many=False, read_only=True)
+    class Meta:
+        model = SourceTrack
+        fields = ('id', 'url', 'artist', 'title', 'static', 'dynamic',
+                  'fetch_task_status', 'fetch_task_error', 'date_created')
+
+class FullSourceTrackSerializer(serializers.ModelSerializer):
+    """Serializer for representing a SourceTrack along with its associated mixes."""
+    static = FullStaticMixSerializer(many=True, read_only=True)
+    dynamic = FullDynamicMixSerializer(many=True, read_only=True)
     is_youtube = serializers.BooleanField(source='source_file.is_youtube',
                                           read_only=True)
     youtube_link = serializers.CharField(source='source_file.youtube_link',
@@ -119,3 +158,17 @@ class SourceTrackSerializer(serializers.ModelSerializer):
         fields = ('id', 'source_file', 'url', 'artist', 'title', 'static',
                   'dynamic', 'is_youtube', 'youtube_link', 'fetch_task',
                   'fetch_task_status', 'fetch_task_error', 'date_created')
+
+class YTSourceTrackSerializer(serializers.ModelSerializer):
+    """Serializer for a SourceTrack derived from YouTube link."""
+    youtube_link = serializers.URLField(write_only=True)
+    artist = serializers.CharField(max_length=100)
+    title = serializers.CharField(max_length=100)
+
+    def create(self, validated_data):
+        validated_data.pop('youtube_link', None)
+        return super().create(validated_data)
+
+    class Meta:
+        model = SourceTrack
+        fields = ['id', 'youtube_link', 'artist', 'title']

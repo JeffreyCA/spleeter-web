@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Alert, Col, Form, Row } from 'react-bootstrap';
-import { MusicPartMap } from '../../models/MusicParts';
-import { SongData } from '../../models/SongData';
+import { Alert, Form } from 'react-bootstrap';
+import { MusicPartMap } from '../../../models/MusicParts';
+import { SongData } from '../../../models/SongData';
+import SeparatorFormGroup from './SeparatorFormGroup';
+import SongInfoFormGroup from './SongInfoFormGroup';
 import './StaticMixModalForm.css';
 
 interface Props {
@@ -10,14 +12,28 @@ interface Props {
   noneChecked: boolean;
   errors: string[];
   handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleModelChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleRandomShiftsChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+interface State {
+  selectedModel: string;
 }
 
 /**
  * Source separation form portion of the modal.
  */
-class StaticMixModalForm extends React.Component<Props> {
+class StaticMixModalForm extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      selectedModel: 'spleeter',
+    };
+  }
+
   render(): JSX.Element {
-    const { song, allChecked, noneChecked, errors, handleCheckboxChange } = this.props;
+    const { song, allChecked, noneChecked, errors, handleCheckboxChange, handleRandomShiftsChange } = this.props;
+
     // Map part names to checkboxes
     const checkboxes = Array.from(MusicPartMap.keys()).map(
       (key: string): JSX.Element => {
@@ -37,22 +53,12 @@ class StaticMixModalForm extends React.Component<Props> {
 
     return (
       <Form>
-        <Form.Group as={Row} controlId="formGridFirst" className="mb-2">
-          <Form.Label column sm="2">
-            Title:
-          </Form.Label>
-          <Col>
-            <Form.Control name="title" disabled value={song.title} />
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} controlId="formGridSecond" className="mb-2">
-          <Form.Label column sm="2">
-            Artist:
-          </Form.Label>
-          <Col>
-            <Form.Control name="artist" disabled value={song.artist} />
-          </Col>
-        </Form.Group>
+        <SongInfoFormGroup song={song} />
+        <SeparatorFormGroup
+          className="mt-3"
+          handleModelSelectChange={this.props.handleModelChange}
+          handleRandomShiftsChange={handleRandomShiftsChange}
+        />
         <Form.Group>
           <Form.Label>Parts to keep:</Form.Label>
           <div className="ml-3">{checkboxes}</div>

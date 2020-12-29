@@ -15,11 +15,17 @@ const PlayButton = (props: Props): JSX.Element => {
   } else if (props.isPlaying) {
     content = <PauseFill size={28} />;
   } else {
-    content = <PlayFill size={28} />;
+    content = <PlayFill size={28} style={{ marginLeft: 1.25, marginRight: -1.25 }} />;
   }
 
   return (
-    <Button disabled={props.disabled} onClick={props.onClick} className="btn-circle p-1" variant="secondary" size="lg">
+    <Button
+      disabled={props.disabled}
+      onClick={props.onClick}
+      className="p-1"
+      variant="secondary"
+      size="lg"
+      style={{ borderRadius: '50%' }}>
       {content}
     </Button>
   );

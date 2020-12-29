@@ -3,7 +3,7 @@
 
 Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or you can use it remove the vocals to get an instrumental version of a song.
 
-It is powered by [Spleeter](https://github.com/deezer/spleeter), an awesome source separation library from Deezer that uses deep learning to separate the various components of a song. Spleeter Web uses the pretrained model [`4stems-model`](https://github.com/deezer/spleeter/wiki/3.-Models#pretrained-model), which performs very well on the [*MusDB*](https://sigsep.github.io/datasets/musdb.html) benchmark.
+It supports a number of different source separation models, including: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model`), [Demucs](https://github.com/facebookresearch/demucs), and [Tasnet](https://github.com/facebookresearch/demucs).
 
 The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue.
 
@@ -27,8 +27,8 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [License](#license)
 
 ## Features
-- Uses deep neural networks (Spleeter) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
-    - Dynamic Mixes lets you control the volumes of each component while playing back the track in real-time
+- Uses deep neural networks (Spleeter, Demucs, Tasnet) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
+    - Dynamic Mixes lets you control the outputs of each component while playing back the track in real-time
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
     - Includes built-in YouTube search functionality (YouTube Data API key required)
 - Persistent audio library with ability to stream and download your source tracks and mixes
@@ -186,12 +186,12 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 |---|---|
 | `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
 | `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
-| `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.s3boto3.S3Boto3Storage`. |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.s3boto3.S3Boto3Storage`. |
-| `AWS_STORAGE_BUCKET_NAME` | AWS S3 storage bucket name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.s3boto3.S3Boto3Storage`. |
-| `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
-| `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
-| `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `storages.backends.azure_storage.AzureStorage`. |
+| `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
+| `AWS_STORAGE_BUCKET_NAME` | AWS S3 storage bucket name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
+| `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`. |
+| `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`. |
+| `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`. |
 | `CELERY_BROKER_URL` | Broker URL for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process (used only if run using Docker). |
@@ -202,7 +202,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It uses [django-storages](https://django-storages.readthedocs.io/en/latest/), so you can also configure it to use other storage backends like Azure Storage or AWS S3.
 
-To do this, edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings.py` and set `DEFAULT_FILE_STORAGE` to another backend like `storages.backends.s3boto3.S3Boto3Storage` or `storages.backends.azure_storage.AzureStorage`.
+To do this, edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings.py` and set `DEFAULT_FILE_STORAGE` to another backend like `api.storage.S3Boto3Storage` or `api.storage.AzureStorage`.
 
 Then, set the following environment variables (`.env` if using Docker), depending on which backend you're using:
 
@@ -231,7 +231,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 2. If you want your server to self-host the media files instead of using a cloud storage provider, then first edit `django_react/settings_docker.py` and uncomment this line:
     ```
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
     ```
     Next, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
 
@@ -280,12 +280,16 @@ To play a dynamic mix, you will need to configure your storage service's CORS se
 
 For more information on how to do this on Azure, see [this](https://docs.microsoft.com/en-us/rest/api/storageservices/cross-origin-resource-sharing--cors--support-for-the-azure-storage-services).
 
+### Tracks don't play on Safari.
+
+I recommended using Chrome or Firefox. Safari is not well-supported at the moment. If you imported a track through YouTube, chances are that it downloaded the audio track as WebM, which Safari cannot play.
+
 ### When playing a track I cannot perform seeks.
 The server that is hosting your media files has to support [**byte-range requests**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) in order for you to be able to perform seeks.
 
 If you are running Spleeter Web locally and storing your media files locally as well, this is expected behaviour as the development Django webserver does not support byte-range requests. You can try to configure it to use nginx + gunicorn instead.
 
-If you are using Azure Blob storage, you need to increase the API version to `2011-01-18` or newer, as the default API version does not support it. See [this](https://stackoverflow.com/questions/17408927/do-http-range-headers-work-with-azure-blob-storage-shared-access-signatures)  StackOverflow post for more details. Or just run [this](https://gist.github.com/JeffreyCA/d5c544df36a0f61737f8a435f897de5e) simple C# program.
+If you are using Azure Blob storage, you need to increase the API version to `2011-01-18` or newer, as the default API version does not support it. See [this](https://stackoverflow.com/questions/17408927/do-http-range-headers-work-with-azure-blob-storage-shared-access-signatures)  StackOverflow post for more details. Or you can check out [this](https://gist.github.com/JeffreyCA/d5c544df36a0f61737f8a435f897de5e) simple C# program.
 
 ### Why is Redis needed?
 The main advantage of using Redis with Celery is so that the user can revoke/terminate in-progress tasks. This is only possible with Redis or amqp brokers.
@@ -298,6 +302,8 @@ Special thanks to:
 * [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 * [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
 * [react-music-player](https://github.com/lijinke666/react-music-player)
+
+Turntable icon made from [Icon Fonts](https://www.onlinewebfonts.com/icon/497039) is licensed by CC BY 3.0.
 
 ## License
 [MIT](./LICENSE)

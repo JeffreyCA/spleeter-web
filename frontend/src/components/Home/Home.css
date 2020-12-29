@@ -37,3 +37,8 @@
   background-color: #095ca428;
   color: white;
 }
+
+.refresher {
+  display: flex;
+  justify-content: flex-end;
+}

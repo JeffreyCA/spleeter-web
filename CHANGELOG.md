@@ -3,6 +3,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2.0.0] - Unreleased
+### Added
+- Support for Facebook Research's [Demucs and Tasnet](https://github.com/facebookresearch/demucs) source separation models, including "light" and "extra" variants
+    - Demucs and Tasnet models have a "random split" parameter that can help improve separation quality
+- New labels to indicate the model and parameters used to generate a mix
+- New refresh button that also indicates the time remaining until next auto-refresh
+- Add brief fade-in and fade-out to dynamic mix player
+
+### Changed
+- Dynamic mixes now appear as part of the mix table
+- Use more descriptive and cleaner file naming scheme for generated files
+- Minor touch-ups to overall interface
+- Fix bug where sort order of mix table gets reset after a few seconds
+- Fix "'ContentDisposition' is an invalid key" error when writing to Azure storage
+
+
 ## [v1.2.0] - 2020-12-22
 ### Added
 - New configurable settings for using AWS S3 as backend for serving media files
@@ -14,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - `psycopg2` Python dependency
+
 
 ## [v1.1.0] - 2020-12-20
 ### **Breaking Changes for Docker**
@@ -29,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use separate Celery queues for fast (YouTube imports) and slow (source separation) tasks
     - For Docker, the fast and slow Celery workers run in separate containers
 - Update dependencies
+
 
 ## [v1.0.0] - 2020-12-19
 ### Added
@@ -55,8 +73,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Periodic cleanup task
 
+
 ## [Pre-release] - before 2020-12
 Undocumented
+
 
 [Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.2.0...HEAD
 [v1.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...v1.2.0
