@@ -10,6 +10,14 @@
   table-layout: auto !important;
 }
 
+.reset-expansion-style {
+  background-color: unset !important;
+}
+
+.inner-table-div {
+  padding-left: 3.25rem !important;
+}
+
 .inner-table {
   background-color: #ececec;
 }

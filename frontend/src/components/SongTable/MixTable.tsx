@@ -308,7 +308,7 @@ class MixTable extends React.Component<Props> {
 
     if (data.length > 0) {
       return (
-        <div>
+        <div className="inner-table-div">
           <BootstrapTable
             classes="inner-table mb-0"
             bootstrap4

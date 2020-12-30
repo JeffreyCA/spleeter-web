@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2.0.1] - 2020-12-30
+### Changed
+- Indent mix table to make it easier to see
+- Update Demucs dependency
+
+
 ## [v2.0.0] - 2020-12-29
 ### Added
 - Support for Facebook Research's [Demucs and Tasnet](https://github.com/facebookresearch/demucs) source separation models, including "light" and "extra" variants
@@ -81,7 +87,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.1...HEAD
+[v2.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.2.0...v2.0.0
 [v1.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...v1.1.0
