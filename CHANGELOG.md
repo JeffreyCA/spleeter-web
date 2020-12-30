@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix bug where music player timestamp would show "00:60" instead of "01:00"
 - Fix blank status badge
 
+
 ## [v1.2.0] - 2020-12-22
 ### Added
 - New configurable settings for using AWS S3 as backend for serving media files
