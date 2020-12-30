@@ -3,13 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v2.0.0] - Unreleased
+## [v2.0.0] - 2020-12-29
 ### Added
 - Support for Facebook Research's [Demucs and Tasnet](https://github.com/facebookresearch/demucs) source separation models, including "light" and "extra" variants
     - Demucs and Tasnet models have a "random split" parameter that can help improve separation quality
 - New labels to indicate the model and parameters used to generate a mix
 - New refresh button that also indicates the time remaining until next auto-refresh
 - Add brief fade-in and fade-out to dynamic mix player
+- Show separator badge in music player
 
 ### Changed
 - Dynamic mixes now appear as part of the mix table
@@ -79,7 +80,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.0...HEAD
+[v2.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.2.0...v2.0.0
 [v1.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/pre...v1.0.0

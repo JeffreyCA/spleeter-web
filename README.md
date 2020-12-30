@@ -58,7 +58,12 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### Instructions
-0. (Optional) Set the YouTube Data API key (for YouTube search functionality):
+1. Clone repo:
+    ```sh
+    $ git clone https://github.com/JeffreyCA/spleeter-web.git
+    $ cd spleeter-web
+    ```
+2. (Optional) Set the YouTube Data API key (for YouTube search functionality):
 
     You can skip this step, but you would not be able to import songs by searching with a query. You would still be able to import songs via YouTube links though.
 
@@ -67,13 +72,17 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     YOUTUBE_API_KEY=<YouTube Data API key>
     ```
 
-1. Build and start containers using the development Docker config:
+3. Download and run prebuilt Docker images:
+    ```sh
+    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+    ```
 
+    Alternatively, you can build the Docker images from source:
     ```sh
     spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
     ```
 
-2. Launch **Spleeter Web**
+4. Launch **Spleeter Web**
 
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded tracks and generated mixes will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
@@ -258,11 +267,17 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
     If you are self-hosting media files:
     ```sh
+    # Use prebuilt images
+    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up -d
+    # Or build from source
     spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build -d
     ```
 
     Otherwise if using a storage provider:
     ```sh
+    # Use prebuilt images
+    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+    # Or build from source
     spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
 
