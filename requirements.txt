@@ -26,7 +26,7 @@ colorama==0.4.3
 coverage==5.3
 cryptography==3.2
 decorator==4.4.2
--e git+https://github.com/JeffreyCA/demucs.git@7e3d9cbb0cd54da536925ed7b936d911ed1f801e#egg=demucs
+-e git+https://github.com/JeffreyCA/demucs.git@dae8434926b740b18aad20096773b8229acfd053#egg=demucs
 Django==3.1.4
 django-storages==1.11
 django-webpack-loader==0.7.0
