@@ -1,0 +1,90 @@
+version: '3.4'
+x-celery-env: &celery-env
+  - DJANGO_SETTINGS_MODULE=django_react.settings_docker
+  - CELERY_BROKER_URL=redis://redis:6379/0
+  - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  - CPU_SEPARATION=1
+  - CELERY_FAST_QUEUE_CONCURRENCY=${CELERY_FAST_QUEUE_CONCURRENCY:-3}
+  - CELERY_SLOW_QUEUE_CONCURRENCY=${CELERY_SLOW_QUEUE_CONCURRENCY:-1}
+  - AWS_ACCESS_KEY_ID
+  - AWS_SECRET_ACCESS_KEY
+  - AWS_STORAGE_BUCKET_NAME
+  - AZURE_ACCOUNT_KEY
+  - AZURE_ACCOUNT_NAME
+  - AZURE_CONTAINER
+services:
+  redis:
+    image: redis:6.0-buster
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+  nginx:
+    image: jeffreyca/spleeter-web-nginx:${TAG:-latest}
+    volumes:
+      - staticfiles:/webapp/staticfiles
+    depends_on:
+      - api
+    restart: always
+  api:
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    volumes:
+      - assets:/webapp/frontend/assets
+      - sqlite-data:/webapp/sqlite
+      - staticfiles:/webapp/staticfiles
+    stdin_open: true
+    tty: true
+    environment:
+      - DJANGO_SETTINGS_MODULE=django_react.settings_docker
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CPU_SEPARATION=1
+      - APP_HOST
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_STORAGE_BUCKET_NAME
+      - AZURE_ACCOUNT_KEY
+      - AZURE_ACCOUNT_NAME
+      - AZURE_CONTAINER
+      - YOUTUBE_API_KEY
+    depends_on:
+      - redis
+      - frontend
+    restart: always
+  celery-fast:
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    entrypoint: ./celery-fast-entrypoint.sh
+    volumes:
+      - celery-data:/webapp/celery
+      - pretrained-models:/webapp/pretrained_models
+      - sqlite-data:/webapp/sqlite
+    environment: *celery-env
+    depends_on:
+      - redis
+    restart: always
+  celery-slow:
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    entrypoint: ./celery-slow-entrypoint.sh
+    volumes:
+      - celery-data:/webapp/celery
+      - pretrained-models:/webapp/pretrained_models
+      - sqlite-data:/webapp/sqlite
+    environment: *celery-env
+    depends_on:
+      - redis
+    restart: always
+  frontend:
+    image: jeffreyca/spleeter-web-frontend:${TAG:-latest}
+    volumes:
+      - assets:/webapp/frontend/assets
+    stdin_open: true
+    tty: true
+volumes:
+  assets:
+  celery-data:
+  pretrained-models:
+  redis-data:
+  sqlite-data:
+  staticfiles:

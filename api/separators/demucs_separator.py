@@ -1,24 +1,30 @@
 from pathlib import Path
 
+from billiard.exceptions import SoftTimeLimitExceeded
+from billiard.pool import Pool
 from demucs.separate import *
-
 """
 This module defines a wrapper interface over the Demucs API.
 """
 
-VALID_MODELS = ['demucs', 'demucs_extra', 'light', 'light_extra', 'tasnet', 'tasnet_extra']
+VALID_MODELS = [
+    'demucs', 'demucs_extra', 'light', 'light_extra', 'tasnet', 'tasnet_extra'
+]
 
 class DemucsSeparator:
     """Performs source separation using Demucs API."""
-    def __init__(self, model_name='light_extra', shifts=5):
-        assert(model_name in VALID_MODELS)
-        self.device = 'cpu'
+    def __init__(self,
+                 model_name='light_extra',
+                 shifts=5,
+                 cpu_separation=True):
+        assert (model_name in VALID_MODELS)
+        self.device = 'cpu' if cpu_separation else 'cuda'
         self.model_name = model_name
         self.model_file = f'{model_name}.th'
         self.model_dir = Path('pretrained_models')
         self.model_file_path = self.model_dir / self.model_file
         self.shifts = shifts
-        self.split = True
+        self.split = cpu_separation
         self.verbose = True
         self.bitrate = 256
 
@@ -100,14 +106,24 @@ class DemucsSeparator:
         self.download_and_verify()
         raw_sources = self.apply_model(input_path)
 
+        pool = Pool()
+        tasks = []
+
         for source, name in zip(raw_sources,
                                 ['drums', 'bass', 'other', 'vocals']):
             source = (source * 2**15).clamp_(-2**15, 2**15 - 1).short()
             source = source.cpu().transpose(0, 1).numpy()
             filename = f'{name}.mp3'
 
-            encode_mp3(source,
-                       str(output_path / filename),
-                       self.bitrate,
-                       verbose=self.verbose)
-            print(f'Finished {name}')
+            print(f'Exporting {name} MP3...')
+            task = pool.apply_async(encode_mp3,
+                                    (source, str(output_path / filename),
+                                     self.bitrate, self.verbose))
+            tasks.append(task)
+
+        try:
+            pool.close()
+            pool.join()
+        except SoftTimeLimitExceeded as e:
+            pool.terminate()
+            raise e

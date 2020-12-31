@@ -11,20 +11,14 @@ This module defines a wrapper interface over the Spleeter API.
 
 class SpleeterSeparator:
     """Performs source separation using Spleeter API."""
-    def __init__(self, config=None):
+    def __init__(self):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
-        if config is None:
-            self.audio_bitrate = '256k'
-            self.audio_format = 'mp3'
-            self.sample_rate = 44100
-            self.spleeter_stem = 'config/4stems-16kHz.json'
-        else:
-            self.audio_bitrate = config['audio_bitrate']
-            self.audio_format = config['audio_format']
-            self.sample_rate = config['sample_rate']
-            self.spleeter_stem = config['spleeter_stem']
+        self.audio_bitrate = '256k'
+        self.audio_format = 'mp3'
+        self.sample_rate = 44100
+        self.spleeter_stem = 'config/4stems-16kHz.json'
         # Use librosa backend as it is less memory intensive
         self.separator = Separator(self.spleeter_stem,
                                    stft_backend='librosa',
@@ -52,7 +46,7 @@ class SpleeterSeparator:
                 out += prediction[key]
                 part_count += 1
 
-        self.audio_adapter.save(output_path, out, self.separator._sample_rate,
+        self.audio_adapter.save(output_path, out, self.sample_rate,
                                 self.audio_format, self.audio_bitrate)
 
     def separate_into_parts(self, input_path, output_path):
@@ -65,6 +59,7 @@ class SpleeterSeparator:
                                         output_path,
                                         self.audio_adapter,
                                         codec='mp3',
+                                        duration=None,
                                         bitrate=self.audio_bitrate,
                                         filename_format='{instrument}.{codec}',
                                         synchronous=False)
