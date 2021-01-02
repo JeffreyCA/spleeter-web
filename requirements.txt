@@ -128,4 +128,4 @@ yarl==1.6.0
 youtube-title-parse==1.0.0
 zipp==3.2.0
 -e git+https://github.com/JeffreyCA/xumx.git@7eb8421aa4b1942a946cdf700881bf16b3392479#egg=xumx
-nnabla-ext-cuda102==1.13.0
+nnabla-ext-cuda102==1.13.0; sys_platform == 'linux'
