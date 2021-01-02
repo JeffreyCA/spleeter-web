@@ -127,5 +127,5 @@ yarl==1.6.0
 -e git+https://github.com/JeffreyCA/youtube-dl.git@a22b8f2a0b54a317c966c2992abaaa4b933e2cbe#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.2.0
--e git+https://github.com/JeffreyCA/xumx.git@647b1a7b4fc780686b527ccfb1dd513d3361879b#egg=xumx
+-e git+https://github.com/JeffreyCA/xumx.git@7eb8421aa4b1942a946cdf700881bf16b3392479#egg=xumx
 nnabla-ext-cuda102==1.13.0
