@@ -12,6 +12,8 @@ from mutagen.id3 import ID3NoHeaderError
 from .validators import *
 from .youtubedl import get_meta_info
 
+from picklefield.fields import PickledObjectField
+
 """
 This module defines Django models.
 """
@@ -43,18 +45,19 @@ DEMUCS_LIGHT = 'light'
 DEMUCS_LIGHT_EXTRA = 'light_extra'
 TASNET = 'tasnet'
 TASNET_EXTRA = 'tasnet_extra'
+XUMX = 'xumx'
 
-SEP_CHOICES = [
-    (SPLEETER, 'Spleeter'),
-    ('demucs', (
-        (DEMUCS, 'Demucs'),
-        (DEMUCS_EXTRA, 'Demucs (extra)'),
-        (DEMUCS_LIGHT, 'Demucs Light'),
-        (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
-        (TASNET, 'Tasnet'),
-        (TASNET_EXTRA, 'Tasnet (extra)'),
-    )),
-]
+DEMUCS_FAMILY = [DEMUCS, DEMUCS_EXTRA, DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA, TASNET, TASNET_EXTRA]
+
+SEP_CHOICES = [(SPLEETER, 'Spleeter'),
+               ('demucs', (
+                   (DEMUCS, 'Demucs'),
+                   (DEMUCS_EXTRA, 'Demucs (extra)'),
+                   (DEMUCS_LIGHT, 'Demucs Light'),
+                   (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
+                   (TASNET, 'Tasnet'),
+                   (TASNET_EXTRA, 'Tasnet (extra)'),
+               )), (XUMX, 'CrossNet-Open-Unmix')]
 
 class TaskStatus(models.IntegerChoices):
     """
@@ -64,6 +67,14 @@ class TaskStatus(models.IntegerChoices):
     IN_PROGRESS = 1, 'In Progress'
     DONE = 2, 'Done'
     ERROR = -1, 'Error'
+
+class Bitrate(models.IntegerChoices):
+    """
+    Enum for MP3 bitrates.
+    """
+    MP3_192 = 192
+    MP3_256 = 256
+    MP3_320 = 320
 
 class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
@@ -210,9 +221,14 @@ class StaticMix(models.Model):
     separator = models.CharField(max_length=20,
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
-    # Random shift value (for Demucs)
-    random_shifts = models.PositiveSmallIntegerField(
-        default=0, validators=[MaxValueValidator(10)])
+    # Separator-specific args
+    separator_args = PickledObjectField(
+        default=dict,
+        blank=True,
+        validators=[is_valid_demucs, is_valid_xumx])
+    # Bitrate
+    bitrate = models.IntegerField(choices=Bitrate.choices,
+                                  default=Bitrate.MP3_256)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -268,7 +284,14 @@ class StaticMix(models.Model):
             parts_lst.append('other')
         prefix = ''.join(prefix_lst)
         parts = ', '.join(parts_lst)
-        return f'{prefix} ({parts}) [{self.separator}, {self.random_shifts}]'
+
+        suffix = self.separator
+        if self.separator in DEMUCS_FAMILY:
+            # pylint: disable=unsubscriptable-object
+            random_shifts = self.separator_args['demucs_random_shifts']
+            suffix += f', {random_shifts}'
+
+        return f'{prefix} ({parts}) [{suffix}]'
 
     def source_path(self):
         """Get the path to the source file."""
@@ -281,13 +304,16 @@ class StaticMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return ['256 kbps', '4 stems (16 kHz)']
+            return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
         else:
-            return ['256 kbps', f'Random shifts: {self.random_shifts}']
+            return [
+                f'{self.bitrate} kbps', f'Random shifts: {self.separator_args}'
+            ]
 
     class Meta:
         unique_together = [[
-            'source_track', 'separator', 'random_shifts', 'vocals', 'drums', 'bass', 'other'
+            'source_track', 'separator', 'separator_args', 'bitrate', 'vocals', 'drums',
+            'bass', 'other'
         ]]
 
 class DynamicMix(models.Model):
@@ -300,9 +326,11 @@ class DynamicMix(models.Model):
     separator = models.CharField(max_length=20,
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
-    # Random shift value (for Demucs)
-    random_shifts = models.PositiveSmallIntegerField(
-        default=0, validators=[MaxValueValidator(10)])
+    # Separator-specific args
+    separator_args = PickledObjectField(default=dict, blank=True)
+    # Bitrate
+    bitrate = models.IntegerField(choices=Bitrate.choices,
+                                  default=Bitrate.MP3_256)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='dynamic',
@@ -351,7 +379,14 @@ class DynamicMix(models.Model):
         Produce a string describing the separator model and random shift value:
         "[Demucs, 0]"
         """
-        return f'[{self.separator}, {self.random_shifts}]'
+        if self.separator == SPLEETER:
+            return f'[{self.separator}]'
+        elif self.separator in DEMUCS_FAMILY:
+            # pylint: disable=unsubscriptable-object
+            random_shifts = self.separator_args['demucs_random_shifts']
+            return f'[{self.separator}, {random_shifts}]'
+        else:
+            return f'[{self.separator}]'
 
     def vocals_url(self):
         """Get the URL of the vocals file."""
@@ -388,9 +423,18 @@ class DynamicMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return ['256 kbps', '4 stems (16 kHz)']
+            return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+        elif self.separator in DEMUCS_FAMILY:
+            # pylint: disable=unsubscriptable-object
+            random_shifts = self.separator_args['demucs_random_shifts']
+            return [f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']
         else:
-            return ['256 kbps', f'Random shifts: {self.random_shifts}']
+            return []
 
     class Meta:
-        unique_together = [['source_track', 'separator', 'random_shifts']]
+        unique_together = [[
+            'source_track',
+            'separator',
+            'separator_args',
+            'bitrate'
+        ]]

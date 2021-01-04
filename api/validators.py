@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from youtube_dl.utils import DownloadError
 
 from .youtubedl import get_meta_info
+from typing import Dict
 
 """
 This module contains validation functions.
@@ -52,3 +53,14 @@ def is_valid_youtube(link):
             raise ValidationError('Video length too long.')
     except DownloadError:
         raise ValidationError('Invalid YouTube link.')
+
+def is_valid_demucs(args: Dict):
+    if 'demucs_random_shifts' in args:
+        random_shifts = args['demucs_random_shifts']
+        if random_shifts < 0 or random_shifts > 10:
+            raise ValidationError('Random shifts must be between 0 and 10.')
+    # return True
+
+def is_valid_xumx(args: Dict):
+    pass
+    # return True
