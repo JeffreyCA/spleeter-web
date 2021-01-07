@@ -3,9 +3,9 @@
 
 Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or you can use it remove the vocals to get an instrumental version of a song.
 
-It supports a number of different source separation models, including: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model`), [Demucs](https://github.com/facebookresearch/demucs), and [Tasnet](https://github.com/facebookresearch/demucs).
+It supports a number of different source separation models: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model`), [Demucs](https://github.com/facebookresearch/demucs), [Tasnet](https://github.com/facebookresearch/demucs), and [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx).
 
-The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue.
+The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue. Docker images are available, including ones with GPU support.
 
 ## Table of Contents
 
@@ -19,23 +19,19 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [Using cloud storage](#using-cloud-storage-azure-storage-aws-s3-etc)
 - [Deployment](#deployment)
 - [Common issues & FAQs](#common-issues--faqs)
-    - [How do I update Spleeter Web?](#how-do-i-update-spleeter-web)
-    - [I get a CORS error when trying to play a dynamic mix.](#i-get-a-cors-error-when-trying-to-play-a-dynamic-mix)
-    - [Tracks don't play on Safari.](#tracks-dont-play-on-safari)
-    - [When playing a track I cannot perform seeks.](#when-playing-a-track-i-cannot-perform-seeks)
-    - [Why is Redis needed?](#why-is-redis-needed)
 - [Credits](#credits)
 - [License](#license)
 
 ## Features
-- Uses deep neural networks (Spleeter, Demucs, Tasnet) to separate audio tracks into any combination of their vocal, accompaniment, bass, and drum components
-    - Dynamic Mixes lets you control the outputs of each component while playing back the track in real-time
+- Supports Spleeter, Demucs, Tasnet, and CrossNet-Open-Unmix (X-UMX) source separation models
+- Dynamic Mixes lets you control the outputs of each component while playing back the track in real-time
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
-    - Includes built-in YouTube search functionality (YouTube Data API key required)
+    - Built-in YouTube search functionality (YouTube Data API key required)
 - Persistent audio library with ability to stream and download your source tracks and mixes
 - Customize number of background workers working on audio separation and YouTube imports
 - Supports third-party storage backends like S3 and Azure Blob Storage
 - Clean and responsive UI
+- Support for GPU separation
 - Fully Dockerized
 
 ## [Demo site](https://jeffreyca.github.io/spleeter-web/)
@@ -71,18 +67,32 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
     YOUTUBE_API_KEY=<YouTube Data API key>
     ```
+3. (Optional) Setup for GPU support:
+    Source separation can be accelerated with a GPU (however only NVIDIA GPUs are supported).
 
-3. Download and run prebuilt Docker images:
+    1. Install NVIDIA drivers for your GPU.
+
+    2. [Install the NVIDIA Container Toolkit.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+
+    3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi`
+
+4. Download and run prebuilt Docker images:
     ```sh
+    # For regular CPU-based separation
     spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+    # For GPU-accelerated separation
+    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.dev.yml up
     ```
 
     Alternatively, you can build the Docker images from source:
     ```sh
+    # For regular CPU-based separation
     spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
+    # For GPU-accelerated separation
+    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml -f docker-compose.dev.yml up --build
     ```
 
-4. Launch **Spleeter Web**
+5. Launch **Spleeter Web**
 
     Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded tracks and generated mixes will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
@@ -148,16 +158,15 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 9. Start Celery workers in separate terminal
 
     **Unix/macOS:**
-
     ```sh
-    (env) spleeter-web$ celery multi start fast slow -l INFO -Q:fast fast_queue -Q:slow slow_queue,fast_queue -c:fast 3 -c:slow 1 -A api --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log --statedb=celery.state
-    ```
-    The above command launches two Celery workers: **fast** and **slow**. **fast** processes YouTube imports and **slow** processes source separation. **fast** can work on 3 tasks concurrently, while **slow** can only work on 1 task concurrently. Feel free to adjust these values to your fitting.
+    # Start fast worker
+    (env) spleeter-web$ celery -A api worker -l INFO -Q fast_queue -c 3
 
-    To stop the workers, run:
-    ```sh
-    (env) spleeter-web$ celery multi stop fast slow --pidfile=./celery_%n.pid --logfile=./celery_%n%I.log
+    # Start slow worker
+    (env) spleeter-web$ celery -A api worker -l INFO -Q slow_queue -c 1
     ```
+
+    This launches two Celery workers: one processes fast tasks like YouTube imports and the other processes slow tasks like source separation. The one working on fast tasks can work on 3 tasks concurrently, while the one working on slow tasks only handles a single task at a time (since it's resource-intensive). Feel free to adjust these values to your fitting.
 
     **Windows:**
 
@@ -169,10 +178,10 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     ```sh
     # Start fast worker
-    (env) spleeter-web$ celery -A api fast_worker -l INFO -Q fast_queue -c 3 --statedb=celery_fast.state --pool=gevent
+    (env) spleeter-web$ celery -A api worker -l INFO -Q fast_queue -c 3 --pool=gevent
 
     # Start slow worker
-    (env) spleeter-web$ celery -A api slow_worker -l INFO -Q slow_queue -c 1 --statedb=celery_slow.state --pool=gevent
+    (env) spleeter-web$ celery -A api worker -l INFO -Q slow_queue -c 1 --pool=gevent
     ```
 
 10. Launch **Spleeter Web**
@@ -194,6 +203,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 | Name | Description |
 |---|---|
+| `CPU_SEPARATION` | No need to set this if using Docker. Otherwise, set to `1` if you want CPU separation and `0` if you want GPU separation.
 | `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
 | `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
 | `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
@@ -264,6 +274,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     These values are referenced in `django_react/settings_docker.py` and `docker-compose.yml`, so you can also edit those files directly to set your production settings.
 
 4. Build and start production containers
+    **To enable GPU separation, substitute `docker-compose.yml` and `docker-compose.build.yml` for `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` below respectively.**
 
     If you are self-hosting media files:
     ```sh
@@ -283,37 +294,14 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
 
-## Common issues & FAQs
-
-### How do I update Spleeter Web?
-**If you are updating to v1.1.0 or later and you use Docker to run Spleeter Web, please note that the database backend has changed from PostgreSQL to SQLite. Please backup your track list as the data in the DB will not carry over when updating. Your media files will not be impacted.**
-
-First, do a `git pull` to fetch the latest changes. Then, if you are using Docker, just re-run `docker-compose` with the `--build` flag to re-build the containers. If you are not using Docker, you will need to re-run `pip install -r requirements` and `python manage.py migrate` and `npm install` (in the `frontend` directory).
-
-### I get a CORS error when trying to play a dynamic mix.
-
-To play a dynamic mix, you will need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
-
-For more information on how to do this on Azure, see [this](https://docs.microsoft.com/en-us/rest/api/storageservices/cross-origin-resource-sharing--cors--support-for-the-azure-storage-services).
-
-### Tracks don't play on Safari.
-
-I recommended using Chrome or Firefox. Safari is not well-supported at the moment. If you imported a track through YouTube, chances are that it downloaded the audio track as WebM, which Safari cannot play.
-
-### When playing a track I cannot perform seeks.
-The server that is hosting your media files has to support [**byte-range requests**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests) in order for you to be able to perform seeks.
-
-If you are running Spleeter Web locally and storing your media files locally as well, this is expected behaviour as the development Django webserver does not support byte-range requests. You can try to configure it to use nginx + gunicorn instead.
-
-If you are using Azure Blob storage, you need to increase the API version to `2011-01-18` or newer, as the default API version does not support it. See [this](https://stackoverflow.com/questions/17408927/do-http-range-headers-work-with-azure-blob-storage-shared-access-signatures)  StackOverflow post for more details. Or you can check out [this](https://gist.github.com/JeffreyCA/d5c544df36a0f61737f8a435f897de5e) simple C# program.
-
-### Why is Redis needed?
-The main advantage of using Redis with Celery is so that the user can revoke/terminate in-progress tasks. This is only possible with Redis or amqp brokers.
+## [Common issues & FAQs](https://github.com/JeffreyCA/spleeter-web/wiki/Common-issues-&-FAQs)
 
 ## Credits
 Special thanks to:
 
 * [spleeter](https://github.com/deezer/spleeter)
+* [Demucs/Tasnet](https://github.com/facebookresearch/demucs)
+* [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [tone.js](https://github.com/Tonejs/Tone.js/)
 * [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 * [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
