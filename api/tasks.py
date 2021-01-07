@@ -79,12 +79,15 @@ def create_static_mix(static_mix_id):
         )
 
         if not settings.CPU_SEPARATION:
+            # For GPU separation, do separation in separate process.
+            # Otherwise, GPU memory is not automatically freed afterwards
             process_eval = Process(target=separator.create_static_mix,
                                    args=(parts, path, rel_path))
             process_eval.start()
             try:
                 process_eval.join()
             except SoftTimeLimitExceeded as e:
+                # Kill process if user aborts task
                 process_eval.terminate()
                 raise e
         else:
@@ -161,12 +164,15 @@ def create_dynamic_mix(dynamic_mix_id):
 
         # Do separation
         if not settings.CPU_SEPARATION:
+            # For GPU separation, do separation in separate process.
+            # Otherwise, GPU memory is not automatically freed afterwards
             process_eval = Process(target=separator.separate_into_parts,
                                    args=(path, rel_path))
             process_eval.start()
             try:
                 process_eval.join()
             except SoftTimeLimitExceeded as e:
+                # Kill process if user aborts task
                 process_eval.terminate()
                 raise e
         else:

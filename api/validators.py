@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from youtube_dl.utils import DownloadError
 
 from .youtubedl import get_meta_info
-from typing import Dict
 
 """
 This module contains validation functions.

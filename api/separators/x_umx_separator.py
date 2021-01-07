@@ -85,7 +85,6 @@ class XUMXSeparator:
 
         print('Writing to MP3...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate, 'mp3', self.bitrate)
-        print('Wrote to: ', str(output_path + '.wav'))
 
     def separate_into_parts(self, input_path: str, output_path: Path):
         self.download_and_verify()
@@ -115,6 +114,7 @@ class XUMXSeparator:
 
         output_path = Path(output_path)
 
+        # Export all source MP3s in parallel
         pool = Pool()
         tasks = []
 

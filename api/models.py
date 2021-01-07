@@ -290,6 +290,7 @@ class StaticMix(models.Model):
         elif self.separator == XUMX:
             iterations = self.separator_args['iterations']
             softmask = self.separator_args['softmask']
+            # Replace decimal point with underscore
             alpha = str(self.separator_args['alpha']).replace('.', '_')
             suffix += f',{iterations} iter'
             if softmask:
@@ -402,6 +403,7 @@ class DynamicMix(models.Model):
         else:
             iterations = self.separator_args['iterations']
             softmask = self.separator_args['softmask']
+            # Replace decimal point with underscore
             alpha = str(self.separator_args['alpha']).replace('.', '_')
 
             suffix = f'[{self.bitrate} kbps,{self.separator},{iterations} iter'

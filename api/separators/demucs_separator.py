@@ -109,6 +109,7 @@ class DemucsSeparator:
         self.download_and_verify()
         raw_sources = self.apply_model(input_path)
 
+        # Export all source MP3s in parallel
         pool = Pool()
         tasks = []
 
