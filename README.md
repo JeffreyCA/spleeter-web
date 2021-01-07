@@ -275,6 +275,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     These values are referenced in `django_react/settings_docker.py` and `docker-compose.yml`, so you can also edit those files directly to set your production settings.
 
 4. Build and start production containers
+
     **To enable GPU separation, substitute `docker-compose.yml` and `docker-compose.build.yml` for `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` below respectively.**
 
     If you are self-hosting media files:
@@ -300,7 +301,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 ## Credits
 Special thanks to:
 
-* [spleeter](https://github.com/deezer/spleeter)
+* [Spleeter](https://github.com/deezer/spleeter)
 * [Demucs/Tasnet](https://github.com/facebookresearch/demucs)
 * [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [tone.js](https://github.com/Tonejs/Tone.js/)
