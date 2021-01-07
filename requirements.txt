@@ -5,15 +5,15 @@ asgiref==3.2.10
 astroid==2.4.2
 astunparse==1.6.3
 async-timeout==3.0.1
-attrs==20.2.0
+attrs==20.3.0
 audioread==2.1.9
 azure-common==1.1.26
 azure-storage-blob==2.1.0
 azure-storage-common==2.1.0
 billiard==3.6.3.0
-boto3==1.16.40
-botocore==1.19.40
-cachetools==4.1.1
+boto3==1.16.50
+botocore==1.19.50
+cachetools==4.2.0
 celery==5.0.5
 certifi==2020.6.20
 cffi==1.14.3
@@ -24,12 +24,12 @@ click-plugins==1.1.1
 click-repl==0.1.6
 colorama==0.4.3
 coverage==5.3
-cryptography==3.2
+cryptography==3.3.1
 decorator==4.4.2
 -e git+https://github.com/JeffreyCA/demucs.git@dae8434926b740b18aad20096773b8229acfd053#egg=demucs
-Django==3.1.4
+Django==3.1.5
 django-picklefield==3.0.1
-django-storages==1.11
+django-storages==1.11.1
 django-webpack-loader==0.7.0
 djangorestframework==3.12.2
 ffmpeg-python==0.2.0
@@ -47,6 +47,7 @@ gunicorn==20.0.4
 h5py==2.10.0
 httplib2==0.18.1
 idna==2.10
+imageio==2.9.0
 importlib-metadata==1.6.1
 isort==4.3.21
 jmespath==0.10.0
@@ -64,6 +65,7 @@ multidict==4.7.6
 musdb==0.3.1
 museval==0.3.0
 mutagen==1.45.1
+nnabla-ext-cuda102==1.13.0; sys_platform == 'linux'
 norbert==0.2.1
 numba==0.52.0
 numpy==1.18.5
@@ -123,10 +125,9 @@ wcwidth==0.2.5
 Werkzeug==1.0.1
 whitenoise==5.2.0
 wrapt==1.12.1
+-e git+https://github.com/JeffreyCA/xumx.git@7eb8421aa4b1942a946cdf700881bf16b3392479#egg=xumx
 yapf==0.30.0
 yarl==1.6.0
--e git+https://github.com/JeffreyCA/youtube-dl.git@a22b8f2a0b54a317c966c2992abaaa4b933e2cbe#egg=youtube_dl
+-e git+https://github.com/JeffreyCA/youtube-dl.git@e97aade949c205e203c6b8bb1ca335c2f6b6b4ff#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.2.0
--e git+https://github.com/JeffreyCA/xumx.git@7eb8421aa4b1942a946cdf700881bf16b3392479#egg=xumx
-nnabla-ext-cuda102==1.13.0; sys_platform == 'linux'
