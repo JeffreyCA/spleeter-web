@@ -149,8 +149,6 @@ class StaticMixModal extends React.Component<Props, State> {
       overwrite: this.state.overwrite,
     };
 
-    console.log(data);
-
     // Make request to add Song
     axios
       .post<StaticMix>('/api/mix/static/', data)

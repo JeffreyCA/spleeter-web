@@ -43,8 +43,6 @@ class DemucsSeparator:
             print(
                 "Downloading pre-trained model weights, this could take a while..."
             )
-            print('URL:', url)
-            print('Model file path:', self.model_file_path)
             download_file(url, self.model_file_path)
 
         if sha256 is not None:

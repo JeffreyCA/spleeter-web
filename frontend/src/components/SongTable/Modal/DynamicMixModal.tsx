@@ -115,8 +115,6 @@ class DynamicMixModal extends React.Component<Props, State> {
       overwrite: true,
     };
 
-    console.log(data);
-
     // Make API request to create the mix
     axios
       .post<DynamicMix>('/api/mix/dynamic/', data)
