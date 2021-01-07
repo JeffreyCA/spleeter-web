@@ -11,11 +11,11 @@ This module defines a wrapper interface over the Spleeter API.
 
 class SpleeterSeparator:
     """Performs source separation using Spleeter API."""
-    def __init__(self):
+    def __init__(self, bitrate=256):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
-        self.audio_bitrate = '256k'
+        self.audio_bitrate = f'{bitrate}k'
         self.audio_format = 'mp3'
         self.sample_rate = 44100
         self.spleeter_stem = 'config/4stems-16kHz.json'

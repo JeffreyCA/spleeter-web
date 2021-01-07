@@ -329,6 +329,15 @@ class DynamicMixCreateView(generics.ListCreateAPIView):
                         ]
                     },
                     status=400)
+        elif 'args' in serializer.errors:
+            # Incomplete separator args given
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'errors': [serializer.errors['args']]
+                },
+                status=400)
+
         return JsonResponse({
             'status': 'error',
             'errors': ['Unknown error']
@@ -354,7 +363,6 @@ class DynamicMixRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         # Revoke the celery task
         print('Revoking celery task:', celery_id)
         app.control.revoke(celery_id, terminate=True, signal=KILL_SIGNAL)
-
         return super().destroy(request, *args, **kwargs)
 
 
@@ -415,10 +423,21 @@ class StaticMixCreateView(generics.ListCreateAPIView):
                     'errors': [serializer.errors['checked']]
                 },
                 status=400)
-        return JsonResponse({
-            'status': 'error',
-            'errors': ['Unknown error']
-        }, status=400)
+        elif 'args' in serializer.errors:
+            # Incomplete separator args given
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'errors': [serializer.errors['args']]
+                },
+                status=400)
+
+        return JsonResponse(
+            {
+                'status': 'error',
+                'errors': ['Unknown error: ' + str(serializer.errors)]
+            },
+            status=400)
 
     def perform_create(self, serializer):
         instance = serializer.save()

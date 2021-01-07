@@ -1,8 +1,17 @@
-export type Separator = 'spleeter' | 'demucs' | 'demucs_extra' | 'light' | 'light_extra' | 'tasnet' | 'tasnet_extra';
+export type Separator =
+  | 'spleeter'
+  | 'xumx'
+  | 'demucs'
+  | 'demucs_extra'
+  | 'light'
+  | 'light_extra'
+  | 'tasnet'
+  | 'tasnet_extra';
 
 // Map of separator IDs to labels
 export const separatorLabelMap = {
   spleeter: 'Spleeter',
+  xumx: 'X-UMX',
   demucs: 'Demucs',
   demucs_extra: 'Demucs (extra)',
   light: 'Demucs Light',

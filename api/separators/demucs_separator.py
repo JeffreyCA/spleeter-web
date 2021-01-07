@@ -13,10 +13,13 @@ VALID_MODELS = [
 
 class DemucsSeparator:
     """Performs source separation using Demucs API."""
-    def __init__(self,
-                 model_name='light_extra',
-                 shifts=5,
-                 cpu_separation=True):
+    def __init__(
+        self,
+        model_name='light_extra',
+        cpu_separation=True,
+        bitrate=256,
+        shifts=5
+    ):
         assert (model_name in VALID_MODELS)
         self.device = 'cpu' if cpu_separation else 'cuda'
         self.model_name = model_name
@@ -26,7 +29,7 @@ class DemucsSeparator:
         self.shifts = shifts
         self.split = cpu_separation
         self.verbose = True
-        self.bitrate = 256
+        self.bitrate = bitrate
 
     def download_and_verify(self):
         sha256 = PRETRAINED_MODELS.get(self.model_file)

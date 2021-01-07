@@ -15,24 +15,31 @@ MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h
 
 class XUMXSeparator:
     """Performs source separation using X-UMX API."""
-    def __init__(self, cpu_separation: bool):
+    def __init__(
+        self,
+        cpu_separation: bool,
+        bitrate=256,
+        softmask=False,
+        alpha=1.0,
+        iterations=1
+    ):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
         if cpu_separation:
-            raise ValueError('X-UMX only works with GPU, aborting...')
+            raise ValueError('X-UMX only works with GPU. Task aborted.')
 
         self.model_file = 'x-umx.h5'
         self.model_dir = Path('pretrained_models')
         self.model_file_path = self.model_dir / self.model_file
         self.context = 'cudnn'
-        self.softmask = True
-        self.alpha = 1.0
-        self.iterations = 1
+        self.softmask = softmask
+        self.alpha = alpha
+        self.iterations = iterations
+        self.bitrate = bitrate
         self.sample_rate = 44100
         self.residual_model = False
         self.audio_adapter = get_default_audio_adapter()
-        self.bitrate = 256
 
     def download_and_verify(self):
         if not self.model_file_path.is_file():

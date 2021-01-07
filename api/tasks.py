@@ -1,9 +1,9 @@
-import gc
 import os
 import os.path
 import pathlib
 import shutil
 
+from typing import Dict
 from billiard.context import Process
 from billiard.exceptions import SoftTimeLimitExceeded
 from django.conf import settings
@@ -21,12 +21,18 @@ from .youtubedl import download_audio, get_file_ext
 This module defines various Celery tasks used for Spleeter Web.
 """
 
-def get_separator(separator: str, random_shifts: int, cpu_separation: bool):
+def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separation: bool):
     """Returns separator object for corresponding source separation model."""
     if separator == 'spleeter':
-        return XUMXSeparator(cpu_separation)
+        return SpleeterSeparator(bitrate)
+    elif separator == 'xumx':
+        softmask = separator_args['softmask']
+        alpha = separator_args['alpha']
+        iterations = separator_args['random_shifts'] + 1
+        return XUMXSeparator(cpu_separation, bitrate, softmask, alpha, iterations)
     else:
-        return DemucsSeparator(separator, random_shifts, cpu_separation)
+        random_shifts = separator_args['random_shifts']
+        return DemucsSeparator(separator, cpu_separation, bitrate, random_shifts)
 
 @app.task()
 def create_static_mix(static_mix_id):
@@ -57,8 +63,8 @@ def create_static_mix(static_mix_id):
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
         separator = get_separator(static_mix.separator,
-                                  static_mix.random_shifts,
-                                  settings.CPU_SEPARATION)
+                                  static_mix.separator_args,
+                                  static_mix.bitrate, settings.CPU_SEPARATION)
 
         parts = {
             'vocals': static_mix.vocals,
@@ -144,7 +150,8 @@ def create_dynamic_mix(dynamic_mix_id):
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
         separator = get_separator(dynamic_mix.separator,
-                                  dynamic_mix.random_shifts,
+                                  dynamic_mix.separator_args,
+                                  dynamic_mix.bitrate,
                                   settings.CPU_SEPARATION)
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()

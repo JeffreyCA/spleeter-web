@@ -57,7 +57,7 @@ SEP_CHOICES = [(SPLEETER, 'Spleeter'),
                    (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
                    (TASNET, 'Tasnet'),
                    (TASNET_EXTRA, 'Tasnet (extra)'),
-               )), (XUMX, 'CrossNet-Open-Unmix')]
+               )), (XUMX, 'X-UMX')]
 
 class TaskStatus(models.IntegerChoices):
     """
@@ -211,6 +211,7 @@ class SourceTrack(models.Model):
         """String representation."""
         return self.artist + ' - ' + self.title
 
+# pylint: disable=unsubscriptable-object
 class StaticMix(models.Model):
     """Model representing a statically mixed track (certain parts are excluded)."""
     # UUID to uniquely identify track
@@ -222,10 +223,7 @@ class StaticMix(models.Model):
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
     # Separator-specific args
-    separator_args = PickledObjectField(
-        default=dict,
-        blank=True,
-        validators=[is_valid_demucs, is_valid_xumx])
+    separator_args = PickledObjectField(default=dict)
     # Bitrate
     bitrate = models.IntegerField(choices=Bitrate.choices,
                                   default=Bitrate.MP3_256)
@@ -287,8 +285,7 @@ class StaticMix(models.Model):
 
         suffix = self.separator
         if self.separator in DEMUCS_FAMILY:
-            # pylint: disable=unsubscriptable-object
-            random_shifts = self.separator_args['demucs_random_shifts']
+            random_shifts = self.separator_args['random_shifts']
             suffix += f', {random_shifts}'
 
         return f'{prefix} ({parts}) [{suffix}]'
@@ -305,17 +302,28 @@ class StaticMix(models.Model):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
-        else:
+        elif self.separator in DEMUCS_FAMILY:
             return [
-                f'{self.bitrate} kbps', f'Random shifts: {self.separator_args}'
+                f'{self.bitrate} kbps', f'Random shifts: {self.separator_args["random_shifts"]}'
+            ]
+        else:
+            info_arr = [
+                f'{self.bitrate} kbps',
+                f'Iterations: {self.separator_args["random_shifts"]}',
+                f'Softmask: {self.separator_args["softmask"]}',
             ]
 
+            if self.separator_args["softmask"]:
+                info_arr.append(f'Alpha: {self.separator_args["alpha"]}')
+
+            return info_arr
     class Meta:
         unique_together = [[
             'source_track', 'separator', 'separator_args', 'bitrate', 'vocals', 'drums',
             'bass', 'other'
         ]]
 
+# pylint: disable=unsubscriptable-object
 class DynamicMix(models.Model):
     """Model representing a track that has been split into individually components."""
     # UUID to uniquely identify track
@@ -327,7 +335,7 @@ class DynamicMix(models.Model):
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
     # Separator-specific args
-    separator_args = PickledObjectField(default=dict, blank=True)
+    separator_args = PickledObjectField(default=dict)
     # Bitrate
     bitrate = models.IntegerField(choices=Bitrate.choices,
                                   default=Bitrate.MP3_256)
@@ -382,8 +390,7 @@ class DynamicMix(models.Model):
         if self.separator == SPLEETER:
             return f'[{self.separator}]'
         elif self.separator in DEMUCS_FAMILY:
-            # pylint: disable=unsubscriptable-object
-            random_shifts = self.separator_args['demucs_random_shifts']
+            random_shifts = self.separator_args['random_shifts']
             return f'[{self.separator}, {random_shifts}]'
         else:
             return f'[{self.separator}]'
@@ -425,11 +432,20 @@ class DynamicMix(models.Model):
         if self.separator == SPLEETER:
             return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
         elif self.separator in DEMUCS_FAMILY:
-            # pylint: disable=unsubscriptable-object
-            random_shifts = self.separator_args['demucs_random_shifts']
+            random_shifts = self.separator_args['random_shifts']
             return [f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']
         else:
-            return []
+            info_arr = [
+                f'{self.bitrate} kbps',
+
+                f'Iterations: {self.separator_args["random_shifts"]}',
+                f'Softmask: {self.separator_args["softmask"]}',
+            ]
+
+            if self.separator_args["softmask"]:
+                info_arr.append(f'Alpha: {self.separator_args["alpha"]}')
+
+            return info_arr
 
     class Meta:
         unique_together = [[
