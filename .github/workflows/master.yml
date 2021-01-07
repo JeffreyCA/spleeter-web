@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Docker Compose push (release)
+name: Docker Compose push (master)
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  release:
-    types: [ created ]
+  push:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -30,26 +30,20 @@ jobs:
         # Container registry server url
         login-server: https://index.docker.io/v1/
 
-    - name: Build images (release)
+    - name: Build images (latest)
       run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build
-      env:
-        TAG: ${{ github.event.release.tag_name }}
 
-    - name: Push images to Docker Hub (release)
+    - name: Push images to Docker Hub (latest)
       run: docker-compose -f docker-compose.yml -f docker-compose.build.yml push
       env:
         DOCKER_CLIENT_TIMEOUT: 180
         COMPOSE_HTTP_TIMEOUT: 180
-        TAG: ${{ github.event.release.tag_name }}
 
-    - name: Build GPU-enabled images (release)
+    - name: Build GPU-enabled images (latest)
       run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build
-      env:
-        TAG: ${{ github.event.release.tag_name }}
 
-    - name: Push GPU-enabled images to Docker Hub (release)
+    - name: Push GPU-enabled images to Docker Hub (latest)
       run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml push
       env:
         DOCKER_CLIENT_TIMEOUT: 180
         COMPOSE_HTTP_TIMEOUT: 180
-        TAG: ${{ github.event.release.tag_name }}

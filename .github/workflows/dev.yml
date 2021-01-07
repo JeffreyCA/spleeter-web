@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Docker Compose push (main)
+name: Docker Compose push (dev)
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ dev ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -32,9 +32,24 @@ jobs:
 
     - name: Build images (latest)
       run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+      env:
+        TAG: "dev"
 
     - name: Push images to Docker Hub (latest)
       run: docker-compose -f docker-compose.yml -f docker-compose.build.yml push
       env:
         DOCKER_CLIENT_TIMEOUT: 180
         COMPOSE_HTTP_TIMEOUT: 180
+        TAG: "dev"
+
+    - name: Build GPU-enabled images (latest)
+      run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build
+      env:
+        TAG: "dev"
+
+    - name: Push GPU-enabled images to Docker Hub (latest)
+      run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml push
+      env:
+        DOCKER_CLIENT_TIMEOUT: 180
+        COMPOSE_HTTP_TIMEOUT: 180
+        TAG: "dev"

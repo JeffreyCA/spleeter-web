@@ -452,8 +452,7 @@ class DynamicMix(models.Model):
         else:
             info_arr = [
                 f'{self.bitrate} kbps',
-
-                f'Iterations: {self.separator_args["random_shifts"]}',
+                f'Iterations: {self.separator_args["iterations"]}',
                 f'Softmask: {self.separator_args["softmask"]}',
             ]
 

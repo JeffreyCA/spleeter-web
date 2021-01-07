@@ -31,7 +31,7 @@ services:
       - api
     restart: always
   api:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-gpu
     volumes:
       - assets:/webapp/frontend/assets
       - sqlite-data:/webapp/sqlite
@@ -56,7 +56,7 @@ services:
       - frontend
     restart: always
   celery-fast:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-gpu
     entrypoint: ./celery-fast-entrypoint.sh
     volumes:
       - celery-data:/webapp/celery
@@ -68,7 +68,7 @@ services:
       - redis
     restart: always
   celery-slow:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-gpu
     entrypoint: ./celery-slow-entrypoint.sh
     volumes:
       - celery-data:/webapp/celery
