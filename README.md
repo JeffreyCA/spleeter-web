@@ -24,6 +24,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ## Features
 - Supports Spleeter, Demucs, Tasnet, and CrossNet-Open-Unmix (X-UMX) source separation models
+    - Each model supports a different set of user-configurable parameters in the UI
 - Dynamic Mixes lets you control the outputs of each component while playing back the track in real-time
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
     - Built-in YouTube search functionality (YouTube Data API key required)
