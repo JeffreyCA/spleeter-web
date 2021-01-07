@@ -281,12 +281,19 @@ class StaticMix(models.Model):
         if self.other:
             parts_lst.append('other')
         prefix = ''.join(prefix_lst)
-        parts = ', '.join(parts_lst)
+        parts = ','.join(parts_lst)
 
-        suffix = self.separator
+        suffix = f'{self.bitrate} kbps,{self.separator}'
         if self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
-            suffix += f', {random_shifts}'
+            suffix += f',{random_shifts} shifts'
+        elif self.separator == XUMX:
+            iterations = self.separator_args['iterations']
+            softmask = self.separator_args['softmask']
+            alpha = str(self.separator_args['alpha']).replace('.', '_')
+            suffix += f',{iterations} iter'
+            if softmask:
+                suffix += f',softmask {alpha}'
 
         return f'{prefix} ({parts}) [{suffix}]'
 
@@ -309,7 +316,7 @@ class StaticMix(models.Model):
         else:
             info_arr = [
                 f'{self.bitrate} kbps',
-                f'Iterations: {self.separator_args["random_shifts"]}',
+                f'Iterations: {self.separator_args["iterations"]}',
                 f'Softmask: {self.separator_args["softmask"]}',
             ]
 
@@ -388,12 +395,20 @@ class DynamicMix(models.Model):
         "[Demucs, 0]"
         """
         if self.separator == SPLEETER:
-            return f'[{self.separator}]'
+            return f'[{self.bitrate} kbps,{self.separator}]'
         elif self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
-            return f'[{self.separator}, {random_shifts}]'
+            return f'[{self.bitrate} kbps,{self.separator},{random_shifts} shifts]'
         else:
-            return f'[{self.separator}]'
+            iterations = self.separator_args['iterations']
+            softmask = self.separator_args['softmask']
+            alpha = str(self.separator_args['alpha']).replace('.', '_')
+
+            suffix = f'[{self.bitrate} kbps,{self.separator},{iterations} iter'
+            if softmask:
+                suffix += f',softmask {alpha}'
+            suffix += ']'
+            return suffix
 
     def vocals_url(self):
         """Get the URL of the vocals file."""

@@ -4,16 +4,17 @@ import { MusicPartMap } from '../../../models/MusicParts';
 import { SongData } from '../../../models/SongData';
 import SeparatorFormGroup from './SeparatorFormGroup';
 import SongInfoFormGroup from './SongInfoFormGroup';
-import './StaticMixModalForm.css';
+import './MixModalForm.css';
 
 interface Props {
   song: SongData;
   handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleModelChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleRandomShiftsChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleSoftmaskChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAlphaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleBitrateChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleModelChange: (newModel: string) => void;
+  handleRandomShiftsChange: (newRandomShifts: number) => void;
+  handleIterationsChange: (newIterations: number) => void;
+  handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
+  handleAlphaChange: (newAlpha: number) => void;
+  handleBitrateChange: (newBitrate: number) => void;
 }
 
 interface State {
@@ -37,8 +38,10 @@ class StaticMixModalForm extends React.Component<Props, State> {
   render(): JSX.Element {
     const {
       song,
+      handleModelChange,
       handleCheckboxChange,
       handleRandomShiftsChange,
+      handleIterationsChange,
       handleSoftmaskChange,
       handleAlphaChange,
       handleBitrateChange,
@@ -66,8 +69,9 @@ class StaticMixModalForm extends React.Component<Props, State> {
         <SongInfoFormGroup song={song} />
         <SeparatorFormGroup
           className="mt-3 mb-0"
-          handleModelSelectChange={this.props.handleModelChange}
+          handleModelChange={handleModelChange}
           handleRandomShiftsChange={handleRandomShiftsChange}
+          handleIterationsChange={handleIterationsChange}
           handleSoftmaskChange={handleSoftmaskChange}
           handleAlphaChange={handleAlphaChange}
           handleBitrateChange={handleBitrateChange}

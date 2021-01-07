@@ -3,15 +3,16 @@ import { Form } from 'react-bootstrap';
 import { SongData } from '../../../models/SongData';
 import SeparatorFormGroup from './SeparatorFormGroup';
 import SongInfoFormGroup from './SongInfoFormGroup';
-import './StaticMixModalForm.css';
+import './MixModalForm.css';
 
 interface Props {
   song: SongData;
-  handleModelChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleRandomShiftsChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleSoftmaskChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAlphaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleBitrateChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleModelChange: (newModel: string) => void;
+  handleRandomShiftsChange: (newRandomShifts: number) => void;
+  handleIterationsChange: (newIterations: number) => void;
+  handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
+  handleAlphaChange: (newAlpha: number) => void;
+  handleBitrateChange: (newBitrate: number) => void;
 }
 
 /**
@@ -23,6 +24,7 @@ class DynamicMixModalForm extends React.Component<Props> {
       song,
       handleModelChange,
       handleRandomShiftsChange,
+      handleIterationsChange,
       handleSoftmaskChange,
       handleAlphaChange,
       handleBitrateChange,
@@ -33,8 +35,9 @@ class DynamicMixModalForm extends React.Component<Props> {
         <SongInfoFormGroup song={song} />
         <SeparatorFormGroup
           className="mt-3"
-          handleModelSelectChange={handleModelChange}
+          handleModelChange={handleModelChange}
           handleRandomShiftsChange={handleRandomShiftsChange}
+          handleIterationsChange={handleIterationsChange}
           handleSoftmaskChange={handleSoftmaskChange}
           handleAlphaChange={handleAlphaChange}
           handleBitrateChange={handleBitrateChange}

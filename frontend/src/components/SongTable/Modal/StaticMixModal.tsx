@@ -1,13 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import {
-  DEFAULT_MIX_BITRATE,
-  DEFAULT_MODEL,
-  DEFAULT_SOFTMASK_ALPHA,
-  MAX_SOFTMASK_ALPHA,
-  MIN_SOFTMASK_ALPHA,
-} from '../../../Constants';
+import { DEFAULT_MIX_BITRATE, DEFAULT_MODEL, DEFAULT_SOFTMASK_ALPHA } from '../../../Constants';
 import { SongData } from '../../../models/SongData';
 import { StaticMix } from '../../../models/StaticMix';
 import StaticMixModalForm from '../Form/StaticMixModalForm';
@@ -27,9 +21,13 @@ interface State {
    */
   model: string;
   /**
-   * Random shifts/iterations parameter (Demucs/X-UMX).
+   * Random shifts parameter (Demucs).
    */
   randomShifts: number;
+  /**
+   * Expectation-maximization algorithm iterations (X-UMX).
+   */
+  emIterations: number;
   /**
    * Whether to use softmask (X-UMX)
    */
@@ -77,6 +75,7 @@ class StaticMixModal extends React.Component<Props, State> {
     this.state = {
       model: DEFAULT_MODEL,
       randomShifts: 0,
+      emIterations: 1,
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
       bitrate: DEFAULT_MIX_BITRATE,
@@ -96,6 +95,7 @@ class StaticMixModal extends React.Component<Props, State> {
     this.setState({
       model: DEFAULT_MODEL,
       randomShifts: 0,
+      emIterations: 1,
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
       bitrate: DEFAULT_MIX_BITRATE,
@@ -137,6 +137,7 @@ class StaticMixModal extends React.Component<Props, State> {
       separator: this.state.model,
       separator_args: {
         random_shifts: this.state.randomShifts,
+        iterations: this.state.emIterations,
         softmask: this.state.softmask,
         alpha: this.state.softmask_alpha,
       },
@@ -170,35 +171,35 @@ class StaticMixModal extends React.Component<Props, State> {
     this.setState({ [name]: checked, errors: [] } as any);
   };
 
-  handleModelChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
-    const { value } = event.target;
-    this.setState({ model: value });
-    console.log('Model change:', value);
+  handleModelChange = (newModel: string): void => {
+    this.setState({ model: newModel });
+    console.log('Model change:', newModel);
   };
 
-  handleRandomShiftsChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
-    const { value } = event.target;
-    this.setState({ randomShifts: parseInt(value) });
-    console.log('Rand shift change:', parseInt(value));
+  handleRandomShiftsChange = (newRandomShifts: number): void => {
+    this.setState({ randomShifts: newRandomShifts });
+    console.log('Rand shift change:', newRandomShifts);
   };
 
-  handleSoftmaskChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const { checked } = event.target;
+  handleIterationsChange = (newIterations: number): void => {
+    this.setState({ emIterations: newIterations });
+    console.log('EM iteration change:', newIterations);
+  };
+
+  handleSoftmaskChange = (newSoftmaskChecked: boolean): void => {
     // Hide softmask alpha errors if unchecked
-    this.setState({ softmask: checked });
-    console.log('Softmask change:', checked);
+    this.setState({ softmask: newSoftmaskChecked });
+    console.log('Softmask change:', newSoftmaskChecked);
   };
 
-  handleAlphaChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const { value } = event.target;
-    this.setState({ softmask_alpha: parseFloat(value) });
-    console.log('Softmask alpha change:', parseFloat(value));
+  handleAlphaChange = (newAlpha: number): void => {
+    this.setState({ softmask_alpha: newAlpha });
+    console.log('Softmask alpha change:', newAlpha);
   };
 
-  handleBitrateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
-    const { value } = event.target;
-    this.setState({ bitrate: parseInt(value) });
-    console.log('Bitrate change:', parseInt(value));
+  handleBitrateChange = (newBitrate: number): void => {
+    this.setState({ bitrate: newBitrate });
+    console.log('Bitrate change:', newBitrate);
   };
 
   render(): JSX.Element | null {
@@ -211,8 +212,7 @@ class StaticMixModal extends React.Component<Props, State> {
     // Display error if all or no parts are checked
     const allChecked = vocals && drums && bass && other;
     const noneChecked = !(vocals || drums || bass || other);
-    const invalidAlpha =
-      model === 'xumx' && softmask && (softmask_alpha < MIN_SOFTMASK_ALPHA || softmask_alpha > MAX_SOFTMASK_ALPHA);
+    const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0;
 
     return (
       <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
@@ -225,17 +225,14 @@ class StaticMixModal extends React.Component<Props, State> {
             handleCheckboxChange={this.handleCheckboxChange}
             handleModelChange={this.handleModelChange}
             handleRandomShiftsChange={this.handleRandomShiftsChange}
+            handleIterationsChange={this.handleIterationsChange}
             handleSoftmaskChange={this.handleSoftmaskChange}
             handleAlphaChange={this.handleAlphaChange}
             handleBitrateChange={this.handleBitrateChange}
           />
           {allChecked && <Alert variant="warning">You must leave at least one part unchecked.</Alert>}
           {noneChecked && <Alert variant="warning">You must check at least one part.</Alert>}
-          {invalidAlpha && (
-            <Alert variant="danger">
-              Softmask alpha must be between {MIN_SOFTMASK_ALPHA} and {MAX_SOFTMASK_ALPHA}.
-            </Alert>
-          )}
+          {invalidAlpha && <Alert variant="danger">Softmask alpha must be greater than 0.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger">
               {errors.map((val, idx) => (

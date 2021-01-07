@@ -28,7 +28,7 @@ def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separa
     elif separator == 'xumx':
         softmask = separator_args['softmask']
         alpha = separator_args['alpha']
-        iterations = separator_args['random_shifts'] + 1
+        iterations = separator_args['iterations']
         return XUMXSeparator(cpu_separation, bitrate, softmask, alpha, iterations)
     else:
         random_shifts = separator_args['random_shifts']

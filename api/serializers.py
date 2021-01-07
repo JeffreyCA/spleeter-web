@@ -94,9 +94,9 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
         if data['separator'] in DEMUCS_FAMILY or data['separator'] == XUMX:
             try:
                 random_shifts = args['random_shifts']
-                if random_shifts < 0 or random_shifts > 10:
+                if random_shifts < 0:
                     raise serializers.ValidationError(
-                        {'args': 'Random shifts must be between 0 and 10.'})
+                        {'args': 'Random shifts must be greater than 0.'})
             except KeyError:
                 raise serializers.ValidationError(
                     {'args': "Must include 'random_shifts' argument."})
@@ -105,9 +105,9 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
             try:
                 softmask = args['softmask']
                 alpha = args['alpha']
-                if alpha < 0.1 or alpha > 2:
+                if alpha < 0:
                     raise serializers.ValidationError(
-                        {'args': 'Softmask alpha must be between 0.1 and 2.0.'})
+                        {'args': 'Softmask alpha must be greater than 0.'})
             except KeyError:
                 raise serializers.ValidationError(
                     {'args': "Must include 'softmask' and 'alpha' arguments."})
@@ -150,9 +150,9 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         if data['separator'] in DEMUCS_FAMILY or data['separator'] == XUMX:
             try:
                 random_shifts = args['random_shifts']
-                if random_shifts < 0 or random_shifts > 10:
+                if random_shifts < 0:
                     raise serializers.ValidationError(
-                        {'args': 'Random shifts must be between 0 and 10.'})
+                        {'args': 'Random shifts must be greater than 0.'})
             except KeyError:
                 raise serializers.ValidationError(
                     {'args': "Must include 'random_shifts' argument."})
@@ -161,9 +161,9 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
             try:
                 softmask = args['softmask']
                 alpha = args['alpha']
-                if alpha < 0.1 or alpha > 2:
+                if alpha < 0:
                     raise serializers.ValidationError(
-                        {'args': 'Softmask alpha must be between 0.1 and 2.0.'})
+                        {'args': 'Softmask alpha must be greater than 0.'})
             except KeyError:
                 raise serializers.ValidationError(
                     {'args': "Must include 'softmask' and 'alpha' arguments."})
