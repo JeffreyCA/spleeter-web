@@ -78,17 +78,17 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 4. Download and run prebuilt Docker images:
     ```sh
-    # For regular CPU-based separation
+    # For regular CPU separation
     spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-    # For GPU-accelerated separation
+    # For GPU separation
     spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.dev.yml up
     ```
 
     Alternatively, you can build the Docker images from source:
     ```sh
-    # For regular CPU-based separation
+    # For regular CPU separation
     spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
-    # For GPU-accelerated separation
+    # For GPU separation
     spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml -f docker-compose.dev.yml up --build
     ```
 
