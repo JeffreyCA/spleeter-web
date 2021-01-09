@@ -258,6 +258,9 @@ class MixTable extends React.Component<Props> {
         isDummyField: true,
         text: 'Included parts',
         formatter: partsFormatter,
+        style: () => {
+          return { minWidth: '300px' };
+        },
       },
       {
         dataField: 'date_created',
@@ -274,7 +277,7 @@ class MixTable extends React.Component<Props> {
           onDeleteStaticMixClick: onDeleteStaticMixClick,
         },
         style: () => {
-          return { paddingRight: 28 };
+          return { maxWidth: '130px', paddingRight: 28 };
         },
       },
     ];
