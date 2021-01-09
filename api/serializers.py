@@ -125,8 +125,6 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
     separator_args = PickledObjectSerializerField()
     # The status of the source separation task
     status = ChoicesSerializerField()
-    # Whether to overwrite any existing static mix with the same source track and 'parts to keep'.
-    overwrite = serializers.BooleanField(read_only=True)
 
     def validate(self, data):
         """
@@ -175,7 +173,7 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title', 'vocals',
                   'drums', 'bass', 'other', 'status', 'url', 'error',
-                  'overwrite', 'date_created')
+                  'date_created')
 
 class LiteSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for representing a SourceTrack along with its associated mixes. Minimal information."""

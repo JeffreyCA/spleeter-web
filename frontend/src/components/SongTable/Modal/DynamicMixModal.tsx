@@ -112,7 +112,6 @@ class DynamicMixModal extends React.Component<Props, State> {
         alpha: this.state.softmask_alpha,
       },
       bitrate: this.state.bitrate,
-      overwrite: true,
     };
 
     // Make API request to create the mix

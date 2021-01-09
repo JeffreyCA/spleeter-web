@@ -57,10 +57,6 @@ interface State {
    */
   other: boolean;
   /**
-   * Whether to overwrite existing mix.
-   */
-  overwrite: boolean;
-  /**
    * Errors.
    */
   errors: string[];
@@ -83,7 +79,6 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false, // Include drums
       bass: false, // Include bass
       other: false, // Include accompaniment
-      overwrite: false, // Whether to overwrite existing static mix, if exists
       errors: [],
     };
   }
@@ -103,7 +98,6 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false,
       bass: false,
       other: false,
-      overwrite: false,
       errors: [],
     });
   };
@@ -146,7 +140,6 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: this.state.drums,
       bass: this.state.bass,
       other: this.state.other,
-      overwrite: this.state.overwrite,
     };
 
     // Make request to add Song

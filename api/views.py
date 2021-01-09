@@ -300,15 +300,6 @@ class DynamicMixCreateView(generics.ListCreateAPIView):
     serializer_class = FullDynamicMixSerializer
     queryset = DynamicMix.objects.all()
 
-    def delete_existing(self, data):
-        """
-        Delete any existing DynamicMix objects. Called when user separates a
-        track with 'overwrite' flag.
-        """
-        source = data['source_track']
-        DynamicMix.objects.filter(source_track=source).exclude(
-            status=TaskStatus.IN_PROGRESS).delete()
-
     def create(self, request, *args, **kwargs):
         """Handle DynamicMix creation."""
         serializer = self.get_serializer(data=request.data)
@@ -317,7 +308,6 @@ class DynamicMixCreateView(generics.ListCreateAPIView):
 
         if 'non_field_errors' in serializer.errors:
             # Check if there already exists a static mix with same requested parts
-            # If that is the case, and the user did not check 'overwrite' option, then return error
             errors = list(map(str, serializer.errors['non_field_errors']))
             if len(errors) == 1 and 'unique set' in errors[0]:
                 return JsonResponse(
@@ -371,24 +361,6 @@ class StaticMixCreateView(generics.ListCreateAPIView):
     serializer_class = FullStaticMixSerializer
     queryset = StaticMix.objects.all()
 
-    def delete_existing(self, data):
-        """
-        Delete any existing StaticMix objects with the same separation parameters as
-        the ones given in 'data'. Called when user separates a track with 'overwrite' flag.
-        """
-        source = data['source_track']
-        vocals = data['vocals']
-        drums = data['drums']
-        bass = data['bass']
-        other = data['other']
-
-        StaticMix.objects.filter(
-            source_track=source,
-            vocals=vocals,
-            drums=drums,
-            bass=bass,
-            other=other).exclude(status=TaskStatus.IN_PROGRESS).delete()
-
     def create(self, request, *args, **kwargs):
         """Handle StaticMix creation."""
         serializer = self.get_serializer(data=request.data)
@@ -397,14 +369,8 @@ class StaticMixCreateView(generics.ListCreateAPIView):
 
         if 'non_field_errors' in serializer.errors:
             # Check if there already exists a static mix with same requested parts
-            # If that is the case, and the user did not check 'overwrite' option, then return error
             errors = list(map(str, serializer.errors['non_field_errors']))
             if len(errors) == 1 and 'unique set' in errors[0]:
-                if request.data['overwrite']:
-                    self.delete_existing(request.data)
-                    serializer = self.get_serializer(data=request.data)
-                    if serializer.is_valid():
-                        return super().create(request, *args, **kwargs)
                 return JsonResponse(
                     {
                         'status':

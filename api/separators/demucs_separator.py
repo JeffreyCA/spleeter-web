@@ -1,8 +1,12 @@
+import gc
 from pathlib import Path
 
+import torch
 from billiard.exceptions import SoftTimeLimitExceeded
 from billiard.pool import Pool
 from demucs.separate import *
+from django.conf import settings
+
 """
 This module defines a wrapper interface over the Demucs API.
 """
@@ -27,7 +31,7 @@ class DemucsSeparator:
         self.model_dir = Path('pretrained_models')
         self.model_file_path = self.model_dir / self.model_file
         self.shifts = shifts
-        self.split = cpu_separation
+        self.split = True
         self.verbose = True
         self.bitrate = bitrate
 
@@ -65,6 +69,10 @@ class DemucsSeparator:
                                   split=self.split,
                                   progress=True)
         raw_sources = raw_sources * ref.std() + ref.mean()
+        if not settings.CPU_SEPARATION:
+            del model
+            torch.cuda.empty_cache()
+            gc.collect()
         return raw_sources
 
     def create_static_mix(self, parts, input_path: str, output_path: Path):

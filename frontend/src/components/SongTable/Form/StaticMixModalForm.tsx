@@ -80,15 +80,6 @@ class StaticMixModalForm extends React.Component<Props, State> {
           <Form.Label>Parts to keep:</Form.Label>
           <div className="ml-3">{checkboxes}</div>
         </Form.Group>
-        <Form.Group controlId="overwrite-checkbox">
-          <Form.Check
-            type="checkbox"
-            inline
-            name="overwrite"
-            label="Overwrite existing mix?"
-            onChange={handleCheckboxChange}
-          />
-        </Form.Group>
       </Form>
     );
   }
