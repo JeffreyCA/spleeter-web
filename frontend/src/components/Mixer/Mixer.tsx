@@ -59,7 +59,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       .then(({ data }) => {
         if (data) {
           this.setState({ isLoaded: true, data: data });
-          document.title = `${data.artist} - ${data.title} · Spleeter Web`;
+          document.title = `${data.title} - ${data.artist} · Spleeter Web`;
         }
         if (data.error) {
           this.setState({
@@ -209,7 +209,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
           {data ? (
             <div>
               <h4 className="mt-3">
-                {data.artist} - {data.title}
+                {data.title} - {data.artist}
               </h4>
               <h5 className="mt-1">
                 <Badge variant="dark">{separatorLabelMap[data.separator]}</Badge>
