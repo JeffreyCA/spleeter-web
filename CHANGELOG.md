@@ -15,7 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Improved dynamic mix processing times by parallelizing the MP3 export process
+- Reduced memory consumption of Demucs/Tasnet models by using splitting
 - Update dependencies
+
+### Removed
+- Overwrite option for static mixes (you can always delete specific mixes)
 
 
 ## [v2.0.1] - 2020-12-30
