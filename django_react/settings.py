@@ -24,6 +24,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', '')
 AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', '')
 AZURE_CONTAINER = os.getenv('AZURE_CONTAINER', '')
+AZURE_CUSTOM_DOMAIN = os.getenv('AZURE_CUSTOM_DOMAIN')
 AZURE_OBJECT_PARAMETERS = {'content_disposition': 'attachment'}
 
 ################################
@@ -32,6 +33,7 @@ AZURE_OBJECT_PARAMETERS = {'content_disposition': 'attachment'}
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', '')
+AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
 
 # A path prefix that will be prepended to all uploads
 AWS_LOCATION = 'media'

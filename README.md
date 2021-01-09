@@ -210,9 +210,11 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 | `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
 | `AWS_STORAGE_BUCKET_NAME` | AWS S3 storage bucket name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`. |
+| `AWS_S3_CUSTOM_DOMAIN` | Custom domain, such as for a CDN. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.S3Boto3Storage`.|
 | `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`. |
 | `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`. |
 | `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`. |
+| `AZURE_CUSTOM_DOMAIN` | Custom domain, such as for a CDN. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`.|
 | `CELERY_BROKER_URL` | Broker URL for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process (used only if run using Docker). |
@@ -264,9 +266,11 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     AWS_ACCESS_KEY_ID=<access key id>                 # Optional
     AWS_SECRET_ACCESS_KEY=<secret key>                # Optional
     AWS_STORAGE_BUCKET_NAME=<bucket name>             # Optional
+    AWS_S3_CUSTOM_DOMAIN=<custom domain>              # Optional
     AZURE_ACCOUNT_KEY=<account key>                   # Optional
     AZURE_ACCOUNT_NAME=<account name>                 # Optional
     AZURE_CONTAINER=<container name>                  # Optional
+    AZURE_CUSTOM_DOMAIN=<custom domain>               # Optional
     CELERY_FAST_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 3)
     CELERY_SLOW_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 1)
     YOUTUBE_API_KEY=<youtube api key>                 # Optional
