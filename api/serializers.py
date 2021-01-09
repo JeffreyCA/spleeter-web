@@ -1,10 +1,17 @@
 from rest_framework import serializers
 from .models import *
 from .validators import is_valid_youtube
-
 """
 This module defines Django serializers.
 """
+
+class PickledObjectSerializerField(serializers.Field):
+    """Serializer field for PickledObjectField"""
+    def to_internal_value(self, data):
+        return data
+
+    def to_representation(self, obj):
+        return obj
 
 class ChoicesSerializerField(serializers.SerializerMethodField):
     """Read-only field with representation of a model field with choices."""
@@ -67,33 +74,62 @@ class LiteStaticMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StaticMix
-        fields = ('id', 'source_track', 'separator', 'extra_info', 'artist', 'title', 'vocals',
-                  'drums', 'bass', 'other', 'status', 'url', 'error',
-                  'date_created')
+        fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
+                  'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url',
+                  'error', 'date_created')
 
 class FullDynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model."""
+    separator_args = PickledObjectSerializerField()
     # The status of the source separation task
     status = ChoicesSerializerField()
+
+    def validate(self, data):
+        """
+        Validate request data to ensure all separator args are included.
+
+        :param data: Request data
+        """
+        args = data['separator_args']
+        if data['separator'] in DEMUCS_FAMILY or data['separator'] == XUMX:
+            try:
+                random_shifts = args['random_shifts']
+                if random_shifts < 0:
+                    raise serializers.ValidationError(
+                        {'args': 'Random shifts must be greater than 0.'})
+            except KeyError:
+                raise serializers.ValidationError(
+                    {'args': "Must include 'random_shifts' argument."})
+
+        if data['separator'] == XUMX:
+            try:
+                softmask = args['softmask']
+                alpha = args['alpha']
+                if alpha < 0:
+                    raise serializers.ValidationError(
+                        {'args': 'Softmask alpha must be greater than 0.'})
+            except KeyError:
+                raise serializers.ValidationError(
+                    {'args': "Must include 'softmask' and 'alpha' arguments."})
+        return data
 
     class Meta:
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
-                  'random_shifts', 'artist', 'title', 'vocals_file',
-                  'other_file', 'bass_file', 'drums_file', 'status', 'error',
-                  'date_created')
+                  'separator_args', 'bitrate', 'artist', 'title',
+                  'vocals_file', 'other_file', 'bass_file', 'drums_file',
+                  'status', 'error', 'date_created')
 
 class FullStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model."""
+    separator_args = PickledObjectSerializerField()
     # The status of the source separation task
     status = ChoicesSerializerField()
-    # Whether to overwrite any existing static mix with the same source track and 'parts to keep'.
-    overwrite = serializers.BooleanField(read_only=True)
 
     def validate(self, data):
         """
         Validate request data to ensure that the user does not separate a source track
-        with zero or all four parts checked.
+        with zero or all four parts checked. Also validate separator args.
 
         :param data: Request data
         """
@@ -107,13 +143,36 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         if none_checked:
             raise serializers.ValidationError(
                 {'checked': 'You must check at least one part.'})
+
+        args = data['separator_args']
+        if data['separator'] in DEMUCS_FAMILY or data['separator'] == XUMX:
+            try:
+                random_shifts = args['random_shifts']
+                if random_shifts < 0:
+                    raise serializers.ValidationError(
+                        {'args': 'Random shifts must be greater than 0.'})
+            except KeyError:
+                raise serializers.ValidationError(
+                    {'args': "Must include 'random_shifts' argument."})
+
+        if data['separator'] == XUMX:
+            try:
+                softmask = args['softmask']
+                alpha = args['alpha']
+                if alpha < 0:
+                    raise serializers.ValidationError(
+                        {'args': 'Softmask alpha must be greater than 0.'})
+            except KeyError:
+                raise serializers.ValidationError(
+                    {'args': "Must include 'softmask' and 'alpha' arguments."})
+
         return data
 
     class Meta:
         model = StaticMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
-                  'random_shifts', 'artist', 'title', 'vocals', 'drums',
-                  'bass', 'other', 'status', 'url', 'error', 'overwrite',
+                  'separator_args', 'bitrate', 'artist', 'title', 'vocals',
+                  'drums', 'bass', 'other', 'status', 'url', 'error',
                   'date_created')
 
 class LiteSourceTrackSerializer(serializers.ModelSerializer):

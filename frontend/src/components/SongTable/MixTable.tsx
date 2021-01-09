@@ -199,10 +199,10 @@ class MixTable extends React.Component<Props> {
         text: '',
         formatter: statusColFormatter,
         headerStyle: () => {
-          return { width: '40px' };
+          return { width: '40px', paddingLeft: '28px' };
         },
         style: () => {
-          return { width: '40px' };
+          return { width: '40px', paddingLeft: '28px' };
         },
       },
       {

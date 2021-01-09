@@ -8,6 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', 'default')
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
 
+CPU_SEPARATION = bool(int(os.getenv('CPU_SEPARATION', '1')))
 
 ALLOWED_HOSTS = [os.getenv('APP_HOST'), '0.0.0.0', '127.0.0.1', 'localhost']
 

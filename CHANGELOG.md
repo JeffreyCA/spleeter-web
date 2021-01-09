@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.0.0] - 2021-01-08
+### Added
+- GPU-enabled Docker images (CUDA 10, CUDNN 7) which can accelerate separation process
+    - Use `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` instead of `docker-compose.yml` and `docker-compose.build.yml` for GPU images
+    - See [updated instructions](https://github.com/JeffreyCA/spleeter-web#instructions) for more info
+    - Tested on NC6 Promo Azure VM
+- Support for Sony AI's [CrossNet-Open-Unmix (X-UMX)](https://github.com/sony/ai-research-code/tree/master/x-umx#crossnet-open-unmix-x-umx) source separation model (NNabla implementation). At the moment it only works with GPU, not CPU. [#52](https://github.com/JeffreyCA/spleeter-web/issues/52) tracks this issue.
+    - User configurable parameters: number of iterations, softmask, softmask alpha
+- Custom bitrates (MP3 CBR) for static and dynamic mixes at: 192 kbps, 256 kbps, and 320 kbps 
+
+### Changed
+- Improved dynamic mix processing times by parallelizing the MP3 export process
+- Reduced memory consumption of Demucs/Tasnet models by using splitting
+- Update dependencies
+
+### Removed
+- Overwrite option for static mixes (you can always delete specific mixes)
+
+
 ## [v2.0.1] - 2020-12-30
 ### Changed
 - Indent mix table to make it easier to see
@@ -87,8 +106,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.1...HEAD
-[v2.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.0...v2.0.1
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.0.0...HEAD
+[v3.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.1...v3.0.0
+[v2.0.1]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.2.0...v2.0.0
 [v1.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v1.0.0...v1.1.0

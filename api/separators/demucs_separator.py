@@ -1,18 +1,31 @@
+import gc
 from pathlib import Path
 
+import torch
+from billiard.exceptions import SoftTimeLimitExceeded
+from billiard.pool import Pool
 from demucs.separate import *
+from django.conf import settings
 
 """
 This module defines a wrapper interface over the Demucs API.
 """
 
-VALID_MODELS = ['demucs', 'demucs_extra', 'light', 'light_extra', 'tasnet', 'tasnet_extra']
+VALID_MODELS = [
+    'demucs', 'demucs_extra', 'light', 'light_extra', 'tasnet', 'tasnet_extra'
+]
 
 class DemucsSeparator:
     """Performs source separation using Demucs API."""
-    def __init__(self, model_name='light_extra', shifts=5):
-        assert(model_name in VALID_MODELS)
-        self.device = 'cpu'
+    def __init__(
+        self,
+        model_name='light_extra',
+        cpu_separation=True,
+        bitrate=256,
+        shifts=5
+    ):
+        assert (model_name in VALID_MODELS)
+        self.device = 'cpu' if cpu_separation else 'cuda'
         self.model_name = model_name
         self.model_file = f'{model_name}.th'
         self.model_dir = Path('pretrained_models')
@@ -20,7 +33,7 @@ class DemucsSeparator:
         self.shifts = shifts
         self.split = True
         self.verbose = True
-        self.bitrate = 256
+        self.bitrate = bitrate
 
     def download_and_verify(self):
         sha256 = PRETRAINED_MODELS.get(self.model_file)
@@ -34,8 +47,6 @@ class DemucsSeparator:
             print(
                 "Downloading pre-trained model weights, this could take a while..."
             )
-            print('URL:', url)
-            print('Model file path:', self.model_file_path)
             download_file(url, self.model_file_path)
 
         if sha256 is not None:
@@ -58,6 +69,10 @@ class DemucsSeparator:
                                   split=self.split,
                                   progress=True)
         raw_sources = raw_sources * ref.std() + ref.mean()
+        if not settings.CPU_SEPARATION:
+            del model
+            torch.cuda.empty_cache()
+            gc.collect()
         return raw_sources
 
     def create_static_mix(self, parts, input_path: str, output_path: Path):
@@ -100,14 +115,25 @@ class DemucsSeparator:
         self.download_and_verify()
         raw_sources = self.apply_model(input_path)
 
+        # Export all source MP3s in parallel
+        pool = Pool()
+        tasks = []
+
         for source, name in zip(raw_sources,
                                 ['drums', 'bass', 'other', 'vocals']):
             source = (source * 2**15).clamp_(-2**15, 2**15 - 1).short()
             source = source.cpu().transpose(0, 1).numpy()
             filename = f'{name}.mp3'
 
-            encode_mp3(source,
-                       str(output_path / filename),
-                       self.bitrate,
-                       verbose=self.verbose)
-            print(f'Finished {name}')
+            print(f'Exporting {name} MP3...')
+            task = pool.apply_async(encode_mp3,
+                                    (source, str(output_path / filename),
+                                     self.bitrate, self.verbose))
+            tasks.append(task)
+
+        try:
+            pool.close()
+            pool.join()
+        except SoftTimeLimitExceeded as e:
+            pool.terminate()
+            raise e

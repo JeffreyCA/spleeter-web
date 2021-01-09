@@ -3,6 +3,8 @@ import os.path
 import pathlib
 import shutil
 
+from typing import Dict
+from billiard.context import Process
 from billiard.exceptions import SoftTimeLimitExceeded
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -12,19 +14,25 @@ from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
+from .separators.x_umx_separator import XUMXSeparator
 from .util import get_valid_filename
 from .youtubedl import download_audio, get_file_ext
-
 """
 This module defines various Celery tasks used for Spleeter Web.
 """
 
-def get_separator(separator: str, random_shifts: int):
+def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separation: bool):
     """Returns separator object for corresponding source separation model."""
     if separator == 'spleeter':
-        return SpleeterSeparator()
+        return SpleeterSeparator(bitrate)
+    elif separator == 'xumx':
+        softmask = separator_args['softmask']
+        alpha = separator_args['alpha']
+        iterations = separator_args['iterations']
+        return XUMXSeparator(cpu_separation, bitrate, softmask, alpha, iterations)
     else:
-        return DemucsSeparator(separator, random_shifts)
+        random_shifts = separator_args['random_shifts']
+        return DemucsSeparator(separator, cpu_separation, bitrate, random_shifts)
 
 @app.task()
 def create_static_mix(static_mix_id):
@@ -54,7 +62,9 @@ def create_static_mix(static_mix_id):
                                     static_mix_id)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = get_separator(static_mix.separator, static_mix.random_shifts)
+        separator = get_separator(static_mix.separator,
+                                  static_mix.separator_args,
+                                  static_mix.bitrate, settings.CPU_SEPARATION)
 
         parts = {
             'vocals': static_mix.vocals,
@@ -67,7 +77,21 @@ def create_static_mix(static_mix_id):
         is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
         path = static_mix.source_path() if is_local else static_mix.source_url(
         )
-        separator.create_static_mix(parts, path, rel_path)
+
+        if not settings.CPU_SEPARATION:
+            # For GPU separation, do separation in separate process.
+            # Otherwise, GPU memory is not automatically freed afterwards
+            process_eval = Process(target=separator.create_static_mix,
+                                   args=(parts, path, rel_path))
+            process_eval.start()
+            try:
+                process_eval.join()
+            except SoftTimeLimitExceeded as e:
+                # Kill process if user aborts task
+                process_eval.terminate()
+                raise e
+        else:
+            separator.create_static_mix(parts, path, rel_path)
 
         # Check file exists
         if os.path.exists(rel_path):
@@ -128,23 +152,42 @@ def create_dynamic_mix(dynamic_mix_id):
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = get_separator(dynamic_mix.separator, dynamic_mix.random_shifts)
+        separator = get_separator(dynamic_mix.separator,
+                                  dynamic_mix.separator_args,
+                                  dynamic_mix.bitrate,
+                                  settings.CPU_SEPARATION)
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
-        path = dynamic_mix.source_path() if is_local else dynamic_mix.source_url()
+        path = dynamic_mix.source_path(
+        ) if is_local else dynamic_mix.source_url()
 
         # Do separation
-        separator.separate_into_parts(path, rel_path)
+        if not settings.CPU_SEPARATION:
+            # For GPU separation, do separation in separate process.
+            # Otherwise, GPU memory is not automatically freed afterwards
+            process_eval = Process(target=separator.separate_into_parts,
+                                   args=(path, rel_path))
+            process_eval.start()
+            try:
+                process_eval.join()
+            except SoftTimeLimitExceeded as e:
+                # Kill process if user aborts task
+                process_eval.terminate()
+                raise e
+        else:
+            separator.separate_into_parts(path, rel_path)
 
         # Check all parts exist
         if exists_all_parts(rel_path):
             rename_all_parts(rel_path, file_prefix, file_suffix)
             dynamic_mix.status = TaskStatus.DONE
             if is_local:
-                save_to_local_storage(dynamic_mix, rel_media_path, file_prefix, file_suffix)
+                save_to_local_storage(dynamic_mix, rel_media_path, file_prefix,
+                                      file_suffix)
             else:
-                save_to_ext_storage(dynamic_mix, rel_path, file_prefix, file_suffix)
+                save_to_ext_storage(dynamic_mix, rel_path, file_prefix,
+                                    file_suffix)
         else:
             raise Exception('Error writing to file')
     except FileNotFoundError as error:
@@ -189,7 +232,8 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR,
                                  str(source_file_id))
-        filename = get_valid_filename(artist + ' - ' + title) + get_file_ext(link)
+        filename = get_valid_filename(artist + ' - ' +
+                                      title) + get_file_ext(link)
         rel_media_path = os.path.join(settings.UPLOAD_DIR, str(source_file_id),
                                       filename)
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
@@ -247,11 +291,13 @@ def rename_all_parts(rel_path, file_prefix: str, file_suffix: str):
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         old_rel_path = os.path.join(rel_path, f'{part}.mp3')
-        new_rel_path = os.path.join(rel_path, f'{file_prefix} ({part}) {file_suffix}.mp3')
+        new_rel_path = os.path.join(
+            rel_path, f'{file_prefix} ({part}) {file_suffix}.mp3')
         print(f'Renaming {old_rel_path} to {new_rel_path}')
         os.rename(old_rel_path, new_rel_path)
 
-def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix: str, file_suffix: str):
+def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix: str,
+                          file_suffix: str):
     """Saves individual parts to the local file system
 
     :param dynamic_mix: DynamicMix model
@@ -273,7 +319,8 @@ def save_to_local_storage(dynamic_mix, rel_media_path, file_prefix: str, file_su
     dynamic_mix.drums_file.name = rel_media_path_drums
     dynamic_mix.save()
 
-def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix: str, file_suffix: str):
+def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix: str,
+                        file_suffix: str):
     """Saves individual parts to external file storage (S3, Azure, etc.)
 
     :param dynamic_mix: DynamicMix model

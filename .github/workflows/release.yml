@@ -41,3 +41,15 @@ jobs:
         DOCKER_CLIENT_TIMEOUT: 180
         COMPOSE_HTTP_TIMEOUT: 180
         TAG: ${{ github.event.release.tag_name }}
+
+    - name: Build GPU-enabled images (release)
+      run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build
+      env:
+        TAG: ${{ github.event.release.tag_name }}
+
+    - name: Push GPU-enabled images to Docker Hub (release)
+      run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml push
+      env:
+        DOCKER_CLIENT_TIMEOUT: 180
+        COMPOSE_HTTP_TIMEOUT: 180
+        TAG: ${{ github.event.release.tag_name }}

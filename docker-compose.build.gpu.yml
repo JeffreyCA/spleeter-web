@@ -1,0 +1,18 @@
+version: '3.4'
+services:
+  nginx:
+    build: ./nginx
+  api:
+    build:
+      context: .
+      dockerfile: gpu.Dockerfile
+  celery-fast:
+    build:
+      context: .
+      dockerfile: gpu.Dockerfile
+  celery-slow:
+    build:
+      context: .
+      dockerfile: gpu.Dockerfile
+  frontend:
+    build: ./frontend

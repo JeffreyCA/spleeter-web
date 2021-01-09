@@ -12,6 +12,8 @@ from mutagen.id3 import ID3NoHeaderError
 from .validators import *
 from .youtubedl import get_meta_info
 
+from picklefield.fields import PickledObjectField
+
 """
 This module defines Django models.
 """
@@ -43,18 +45,19 @@ DEMUCS_LIGHT = 'light'
 DEMUCS_LIGHT_EXTRA = 'light_extra'
 TASNET = 'tasnet'
 TASNET_EXTRA = 'tasnet_extra'
+XUMX = 'xumx'
 
-SEP_CHOICES = [
-    (SPLEETER, 'Spleeter'),
-    ('demucs', (
-        (DEMUCS, 'Demucs'),
-        (DEMUCS_EXTRA, 'Demucs (extra)'),
-        (DEMUCS_LIGHT, 'Demucs Light'),
-        (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
-        (TASNET, 'Tasnet'),
-        (TASNET_EXTRA, 'Tasnet (extra)'),
-    )),
-]
+DEMUCS_FAMILY = [DEMUCS, DEMUCS_EXTRA, DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA, TASNET, TASNET_EXTRA]
+
+SEP_CHOICES = [(SPLEETER, 'Spleeter'),
+               ('demucs', (
+                   (DEMUCS, 'Demucs'),
+                   (DEMUCS_EXTRA, 'Demucs (extra)'),
+                   (DEMUCS_LIGHT, 'Demucs Light'),
+                   (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
+                   (TASNET, 'Tasnet'),
+                   (TASNET_EXTRA, 'Tasnet (extra)'),
+               )), (XUMX, 'X-UMX')]
 
 class TaskStatus(models.IntegerChoices):
     """
@@ -64,6 +67,14 @@ class TaskStatus(models.IntegerChoices):
     IN_PROGRESS = 1, 'In Progress'
     DONE = 2, 'Done'
     ERROR = -1, 'Error'
+
+class Bitrate(models.IntegerChoices):
+    """
+    Enum for MP3 bitrates.
+    """
+    MP3_192 = 192
+    MP3_256 = 256
+    MP3_320 = 320
 
 class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
@@ -200,6 +211,7 @@ class SourceTrack(models.Model):
         """String representation."""
         return self.artist + ' - ' + self.title
 
+# pylint: disable=unsubscriptable-object
 class StaticMix(models.Model):
     """Model representing a statically mixed track (certain parts are excluded)."""
     # UUID to uniquely identify track
@@ -210,9 +222,11 @@ class StaticMix(models.Model):
     separator = models.CharField(max_length=20,
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
-    # Random shift value (for Demucs)
-    random_shifts = models.PositiveSmallIntegerField(
-        default=0, validators=[MaxValueValidator(10)])
+    # Separator-specific args
+    separator_args = PickledObjectField(default=dict)
+    # Bitrate
+    bitrate = models.IntegerField(choices=Bitrate.choices,
+                                  default=Bitrate.MP3_256)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -267,8 +281,22 @@ class StaticMix(models.Model):
         if self.other:
             parts_lst.append('other')
         prefix = ''.join(prefix_lst)
-        parts = ', '.join(parts_lst)
-        return f'{prefix} ({parts}) [{self.separator}, {self.random_shifts}]'
+        parts = ','.join(parts_lst)
+
+        suffix = f'{self.bitrate} kbps,{self.separator}'
+        if self.separator in DEMUCS_FAMILY:
+            random_shifts = self.separator_args['random_shifts']
+            suffix += f',{random_shifts} shifts'
+        elif self.separator == XUMX:
+            iterations = self.separator_args['iterations']
+            softmask = self.separator_args['softmask']
+            # Replace decimal point with underscore
+            alpha = str(self.separator_args['alpha']).replace('.', '_')
+            suffix += f',{iterations} iter'
+            if softmask:
+                suffix += f',softmask {alpha}'
+
+        return f'{prefix} ({parts}) [{suffix}]'
 
     def source_path(self):
         """Get the path to the source file."""
@@ -281,15 +309,29 @@ class StaticMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return ['256 kbps', '4 stems (16 kHz)']
+            return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+        elif self.separator in DEMUCS_FAMILY:
+            return [
+                f'{self.bitrate} kbps', f'Random shifts: {self.separator_args["random_shifts"]}'
+            ]
         else:
-            return ['256 kbps', f'Random shifts: {self.random_shifts}']
+            info_arr = [
+                f'{self.bitrate} kbps',
+                f'Iterations: {self.separator_args["iterations"]}',
+                f'Softmask: {self.separator_args["softmask"]}',
+            ]
 
+            if self.separator_args["softmask"]:
+                info_arr.append(f'Alpha: {self.separator_args["alpha"]}')
+
+            return info_arr
     class Meta:
         unique_together = [[
-            'source_track', 'separator', 'random_shifts', 'vocals', 'drums', 'bass', 'other'
+            'source_track', 'separator', 'separator_args', 'bitrate', 'vocals', 'drums',
+            'bass', 'other'
         ]]
 
+# pylint: disable=unsubscriptable-object
 class DynamicMix(models.Model):
     """Model representing a track that has been split into individually components."""
     # UUID to uniquely identify track
@@ -300,9 +342,11 @@ class DynamicMix(models.Model):
     separator = models.CharField(max_length=20,
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
-    # Random shift value (for Demucs)
-    random_shifts = models.PositiveSmallIntegerField(
-        default=0, validators=[MaxValueValidator(10)])
+    # Separator-specific args
+    separator_args = PickledObjectField(default=dict)
+    # Bitrate
+    bitrate = models.IntegerField(choices=Bitrate.choices,
+                                  default=Bitrate.MP3_256)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='dynamic',
@@ -351,7 +395,22 @@ class DynamicMix(models.Model):
         Produce a string describing the separator model and random shift value:
         "[Demucs, 0]"
         """
-        return f'[{self.separator}, {self.random_shifts}]'
+        if self.separator == SPLEETER:
+            return f'[{self.bitrate} kbps,{self.separator}]'
+        elif self.separator in DEMUCS_FAMILY:
+            random_shifts = self.separator_args['random_shifts']
+            return f'[{self.bitrate} kbps,{self.separator},{random_shifts} shifts]'
+        else:
+            iterations = self.separator_args['iterations']
+            softmask = self.separator_args['softmask']
+            # Replace decimal point with underscore
+            alpha = str(self.separator_args['alpha']).replace('.', '_')
+
+            suffix = f'[{self.bitrate} kbps,{self.separator},{iterations} iter'
+            if softmask:
+                suffix += f',softmask {alpha}'
+            suffix += ']'
+            return suffix
 
     def vocals_url(self):
         """Get the URL of the vocals file."""
@@ -388,9 +447,26 @@ class DynamicMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return ['256 kbps', '4 stems (16 kHz)']
+            return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+        elif self.separator in DEMUCS_FAMILY:
+            random_shifts = self.separator_args['random_shifts']
+            return [f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']
         else:
-            return ['256 kbps', f'Random shifts: {self.random_shifts}']
+            info_arr = [
+                f'{self.bitrate} kbps',
+                f'Iterations: {self.separator_args["iterations"]}',
+                f'Softmask: {self.separator_args["softmask"]}',
+            ]
+
+            if self.separator_args["softmask"]:
+                info_arr.append(f'Alpha: {self.separator_args["alpha"]}')
+
+            return info_arr
 
     class Meta:
-        unique_together = [['source_track', 'separator', 'random_shifts']]
+        unique_together = [[
+            'source_track',
+            'separator',
+            'separator_args',
+            'bitrate'
+        ]]

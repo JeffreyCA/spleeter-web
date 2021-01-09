@@ -3,7 +3,7 @@ x-celery-env: &celery-env
   - DJANGO_SETTINGS_MODULE=django_react.settings_docker
   - CELERY_BROKER_URL=redis://redis:6379/0
   - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  - CPU_SEPARATION=1
+  - CPU_SEPARATION=0
   - CELERY_FAST_QUEUE_CONCURRENCY=${CELERY_FAST_QUEUE_CONCURRENCY:-3}
   - CELERY_SLOW_QUEUE_CONCURRENCY=${CELERY_SLOW_QUEUE_CONCURRENCY:-1}
   - AWS_ACCESS_KEY_ID
@@ -12,6 +12,8 @@ x-celery-env: &celery-env
   - AZURE_ACCOUNT_KEY
   - AZURE_ACCOUNT_NAME
   - AZURE_CONTAINER
+  - NVIDIA_VISIBLE_DEVICES=all
+  - NVIDIA_DRIVER_CAPABILITIES=all
 services:
   redis:
     image: redis:6.0-buster
@@ -29,7 +31,7 @@ services:
       - api
     restart: always
   api:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-gpu
     volumes:
       - assets:/webapp/frontend/assets
       - sqlite-data:/webapp/sqlite
@@ -40,7 +42,7 @@ services:
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - CPU_SEPARATION=1
+      - CPU_SEPARATION=0
       - APP_HOST
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
@@ -54,23 +56,25 @@ services:
       - frontend
     restart: always
   celery-fast:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-gpu
     entrypoint: ./celery-fast-entrypoint.sh
     volumes:
       - celery-data:/webapp/celery
       - pretrained-models:/webapp/pretrained_models
       - sqlite-data:/webapp/sqlite
+    runtime: nvidia
     environment: *celery-env
     depends_on:
       - redis
     restart: always
   celery-slow:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-gpu
     entrypoint: ./celery-slow-entrypoint.sh
     volumes:
       - celery-data:/webapp/celery
       - pretrained-models:/webapp/pretrained_models
       - sqlite-data:/webapp/sqlite
+    runtime: nvidia
     environment: *celery-env
     depends_on:
       - redis
