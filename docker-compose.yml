@@ -9,9 +9,11 @@ x-celery-env: &celery-env
   - AWS_ACCESS_KEY_ID
   - AWS_SECRET_ACCESS_KEY
   - AWS_STORAGE_BUCKET_NAME
+  - AWS_S3_CUSTOM_DOMAIN
   - AZURE_ACCOUNT_KEY
   - AZURE_ACCOUNT_NAME
   - AZURE_CONTAINER
+  - AZURE_CUSTOM_DOMAIN
 services:
   redis:
     image: redis:6.0-buster
@@ -45,9 +47,11 @@ services:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - AWS_STORAGE_BUCKET_NAME
+      - AWS_S3_CUSTOM_DOMAIN
       - AZURE_ACCOUNT_KEY
       - AZURE_ACCOUNT_NAME
       - AZURE_CONTAINER
+      - AZURE_CUSTOM_DOMAIN
       - YOUTUBE_API_KEY
     depends_on:
       - redis
