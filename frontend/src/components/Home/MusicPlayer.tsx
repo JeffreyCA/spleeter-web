@@ -5,6 +5,7 @@ import ReactJkMusicPlayer, {
 } from '@jeffreyca/react-jinke-music-player';
 import * as React from 'react';
 import { Badge } from 'react-bootstrap';
+import { FADE_DURATION_MS } from '../../Constants';
 import { separatorLabelMap } from '../../models/Separator';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
@@ -91,7 +92,7 @@ class MusicPlayer extends React.Component<Props> {
         onAudioPlay={onAudioPlay}
         locale={{ playListsText: 'Now Playing' } as ReactJkMusicPlayerCustomLocale}
         spaceBar={true}
-        volumeFade={{ fadeIn: 200, fadeOut: 200 }}
+        volumeFade={{ fadeIn: FADE_DURATION_MS, fadeOut: FADE_DURATION_MS }}
       />
     );
   }
