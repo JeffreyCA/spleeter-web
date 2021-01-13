@@ -53,10 +53,6 @@ interface State {
    */
   songList: SongData[];
   /**
-   * Reference to audio player instance
-   */
-  audioInstance?: HTMLAudioElement;
-  /**
    * Current song, if it is a source song
    */
   currentSrcSong?: SongData;
@@ -96,6 +92,7 @@ interface State {
  */
 class Home extends React.Component<RouteComponentProps, State> {
   taskInterval?: number;
+  audioInstance: HTMLMediaElement | null;
 
   constructor(props: RouteComponentProps) {
     super(props);
@@ -107,7 +104,6 @@ class Home extends React.Component<RouteComponentProps, State> {
       showStaticMixModal: false,
       showUploadModal: false,
       songList: [],
-      audioInstance: undefined,
       currentSrcSong: undefined,
       currentStaticMix: undefined,
       currentModalSrcSong: undefined,
@@ -117,12 +113,12 @@ class Home extends React.Component<RouteComponentProps, State> {
       task: undefined,
       expandedIds: [],
     };
+    this.audioInstance = null;
   }
 
   getAudioInstance = (instance: HTMLAudioElement): void => {
-    this.setState({
-      audioInstance: instance,
-    });
+    instance.onvolumechange = null;
+    this.audioInstance = instance;
   };
 
   onAudioPause = (): void => {
@@ -141,9 +137,8 @@ class Home extends React.Component<RouteComponentProps, State> {
     this.setState({
       isPlaying: false,
     });
-    if (this.state.audioInstance) {
-      this.state.audioInstance.pause();
-    }
+
+    (window as any).reactmusicplayer.onTogglePlay();
   };
 
   onSrcSongPlayClick = (song: SongData): void => {
@@ -151,9 +146,7 @@ class Home extends React.Component<RouteComponentProps, State> {
       this.setState({
         isPlaying: true,
       });
-      if (this.state.audioInstance) {
-        this.state.audioInstance.play();
-      }
+      (window as any).reactmusicplayer.onTogglePlay();
     } else {
       this.setState({
         currentSrcSong: song,
@@ -167,9 +160,7 @@ class Home extends React.Component<RouteComponentProps, State> {
     this.setState({
       isPlaying: false,
     });
-    if (this.state.audioInstance) {
-      this.state.audioInstance.pause();
-    }
+    (window as any).reactmusicplayer.onTogglePlay();
   };
 
   onStaticMixPlayClick = (staticMix: StaticMix): void => {
@@ -177,9 +168,7 @@ class Home extends React.Component<RouteComponentProps, State> {
       this.setState({
         isPlaying: true,
       });
-      if (this.state.audioInstance) {
-        this.state.audioInstance.play();
-      }
+      (window as any).reactmusicplayer.onTogglePlay();
     } else {
       this.setState({
         currentSrcSong: undefined,

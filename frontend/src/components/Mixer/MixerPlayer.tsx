@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Tone from 'tone';
+import { FADE_DURATION_S } from '../../Constants';
 import { DynamicMix } from '../../models/DynamicMix';
 import { PartId } from '../../models/PartId';
 import PlayerUI from './PlayerUI';
@@ -69,8 +70,8 @@ class MixerPlayer extends React.Component<Props, State> {
       () => {
         players.toDestination();
         this.tonePlayers = players;
-        this.tonePlayers.fadeIn = 0.2;
-        this.tonePlayers.fadeOut = 0.2;
+        this.tonePlayers.fadeIn = FADE_DURATION_S;
+        this.tonePlayers.fadeOut = FADE_DURATION_S;
         // Tracks are now ready to be played
         if (this.isMounted) {
           this.setState({

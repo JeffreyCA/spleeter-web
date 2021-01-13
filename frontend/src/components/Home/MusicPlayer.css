@@ -1839,6 +1839,15 @@
   }
 }
 
+.badge-flex {
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+.badge-flex>* {
+  margin-right: 3px;
+}
+
 .progress-bar {
   display: initial !important;
   flex-direction: initial !important;
