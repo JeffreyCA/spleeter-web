@@ -24,7 +24,7 @@ import StatusIcon from './StatusIcon';
 const statusColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex, formatExtraData) => {
   return (
     <div className="d-flex align-items-center justify-content-start">
-      <StatusIcon status={row.fetch_task_status} overlayText={row.fetch_task_error} />
+      <StatusIcon status={row.fetch_task_status} overlayText={row.fetch_task_error ?? undefined} />
     </div>
   );
 };
