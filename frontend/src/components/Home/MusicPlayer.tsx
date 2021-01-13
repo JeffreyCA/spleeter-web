@@ -34,7 +34,7 @@ class MusicPlayer extends React.Component<Props> {
     let audioTitleExtra;
     let audioList: ReactJkMusicPlayerAudioListProps[] = [];
     if (songData) {
-      audioTitleExtra = <OriginalBadge />;
+      audioTitleExtra = <OriginalBadge title="Original" />;
       audioList = [
         {
           name: songData.title,
@@ -47,10 +47,10 @@ class MusicPlayer extends React.Component<Props> {
         // Remove everything in brackets to save space
         <Badge variant="dark">{separatorLabelMap[staticMix.separator].replace(/ *\([^)]*\) */g, '')}</Badge>
       );
-      const vocalBadge = staticMix.vocals ? <VocalsBadge /> : null;
-      const accompBadge = staticMix.other ? <AccompShortBadge /> : null;
-      const bassBadge = staticMix.bass ? <BassBadge /> : null;
-      const drumsBadge = staticMix.drums ? <DrumsBadge /> : null;
+      const vocalBadge = staticMix.vocals ? <VocalsBadge title="Vocals" /> : null;
+      const accompBadge = staticMix.other ? <AccompShortBadge title="Accompaniment" /> : null;
+      const bassBadge = staticMix.bass ? <BassBadge title="Bass" /> : null;
+      const drumsBadge = staticMix.drums ? <DrumsBadge title="Drums" /> : null;
       audioTitleExtra = (
         <div className="badge-flex ml-2 mr-2">
           {separatorBadge} {vocalBadge} {accompBadge} {bassBadge} {drumsBadge}
@@ -66,6 +66,8 @@ class MusicPlayer extends React.Component<Props> {
     }
 
     return (
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
       <ReactJkMusicPlayer
         audioLists={audioList}
         getAudioInstance={getAudioInstance}
@@ -88,6 +90,8 @@ class MusicPlayer extends React.Component<Props> {
         onAudioPause={onAudioPause}
         onAudioPlay={onAudioPlay}
         locale={{ playListsText: 'Now Playing' } as ReactJkMusicPlayerCustomLocale}
+        spaceBar={true}
+        volumeFade={{ fadeIn: 200, fadeOut: 200 }}
       />
     );
   }
