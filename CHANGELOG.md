@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.1.1] - 2021-01-14
+### Changed
+- Update `react-music-player` with bug fixes
+
+
 ## [v3.1.0] - 2021-01-13
 ### Added
 - Environment variables to support custom domains such as for CDNs
@@ -116,7 +121,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.1...HEAD
+[v3.1.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.0.0...v3.1.0
 [v3.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.1...v3.0.0
 [v2.0.1]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.0...v2.0.1
