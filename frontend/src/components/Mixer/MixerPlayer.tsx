@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Tone from 'tone';
 import { FADE_DURATION_S } from '../../Constants';
 import { DynamicMix } from '../../models/DynamicMix';
-import { PartId } from '../../models/PartId';
+import { PartId, PartIds } from '../../models/PartId';
 import PlayerUI from './PlayerUI';
 import VolumeUI from './VolumeUI';
 
@@ -11,6 +11,20 @@ interface VolumeLevels {
   accomp: number;
   drums: number;
   bass: number;
+}
+
+interface MuteStatus {
+  vocals: boolean;
+  accomp: boolean;
+  drums: boolean;
+  bass: boolean;
+}
+
+interface SoloStatus {
+  vocals: boolean;
+  accomp: boolean;
+  drums: boolean;
+  bass: boolean;
 }
 
 interface Props {
@@ -24,6 +38,8 @@ interface State {
   durationSeconds: number;
   secondsElapsed: number;
   volume: VolumeLevels;
+  muteStatus: MuteStatus;
+  soloStatus: SoloStatus;
 }
 
 /**
@@ -52,6 +68,18 @@ class MixerPlayer extends React.Component<Props, State> {
         accomp: 0,
         drums: 0,
         bass: 0,
+      },
+      muteStatus: {
+        vocals: false,
+        accomp: false,
+        drums: false,
+        bass: false,
+      },
+      soloStatus: {
+        vocals: false,
+        accomp: false,
+        drums: false,
+        bass: false,
       },
     };
   }
@@ -151,6 +179,10 @@ class MixerPlayer extends React.Component<Props, State> {
     }
   };
 
+  isNoneSoloed = (soloStatus: SoloStatus = this.state.soloStatus): boolean => {
+    return !soloStatus.vocals && !soloStatus.accomp && !soloStatus.bass && !soloStatus.drums;
+  };
+
   /**
    * Called to update playback progress.
    */
@@ -188,16 +220,62 @@ class MixerPlayer extends React.Component<Props, State> {
       return;
     }
 
-    const player = this.tonePlayers.player(id);
+    const newMuteStatus = this.state.muteStatus;
+    newMuteStatus[id] = !newMuteStatus[id];
+    this.setState({
+      muteStatus: newMuteStatus,
+    });
 
-    if (player.volume.value === -Infinity) {
-      // Restore volume level to previous value
-      player.volume.value = this.state.volume[id];
-    } else {
-      // Mute the player volume
-      player.volume.value = -Infinity;
+    const noneSoloed = this.isNoneSoloed(this.state.soloStatus);
+    if (noneSoloed || this.state.soloStatus[id]) {
+      const player = this.tonePlayers.player(id);
+      if (newMuteStatus[id]) {
+        // Mute the player volume
+        player.volume.value = -Infinity;
+      } else {
+        // Restore volume level to previous value
+        player.volume.value = this.state.volume[id];
+      }
     }
-    this.forceUpdate();
+  };
+
+  /**
+   * Handle solo button click.
+   * @param id Track ID
+   */
+  onSoloClick = (id: PartId, overwrite: boolean): void => {
+    if (!this.tonePlayers) {
+      return;
+    }
+
+    const prevSoloed = this.state.soloStatus[id];
+
+    // Reset solo state if modifier key was not pressed and the track is changing from non-solo to solo state
+    const newSoloStatus: SoloStatus =
+      !prevSoloed && overwrite
+        ? {
+            vocals: false,
+            accomp: false,
+            drums: false,
+            bass: false,
+          }
+        : this.state.soloStatus;
+
+    newSoloStatus[id] = !prevSoloed;
+    this.setState({ soloStatus: newSoloStatus });
+
+    const noneSoloed = this.isNoneSoloed(newSoloStatus);
+
+    for (const part of PartIds) {
+      const player = this.tonePlayers.player(part);
+      if (!this.state.muteStatus[part] && (noneSoloed || newSoloStatus[part])) {
+        // Make track audible if none of the tracks are soloed or the track itself is soloed
+        player.volume.value = this.state.volume[part];
+      } else {
+        // Otherwise mute
+        player.volume.value = -Infinity;
+      }
+    }
   };
 
   /**
@@ -212,24 +290,25 @@ class MixerPlayer extends React.Component<Props, State> {
 
     // Convert percentage to dB
     const db = 20 * Math.log10(pct / 100.0);
-    // Change player volume
-    this.tonePlayers.player(id).volume.value = db;
-
     // Save volume level in state so that if it's muted, the previous volume level is saved
     const currentVolumes = this.state.volume;
     currentVolumes[id] = db;
+
     this.setState({
       volume: currentVolumes,
     });
+
+    const soloStatus = this.state.soloStatus;
+    // Adjust player volume only if not muted and is active
+    if (!this.state.muteStatus[id] && (this.isNoneSoloed(soloStatus) || soloStatus[id])) {
+      // Change player volume
+      this.tonePlayers.player(id).volume.value = db;
+    }
   };
 
   render(): JSX.Element {
-    const { durationSeconds, secondsElapsed, isReady } = this.state;
-
-    const vocalsMuted = this.tonePlayers ? this.tonePlayers.player('vocals').volume.value === -Infinity : false;
-    const accompMuted = this.tonePlayers ? this.tonePlayers.player('accomp').volume.value === -Infinity : false;
-    const bassMuted = this.tonePlayers ? this.tonePlayers.player('bass').volume.value === -Infinity : false;
-    const drumsMuted = this.tonePlayers ? this.tonePlayers.player('drums').volume.value === -Infinity : false;
+    const { durationSeconds, secondsElapsed, isReady, muteStatus, soloStatus } = this.state;
+    const noneSoloed = this.isNoneSoloed(soloStatus);
 
     return (
       <div>
@@ -246,29 +325,41 @@ class MixerPlayer extends React.Component<Props, State> {
         <VolumeUI
           id="vocals"
           disabled={!isReady}
-          isMuted={vocalsMuted}
+          isActive={!muteStatus.vocals && (soloStatus.vocals || noneSoloed)}
+          isMuted={muteStatus.vocals}
+          isSoloed={soloStatus.vocals}
           onMuteClick={this.onMuteClick}
+          onSoloClick={this.onSoloClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="accomp"
           disabled={!isReady}
-          isMuted={accompMuted}
+          isActive={!muteStatus.accomp && (soloStatus.accomp || noneSoloed)}
+          isMuted={muteStatus.accomp}
+          isSoloed={soloStatus.accomp}
           onMuteClick={this.onMuteClick}
+          onSoloClick={this.onSoloClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="bass"
           disabled={!isReady}
-          isMuted={bassMuted}
+          isActive={!muteStatus.bass && (soloStatus.bass || noneSoloed)}
+          isSoloed={soloStatus.bass}
+          isMuted={muteStatus.bass}
           onMuteClick={this.onMuteClick}
+          onSoloClick={this.onSoloClick}
           onVolChange={this.onVolChange}
         />
         <VolumeUI
           id="drums"
           disabled={!isReady}
-          isMuted={drumsMuted}
+          isActive={!muteStatus.drums && (soloStatus.drums || noneSoloed)}
+          isSoloed={soloStatus.drums}
+          isMuted={muteStatus.drums}
           onMuteClick={this.onMuteClick}
+          onSoloClick={this.onSoloClick}
           onVolChange={this.onVolChange}
         />
       </div>

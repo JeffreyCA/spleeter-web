@@ -8,16 +8,22 @@ interface Props {
   onClick: () => void;
 }
 
+/**
+ * Mute button component.
+ */
 const MuteButton = (props: Props): JSX.Element => {
+  const { isMuted } = props;
+  const variant = isMuted ? 'white' : 'secondary';
+
   return (
     <Button
       onClick={props.onClick}
       disabled={props.disabled}
       className="p-1"
-      variant="secondary"
+      variant={variant}
       size="lg"
-      style={{ borderRadius: '50%' }}>
-      {props.isMuted ? <VolumeMuteFill size={28} /> : <VolumeUpFill size={28} />}
+      active={isMuted}>
+      {isMuted ? <VolumeMuteFill size={28} /> : <VolumeUpFill size={28} />}
     </Button>
   );
 };

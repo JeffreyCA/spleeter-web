@@ -61,8 +61,14 @@
   justify-content: flex-start;
 }
 
-.vol-slider.disabled,
-.vol-slider.disabled > .vol-track,
-.vol-slider.disabled > .vol-thumb {
+.vol-slider.disabled, .vol-slider.disabled>.vol-track, .vol-slider.disabled>.vol-thumb {
   cursor: not-allowed;
+}
+
+.track-inactive {
+  opacity: 0.5;
+}
+
+.btn-white {
+  border-color: #999999 !important;
 }

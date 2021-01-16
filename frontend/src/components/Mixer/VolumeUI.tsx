@@ -1,16 +1,21 @@
 import * as React from 'react';
+import { Button } from 'react-bootstrap';
 import { Col, Row } from 'react-bootstrap';
 import ReactSlider from 'react-slider';
 import { PartId } from '../../models/PartId';
 import { AccompShortBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
 import MuteButton from './MuteButton';
+import SoloButton from './SoloButton';
 import './VolumeUI.css';
 
 interface Props {
   id: PartId;
   disabled: boolean;
+  isActive: boolean;
   isMuted: boolean;
+  isSoloed: boolean;
   onMuteClick: (id: PartId) => void;
+  onSoloClick: (id: PartId, overwrite: boolean) => void;
   onVolChange: (id: PartId, newVal: number) => void;
 }
 
@@ -20,6 +25,10 @@ interface Props {
 const VolumeUI = (props: Props): JSX.Element => {
   const onMuteClick = () => {
     props.onMuteClick(props.id);
+  };
+
+  const onSoloClick = (event: React.MouseEvent<HTMLElement>) => {
+    props.onSoloClick(props.id, !event.ctrlKey && !event.metaKey);
   };
 
   const onVolChange = (value: number | number[] | undefined | null): void => {
@@ -39,10 +48,12 @@ const VolumeUI = (props: Props): JSX.Element => {
     badge = <DrumsBadge className="vol-badge" />;
   }
 
+  const rowClass = props.isActive ? '' : 'track-inactive';
   return (
-    <Row noGutters className="volume-ui">
+    <Row noGutters className={`volume-ui ${rowClass}`}>
       <div className="badge-group">{badge}</div>
       <MuteButton disabled={props.disabled} isMuted={props.isMuted} onClick={onMuteClick} />
+      <SoloButton className="ml-2" disabled={props.disabled} isSoloed={props.isSoloed} onClick={onSoloClick} />
       <Col xs={4}>
         <ReactSlider
           className="vol-slider"
