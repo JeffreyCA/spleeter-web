@@ -178,10 +178,10 @@ class MixerPlayer extends React.Component<Props, State> {
       // Resume/start playback
       Tone.Transport.start();
 
-      // Set regular refresh interval (twice a second)
+      // Set regular refresh interval
       this.interval = setInterval(() => {
         this.onUpdate();
-      }, 200);
+      }, 100);
     }
 
     this.setState({

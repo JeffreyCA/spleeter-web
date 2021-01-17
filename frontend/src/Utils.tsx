@@ -44,13 +44,15 @@ export const zeroPadNumber = (number: number): string => {
 };
 
 export const formatTime = (seconds: number): string => {
-  if (typeof seconds === 'number' && seconds > 0) {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds - m * 60);
-    return zeroPadNumber(m) + ':' + zeroPadNumber(s);
-  } else {
-    return '00:00';
+  if (typeof seconds === 'number') {
+    seconds = Math.floor(seconds);
+    if (seconds > 0) {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds - m * 60);
+      return zeroPadNumber(m) + ':' + zeroPadNumber(s);
+    }
   }
+  return '00:00';
 };
 
 /**
