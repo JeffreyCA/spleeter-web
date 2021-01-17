@@ -221,7 +221,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
           {(isQueued || isProcessing) && !(isAborted || isDeleted) && <CancelButton onClick={this.onCancelTaskClick} />}
           {isDone && !isDeleted && <MixerPlayer data={data} />}
           {(isDone || isError) && !(isAborted || isDeleted) && (
-            <DeleteButton className="mt-5" onClick={this.onDeleteTaskClick} />
+            <DeleteButton className="mt-4" onClick={this.onDeleteTaskClick} />
           )}
         </Container>
         <CancelTaskModal show={showCancelTaskModal} hide={this.handleCancelTaskModalHide} submit={this.cancelTask} />

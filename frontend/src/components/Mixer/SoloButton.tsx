@@ -23,7 +23,8 @@ const SoloButton = (props: Props): JSX.Element => {
       variant={variant}
       size="lg"
       style={{ width: 38, height: 38 }}
-      active={props.isSoloed}>
+      active={props.isSoloed}
+      title="Solo track">
       S
     </Button>
   );

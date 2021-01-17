@@ -22,7 +22,8 @@ const MuteButton = (props: Props): JSX.Element => {
       className="p-1"
       variant={variant}
       size="lg"
-      active={isMuted}>
+      active={isMuted}
+      title="Mute track">
       {isMuted ? <VolumeMuteFill size={28} /> : <VolumeUpFill size={28} />}
     </Button>
   );

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
 import { Col, Row } from 'react-bootstrap';
 import ReactSlider from 'react-slider';
 import { PartId } from '../../models/PartId';
@@ -28,7 +27,7 @@ const VolumeUI = (props: Props): JSX.Element => {
   };
 
   const onSoloClick = (event: React.MouseEvent<HTMLElement>) => {
-    props.onSoloClick(props.id, !event.ctrlKey && !event.metaKey);
+    props.onSoloClick(props.id, !event.ctrlKey && !event.metaKey && !event.shiftKey);
   };
 
   const onVolChange = (value: number | number[] | undefined | null): void => {
