@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Pressing space bar on home page should play/pause current track without scrolling to bottom
-- Spleeter; Update to v2.1.2
+- Spleeter: Update to v2.1.2
 - Spleeter: use `STFTBackend.LIBROSA` for CPU separation and `STFTBackend.TENSORFLOW` for GPU separation
 
 
