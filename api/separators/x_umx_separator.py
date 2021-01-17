@@ -8,7 +8,7 @@ from billiard.exceptions import SoftTimeLimitExceeded
 from billiard.pool import Pool
 from demucs.separate import download_file
 from nnabla.ext_utils import get_extension_context
-from spleeter.audio.adapter import get_default_audio_adapter
+from spleeter.audio.adapter import AudioAdapter
 from xumx.test import separate
 
 MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h5'
@@ -39,7 +39,7 @@ class XUMXSeparator:
         self.bitrate = bitrate
         self.sample_rate = 44100
         self.residual_model = False
-        self.audio_adapter = get_default_audio_adapter()
+        self.audio_adapter = AudioAdapter.default()
 
     def download_and_verify(self):
         if not self.model_file_path.is_file():

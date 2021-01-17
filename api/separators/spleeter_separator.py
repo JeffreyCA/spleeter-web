@@ -1,9 +1,9 @@
-import ffmpeg
 import numpy as np
 from spleeter import *
-from spleeter.audio.adapter import get_default_audio_adapter
+from spleeter.audio.adapter import AudioAdapter
 from spleeter.separator import Separator
 from spleeter.utils import *
+from spleeter.audio import STFTBackend
 
 """
 This module defines a wrapper interface over the Spleeter API.
@@ -19,11 +19,10 @@ class SpleeterSeparator:
         self.audio_format = 'mp3'
         self.sample_rate = 44100
         self.spleeter_stem = 'config/4stems-16kHz.json'
-        # Use librosa backend as it is less memory intensive
         self.separator = Separator(self.spleeter_stem,
-                                   stft_backend='librosa',
+                                   stft_backend=STFTBackend.AUTO,
                                    multiprocess=False)
-        self.audio_adapter = get_default_audio_adapter()
+        self.audio_adapter = AudioAdapter.default()
 
     def create_static_mix(self, parts, input_path, output_path):
         """Creates a static mix by performing source separation and adding the
