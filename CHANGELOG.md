@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v3.2.0] - 2021-01-16
+## [v3.2.0] - 2021-01-17
 ### Added
 - Solo track functionality to dynamic mixer
 - Keyboard controls for dynamic mixer
@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Pressing space bar on home page should play/pause current track without scrolling to bottom
+- Spleeter; Update to v2.1.2
+- Spleeter: use `STFTBackend.LIBROSA` for CPU separation and `STFTBackend.TENSORFLOW` for GPU separation
 
 
 ## [v3.1.1] - 2021-01-14
