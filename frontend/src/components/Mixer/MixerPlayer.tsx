@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Alert } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { FADE_DURATION_S } from '../../Constants';
 import { DynamicMix } from '../../models/DynamicMix';
 import { PartId, PartIds } from '../../models/PartId';
+import './MixerPlayer.css';
 import PlayerUI from './PlayerUI';
 import VolumeUI from './VolumeUI';
 
@@ -84,6 +86,35 @@ class MixerPlayer extends React.Component<Props, State> {
     };
   }
 
+  onKeyPress = (event: KeyboardEvent): void => {
+    // Mute keyboard shortcuts
+    if (event.key.toLowerCase() === 'q') {
+      this.onMuteClick('vocals');
+    } else if (event.key.toLowerCase() === 'w') {
+      this.onMuteClick('accomp');
+    } else if (event.key.toLowerCase() === 'e') {
+      this.onMuteClick('bass');
+    } else if (event.key.toLowerCase() === 'r') {
+      this.onMuteClick('drums');
+    }
+
+    // Solo keyboard shortcuts
+    if (event.key === '1' || event.key === '!') {
+      this.onSoloClick('vocals', !event.ctrlKey && !event.metaKey && !event.shiftKey);
+    } else if (event.key === '2' || event.key === '@') {
+      this.onSoloClick('accomp', !event.ctrlKey && !event.metaKey && !event.shiftKey);
+    } else if (event.key === '3' || event.key === '#') {
+      this.onSoloClick('bass', !event.ctrlKey && !event.metaKey && !event.shiftKey);
+    } else if (event.key === '4' || event.key === '$') {
+      this.onSoloClick('drums', !event.ctrlKey && !event.metaKey && !event.shiftKey);
+    }
+
+    if (event.key === ' ' && this.state.isReady) {
+      this.play();
+      event.preventDefault();
+    }
+  };
+
   componentDidMount(): void {
     this.isMounted = true;
     const { data } = this.props;
@@ -108,6 +139,7 @@ class MixerPlayer extends React.Component<Props, State> {
         }
       }
     );
+    document.addEventListener('keydown', this.onKeyPress, false);
   }
 
   componentWillUnmount(): void {
@@ -118,6 +150,7 @@ class MixerPlayer extends React.Component<Props, State> {
       this.tonePlayers.dispose();
     }
     clearInterval(this.interval);
+    document.removeEventListener('keydown', this.onKeyPress, false);
   }
 
   /**
@@ -362,6 +395,22 @@ class MixerPlayer extends React.Component<Props, State> {
           onSoloClick={this.onSoloClick}
           onVolChange={this.onVolChange}
         />
+        <Alert className="mt-5" variant="info" style={{ fontSize: '0.9em' }}>
+          <p className="mb-0">
+            <b>Mute/unmute parts: </b>
+            <kbd>Q</kbd>
+            <kbd>W</kbd>
+            <kbd>E</kbd>
+            <kbd>R</kbd>
+            <br />
+            <b>Solo/unsolo parts: </b>
+            <kbd>1</kbd>
+            <kbd>2</kbd>
+            <kbd>3</kbd>
+            <kbd>4</kbd>
+            (Hold either<kbd>Ctrl/Cmd/Shift</kbd>to solo/unsolo multiple parts)
+          </p>
+        </Alert>
       </div>
     );
   }
