@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.2.0] - 2021-01-16
+### Added
+- Solo track functionality to dynamic mixer
+- Keyboard controls for dynamic mixer
+    - Play/pause: `spacebar`
+    - Mute/unmute: `Q/W/E/R`
+    - Solo/unsolo: `1/2/3/4` (hold either `Ctrl/Cmd/Shift` to solo/unsolo multiple parts)
+
+### Changed
+- Pressing space bar on home page should play/pause current track without scrolling to bottom
+
+
 ## [v3.1.1] - 2021-01-14
 ### Changed
 - Update `react-music-player` with bug fixes
@@ -121,7 +133,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.2.0...HEAD
+[v3.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.0.0...v3.1.0
 [v3.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v2.0.1...v3.0.0
