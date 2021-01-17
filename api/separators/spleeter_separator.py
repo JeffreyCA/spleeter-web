@@ -11,7 +11,7 @@ This module defines a wrapper interface over the Spleeter API.
 
 class SpleeterSeparator:
     """Performs source separation using Spleeter API."""
-    def __init__(self, bitrate=256):
+    def __init__(self, cpu_separation: bool, bitrate=256):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
@@ -20,7 +20,7 @@ class SpleeterSeparator:
         self.sample_rate = 44100
         self.spleeter_stem = 'config/4stems-16kHz.json'
         self.separator = Separator(self.spleeter_stem,
-                                   stft_backend=STFTBackend.AUTO,
+                                   stft_backend=STFTBackend.LIBROSA if cpu_separation else STFTBackend.TENSORFLOW,
                                    multiprocess=False)
         self.audio_adapter = AudioAdapter.default()
 

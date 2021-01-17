@@ -24,7 +24,7 @@ This module defines various Celery tasks used for Spleeter Web.
 def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separation: bool):
     """Returns separator object for corresponding source separation model."""
     if separator == 'spleeter':
-        return SpleeterSeparator(bitrate)
+        return SpleeterSeparator(cpu_separation, bitrate)
     elif separator == 'xumx':
         softmask = separator_args['softmask']
         alpha = separator_args['alpha']
