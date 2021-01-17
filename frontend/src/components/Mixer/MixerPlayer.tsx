@@ -88,24 +88,24 @@ class MixerPlayer extends React.Component<Props, State> {
 
   onKeyPress = (event: KeyboardEvent): void => {
     // Mute keyboard shortcuts
-    if (event.key.toLowerCase() === 'q') {
+    if (event.key === '1' || event.key === '!') {
       this.onMuteClick('vocals');
-    } else if (event.key.toLowerCase() === 'w') {
+    } else if (event.key === '2' || event.key === '@') {
       this.onMuteClick('accomp');
-    } else if (event.key.toLowerCase() === 'e') {
+    } else if (event.key === '3' || event.key === '#') {
       this.onMuteClick('bass');
-    } else if (event.key.toLowerCase() === 'r') {
+    } else if (event.key === '4' || event.key === '$') {
       this.onMuteClick('drums');
     }
 
     // Solo keyboard shortcuts
-    if (event.key === '1' || event.key === '!') {
+    if (event.key.toLowerCase() === 'q') {
       this.onSoloClick('vocals', !event.ctrlKey && !event.metaKey && !event.shiftKey);
-    } else if (event.key === '2' || event.key === '@') {
+    } else if (event.key.toLowerCase() === 'w') {
       this.onSoloClick('accomp', !event.ctrlKey && !event.metaKey && !event.shiftKey);
-    } else if (event.key === '3' || event.key === '#') {
+    } else if (event.key.toLowerCase() === 'e') {
       this.onSoloClick('bass', !event.ctrlKey && !event.metaKey && !event.shiftKey);
-    } else if (event.key === '4' || event.key === '$') {
+    } else if (event.key.toLowerCase() === 'r') {
       this.onSoloClick('drums', !event.ctrlKey && !event.metaKey && !event.shiftKey);
     }
 
@@ -398,17 +398,17 @@ class MixerPlayer extends React.Component<Props, State> {
         <Alert className="mt-5" variant="info" style={{ fontSize: '0.9em' }}>
           <p className="mb-0">
             <b>Mute/unmute parts: </b>
-            <kbd>Q</kbd>
-            <kbd>W</kbd>
-            <kbd>E</kbd>
-            <kbd>R</kbd>
-            <br />
-            <b>Solo/unsolo parts: </b>
             <kbd>1</kbd>
             <kbd>2</kbd>
             <kbd>3</kbd>
             <kbd>4</kbd>
-            (Hold either<kbd>Ctrl/Cmd/Shift</kbd>to solo/unsolo multiple parts)
+            <br />
+            <b>Solo/unsolo parts: </b>
+            <kbd>Q</kbd>
+            <kbd>W</kbd>
+            <kbd>E</kbd>
+            <kbd>R</kbd>
+            &nbsp;(Hold either<kbd>Ctrl/Cmd/Shift</kbd>to solo/unsolo multiple parts)
           </p>
         </Alert>
       </div>

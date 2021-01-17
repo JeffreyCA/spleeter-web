@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Solo track functionality to dynamic mixer
 - Keyboard controls for dynamic mixer
     - Play/pause: `spacebar`
-    - Mute/unmute: `Q/W/E/R`
-    - Solo/unsolo: `1/2/3/4` (hold either `Ctrl/Cmd/Shift` to solo/unsolo multiple parts)
+    - Mute/unmute: `1/2/3/4`
+    - Solo/unsolo: `Q/W/E/R` (hold either `Ctrl/Cmd/Shift` to solo/unsolo multiple parts)
 
 ### Changed
 - Pressing space bar on home page should play/pause current track without scrolling to bottom
