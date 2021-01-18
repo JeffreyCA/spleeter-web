@@ -93,6 +93,7 @@ pyaml==20.4.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
+pydub==0.24.1
 pylint==2.6.0
 pylint-django==2.3.0
 pylint-plugin-utils==0.6
@@ -140,7 +141,7 @@ wcwidth==0.2.5
 Werkzeug==1.0.1
 whitenoise==5.2.0
 wrapt==1.12.1
--e git+https://github.com/JeffreyCA/xumx.git@7eb8421aa4b1942a946cdf700881bf16b3392479#egg=xumx
+xumx-unofficial==0.1.0
 yapf==0.30.0
 yarl==1.6.0
 -e git+https://github.com/JeffreyCA/youtube-dl.git@7ef0c80d4f5c9c332696aa2037f992f059c33bbe#egg=youtube_dl
