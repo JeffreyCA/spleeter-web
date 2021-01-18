@@ -167,7 +167,7 @@ class SeparatorFormGroup extends React.Component<Props, State> {
                 <option value="spleeter">Spleeter</option>
               </optgroup>
               <optgroup label="Open-Unmix">
-                <option value="xumx">X-UMX (GPU-only)</option>
+                <option value="xumx">X-UMX</option>
               </optgroup>
               <optgroup label="Demucs">
                 <option value="demucs">Demucs</option>
