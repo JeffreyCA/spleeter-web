@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.3.1] - 2021-01-30
+
+### Changed
+- Fix bug where Spleeter static mixes would fail
+
+
 ## [v3.3.0] - 2021-01-18
 ### Added
 - Support X-UMX CPU separation
@@ -143,7 +149,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.1...HEAD
+[v3.3.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.0...v3.3.1
 [v3.3.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.2.0...v3.3.0
 [v3.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.0...v3.1.1
