@@ -35,7 +35,7 @@ class SpleeterSeparator:
         """
         waveform, _ = self.audio_adapter.load(input_path,
                                               sample_rate=self.sample_rate)
-        prediction = self.separator.separate(waveform)
+        prediction = self.separator.separate(waveform, '')
         out = np.zeros_like(prediction['vocals'])
         part_count = 0
 
