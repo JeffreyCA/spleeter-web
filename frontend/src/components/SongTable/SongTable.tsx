@@ -1,3 +1,4 @@
+import axios from 'axios';
 import * as React from 'react';
 import { CaretDownFill, CaretUpFill, Plus } from 'react-bootstrap-icons';
 import BootstrapTable, {
@@ -7,6 +8,7 @@ import BootstrapTable, {
   SortOrder,
 } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import cellEditFactory from 'react-bootstrap-table2-editor';
 import { DynamicMix } from '../../models/DynamicMix';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
@@ -114,6 +116,14 @@ class SongTable extends React.Component<Props> {
       onExpandAll,
     } = this.props;
 
+    const onSaveEditedCell = (oldValue: string, newValue: string, row: SongData, column: ColumnDescription) => {
+      if (oldValue !== newValue && newValue) {
+        const id = row.id;
+        const dataField = column.dataField;
+        axios.patch(`/api/source-track/${id}/`, { [dataField]: newValue });
+      }
+    };
+
     // Show static mix details inside expand row
     const expandRow: ExpandRowProps<SongData, string> = {
       renderer: (row: SongData) => {
@@ -144,10 +154,11 @@ class SongTable extends React.Component<Props> {
       },
     };
     // Song table columns
-    const columns: ColumnDescription[] = [
+    const columns: ColumnDescription<SongData>[] = [
       {
         dataField: 'status_dummy',
         isDummyField: true,
+        editable: false,
         text: '',
         formatter: statusColFormatter,
         headerStyle: () => {
@@ -159,6 +170,7 @@ class SongTable extends React.Component<Props> {
       },
       {
         dataField: 'url',
+        editable: false,
         text: '',
         formatter: playColFormatter,
         formatExtraData: {
@@ -173,21 +185,43 @@ class SongTable extends React.Component<Props> {
       },
       {
         dataField: 'id',
+        editable: false,
         text: 'ID',
         hidden: true,
       },
       {
         dataField: 'title',
+        editable: true,
         text: 'Title',
         sort: true,
+        validator: (newValue: string) => {
+          if (!newValue) {
+            return {
+              valid: false,
+              message: 'Cannot be empty.',
+            };
+          }
+          return true;
+        },
       },
       {
         dataField: 'artist',
+        editable: true,
         text: 'Artist',
         sort: true,
+        validator: (newValue: string) => {
+          if (!newValue) {
+            return {
+              valid: false,
+              message: 'Cannot be empty.',
+            };
+          }
+          return true;
+        },
       },
       {
         dataField: 'date_created',
+        editable: false,
         text: 'Uploaded',
         formatter: toRelativeDateSpan,
         sort: true,
@@ -195,6 +229,7 @@ class SongTable extends React.Component<Props> {
       {
         dataField: 'download_dummy',
         isDummyField: true,
+        editable: false,
         text: '',
         formatter: spleetColFormatter,
         formatExtraData: {
@@ -220,6 +255,12 @@ class SongTable extends React.Component<Props> {
         defaultSorted={sort}
         expandRow={expandRow}
         bordered={false}
+        cellEdit={cellEditFactory({
+          mode: 'click',
+          blurToSave: true,
+          autoSelectText: true,
+          afterSaveCell: onSaveEditedCell,
+        })}
       />
     );
   }
