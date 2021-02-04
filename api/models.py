@@ -6,6 +6,7 @@ import requests
 from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.db import models
+import mutagen
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 
@@ -144,17 +145,19 @@ class SourceFile(models.Model):
         else:
             try:
                 if settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage':
-                    audio = EasyID3(self.file.path)
+                    audio = EasyID3(self.file.path) if self.file.path.endswith('mp3') else mutagen.File(self.file.path)
                 else:
                     r = requests.get(self.file.url)
                     file = BytesIO(r.content)
-                    audio = EasyID3(file)
+                    audio = EasyID3(file) if self.file.url.endswith('mp3') else mutagen.File(file)
 
                 if 'artist' in audio:
                     artist = audio['artist'][0]
                 if 'title' in audio:
                     title = audio['title'][0]
             except ID3NoHeaderError:
+                pass
+            except:
                 pass
         return (artist, title)
 

@@ -22,7 +22,7 @@ def is_valid_size(value):
 
 def is_valid_audio_file(file):
     """
-    Validate file has a valid MP3/FLAC/WAV MIME type and file extension.
+    Validate audio file has a valid MIME type and file extension.
 
     :param file: Audio file
     """
@@ -34,7 +34,9 @@ def is_valid_audio_file(file):
         if 'Audio file' not in file_type:
             raise ValidationError('File type not allowed.')
     elif file_mime_type not in settings.VALID_MIME_TYPES:
-        raise ValidationError('File type not allowed.')
+        raise ValidationError(
+            f'MIME type {file_mime_type} not allowed.'
+        )
 
     ext = os.path.splitext(file.name)[1]
     if ext.lower() not in settings.VALID_FILE_EXT:
