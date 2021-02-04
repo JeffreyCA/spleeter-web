@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support additional audio formats
     - Full list: `.aac, .aif, .aifc, .aiff, .flac, .m4a, .mogg, .mp3, .oga, .ogg, .opus, .wav, .weba, .webm`
+- Ability to edit source track artist and title information
+    - In the song table, just click on the cell to edit its value. Then press `enter` or click elsewhere to save.
 
 ### Changed
 - Improve YouTube link parsing logic
@@ -14,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - You can override this by changing `UPLOAD_FILE_SIZE_LIMIT` in `settings.py/settings_docker.py` and `MAX_FILE_BYTES` in `Constants.tsx`
 - Increase max YouTube video length to 30 minutes
     - You can override this by changing `YOUTUBE_LENGTH_LIMIT` in `settings.py/settings_docker.py`
+- Update Node dependencies
 
 
 ## [v3.3.1] - 2021-01-30
