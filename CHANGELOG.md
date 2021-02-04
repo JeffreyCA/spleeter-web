@@ -3,8 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v3.3.1] - 2021-01-30
+## [v3.4.0] - 2021-02-03
+### Added
+- Support additional audio formats
+    - Full list: `.aac, .aif, .aifc, .aiff, .flac, .m4a, .mogg, .mp3, .oga, .ogg, .opus, .wav, .weba, .webm`
 
+### Changed
+- Improve YouTube link parsing logic
+- Increase max file size upload limit to 100 MB
+    - You can override this by changing `UPLOAD_FILE_SIZE_LIMIT` in `settings.py/settings_docker.py` and `MAX_FILE_BYTES` in `Constants.tsx`
+- Increase max YouTube video length to 30 minutes
+    - You can override this by changing `YOUTUBE_LENGTH_LIMIT` in `settings.py/settings_docker.py`
+
+
+## [v3.3.1] - 2021-01-30
 ### Changed
 - Fix bug where Spleeter static mixes would fail
 
@@ -149,7 +161,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.1...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.4.0...HEAD
+[v3.4.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.1...v3.4.0
 [v3.3.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.0...v3.3.1
 [v3.3.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.2.0...v3.3.0
 [v3.2.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.1.1...v3.2.0

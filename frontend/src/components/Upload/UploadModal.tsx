@@ -4,6 +4,7 @@ import axios from 'axios';
 import he from 'he';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
+import { ALLOWED_EXTENSIONS, MAX_FILE_BYTES } from '../../Constants';
 import { SongData } from '../../models/SongData';
 import { YouTubeLinkFetchStatus } from '../../models/YouTubeLinkFetchStatus';
 import { YouTubeSearchResponse } from '../../models/YouTubeSearchResponse';
@@ -14,10 +15,6 @@ import CustomPreview from './CustomPreview';
 import './UploadModal.css';
 import UploadModalForm from './UploadModalForm';
 import { YouTubeForm } from './YouTubeForm';
-
-// This value is the same on the server-side (settings.py)
-const MAX_FILE_BYTES = 30 * 1024 * 1024;
-const ALLOWED_EXT = '.mp3,.flac,.wav';
 
 const DEBOUNCE_MS = 400;
 
@@ -30,7 +27,7 @@ const ERROR_MAP = new Map([
 ]);
 
 function isValidYouTubeLink(link: string): boolean {
-  const re = /(?:youtube\.com\/\S*(?:(?:\/e(?:mbed))?\/|watch\?(?:\S*?&?v=))|youtu\.be\/)([a-zA-Z0-9_-]{6,11})/;
+  const re = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9_-]+)/;
   return re.test(link);
 }
 
@@ -416,7 +413,7 @@ class UploadModal extends React.Component<Props, State> {
                 maxFiles={1}
                 maxSizeBytes={MAX_FILE_BYTES}
                 multiple={false}
-                accept={ALLOWED_EXT}
+                accept={ALLOWED_EXTENSIONS.join(',')}
                 onChangeStatus={this.onFileUploadStatusChange}
                 getUploadParams={() => ({ url: '/api/source-file/file/' })}
                 InputComponent={CustomInput}
