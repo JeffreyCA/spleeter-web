@@ -167,7 +167,7 @@ class SourceFileView(viewsets.ModelViewSet):
                 },
                 status=400)
 
-class SourceTrackRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+class SourceTrackRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """View that handles SourceTrack deletion and retrieval."""
     queryset = SourceTrack.objects.all()
     serializer_class = LiteSourceTrackSerializer

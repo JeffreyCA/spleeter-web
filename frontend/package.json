@@ -65,6 +65,7 @@
     "react-bootstrap": "^1.4.3",
     "react-bootstrap-icons": "^1.1.0",
     "react-bootstrap-table-next": "^4.0.3",
+    "react-bootstrap-table2-editor": "^1.4.0",
     "react-dom": "^16.14.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",

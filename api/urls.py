@@ -16,7 +16,7 @@ urlpatterns = [
     path('api/source-file/youtube/', views.YTLinkInfoView.as_view()),
     path('api/source-track/', views.SourceTrackListView.as_view()),
     path('api/source-track/<uuid:id>/',
-         views.SourceTrackRetrieveDestroyView.as_view()),
+         views.SourceTrackRetrieveUpdateDestroyView.as_view()),
     path('api/source-track/file/', views.FileSourceTrackView.as_view()),
     path('api/source-track/youtube/', views.YTSourceTrackView.as_view()),
     path('api/mix/static/', views.StaticMixCreateView.as_view()),
