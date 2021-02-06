@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v3.4.0] - 2021-02-03
+## [v3.4.0] - 2021-02-06
 ### Added
 - Support additional audio formats
     - Full list: `.aac, .aif, .aifc, .aiff, .flac, .m4a, .mogg, .mp3, .oga, .ogg, .opus, .wav, .weba, .webm`
