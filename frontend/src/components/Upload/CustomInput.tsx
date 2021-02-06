@@ -26,7 +26,6 @@ const CustomInput = ({ accept, onFiles, files, disabled }: IInputProps): JSX.Ele
 
   const supportedFormatsTooltip = (props: OverlayInjectedProps) => {
     const text = 'Supported: ' + ALLOWED_EXTENSIONS.sort().join(', ');
-    console.log(text);
 
     return (
       <Tooltip id="status-tooltip" {...props}>
