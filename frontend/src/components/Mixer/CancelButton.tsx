@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button } from 'react-bootstrap';
 
 interface Props {
+  disabled: boolean;
   onClick: () => void;
 }
 
@@ -11,7 +12,7 @@ interface Props {
 class CancelButton extends React.Component<Props> {
   render(): JSX.Element {
     return (
-      <Button className={`text-btn`} variant="danger" onClick={this.props.onClick}>
+      <Button className={`text-btn`} variant="danger" disabled={this.props.disabled} onClick={this.props.onClick}>
         Cancel
       </Button>
     );

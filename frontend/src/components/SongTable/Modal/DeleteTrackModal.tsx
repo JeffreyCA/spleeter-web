@@ -13,6 +13,7 @@ interface Props {
 }
 
 interface State {
+  isDeleting: boolean;
   errors: string[];
 }
 
@@ -23,6 +24,7 @@ class DeleteTrackModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      isDeleting: false,
       errors: [],
     };
   }
@@ -32,6 +34,7 @@ class DeleteTrackModal extends React.Component<Props, State> {
    */
   resetErrors = (): void => {
     this.setState({
+      isDeleting: false,
       errors: [],
     });
   };
@@ -59,6 +62,10 @@ class DeleteTrackModal extends React.Component<Props, State> {
       return;
     }
 
+    this.setState({
+      isDeleting: true,
+    });
+
     // DELETE request to delete the source track.
     const songId = this.props.song.id;
     axios
@@ -66,24 +73,28 @@ class DeleteTrackModal extends React.Component<Props, State> {
       .then(() => {
         this.props.refresh();
         this.props.hide();
+        this.setState({
+          isDeleting: false,
+        });
       })
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
+          isDeleting: false,
           errors: [data.error],
         });
       });
   };
 
   render(): JSX.Element | null {
-    const { errors } = this.state;
+    const { isDeleting, errors } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
     }
 
     return (
-      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isDeleting && this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm track deletion</Modal.Title>
         </Modal.Header>
@@ -100,10 +111,10 @@ class DeleteTrackModal extends React.Component<Props, State> {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={this.onHide}>
+          <Button variant="outline-secondary" disabled={isDeleting} onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={this.onSubmit}>
+          <Button variant="danger" disabled={isDeleting} onClick={this.onSubmit}>
             Delete
           </Button>
         </Modal.Footer>

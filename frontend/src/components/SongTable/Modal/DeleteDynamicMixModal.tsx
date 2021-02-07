@@ -12,6 +12,7 @@ interface Props {
 }
 
 interface State {
+  isDeleting: boolean;
   errors: string[];
 }
 
@@ -22,6 +23,7 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      isDeleting: false,
       errors: [],
     };
   }
@@ -31,6 +33,7 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
    */
   resetErrors = (): void => {
     this.setState({
+      isDeleting: false,
       errors: [],
     });
   };
@@ -62,29 +65,37 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
     const mixId = this.props.mix.id;
     console.log(mixId);
 
+    this.setState({
+      isDeleting: true,
+    });
+
     axios
       .delete(`/api/mix/dynamic/${mixId}/`)
       .then(() => {
         this.props.refresh();
         this.props.hide();
+        this.setState({
+          isDeleting: false,
+        });
       })
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
+          isDeleting: false,
           errors: [data.error],
         });
       });
   };
 
   render(): JSX.Element | null {
-    const { errors } = this.state;
+    const { isDeleting, errors } = this.state;
     const { show, mix } = this.props;
     if (!mix) {
       return null;
     }
 
     return (
-      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isDeleting && this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm dynamic mix deletion</Modal.Title>
         </Modal.Header>
@@ -102,10 +113,10 @@ class DeleteDynamicMixModal extends React.Component<Props, State> {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={this.onHide}>
+          <Button variant="outline-secondary" disabled={isDeleting} onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={this.onSubmit}>
+          <Button variant="danger" disabled={isDeleting} onClick={this.onSubmit}>
             Delete
           </Button>
         </Modal.Footer>
