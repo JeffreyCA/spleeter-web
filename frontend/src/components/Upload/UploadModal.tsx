@@ -42,6 +42,7 @@ interface State {
   fetchStatus: YouTubeLinkFetchStatus;
   isUploading: boolean;
   detailsStep: boolean;
+  isSubmitting: boolean;
   fileId: number;
   artist: string;
   title: string;
@@ -58,6 +59,7 @@ class UploadModal extends React.Component<Props, State> {
       droppedFile: false,
       fetchStatus: YouTubeLinkFetchStatus.IDLE,
       isUploading: false,
+      isSubmitting: false,
       detailsStep: false,
       fileId: -1,
       artist: '',
@@ -74,6 +76,7 @@ class UploadModal extends React.Component<Props, State> {
       droppedFile: false,
       fetchStatus: YouTubeLinkFetchStatus.IDLE,
       isUploading: false,
+      isSubmitting: false,
       detailsStep: false,
       fileId: -1,
       artist: '',
@@ -151,14 +154,21 @@ class UploadModal extends React.Component<Props, State> {
         title: this.state.title,
       };
       // Make request to add Song
+      this.setState({
+        isSubmitting: true,
+      });
       axios
         .post<SongData>('/api/source-track/file/', song)
         .then(({ data }) => {
           this.props.hide();
           this.props.refresh();
+          this.setState({
+            isSubmitting: false,
+          });
         })
         .catch(err => {
           this.setState({
+            isSubmitting: false,
             errors: [err],
           });
         });
@@ -168,16 +178,23 @@ class UploadModal extends React.Component<Props, State> {
         artist: this.state.artist,
         title: this.state.title,
       };
+      this.setState({
+        isSubmitting: true,
+      });
       // Submit YouTube song
       axios
         .post('/api/source-track/youtube/', details)
         .then(() => {
           this.props.hide();
           this.props.refresh();
+          this.setState({
+            isSubmitting: false,
+          });
         })
         .catch(({ response }) => {
           const { data } = response;
           this.setState({
+            isSubmitting: false,
             errors: data.errors,
           });
         });
@@ -368,6 +385,7 @@ class UploadModal extends React.Component<Props, State> {
       droppedFile,
       fetchStatus,
       isUploading,
+      isSubmitting,
       detailsStep,
       artist,
       title,
@@ -388,11 +406,11 @@ class UploadModal extends React.Component<Props, State> {
         buttonEnabled = errors.length === 0 && link && fetchStatus === YouTubeLinkFetchStatus.DONE;
       }
     } else {
-      buttonEnabled = artist && title;
+      buttonEnabled = artist && title && !isSubmitting;
     }
 
     return (
-      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isSubmitting && this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
@@ -432,11 +450,11 @@ class UploadModal extends React.Component<Props, State> {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-danger" onClick={this.onHide}>
+          <Button variant="outline-danger" disabled={isSubmitting} onClick={this.onHide}>
             Cancel
           </Button>
           {detailsStep && (
-            <Button variant="outline-secondary" onClick={this.onBack}>
+            <Button variant="outline-secondary" disabled={isSubmitting} onClick={this.onBack}>
               Back
             </Button>
           )}

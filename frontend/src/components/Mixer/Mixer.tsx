@@ -18,6 +18,7 @@ interface MatchParams {
 interface State {
   data?: DynamicMix;
   isAborted: boolean;
+  isDeleting: boolean;
   isDeleted: boolean;
   isLoaded: boolean;
   showCancelTaskModal: boolean;
@@ -36,6 +37,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
     this.state = {
       data: undefined,
       isAborted: false,
+      isDeleting: false,
       isDeleted: false,
       isLoaded: false,
       showCancelTaskModal: false,
@@ -81,13 +83,17 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       });
   };
 
-  cancelTask = (): void => {
+  cancelTask = (): Promise<void> => {
     const mixId = this.getMixId();
+    this.setState({
+      isDeleting: true,
+    });
     // Cancel dynamic mix task
-    axios
+    return axios
       .delete(`/api/mix/dynamic/${mixId}/`)
       .then(() => {
         this.setState({
+          isDeleting: false,
           isAborted: true,
         });
         clearTimeout(this.timeout);
@@ -95,18 +101,23 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
+          isDeleting: false,
           errors: [data.error],
         });
       });
   };
 
-  deleteTask = (): void => {
+  deleteTask = (): Promise<void> => {
     const mixId = this.getMixId();
+    this.setState({
+      isDeleting: true,
+    });
     // Delete dynamic mix task
-    axios
+    return axios
       .delete(`/api/mix/dynamic/${mixId}/`)
       .then(() => {
         this.setState({
+          isDeleting: false,
           isDeleted: true,
         });
         clearTimeout(this.timeout);
@@ -114,6 +125,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
+          isDeleting: false,
           errors: [data.error],
         });
       });
@@ -144,7 +156,16 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
   };
 
   render(): JSX.Element | null {
-    const { data, errors, isAborted, isDeleted, isLoaded, showCancelTaskModal, showDeleteTaskModal } = this.state;
+    const {
+      data,
+      errors,
+      isAborted,
+      isDeleting,
+      isDeleted,
+      isLoaded,
+      showCancelTaskModal,
+      showDeleteTaskModal,
+    } = this.state;
     let alert = null;
 
     if (!isLoaded) {
@@ -218,14 +239,26 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
             </div>
           ) : null}
           {alert}
-          {(isQueued || isProcessing) && !(isAborted || isDeleted) && <CancelButton onClick={this.onCancelTaskClick} />}
+          {(isQueued || isProcessing) && !(isAborted || isDeleted) && (
+            <CancelButton disabled={isDeleting} onClick={this.onCancelTaskClick} />
+          )}
           {isDone && !isDeleted && <MixerPlayer data={data} />}
           {(isDone || isError) && !(isAborted || isDeleted) && (
-            <DeleteButton className="mt-4" onClick={this.onDeleteTaskClick} />
+            <DeleteButton className="mt-4" disabled={isDeleting} onClick={this.onDeleteTaskClick} />
           )}
         </Container>
-        <CancelTaskModal show={showCancelTaskModal} hide={this.handleCancelTaskModalHide} submit={this.cancelTask} />
-        <DeleteTaskModal show={showDeleteTaskModal} hide={this.handleDeleteTaskModalHide} submit={this.deleteTask} />
+        <CancelTaskModal
+          show={showCancelTaskModal}
+          hide={this.handleCancelTaskModalHide}
+          isCancelling={isDeleting}
+          submit={this.cancelTask}
+        />
+        <DeleteTaskModal
+          show={showDeleteTaskModal}
+          hide={this.handleDeleteTaskModalHide}
+          isDeleting={isDeleting}
+          submit={this.deleteTask}
+        />
       </div>
     );
   }

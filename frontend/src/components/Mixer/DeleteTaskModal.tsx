@@ -3,8 +3,9 @@ import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
 interface Props {
+  isDeleting: boolean;
   show: boolean;
-  submit: () => void;
+  submit: () => Promise<void>;
   hide: () => void;
 }
 
@@ -16,14 +17,15 @@ class DeleteTaskModal extends React.Component<Props, {}> {
     super(props);
   }
 
-  submit = (): void => {
-    this.props.submit();
+  submit = async (): Promise<void> => {
+    await this.props.submit();
     this.props.hide();
   };
 
   render(): JSX.Element | null {
+    const { isDeleting } = this.props;
     return (
-      <Modal show={this.props.show} onHide={this.props.hide}>
+      <Modal show={this.props.show} onHide={!isDeleting && this.props.hide}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm deletion</Modal.Title>
         </Modal.Header>
@@ -31,7 +33,7 @@ class DeleteTaskModal extends React.Component<Props, {}> {
           <div>Are you sure you want to delete this mix?</div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={this.submit}>
+          <Button variant="danger" disabled={this.props.isDeleting} onClick={this.submit}>
             Delete
           </Button>
         </Modal.Footer>

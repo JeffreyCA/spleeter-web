@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 
 interface Props {
   className?: string;
+  disabled: boolean;
   onClick: () => void;
 }
 
@@ -16,6 +17,7 @@ class DeleteButton extends React.Component<Props> {
         className={`text-btn ${this.props.className}`}
         variant="outline-danger"
         size="sm"
+        disabled={this.props.disabled}
         onClick={this.props.onClick}>
         Delete
       </Button>

@@ -41,6 +41,10 @@ interface State {
    */
   bitrate: number;
   /**
+   * Whether currently in process of creating mix.
+   */
+  isCreating: boolean;
+  /**
    * Errors.
    */
   errors: string[];
@@ -59,6 +63,7 @@ class DynamicMixModal extends React.Component<Props, State> {
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
       bitrate: DEFAULT_MIX_BITRATE,
+      isCreating: false,
       errors: [],
     };
   }
@@ -74,6 +79,7 @@ class DynamicMixModal extends React.Component<Props, State> {
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
       bitrate: DEFAULT_MIX_BITRATE,
+      isCreating: false,
       errors: [],
     });
   };
@@ -114,16 +120,24 @@ class DynamicMixModal extends React.Component<Props, State> {
       bitrate: this.state.bitrate,
     };
 
+    this.setState({
+      isCreating: true,
+    });
+
     // Make API request to create the mix
     axios
       .post<DynamicMix>('/api/mix/dynamic/', data)
       .then(({ data }) => {
         this.props.hide();
         this.props.submit(data.source_track, data.id);
+        this.setState({
+          isCreating: false,
+        });
       })
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
+          isCreating: false,
           errors: data.errors,
         });
       });
@@ -161,7 +175,7 @@ class DynamicMixModal extends React.Component<Props, State> {
   };
 
   render(): JSX.Element | null {
-    const { model, softmask, softmask_alpha, errors } = this.state;
+    const { model, softmask, softmask_alpha, isCreating, errors } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
@@ -170,7 +184,7 @@ class DynamicMixModal extends React.Component<Props, State> {
     const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0.0;
 
     return (
-      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isCreating && this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Create dynamic mix</Modal.Title>
         </Modal.Header>
@@ -194,10 +208,10 @@ class DynamicMixModal extends React.Component<Props, State> {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-danger" onClick={this.onHide}>
+          <Button variant="outline-danger" disabled={isCreating} onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="success" onClick={this.onSubmit} disabled={invalidAlpha}>
+          <Button variant="primary" onClick={this.onSubmit} disabled={invalidAlpha || isCreating}>
             Create Mix
           </Button>
         </Modal.Footer>

@@ -57,6 +57,10 @@ interface State {
    */
   other: boolean;
   /**
+   * Whether currently in process of creating mix.
+   */
+  isCreating: boolean;
+  /**
    * Errors.
    */
   errors: string[];
@@ -79,6 +83,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false, // Include drums
       bass: false, // Include bass
       other: false, // Include accompaniment
+      isCreating: false,
       errors: [],
     };
   }
@@ -98,6 +103,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false,
       bass: false,
       other: false,
+      isCreating: false,
       errors: [],
     });
   };
@@ -142,16 +148,24 @@ class StaticMixModal extends React.Component<Props, State> {
       other: this.state.other,
     };
 
+    this.setState({
+      isCreating: true,
+    });
+
     // Make request to add Song
     axios
       .post<StaticMix>('/api/mix/static/', data)
       .then(({ data }) => {
         this.props.hide();
         this.props.submit(data.source_track, data.id, data.status);
+        this.setState({
+          isCreating: false,
+        });
       })
       .catch(({ response }) => {
         const { data } = response;
         this.setState({
+          isCreating: false,
           errors: data.errors,
         });
       });
@@ -194,7 +208,7 @@ class StaticMixModal extends React.Component<Props, State> {
   };
 
   render(): JSX.Element | null {
-    const { model, vocals, drums, bass, other, errors, softmask, softmask_alpha } = this.state;
+    const { model, vocals, drums, bass, other, errors, softmask, softmask_alpha, isCreating } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
@@ -206,7 +220,7 @@ class StaticMixModal extends React.Component<Props, State> {
     const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0;
 
     return (
-      <Modal show={show} onHide={this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isCreating && this.onHide} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Create static mix</Modal.Title>
         </Modal.Header>
@@ -233,10 +247,13 @@ class StaticMixModal extends React.Component<Props, State> {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-danger" onClick={this.onHide}>
+          <Button variant="outline-danger" disabled={isCreating} onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="primary" disabled={allChecked || noneChecked || invalidAlpha} onClick={this.onSubmit}>
+          <Button
+            variant="primary"
+            disabled={allChecked || noneChecked || invalidAlpha || isCreating}
+            onClick={this.onSubmit}>
             Create Mix
           </Button>
         </Modal.Footer>
