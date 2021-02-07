@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
+import { Download } from 'react-bootstrap-icons';
 import ReactSlider from 'react-slider';
 import { PartId } from '../../models/PartId';
 import { AccompShortBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
@@ -9,6 +10,7 @@ import './VolumeUI.css';
 
 interface Props {
   id: PartId;
+  url?: string;
   disabled: boolean;
   isActive: boolean;
   isMuted: boolean;
@@ -19,7 +21,7 @@ interface Props {
 }
 
 /**
- * Volume slider with mute button component.
+ * Component for volume slider with mute/solo/download buttons.
  */
 const VolumeUI = (props: Props): JSX.Element => {
   const onMuteClick = () => {
@@ -47,13 +49,23 @@ const VolumeUI = (props: Props): JSX.Element => {
     badge = <DrumsBadge className="vol-badge" />;
   }
 
-  const rowClass = props.isActive ? '' : 'track-inactive';
+  const trackInactive = props.isActive ? '' : 'track-inactive';
   return (
-    <Row noGutters className={`volume-ui ${rowClass}`}>
-      <div className="badge-group">{badge}</div>
-      <MuteButton disabled={props.disabled} isMuted={props.isMuted} onClick={onMuteClick} />
-      <SoloButton className="ml-2" disabled={props.disabled} isSoloed={props.isSoloed} onClick={onSoloClick} />
-      <Col xs={4}>
+    <Row noGutters className="volume-ui">
+      <div className={`badge-group ${trackInactive}`}>{badge}</div>
+      <MuteButton
+        className={`${trackInactive}`}
+        disabled={props.disabled}
+        isMuted={props.isMuted}
+        onClick={onMuteClick}
+      />
+      <SoloButton
+        className={`ml-2 ${trackInactive}`}
+        disabled={props.disabled}
+        isSoloed={props.isSoloed}
+        onClick={onSoloClick}
+      />
+      <Col className={`${trackInactive}`} xs={4}>
         <ReactSlider
           className="vol-slider"
           thumbClassName="vol-thumb"
@@ -70,6 +82,9 @@ const VolumeUI = (props: Props): JSX.Element => {
           )}
         />
       </Col>
+      <Button className="ml-4" size="sm" variant="success" disabled={!props.url} href={props.url} target="_blank">
+        <Download />
+      </Button>
     </Row>
   );
 };

@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { VolumeMuteFill, VolumeUpFill } from 'react-bootstrap-icons';
 
 interface Props {
+  className?: string;
   isMuted: boolean;
   disabled: boolean;
   onClick: () => void;
@@ -19,7 +20,7 @@ const MuteButton = (props: Props): JSX.Element => {
     <Button
       onClick={props.onClick}
       disabled={props.disabled}
-      className="p-1"
+      className={`p-1 ${props.className}`}
       variant={variant}
       size="lg"
       active={isMuted}
