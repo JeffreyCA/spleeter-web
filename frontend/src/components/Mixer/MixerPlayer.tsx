@@ -340,6 +340,7 @@ class MixerPlayer extends React.Component<Props, State> {
   };
 
   render(): JSX.Element {
+    const { data } = this.props;
     const { durationSeconds, secondsElapsed, isReady, muteStatus, soloStatus } = this.state;
     const noneSoloed = this.isNoneSoloed(soloStatus);
 
@@ -357,6 +358,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="vocals"
+          url={data?.vocals_file ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.vocals && (soloStatus.vocals || noneSoloed)}
           isMuted={muteStatus.vocals}
@@ -367,6 +369,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="accomp"
+          url={data?.other_file ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.accomp && (soloStatus.accomp || noneSoloed)}
           isMuted={muteStatus.accomp}
@@ -377,6 +380,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="bass"
+          url={data?.bass_file ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.bass && (soloStatus.bass || noneSoloed)}
           isSoloed={soloStatus.bass}
@@ -387,6 +391,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="drums"
+          url={data?.drums_file ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.drums && (soloStatus.drums || noneSoloed)}
           isSoloed={soloStatus.drums}

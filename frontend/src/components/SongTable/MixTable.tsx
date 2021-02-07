@@ -150,7 +150,7 @@ const actionFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex, formatEx
 
     return (
       <div className="d-flex align-items-center justify-content-end">
-        <Button variant="success" disabled={!url} href={url}>
+        <Button variant="success" disabled={!url} href={url} target="_blank">
           <Download />
         </Button>
         <DeleteStaticMixButton onClick={onDeleteStaticMixClick} mix={mix} />
