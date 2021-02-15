@@ -1,5 +1,5 @@
 absl-py==0.11.0
-amqp==5.0.2
+amqp==5.0.5
 appdirs==1.4.4
 asgiref==3.2.10
 astroid==2.4.2
@@ -13,7 +13,7 @@ azure-storage-common==2.1.0
 billiard==3.6.3.0
 boto3==1.16.50
 botocore==1.19.50
-cachetools==4.2.0
+cachetools==4.2.1
 celery==5.0.5
 certifi==2020.6.20
 cffi==1.14.3
@@ -26,11 +26,11 @@ colorama==0.4.3
 configparser==5.0.1
 contextlib2==0.6.0.post1
 coverage==5.3
-cryptography==3.3.2
+cryptography==3.4.5
 Cython==0.29.21
 decorator==4.4.2
 -e git+https://github.com/JeffreyCA/demucs.git@dae8434926b740b18aad20096773b8229acfd053#egg=demucs
-Django==3.1.5
+Django==3.1.6
 django-picklefield==3.0.1
 django-storages==1.11.1
 django-webpack-loader==0.7.0
@@ -105,11 +105,11 @@ python-magic-bin==0.4.14; sys_platform != 'linux'
 pytz==2019.3
 PyYAML==5.3.1
 redis==3.5.3
-requests==2.24.0
+requests==2.25.1
 requests-oauthlib==1.3.0
 resampy==0.2.2
 rfc3986==1.4.0
-rsa==4.6
+rsa==4.7
 s3transfer==0.3.3
 scikit-learn==0.23.2
 scipy==1.4.1
@@ -144,6 +144,6 @@ wrapt==1.12.1
 xumx-unofficial==0.1.0
 yapf==0.30.0
 yarl==1.6.0
--e git+https://github.com/JeffreyCA/youtube-dl.git@7ef0c80d4f5c9c332696aa2037f992f059c33bbe#egg=youtube_dl
+-e git+https://github.com/JeffreyCA/youtube-dl.git@37428584178dda175630dee07a7dbdadca53e75b#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.2.0
