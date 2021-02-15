@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.5.1] - 2021-02-15
+
+### Changed
+- Suppress discovery_cache warnings related to YouTube data API calls
+- Update dependencies
+
+
 ## [v3.5.0] - 2021-02-07
 ### Added
 - Ability to download individual parts of a dynamic mix
@@ -172,7 +179,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.1...HEAD
+[v3.5.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.0...v3.5.1
 [v3.5.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.4.0...v3.5.0
 [v3.4.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.1...v3.4.0
 [v3.3.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.0...v3.3.1
