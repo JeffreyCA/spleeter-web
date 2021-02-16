@@ -194,8 +194,6 @@ class SongTable extends React.Component<Props> {
         editable: true,
         text: 'Title',
         sort: true,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         validator: (newValue: string) => {
           if (!newValue) {
             return {
@@ -211,8 +209,6 @@ class SongTable extends React.Component<Props> {
         editable: true,
         text: 'Artist',
         sort: true,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         validator: (newValue: string) => {
           if (!newValue) {
             return {
