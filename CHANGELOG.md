@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.5.2] - 2021-04-16
+
+### Changed
+- Update dependencies
+
+
 ## [v3.5.1] - 2021-02-15
 
 ### Changed
@@ -179,7 +185,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.1...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.2...HEAD
+[v3.5.2]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.1...v3.5.2
 [v3.5.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.0...v3.5.1
 [v3.5.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.4.0...v3.5.0
 [v3.4.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.3.1...v3.4.0
