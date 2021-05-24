@@ -3,7 +3,7 @@ DEBUG = True
 
 SECRET_KEY = 'default'
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
 # DEFAULT_FILE_STORAGE = 'api.storage.S3Boto3Storage'
