@@ -4,11 +4,11 @@ from pathlib import Path
 
 import nnabla as nn
 import numpy as np
+import requests
 from billiard.pool import Pool
-from demucs.separate import download_file
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
-from tqdm import trange
+from tqdm import tqdm, trange
 from xumx.test import separate
 
 MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h5'
@@ -39,13 +39,31 @@ class XUMXSeparator:
         self.audio_adapter = AudioAdapter.default()
         self.chunk_duration = 30
 
+    def download_file(self, url, target):
+        def _download():
+            response = requests.get(url, stream=True)
+            total_length = int(response.headers.get('content-length', 0))
+
+            with tqdm(total=total_length, ncols=120, unit="B", unit_scale=True) as bar:
+                with open(target, "wb") as output:
+                    for data in response.iter_content(chunk_size=4096):
+                        output.write(data)
+                        bar.update(len(data))
+
+        try:
+            _download()
+        except:
+            if target.exists():
+                target.unlink()
+            raise
+
     def download_and_verify(self):
         if not self.model_file_path.is_file():
             self.model_dir.mkdir(exist_ok=True, parents=True)
             print(
                 "Downloading pre-trained model, this could take a while..."
             )
-            download_file(MODEL_URL, self.model_file_path)
+            self.download_file(MODEL_URL, self.model_file_path)
 
     def get_estimates(self, input_path: str):
         ctx = get_extension_context(self.context)
@@ -118,9 +136,7 @@ class XUMXSeparator:
         for name, estimate in estimates.items():
             filename = f'{name}.mp3'
             print(f'Exporting {name} MP3...')
-            task = pool.apply_async(self.audio_adapter.save, (os.path.join(
-                output_path,
-                filename), estimate, self.sample_rate, 'mp3', self.bitrate))
+            task = pool.apply_async(self.audio_adapter.save, (output_path / filename, estimate, self.sample_rate, 'mp3', self.bitrate))
             tasks.append(task)
 
         pool.close()
