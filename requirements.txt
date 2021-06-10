@@ -30,7 +30,7 @@ cryptography==3.4.7
 Cython==0.29.23
 decorator==4.4.2
 -e git+https://github.com/JeffreyCA/demucs.git@dae8434926b740b18aad20096773b8229acfd053#egg=demucs
-Django==3.2
+Django==3.2.4
 django-picklefield==3.0.1
 django-storages==1.11.1
 django-webpack-loader==0.7.0
