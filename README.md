@@ -73,7 +73,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     1. Install NVIDIA drivers for your GPU.
 
-    2. [Install the NVIDIA Container Toolkit.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+    2. [Install the NVIDIA Container Toolkit.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) If on Windows, refer to [this](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
 
     3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi`
 
@@ -106,13 +106,13 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 * Node.js 12+ ([link](https://nodejs.org/en/download/))
 * Redis ([link](https://redis.io/))
 * ffmpeg and ffprobe ([link](https://www.ffmpeg.org/download.html))
-    * On macOS, you can install using Homebrew or MacPorts
+    * On macOS, you can install it using Homebrew or MacPorts
     * On Windows, you can follow [this guide](http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
 
 ### Instructions
 1. Set environment variables
 
-    **Make sure these variables are set when running all subsequent commands.**
+    **Make sure these variables are set in every terminal session prior to running the commands below.**
 
     ```sh
     # Unix/macOS:
@@ -167,7 +167,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     (env) spleeter-web$ celery -A api worker -l INFO -Q slow_queue -c 1
     ```
 
-    This launches two Celery workers: one processes fast tasks like YouTube imports and the other processes slow tasks like source separation. The one working on fast tasks can work on 3 tasks concurrently, while the one working on slow tasks only handles a single task at a time (since it's resource-intensive). Feel free to adjust these values to your fitting.
+    This launches two Celery workers: one processes fast tasks like YouTube imports and the other processes slow tasks like source separation. The one working on fast tasks can work on 3 tasks concurrently, while the one working on slow tasks only handles a single task at a time (since it's memory-intensive). Feel free to adjust these values to your fitting.
 
     **Windows:**
 
@@ -201,6 +201,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 | `django_react/settings_docker_dev.py` | Contains the **override** settings used when run in development mode using Docker (i.e. `docker-compose.dev.yml`). |
 
 ### Environment variables
+Here is a list of all the environment variables you can use to further customize Spleeter Web:
 
 | Name | Description |
 |---|---|
@@ -229,12 +230,12 @@ To do this, edit `django_react/settings_docker.py` (if using Docker) or `django_
 
 Then, set the following environment variables (`.env` if using Docker), depending on which backend you're using:
 
-**S3:**
+**AWS S3:**
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_STORAGE_BUCKET_NAME`
 
-**Azure:**
+**Azure Storage:**
 - `AZURE_ACCOUNT_KEY`
 - `AZURE_ACCOUNT_NAME`
 - `AZURE_CONTAINER`
@@ -252,11 +253,9 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     $ cd spleeter-web
     ```
 
-2. If you want your server to self-host the media files instead of using a cloud storage provider, then first edit `django_react/settings_docker.py` and uncomment this line:
-    ```
-    DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
-    ```
-    Next, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
+2. Configure your storage provider in `django_react/settings_docker.py`. Set `DEFAULT_FILE_STORAGE` to one of: `api.storage.AzureStorage`, `api.storage.S3Boto3Storage`, or `api.storage.FileSystemStorage` (for hosting on Azure, AWS, or locally).
+
+    If self-hosting, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
 
 3. In `spleeter-web`, create an `.env` file with the production environment variables
 
@@ -280,7 +279,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 4. Build and start production containers
 
-    **To enable GPU separation, substitute `docker-compose.yml` and `docker-compose.build.yml` for `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` below respectively.**
+    **To enable GPU separation, substitute below `docker-compose.yml` and `docker-compose.build.yml` for `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` respectively.**
 
     If you are self-hosting media files:
     ```sh
@@ -305,13 +304,16 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 ## Credits
 Special thanks to:
 
-* [Spleeter](https://github.com/deezer/spleeter)
-* [Demucs/Tasnet](https://github.com/facebookresearch/demucs)
-* [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [tone.js](https://github.com/Tonejs/Tone.js/)
 * [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 * [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
 * [react-music-player](https://github.com/lijinke666/react-music-player)
+
+And to all the researchers and devs behind the supported source separation models:
+
+* [Spleeter](https://github.com/deezer/spleeter)
+* [Demucs/Tasnet](https://github.com/facebookresearch/demucs)
+* [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 
 Turntable icon made from [Icon Fonts](https://www.onlinewebfonts.com/icon/497039) is licensed by CC BY 3.0.
 
