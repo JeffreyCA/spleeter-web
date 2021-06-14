@@ -6,7 +6,10 @@ export type Separator =
   | 'demucs_extra'
   | 'demucs_quantized'
   | 'tasnet'
-  | 'tasnet_extra';
+  | 'tasnet_extra'
+  // Deprecated
+  | 'light'
+  | 'light_extra';
 
 // Map of separator IDs to labels
 export const separatorLabelMap = {
@@ -18,4 +21,6 @@ export const separatorLabelMap = {
   demucs_quantized: 'Demucs Quantized',
   tasnet: 'Tasnet',
   tasnet_extra: 'Tasnet Extra',
+  light: 'Demucs Light',
+  light_extra: 'Demucs Light (extra)',
 };
