@@ -41,23 +41,23 @@ def mix_track_path(instance, filename):
 
 SPLEETER = 'spleeter'
 DEMUCS = 'demucs'
+DEMUCS_HQ = 'demucs48_hq'
 DEMUCS_EXTRA = 'demucs_extra'
-DEMUCS_LIGHT = 'light'
-DEMUCS_LIGHT_EXTRA = 'light_extra'
+DEMUCS_QUANTIZED = 'demucs_quantized'
 TASNET = 'tasnet'
 TASNET_EXTRA = 'tasnet_extra'
 XUMX = 'xumx'
 
-DEMUCS_FAMILY = [DEMUCS, DEMUCS_EXTRA, DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA, TASNET, TASNET_EXTRA]
+DEMUCS_FAMILY = [DEMUCS, DEMUCS_HQ,  DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TASNET_EXTRA]
 
 SEP_CHOICES = [(SPLEETER, 'Spleeter'),
                ('demucs', (
                    (DEMUCS, 'Demucs'),
-                   (DEMUCS_EXTRA, 'Demucs (extra)'),
-                   (DEMUCS_LIGHT, 'Demucs Light'),
-                   (DEMUCS_LIGHT_EXTRA, 'Demucs Light (extra)'),
+                   (DEMUCS_HQ, 'Demucs HQ'),
+                   (DEMUCS_EXTRA, 'Demucs Extra'),
+                   (DEMUCS_QUANTIZED, 'Demucs Quantized'),
                    (TASNET, 'Tasnet'),
-                   (TASNET_EXTRA, 'Tasnet (extra)'),
+                   (TASNET_EXTRA, 'Tasnet Extra'),
                )), (XUMX, 'X-UMX')]
 
 class TaskStatus(models.IntegerChoices):

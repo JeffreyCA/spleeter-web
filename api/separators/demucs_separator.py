@@ -4,7 +4,7 @@ from pathlib import Path
 import torch
 from billiard.exceptions import SoftTimeLimitExceeded
 from billiard.pool import Pool
-from demucs.pretrained import load_pretrained
+from demucs.pretrained import load_pretrained, PRETRAINED_MODELS
 from demucs.separate import *
 from django.conf import settings
 from spleeter.audio.adapter import AudioAdapter
@@ -13,21 +13,14 @@ from spleeter.audio.adapter import AudioAdapter
 This module defines a wrapper interface over the Demucs API.
 """
 
-VALID_MODELS = [
-    'demucs', 'demucs_extra', 'light', 'light_extra', 'tasnet', 'tasnet_extra'
-]
-
 class DemucsSeparator:
     """Performs source separation using Demucs API."""
-    def __init__(
-        self,
-        model_name='light_extra',
-        cpu_separation=True,
-        bitrate=256,
-        shifts=5
-    ):
-        assert (model_name in VALID_MODELS)
-        model_name = 'demucs48_hq'
+    def __init__(self,
+                 model_name='demucs',
+                 cpu_separation=True,
+                 bitrate=256,
+                 shifts=5):
+        assert (model_name in PRETRAINED_MODELS)
         self.device = 'cpu' if cpu_separation else 'cuda'
         self.sample_rate = 44100
         self.model_name = model_name
@@ -43,12 +36,8 @@ class DemucsSeparator:
 
     def get_model(self):
         torch.hub.set_dir(str(self.model_dir))
-        if self.model_file_path.is_file():
-            model = load_model(self.model_file_path)
-        else:
-            model = load_pretrained(self.model_name)
+        model = load_pretrained(self.model_name)
         model.to(self.device)
-
         return model
 
     def apply_model(self, model, input_path: Path):

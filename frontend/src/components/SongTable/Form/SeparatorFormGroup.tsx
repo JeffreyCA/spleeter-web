@@ -169,13 +169,13 @@ class SeparatorFormGroup extends React.Component<Props, State> {
               <optgroup label="Open-Unmix">
                 <option value="xumx">X-UMX</option>
               </optgroup>
-              <optgroup label="Demucs">
+              <optgroup label="Demucs/Tasnet">
                 <option value="demucs">Demucs</option>
-                <option value="demucs_extra">Demucs (extra)</option>
-                <option value="light">Demucs Light</option>
-                <option value="light_extra">Demucs Light (extra)</option>
+                <option value="demucs48_hq">Demucs HQ</option>
+                <option value="demucs_extra">Demucs Extra</option>
+                <option value="demucs_quantized">Demucs Quantized</option>
                 <option value="tasnet">Tasnet</option>
-                <option value="tasnet_extra">Tasnet (extra)</option>
+                <option value="tasnet_extra">Tasnet Extra</option>
               </optgroup>
             </Form.Control>
           </Form.Group>
