@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.6.1] - 2021-06-14
+
+### Changed
+- Add back Demucs Light variant mapping
+- Update more dependencies (security fixes)
+
+
 ## [v3.6.0] - 2021-06-13
 
 ### Changed
@@ -193,7 +200,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.1...HEAD
+[v3.6.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.0...v3.6.1
 [v3.6.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.2...v3.6.0
 [v3.5.2]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.1...v3.5.2
 [v3.5.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.0...v3.5.1
