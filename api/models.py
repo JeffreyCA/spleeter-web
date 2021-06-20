@@ -4,7 +4,6 @@ from io import BytesIO
 
 import requests
 from django.conf import settings
-from django.core.validators import MaxValueValidator
 from django.db import models
 import mutagen
 from mutagen.easyid3 import EasyID3
@@ -40,6 +39,7 @@ def mix_track_path(instance, filename):
     return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
 
 SPLEETER = 'spleeter'
+D3NET = 'd3net'
 DEMUCS = 'demucs'
 DEMUCS_HQ = 'demucs48_hq'
 DEMUCS_EXTRA = 'demucs_extra'
@@ -56,6 +56,7 @@ DEMUCS_FAMILY = [DEMUCS, DEMUCS_HQ,  DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TAS
 
 SEP_CHOICES = [
     (SPLEETER, 'Spleeter'),
+    (D3NET, 'D3Net'),
     (
         'demucs',
         (
@@ -65,7 +66,7 @@ SEP_CHOICES = [
             (DEMUCS_QUANTIZED, 'Demucs Quantized'),
             (TASNET, 'Tasnet'),
             (TASNET_EXTRA, 'Tasnet Extra'),
-            # Deprecated
+    # Deprecated
             (DEMUCS_LIGHT, 'Demucs Light'),
             (DEMUCS_LIGHT_EXTRA, 'Demucs Light Extra'))),
     (XUMX, 'X-UMX')
@@ -324,6 +325,8 @@ class StaticMix(models.Model):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+        elif self.separator == D3NET:
+            return [f'{self.bitrate} kbps']
         elif self.separator in DEMUCS_FAMILY:
             return [
                 f'{self.bitrate} kbps', f'Random shifts: {self.separator_args["random_shifts"]}'
@@ -411,6 +414,8 @@ class DynamicMix(models.Model):
         """
         if self.separator == SPLEETER:
             return f'[{self.bitrate} kbps,{self.separator}]'
+        elif self.separator == D3NET:
+            return f'[{self.bitrate} kbps]'
         elif self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
             return f'[{self.bitrate} kbps,{self.separator},{random_shifts} shifts]'
@@ -462,6 +467,8 @@ class DynamicMix(models.Model):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+        elif self.separator == D3NET:
+            return [f'{self.bitrate} kbps']
         elif self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
             return [f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']

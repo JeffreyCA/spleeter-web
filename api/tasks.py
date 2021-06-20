@@ -15,8 +15,10 @@ from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
 from .separators.x_umx_separator import XUMXSeparator
+from .separators.d3net_separator import D3NetSeparator
 from .util import get_valid_filename
 from .youtubedl import download_audio, get_file_ext
+
 """
 This module defines various Celery tasks used for Spleeter Web.
 """
@@ -25,6 +27,8 @@ def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separa
     """Returns separator object for corresponding source separation model."""
     if separator == 'spleeter':
         return SpleeterSeparator(cpu_separation, bitrate)
+    elif separator == 'd3net':
+        return D3NetSeparator(cpu_separation, bitrate)
     elif separator == 'xumx':
         softmask = separator_args['softmask']
         alpha = separator_args['alpha']

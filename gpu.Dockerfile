@@ -22,7 +22,8 @@ RUN apt-get update \
     && apt-get update \
     && apt-get -y install python3.7 python3.7-gdbm python3-distutils \
     && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-    && python3.7 get-pip.py
+    && python3.7 get-pip.py \
+    && ln -s /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudart.so.10.2 /usr/lib/x86_64-linux-gnu/libcudart.so.10.1
 
 RUN mkdir -p /webapp/media /webapp/staticfiles
 

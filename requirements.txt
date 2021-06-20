@@ -29,6 +29,7 @@ contextlib2==0.6.0.post1
 coverage==5.3
 cryptography==3.4.7
 Cython==0.29.23
+d3net-spleeterweb==0.0.4
 decorator==4.4.2
 demucs==2.0.2
 diffq==0.1.1
@@ -140,6 +141,7 @@ typer==0.3.2
 typing-extensions==3.7.4.3
 uritemplate==3.0.1
 urllib3==1.26.5
+validators==0.18.2
 vine==5.0.0
 wcwidth==0.2.5
 Werkzeug==1.0.1

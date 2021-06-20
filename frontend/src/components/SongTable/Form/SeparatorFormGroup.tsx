@@ -9,7 +9,8 @@ import {
   DEFAULT_SOFTMASK_ALPHA,
   MAX_SHIFT_ITER,
 } from '../../../Constants';
-import { Separator } from '../../../models/Separator';
+import { isDemucsOrTasnet, Separator } from '../../../models/Separator';
+import XUMXFormSubgroup from './XUMXFormSubgroup';
 
 interface Props {
   className: string;
@@ -60,16 +61,16 @@ class SeparatorFormGroup extends React.Component<Props, State> {
   }
 
   onModelSelectChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
-    const parsedVal = event.target.value as Separator;
+    const model = event.target.value as Separator;
     this.setState({
-      selectedModel: parsedVal,
+      selectedModel: model,
     });
-    this.props.handleModelChange(parsedVal);
-    if (parsedVal === 'xumx') {
+    this.props.handleModelChange(model);
+    if (model === 'xumx') {
       // X-UMX
       this.props.handleIterationsChange(this.state.shiftIters);
-    } else if (parsedVal !== 'spleeter') {
-      // Demucs
+    } else if (isDemucsOrTasnet(model)) {
+      // Demucs/Tasnet
       this.props.handleRandomShiftsChange(this.state.shiftIters);
     }
   };
@@ -166,6 +167,9 @@ class SeparatorFormGroup extends React.Component<Props, State> {
               <optgroup label="Spleeter">
                 <option value="spleeter">Spleeter</option>
               </optgroup>
+              <optgroup label="D3Net">
+                <option value="d3net">D3Net</option>
+              </optgroup>
               <optgroup label="Open-Unmix">
                 <option value="xumx">X-UMX</option>
               </optgroup>
@@ -179,7 +183,7 @@ class SeparatorFormGroup extends React.Component<Props, State> {
               </optgroup>
             </Form.Control>
           </Form.Group>
-          {selectedModel !== 'spleeter' && (
+          {isDemucsOrTasnet(selectedModel) && (
             <Form.Group as={Col} xs={6} className="mb-0">
               <Form.Label id={shiftIterId}>
                 {shiftIterLabel}: {shiftIterOverlay}
@@ -193,33 +197,13 @@ class SeparatorFormGroup extends React.Component<Props, State> {
           )}
         </Form.Row>
         {selectedModel === 'xumx' && (
-          <Form.Row className="mt-3">
-            <Form.Group as={Col} xs={6} className="m-0" controlId="softmask-checkbox">
-              <Form.Label id="softmask">Softmask:</Form.Label>
-              <Form.Check
-                type="checkbox"
-                name="softmask"
-                label="Use softmask"
-                defaultChecked={softmask}
-                onChange={this.onSoftmaskChange}
-              />
-            </Form.Group>
-            {selectedModel === 'xumx' && softmask && (
-              <Form.Group as={Col} xs={6} className="mb-0" controlId="validationSoftmaskAlpha">
-                <Form.Label id="softmask-alpha">Softmask alpha:</Form.Label>
-                <Form.Control
-                  type="number"
-                  min={0.1}
-                  max={2.0}
-                  step={0.1}
-                  defaultValue={alpha}
-                  placeholder="1.0"
-                  onChange={this.onAlphaChange}
-                  onBlur={this.onAlphaFocusOut}
-                />
-              </Form.Group>
-            )}
-          </Form.Row>
+          <XUMXFormSubgroup
+            alpha={alpha}
+            softmask={softmask}
+            onAlphaChange={this.onAlphaChange}
+            onAlphaFocusOut={this.onAlphaFocusOut}
+            onSoftmaskChange={this.onSoftmaskChange}
+          />
         )}
         <Form.Row className="mt-3">
           <Col xs={6}>

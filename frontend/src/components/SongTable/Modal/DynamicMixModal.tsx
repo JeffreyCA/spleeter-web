@@ -182,6 +182,7 @@ class DynamicMixModal extends React.Component<Props, State> {
     }
 
     const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0.0;
+    const slowCpuModel = model === 'xumx' || model === 'd3net';
 
     return (
       <Modal show={show} onHide={!isCreating && this.onHide} onExited={this.onExited}>
@@ -198,6 +199,7 @@ class DynamicMixModal extends React.Component<Props, State> {
             handleAlphaChange={this.handleAlphaChange}
             handleBitrateChange={this.handleBitrateChange}
           />
+          {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
           {invalidAlpha && <Alert variant="danger">Softmask alpha must be greater than 0.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger" className="m-0">

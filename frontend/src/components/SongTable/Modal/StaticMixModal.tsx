@@ -218,6 +218,7 @@ class StaticMixModal extends React.Component<Props, State> {
     const allChecked = vocals && drums && bass && other;
     const noneChecked = !(vocals || drums || bass || other);
     const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0;
+    const slowCpuModel = model === 'xumx' || model === 'd3net';
 
     return (
       <Modal show={show} onHide={!isCreating && this.onHide} onExited={this.onExited}>
@@ -237,6 +238,7 @@ class StaticMixModal extends React.Component<Props, State> {
           />
           {allChecked && <Alert variant="warning">You must leave at least one part unchecked.</Alert>}
           {noneChecked && <Alert variant="warning">You must check at least one part.</Alert>}
+          {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
           {invalidAlpha && <Alert variant="danger">Softmask alpha must be greater than 0.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger">

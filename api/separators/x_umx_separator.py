@@ -4,11 +4,11 @@ from pathlib import Path
 
 import nnabla as nn
 import numpy as np
-import requests
+from api.separators.util import download_and_verify
 from billiard.pool import Pool
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
-from tqdm import tqdm, trange
+from tqdm import trange
 from xumx.test import separate
 
 MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h5'
@@ -38,32 +38,6 @@ class XUMXSeparator:
         self.residual_model = False
         self.audio_adapter = AudioAdapter.default()
         self.chunk_duration = 30
-
-    def download_file(self, url, target):
-        def _download():
-            response = requests.get(url, stream=True)
-            total_length = int(response.headers.get('content-length', 0))
-
-            with tqdm(total=total_length, ncols=120, unit="B", unit_scale=True) as bar:
-                with open(target, "wb") as output:
-                    for data in response.iter_content(chunk_size=4096):
-                        output.write(data)
-                        bar.update(len(data))
-
-        try:
-            _download()
-        except:
-            if target.exists():
-                target.unlink()
-            raise
-
-    def download_and_verify(self):
-        if not self.model_file_path.is_file():
-            self.model_dir.mkdir(exist_ok=True, parents=True)
-            print(
-                "Downloading pre-trained model, this could take a while..."
-            )
-            self.download_file(MODEL_URL, self.model_file_path)
 
     def get_estimates(self, input_path: str):
         ctx = get_extension_context(self.context)
@@ -111,7 +85,7 @@ class XUMXSeparator:
         return estimates
 
     def create_static_mix(self, parts, input_path: str, output_path: Path):
-        self.download_and_verify()
+        download_and_verify(MODEL_URL, self.model_dir, self.model_file_path)
         estimates = self.get_estimates(input_path)
 
         final_source = None
@@ -125,7 +99,7 @@ class XUMXSeparator:
         self.audio_adapter.save(output_path, final_source, self.sample_rate, 'mp3', self.bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
-        self.download_and_verify()
+        download_and_verify(MODEL_URL, self.model_dir, self.model_file_path)
         estimates = self.get_estimates(input_path)
 
         # Export all source MP3s in parallel
