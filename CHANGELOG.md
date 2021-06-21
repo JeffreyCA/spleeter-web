@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.7.0] - 2021-06-21
+
+### Added
+- Support for D3Net model! Big thanks to Sony AI Research for making it [open-source](https://github.com/sony/ai-research-code/tree/master/d3net) ([paper](https://arxiv.org/abs/2010.01733)).
+
+### Changed
+- Fix GPU Docker image so that GPU-accelerated separation works properly with Spleeter
+
+
 ## [v3.6.1] - 2021-06-14
 
 ### Changed
@@ -200,7 +209,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.1...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...HEAD
+[v3.7.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.2...v3.7.0
 [v3.6.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.0...v3.6.1
 [v3.6.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.2...v3.6.0
 [v3.5.2]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.1...v3.5.2
