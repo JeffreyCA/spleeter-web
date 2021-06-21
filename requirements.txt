@@ -150,6 +150,6 @@ wrapt==1.12.1
 xumx-unofficial==0.1.0
 yapf==0.31.0
 yarl==1.6.3
--e git+https://github.com/JeffreyCA/youtube-dl.git@5af035971b6e4e326b6bc2cc1ea91965cd202d63#egg=youtube_dl
+-e git+https://github.com/JeffreyCA/youtube-dl.git@b73c4cd4aeade1a7ce5266ee2443507d7eff73c2#egg=youtube_dl
 youtube-title-parse==1.0.0
 zipp==3.2.0
