@@ -210,7 +210,7 @@ Undocumented
 
 
 [Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...HEAD
-[v3.7.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.2...v3.7.0
+[v3.7.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.1...v3.7.0
 [v3.6.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.0...v3.6.1
 [v3.6.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.2...v3.6.0
 [v3.5.2]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.1...v3.5.2
