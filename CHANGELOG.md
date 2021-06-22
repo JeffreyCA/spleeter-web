@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Fix GPU Docker image so that GPU-accelerated separation works properly with Spleeter
 - Update `youtube-dl`
+- Fix YouTube metadata parsing on certain types of videos
+
 
 ## [v3.6.1] - 2021-06-14
 
