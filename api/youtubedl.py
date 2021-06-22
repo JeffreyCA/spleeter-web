@@ -69,9 +69,9 @@ def get_meta_info(url):
                 # YT video uploader
                     'uploader': info['uploader'],
                 # YT video's embedded track artist (some official songs)
-                    'embedded_artist': info['artist'],
+                    'embedded_artist': info['artist'] if 'artist' in info else '',
                 # YT video's embedded track title (some official songs)
-                    'embedded_title': info['track'],
+                    'embedded_title': info['track'] if 'track' in info else '',
                 # Artist name parsed from the YouTube video title
                     'parsed_artist': parsed_artist,
                 # Title parsed from the YouTube video title
@@ -84,6 +84,8 @@ def get_meta_info(url):
                     'filename': filename
                 }
                 return metadata
+        except KeyError:
+            pass
         except DownloadError:
             # Allow for retry
             pass
