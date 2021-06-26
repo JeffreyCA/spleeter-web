@@ -3,7 +3,9 @@ name: Docker Compose push (master)
 on:
   push:
     branches: [ master ]
-
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build-cpu:
     name: Build and publish CPU images
