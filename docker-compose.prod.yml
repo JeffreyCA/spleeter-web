@@ -2,7 +2,9 @@ version: '3.4'
 services:
   nginx:
     ports:
-      - "80:80"
+      - "${NGINX_PORT:-80}:80"
+    environment:
+      - NGINX_PORT
   api:
     expose:
       - "8000"
