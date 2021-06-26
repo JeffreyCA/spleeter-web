@@ -274,6 +274,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     AZURE_CUSTOM_DOMAIN=<custom domain>               # Optional
     CELERY_FAST_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 3)
     CELERY_SLOW_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 1)
+    NGINX_PORT=<webserver port>                       # Optional (default = 80)
     YOUTUBE_API_KEY=<youtube api key>                 # Optional
     ```
 
