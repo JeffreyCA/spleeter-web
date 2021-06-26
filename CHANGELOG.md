@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.8.0] - 2021-06-25
+
+### Added
+- Docker: Add environment variables `DEV_WEBSERVER_PORT` and `NGINX_PORT` to configure which ports to use on host machine for webserver
+
+### Removed
+- Docker: Unexpose Redis port `6379` on host machine
+
+
 ## [v3.7.0] - 2021-06-21
 
 ### Added
@@ -211,7 +220,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.8.0...HEAD
+[v3.8.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...v3.8.0
 [v3.7.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.1...v3.7.0
 [v3.6.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.0...v3.6.1
 [v3.6.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.5.2...v3.6.0
