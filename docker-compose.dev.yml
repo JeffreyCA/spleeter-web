@@ -8,7 +8,6 @@ services:
       - "${DEV_WEBSERVER_PORT:-8000}:8000"
     environment:
       - DJANGO_DEVELOPMENT=true
-      - DEV_WEBSERVER_PORT
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media

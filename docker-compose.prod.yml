@@ -3,8 +3,6 @@ services:
   nginx:
     ports:
       - "${NGINX_PORT:-80}:80"
-    environment:
-      - NGINX_PORT
   api:
     expose:
       - "8000"
