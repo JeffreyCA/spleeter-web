@@ -218,8 +218,10 @@ Here is a list of all the environment variables you can use to further customize
 | `AZURE_CUSTOM_DOMAIN` | Custom domain, such as for a CDN. Used when `DEFAULT_FILE_STORAGE` in `settings*.py` is set to `api.storage.AzureStorage`.|
 | `CELERY_BROKER_URL` | Broker URL for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
-| `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process (used only if run using Docker). |
-| `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process (used only if run using Docker).|
+| `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process. Docker only. |
+| `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process. Docker only. |
+| `DEV_WEBSERVER_PORT` | Port that development webserver is mapped to on **host** machine. Docker only. |
+| `NGINX_PORT` | Port that Nginx is mapped to on **host** machine. Docker only. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
