@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 import os
 
 from django.conf import settings
-from youtube_dl import YoutubeDL
-from youtube_dl.utils import DownloadError
+from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 from youtube_title_parse import get_artist_title
 
 """
