@@ -67,6 +67,8 @@ services:
     environment: *celery-env
     depends_on:
       - redis
+    dns:
+      - "8.8.8.8"
     restart: always
   celery-slow:
     image: jeffreyca/spleeter-web-backend:${TAG:-latest}
