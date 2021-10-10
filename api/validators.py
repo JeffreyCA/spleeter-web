@@ -3,7 +3,7 @@ import os
 import magic
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from youtube_dl.utils import DownloadError
+from yt_dlp.utils import DownloadError
 
 from .youtubedl import get_meta_info
 
