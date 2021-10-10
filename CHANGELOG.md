@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.9.0] - 2021-10-09
+
+### Changed
+- Update Spleeter to 2.3.0 (which uses Tensorflow 2.5.0)
+- Update GPU Dockerfile to use CUDA 11.2.0/cuDNN8 and latest nnabla package
+- Switch from youtube_dl (inactive project) to yt_dlp which fixes slow YouTube download speeds
+- Fix issue with using Docker on Windows where YouTube videos would not download
+- Update dependencies
+
+
 ## [v3.8.0] - 2021-06-25
 
 ### Added
@@ -220,7 +230,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.8.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...HEAD
+[v3.9.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.8.0...v3.9.0
 [v3.8.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...v3.8.0
 [v3.7.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.1...v3.7.0
 [v3.6.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.0...v3.6.1
