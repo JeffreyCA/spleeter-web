@@ -155,6 +155,6 @@ wrapt==1.12.1
 xumx-unofficial==0.1.0
 yapf==0.31.0
 yarl==1.6.3
-yt-dlp==2021.10.10
+-e git+https://github.com/JeffreyCA/yt-dlp.git@1e35dd633299adaaffcd50cc42128ce2b3c4b284#egg=yt-dlp
 youtube-title-parse==1.0.0
 zipp==3.2.0
