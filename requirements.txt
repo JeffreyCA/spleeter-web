@@ -83,6 +83,7 @@ musdb==0.3.1
 museval==0.3.0
 mutagen==1.45.1
 nnabla==1.21.0
+nnabla-ext-cuda110==1.21.0
 norbert==0.2.1
 numba==0.53.1
 numpy==1.19.5
