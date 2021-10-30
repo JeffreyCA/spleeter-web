@@ -14,7 +14,7 @@ from d3net.util import generate_data, model_separate, stft2time_domain
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
 
-MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/d3net/mss/d3net-mss.h5'
+MODEL_URL = 'https://github.com/JeffreyCA/spleeterweb-d3net/releases/download/d3net-mss/d3net-mss.h5'
 
 class D3NetSeparator:
     """Performs source separation using D3Net API."""
