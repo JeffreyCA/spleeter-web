@@ -229,9 +229,9 @@ Here is a list of all the environment variables you can use to further customize
 
 By default, **Spleeter Web** uses the local filesystem to store uploaded files and mixes. It uses [django-storages](https://django-storages.readthedocs.io/en/latest/), so you can also configure it to use other storage backends like Azure Storage or AWS S3.
 
-To do this, edit `django_react/settings_docker.py` (if using Docker) or `django_react/settings.py` and set `DEFAULT_FILE_STORAGE` to another backend like `api.storage.S3Boto3Storage` or `api.storage.AzureStorage`.
+You can set the environment variable `DEFAULT_FILE_STORAGE` (`.env` if using Docker) to either `FILE` (for local storage), `AWS` (S3 storage), or `AZURE` (Azure Storage).
 
-Then, set the following environment variables (`.env` if using Docker), depending on which backend you're using:
+Then, depending on which backend you're using, set these additional variables:
 
 **AWS S3:**
 - `AWS_ACCESS_KEY_ID`
@@ -256,15 +256,14 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     $ cd spleeter-web
     ```
 
-2. Configure your storage provider in `django_react/settings_docker.py`. Set `DEFAULT_FILE_STORAGE` to one of: `api.storage.AzureStorage`, `api.storage.S3Boto3Storage`, or `api.storage.FileSystemStorage` (for hosting on Azure, AWS, or locally).
-
-    If self-hosting, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
+2. (Optional) If self-hosting, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
 
 3. In `spleeter-web`, create an `.env` file with the production environment variables
 
     `.env` file:
     ```
     APP_HOST=<domain name or public IP of server>
+    DEFAULT_FILE_STORAGE=<FILE or AWS or AZURE>       # Optional (default = FILE)
     AWS_ACCESS_KEY_ID=<access key id>                 # Optional
     AWS_SECRET_ACCESS_KEY=<secret key>                # Optional
     AWS_STORAGE_BUCKET_NAME=<bucket name>             # Optional
