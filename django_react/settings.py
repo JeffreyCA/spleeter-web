@@ -12,7 +12,16 @@ CPU_SEPARATION = bool(int(os.getenv('CPU_SEPARATION', '1')))
 
 ALLOWED_HOSTS = [os.getenv('APP_HOST'), '0.0.0.0', '127.0.0.1', 'localhost']
 
-DEFAULT_FILE_STORAGE = 'api.storage.AzureStorage'
+DEFAULT_FILE_STORAGE = os.getenv('DEFAULT_FILE_STORAGE', 'api.storage.FileSystemStorage')
+if DEFAULT_FILE_STORAGE != 'api.storage.FileSystemStorage':
+    storage_type = DEFAULT_FILE_STORAGE.upper()
+    if storage_type == 'AWS':
+        DEFAULT_FILE_STORAGE = 'api.storage.S3Boto3Storage'
+    elif storage_type == 'AZURE':
+        DEFAULT_FILE_STORAGE = 'api.storage.AzureStorage'
+    else:
+        DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
+# DEFAULT_FILE_STORAGE = 'api.storage.AzureStorage'
 # DEFAULT_FILE_STORAGE = 'api.storage.S3Boto3Storage'
 # DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
 

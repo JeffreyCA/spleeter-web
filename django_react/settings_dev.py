@@ -5,7 +5,7 @@ SECRET_KEY = 'default'
 
 ALLOWED_HOSTS = ['*']
 
-DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
+# DEFAULT_FILE_STORAGE = 'api.storage.FileSystemStorage'
 # DEFAULT_FILE_STORAGE = 'api.storage.S3Boto3Storage'
 # DEFAULT_FILE_STORAGE = 'api.storage.AzureStorage'
 
