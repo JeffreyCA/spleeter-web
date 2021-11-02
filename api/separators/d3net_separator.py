@@ -2,15 +2,17 @@ import os
 import tempfile
 from pathlib import Path
 
+import magic
 import nnabla as nn
 import numpy as np
 import requests
 import yaml
-from api.separators.util import download_and_verify, is_valid_url
+from api.separators.util import download_and_verify
 from billiard.pool import Pool
 from d3net.filter import apply_mwf
 from d3net.separate import get_extension_context
 from d3net.util import generate_data, model_separate, stft2time_domain
+from django.conf import settings
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
 
@@ -50,7 +52,7 @@ class D3NetSeparator:
         nn.load_parameters(str(self.model_file_path))
 
         # Read file locally
-        if not is_valid_url(input_path):
+        if settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage':
             _, inp_stft = generate_data(input_path, fft_size,
                                                   hop_size, n_channels, self.sample_rate)
         else:
@@ -110,7 +112,16 @@ class D3NetSeparator:
         self.audio_adapter.save(output_path, final_source, self.sample_rate, 'mp3', self.bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
-        download_and_verify(MODEL_URL, self.model_dir, self.model_file_path)
+        # Check if we downloaded a webpage instead of the actual model file
+        file_exists = self.model_file_path.is_file()
+        mime = None
+        if file_exists:
+            mime = magic.from_file(str(self.model_file_path), mime=True)
+
+        download_and_verify(MODEL_URL,
+                            self.model_dir,
+                            self.model_file_path,
+                            force=(file_exists and mime == 'text/html'))
 
         parts = {
             'vocals': True,
