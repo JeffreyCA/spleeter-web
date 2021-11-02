@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - D3Net - Fix separation when using local file storage
 - Make `DEFAULT_FILE_STORAGE` an environment variable. It can be set to `FILE`, `AWS`, or `AZURE`. More information in `README.md`.
     - Set the default to `FILE` in all cases
+- Apply workaround for DNS issue on Docker for Windows
 
 
 ## [v3.9.0] - 2021-10-09
