@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.10.0] - 2021-11-01
+
+### Changed
+- D3Net - Fix "Unable to open file (file signature not found)" error
+- D3Net - Fix separation when using local file storage
+- Make `DEFAULT_FILE_STORAGE` an environment variable. It can be set to `FILE`, `AWS`, or `AZURE`. More information in `README.md`.
+    - Set the default to `FILE` in all cases
+
+
 ## [v3.9.0] - 2021-10-09
 
 ### Changed
@@ -230,7 +239,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...HEAD
+[v3.10.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...v3.10.0
 [v3.9.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.8.0...v3.9.0
 [v3.8.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...v3.8.0
 [v3.7.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.6.1...v3.7.0
