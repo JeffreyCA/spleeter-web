@@ -60,8 +60,8 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
     class Meta:
         model = DynamicMix
         fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
-                  'title', 'vocals_file', 'other_file', 'bass_file',
-                  'drums_file', 'status', 'error', 'date_created')
+                  'title', 'vocals_url', 'other_url', 'bass_url',
+                  'drums_url', 'status', 'error', 'date_created')
 
 class LiteStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model with minimal information."""
@@ -117,7 +117,7 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title',
-                  'vocals_file', 'other_file', 'bass_file', 'drums_file',
+                  'vocals_url', 'other_url', 'bass_url', 'drums_url',
                   'status', 'error', 'date_created')
 
 class FullStaticMixSerializer(serializers.ModelSerializer):
