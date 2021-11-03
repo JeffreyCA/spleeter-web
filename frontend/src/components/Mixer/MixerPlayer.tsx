@@ -121,10 +121,10 @@ class MixerPlayer extends React.Component<Props, State> {
     // Initialize Player objects pointing to the four track files
     const players = new Tone.Players(
       {
-        vocals: data?.vocals_file ?? '',
-        accomp: data?.other_file ?? '',
-        drums: data?.drums_file ?? '',
-        bass: data?.bass_file ?? '',
+        vocals: data?.vocals_url ?? '',
+        accomp: data?.other_url ?? '',
+        drums: data?.drums_url ?? '',
+        bass: data?.bass_url ?? '',
       },
       () => {
         players.toDestination();
@@ -358,7 +358,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="vocals"
-          url={data?.vocals_file ?? ''}
+          url={data?.vocals_url ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.vocals && (soloStatus.vocals || noneSoloed)}
           isMuted={muteStatus.vocals}
@@ -369,7 +369,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="accomp"
-          url={data?.other_file ?? ''}
+          url={data?.other_url ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.accomp && (soloStatus.accomp || noneSoloed)}
           isMuted={muteStatus.accomp}
@@ -380,7 +380,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="bass"
-          url={data?.bass_file ?? ''}
+          url={data?.bass_url ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.bass && (soloStatus.bass || noneSoloed)}
           isSoloed={soloStatus.bass}
@@ -391,7 +391,7 @@ class MixerPlayer extends React.Component<Props, State> {
         />
         <VolumeUI
           id="drums"
-          url={data?.drums_file ?? ''}
+          url={data?.drums_url ?? ''}
           disabled={!isReady}
           isActive={!muteStatus.drums && (soloStatus.drums || noneSoloed)}
           isSoloed={soloStatus.drums}
