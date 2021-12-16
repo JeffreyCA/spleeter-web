@@ -79,23 +79,23 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 4. Download and run prebuilt Docker images:
     ```sh
-    # For regular CPU separation
-    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-    # For GPU separation
-    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.dev.yml up
+    # CPU separation
+    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
+    # GPU separation
+    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
     ```
 
     Alternatively, you can build the Docker images from source:
     ```sh
-    # For regular CPU separation
-    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.dev.yml up --build
-    # For GPU separation
-    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml -f docker-compose.dev.yml up --build
+    # CPU separation
+    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build
+    # GPU separation
+    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build
     ```
 
 5. Launch **Spleeter Web**
 
-    Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser. Uploaded tracks and generated mixes will appear in `media/uploads` and `media/separate` respectively on your host machine.
+    Navigate to [http://127.0.0.1:80](http://127.0.0.1:80) in your browser. Uploaded tracks and generated mixes will appear in `media/uploads` and `media/separate` respectively on your host machine.
 
 ## Getting started without Docker
 **If you are on Windows, it's recommended to follow the Docker instructions above. Celery is not well-supported on Windows.**
@@ -116,10 +116,8 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     ```sh
     # Unix/macOS:
-    (env) spleeter-web$ export DJANGO_DEVELOPMENT=true
     (env) spleeter-web$ export YOUTUBE_API_KEY=<api key>
     # Windows:
-    (env) spleeter-web$ set DJANGO_DEVELOPMENT=true
     (env) spleeter-web$ set YOUTUBE_API_KEY=<api key>
     ```
 2. Create Python virtual environment
@@ -147,13 +145,13 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```sh
     (env) spleeter-web$ python manage.py migrate
     ````
-7. Start frontend
+7. Build frontend
     ```sh
-    spleeter-web$ npm run dev --prefix frontend
+    spleeter-web$ npm run build --prefix frontend
     ```
 8. Start backend in separate terminal
     ```sh
-    (env) spleeter-web$ python manage.py runserver 0.0.0.0:8000
+    (env) spleeter-web$ python manage.py collectstatic && python manage.py runserver 0.0.0.0:8000
     ````
 
 9. Start Celery workers in separate terminal
@@ -256,7 +254,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
     $ cd spleeter-web
     ```
 
-2. (Optional) If self-hosting, update `docker-compose.prod.selfhost.yml` and replace `/path/to/media` with the path where media files should be stored on the server.
+2. (Optional) If self-hosting, update `docker-compose.prod.selfhost.yml` and replace `./media` with the path where media files should be stored on the server.
 
 3. In `spleeter-web`, create an `.env` file with the production environment variables
 
@@ -282,7 +280,7 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 4. Build and start production containers
 
-    **To enable GPU separation, substitute below `docker-compose.yml` and `docker-compose.build.yml` for `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` respectively.**
+    **For GPU separation, replace `docker-compose.yml` and `docker-compose.build.yml` below for `docker-compose.gpu.yml` and `docker-compose.build.gpu.yml` respectively.**
 
     If you are self-hosting media files:
     ```sh
