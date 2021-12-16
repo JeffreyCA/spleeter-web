@@ -2,13 +2,13 @@ version: '3.4'
 services:
   nginx:
     volumes:
-      - /path/to/media:/webapp/media
+      - ./media:/webapp/media
   api:
     volumes:
-      - /path/to/media:/webapp/media
+      - ./media:/webapp/media
   celery-fast:
     volumes:
-      - /path/to/media:/webapp/media
+      - ./media:/webapp/media
   celery-slow:
     volumes:
-      - /path/to/media:/webapp/media
+      - ./media:/webapp/media
