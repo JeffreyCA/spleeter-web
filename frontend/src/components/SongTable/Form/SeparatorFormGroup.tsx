@@ -9,7 +9,7 @@ import {
   DEFAULT_SOFTMASK_ALPHA,
   MAX_SHIFT_ITER,
 } from '../../../Constants';
-import { isDemucsOrTasnet, Separator } from '../../../models/Separator';
+import { isDemucsOrTasnet, Separator, separatorLabelMap } from '../../../models/Separator';
 import XUMXFormSubgroup from './XUMXFormSubgroup';
 
 interface Props {
@@ -165,21 +165,19 @@ class SeparatorFormGroup extends React.Component<Props, State> {
             <Form.Label>Model:</Form.Label>
             <Form.Control as="select" defaultValue="spleeter" onChange={this.onModelSelectChange}>
               <optgroup label="Spleeter">
-                <option value="spleeter">Spleeter</option>
+                <option value="spleeter">{separatorLabelMap['spleeter']}</option>
               </optgroup>
               <optgroup label="D3Net">
-                <option value="d3net">D3Net</option>
+                <option value="d3net">{separatorLabelMap['d3net']}</option>
               </optgroup>
               <optgroup label="Open-Unmix">
-                <option value="xumx">X-UMX</option>
+                <option value="xumx">{separatorLabelMap['xumx']}</option>
               </optgroup>
-              <optgroup label="Demucs/Tasnet">
-                <option value="demucs">Demucs</option>
-                <option value="demucs48_hq">Demucs HQ</option>
-                <option value="demucs_extra">Demucs Extra</option>
-                <option value="demucs_quantized">Demucs Quantized</option>
-                <option value="tasnet">Tasnet</option>
-                <option value="tasnet_extra">Tasnet Extra</option>
+              <optgroup label="Demucs v3">
+                <option value="mdx">{separatorLabelMap['mdx']}</option>
+                <option value="mdx_extra">{separatorLabelMap['mdx_extra']}</option>
+                <option value="mdx_q">{separatorLabelMap['mdx_q']}</option>
+                <option value="mdx_extra_q">{separatorLabelMap['mdx_extra_q']}</option>
               </optgroup>
             </Form.Control>
           </Form.Group>
