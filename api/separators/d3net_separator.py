@@ -32,7 +32,7 @@ class D3NetSeparator:
         self.model_dir = Path('pretrained_models')
         self.model_file_path = self.model_dir / self.model_file
         self.context = 'cpu' if cpu_separation else 'cudnn'
-        self.bitrate = bitrate
+        self.bitrate = f'{bitrate}k'
         self.sample_rate = 44100
         self.audio_adapter = AudioAdapter.default()
 

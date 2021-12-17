@@ -33,7 +33,7 @@ class XUMXSeparator:
         self.softmask = softmask
         self.alpha = alpha
         self.iterations = iterations
-        self.bitrate = bitrate
+        self.bitrate = f'{bitrate}k'
         self.sample_rate = 44100
         self.residual_model = False
         self.audio_adapter = AudioAdapter.default()
