@@ -40,19 +40,28 @@ def mix_track_path(instance, filename):
 
 SPLEETER = 'spleeter'
 D3NET = 'd3net'
+XUMX = 'xumx'
+
+DEMUCS3_MDX = 'mdx'
+DEMUCS3_MDX_EXTRA = 'mdx_extra'
+DEMUCS3_MDX_Q = 'mdx_q'
+DEMUCS3_MDX_EXTRA_Q = 'mdx_extra_q'
+
+# Deprecated
 DEMUCS = 'demucs'
 DEMUCS_HQ = 'demucs48_hq'
 DEMUCS_EXTRA = 'demucs_extra'
 DEMUCS_QUANTIZED = 'demucs_quantized'
 TASNET = 'tasnet'
 TASNET_EXTRA = 'tasnet_extra'
-XUMX = 'xumx'
-
-# Deprecated
 DEMUCS_LIGHT = 'light'
 DEMUCS_LIGHT_EXTRA = 'light_extra'
 
-DEMUCS_FAMILY = [DEMUCS, DEMUCS_HQ,  DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TASNET_EXTRA, DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA]
+DEMUCS_FAMILY = [
+    DEMUCS3_MDX, DEMUCS3_MDX_EXTRA, DEMUCS3_MDX_Q, DEMUCS3_MDX_EXTRA_Q, DEMUCS,
+    DEMUCS_HQ, DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TASNET_EXTRA,
+    DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA
+]
 
 SEP_CHOICES = [
     (SPLEETER, 'Spleeter'),
@@ -60,13 +69,17 @@ SEP_CHOICES = [
     (
         'demucs',
         (
+            (DEMUCS3_MDX, 'Demucs v3'),
+            (DEMUCS3_MDX_EXTRA, 'Demucs v3 Extra'),
+            (DEMUCS3_MDX_Q, 'Demucs v3 Quantized'),
+            (DEMUCS3_MDX_EXTRA_Q, 'Demucs v3 Extra Quantized'),
+    # Deprecated
             (DEMUCS, 'Demucs'),
             (DEMUCS_HQ, 'Demucs HQ'),
             (DEMUCS_EXTRA, 'Demucs Extra'),
             (DEMUCS_QUANTIZED, 'Demucs Quantized'),
             (TASNET, 'Tasnet'),
             (TASNET_EXTRA, 'Tasnet Extra'),
-    # Deprecated
             (DEMUCS_LIGHT, 'Demucs Light'),
             (DEMUCS_LIGHT_EXTRA, 'Demucs Light Extra'))),
     (XUMX, 'X-UMX')

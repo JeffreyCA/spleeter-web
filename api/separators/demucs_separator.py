@@ -2,9 +2,10 @@ import gc
 from pathlib import Path
 
 import torch
+
 from billiard.exceptions import SoftTimeLimitExceeded
 from billiard.pool import Pool
-from demucs.pretrained import load_pretrained, PRETRAINED_MODELS
+from demucs.pretrained import get_model, ModelLoadingError
 from demucs.separate import *
 from django.conf import settings
 from spleeter.audio.adapter import AudioAdapter
@@ -16,17 +17,15 @@ This module defines a wrapper interface over the Demucs API.
 class DemucsSeparator:
     """Performs source separation using Demucs API."""
     def __init__(self,
-                 model_name='demucs',
+                 model_name='mdx_extra_q',
                  cpu_separation=True,
                  bitrate=256,
                  shifts=5):
-        assert (model_name in PRETRAINED_MODELS)
         self.device = 'cpu' if cpu_separation else 'cuda'
         self.sample_rate = 44100
         self.model_name = model_name
-        self.model_file = f'{model_name}.th'
+        self.repo = None
         self.model_dir = Path('pretrained_models')
-        self.model_file_path = self.model_dir / self.model_file
         self.shifts = shifts
         self.split = True
         self.overlap = 0.25
@@ -36,27 +35,37 @@ class DemucsSeparator:
 
     def get_model(self):
         torch.hub.set_dir(str(self.model_dir))
-        model = load_pretrained(self.model_name)
-        model.to(self.device)
+        try:
+            model = get_model(self.model_name, self.repo)
+        except ModelLoadingError as error:
+            fatal(error.args[0])
+
+        if isinstance(model, BagOfModels):
+            print(f"Selected model is a bag of {len(model.models)} models. "
+                "You will see that many progress bars per track.")
+
+        model.cpu()
+        model.eval()
         return model
 
     def apply_model(self, model, input_path: Path):
         """Applies model to waveform file"""
         print(f"Separating track {input_path}")
-        wav = AudioFile(input_path).read(streams=0,
-                                         samplerate=self.sample_rate,
-                                         channels=2).to(self.device)
-        # Round to nearest short integer for compatibility with how MusDB load audio with stempeg.
-        wav = (wav * 2**15).round() / 2**15
+        wav = load_track(input_path, self.device, model.audio_channels,
+                         model.samplerate)
+        wav = wav.cpu()
+
         ref = wav.mean(0)
         wav = (wav - ref.mean()) / ref.std()
         raw_sources = apply_model(model,
-                                  wav,
-                                  shifts=self.shifts,
-                                  split=self.split,
-                                  overlap=self.overlap,
-                                  progress=True)
+                              wav[None],
+                              # device=self.device,
+                              shifts=self.shifts,
+                              split=self.split,
+                              overlap=self.overlap,
+                              progress=True)[0]
         raw_sources = raw_sources * ref.std() + ref.mean()
+
         if not settings.CPU_SEPARATION:
             del model
             torch.cuda.empty_cache()
@@ -73,6 +82,7 @@ class DemucsSeparator:
         """
         input_path = Path(input_path)
         model = self.get_model()
+
         raw_sources = self.apply_model(model, input_path)
 
         final_source = None
@@ -99,6 +109,7 @@ class DemucsSeparator:
         """
         input_path = Path(input_path)
         output_path = Path(output_path)
+
         model = self.get_model()
         raw_sources = self.apply_model(model, input_path)
 
