@@ -30,7 +30,7 @@ class DemucsSeparator:
         self.split = True
         self.overlap = 0.25
         self.verbose = True
-        self.bitrate = bitrate
+        self.bitrate = f'{bitrate}k'
         self.audio_adapter = AudioAdapter.default()
 
     def get_model(self):
