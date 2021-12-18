@@ -31,7 +31,7 @@ export const separatorLabelMap = {
   demucs: 'Demucs v2',
   demucs48_hq: 'Demucs v2 HQ',
   demucs_extra: 'Demucs v2 Extra',
-  demucs_quantized: 'Demucs v2 Quantized',
+  demucs_quantized: 'Demucs v2 Q',
   tasnet: 'Tasnet v2',
   tasnet_extra: 'Tasnet v2 Extra',
   light: 'Demucs v1 Light',
