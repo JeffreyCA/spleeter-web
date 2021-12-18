@@ -342,7 +342,8 @@ class StaticMix(models.Model):
             return [f'{self.bitrate} kbps']
         elif self.separator in DEMUCS_FAMILY:
             return [
-                f'{self.bitrate} kbps', f'Random shifts: {self.separator_args["random_shifts"]}'
+                self.separator, f'{self.bitrate} kbps',
+                f'Random shifts: {self.separator_args["random_shifts"]}'
             ]
         else:
             info_arr = [
@@ -484,7 +485,7 @@ class DynamicMix(models.Model):
             return [f'{self.bitrate} kbps']
         elif self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
-            return [f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']
+            return [self.separator, f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']
         else:
             info_arr = [
                 f'{self.bitrate} kbps',

@@ -35,7 +35,7 @@ cryptography==3.4.7
 Cython==0.29.23
 d3net-spleeterweb==0.0.4
 decorator==4.4.2
-demucs==3.0.1
+demucs==3.0.3
 diffq==0.2.2
 Django==3.2.5
 django-picklefield==3.0.1

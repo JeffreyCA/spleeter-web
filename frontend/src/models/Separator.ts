@@ -25,8 +25,8 @@ export const separatorLabelMap = {
   // Demucs v3
   mdx: 'Demucs v3',
   mdx_extra: 'Demucs v3 Extra',
-  mdx_q: 'Demucs v3 Quantized',
-  mdx_extra_q: 'Demucs v3 Extra Quantized',
+  mdx_q: 'Demucs v3 Q',
+  mdx_extra_q: 'Demucs v3 Extra Q',
   // Demucs v2
   demucs: 'Demucs v2',
   demucs48_hq: 'Demucs v2 HQ',
