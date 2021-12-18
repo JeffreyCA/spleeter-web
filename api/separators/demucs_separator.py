@@ -13,6 +13,7 @@ from spleeter.audio.adapter import AudioAdapter
 
 """
 This module defines a wrapper interface over the Demucs API.
+Code adapted from https://github.com/facebookresearch/demucs/blob/main/demucs/separate.py which is copyrighted by Facebook, Inc. and its affiliates. under the terms of the MIT license.
 """
 
 class DemucsSeparator:
