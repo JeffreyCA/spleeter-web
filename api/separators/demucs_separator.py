@@ -1,5 +1,6 @@
 import gc
 from pathlib import Path
+from demucs.utils import DummyPoolExecutor
 
 import torch
 
@@ -29,6 +30,7 @@ class DemucsSeparator:
         self.shifts = shifts
         self.split = True
         self.overlap = 0.25
+        self.workers = 0
         self.verbose = True
         self.bitrate = f'{bitrate}k'
         self.audio_adapter = AudioAdapter.default()
@@ -51,19 +53,18 @@ class DemucsSeparator:
     def apply_model(self, model, input_path: Path):
         """Applies model to waveform file"""
         print(f"Separating track {input_path}")
-        wav = load_track(input_path, self.device, model.audio_channels,
-                         model.samplerate)
-        wav = wav.cpu()
+        wav = load_track(input_path, model.audio_channels, model.samplerate)
 
         ref = wav.mean(0)
         wav = (wav - ref.mean()) / ref.std()
         raw_sources = apply_model(model,
                               wav[None],
-                              # device=self.device,
+                              device=self.device,
                               shifts=self.shifts,
                               split=self.split,
                               overlap=self.overlap,
-                              progress=True)[0]
+                              progress=True,
+                              num_workers=self.workers)[0]
         raw_sources = raw_sources * ref.std() + ref.mean()
 
         if not settings.CPU_SEPARATION:
