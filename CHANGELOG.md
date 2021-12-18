@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.11.0] - 2021-12-17
+
+### Changed
+- Update Demucs to v3, which uses hybrid separation approach resulting in much improved performance
+    - [Official Demucs changelog](https://github.com/facebookresearch/demucs/blob/main/docs/release.md)
+- Fix bug where non-Spleeter models always generated 128kbps MP3 files. Oops!
+- Update "Getting Started" section in README to use prod configuration
+- Update some dependencies
+
+### Removed
+- Tasnet models
+- Ability to separate using older Demucs models
+
 ## [v3.10.0] - 2021-11-01
 
 ### Changed
@@ -240,7 +253,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.11.0...HEAD
+[v3.11.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...v3.11.0
 [v3.10.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...v3.10.0
 [v3.9.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.8.0...v3.9.0
 [v3.8.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.7.0...v3.8.0
