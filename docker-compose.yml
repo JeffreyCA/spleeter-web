@@ -28,6 +28,8 @@ services:
     image: jeffreyca/spleeter-web-nginx:${TAG:-latest}
     volumes:
       - staticfiles:/webapp/staticfiles
+    environment:
+      - API_HOST=api
     depends_on:
       - api
     restart: always
