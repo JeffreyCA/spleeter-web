@@ -203,9 +203,10 @@ Here is a list of all the environment variables you can use to further customize
 
 | Name | Description |
 |---|---|
-| `CPU_SEPARATION` | No need to set this if using Docker. Otherwise, set to `1` if you want CPU separation and `0` if you want GPU separation.
+| `CPU_SEPARATION` | No need to set this if using Docker. Otherwise, set to `1` if you want CPU separation and `0` if you want GPU separation. |
 | `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
 | `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
+| `API_HOST` | Hostname of API server (for nginx) |
 | `DEFAULT_FILE_STORAGE` | Whether to use local filesystem or cloud-based storage for storing uploads and separated files. `FILE` or `AWS` or `AZURE`. |
 | `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
