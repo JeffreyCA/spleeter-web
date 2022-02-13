@@ -2,7 +2,6 @@
 .git
 *Dockerfile*
 *docker-compose*
-web-entrypoint.sh
 
 docs
 env
@@ -11,5 +10,4 @@ screenshots
 
 frontend/assets/
 frontend/node_modules
-frontend/src
 frontend/webpack-stats.json

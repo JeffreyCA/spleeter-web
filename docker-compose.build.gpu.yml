@@ -3,16 +3,11 @@ services:
   nginx:
     build: ./nginx
   api:
-    build:
-      context: .
-      dockerfile: gpu.Dockerfile
+    build: .
   celery-fast:
     build:
-      context: .
-      dockerfile: gpu.Dockerfile
+      target: celery-fast
   celery-slow:
     build:
       context: .
       dockerfile: gpu.Dockerfile
-  frontend:
-    build: ./frontend

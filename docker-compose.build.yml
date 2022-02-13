@@ -3,10 +3,11 @@ services:
   nginx:
     build: ./nginx
   api:
-    build: .
+    build:
+      target: api
   celery-fast:
-    build: .
+    build:
+      target: celery-fast
   celery-slow:
-    build: .
-  frontend:
-    build: ./frontend
+    build:
+      target: celery-slow

@@ -34,7 +34,6 @@ services:
   api:
     image: jeffreyca/spleeter-web-backend:${TAG:-latest}
     volumes:
-      - assets:/webapp/frontend/assets
       - sqlite-data:/webapp/sqlite
       - staticfiles:/webapp/staticfiles
     stdin_open: true
@@ -57,11 +56,9 @@ services:
       - YOUTUBE_API_KEY
     depends_on:
       - redis
-      - frontend
     restart: always
   celery-fast:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
-    entrypoint: ./celery-fast-entrypoint.sh
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-celery-fast
     volumes:
       - celery-data:/webapp/celery
       - pretrained-models:/webapp/pretrained_models
@@ -73,8 +70,7 @@ services:
       - "8.8.8.8"
     restart: always
   celery-slow:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
-    entrypoint: ./celery-slow-entrypoint.sh
+    image: jeffreyca/spleeter-web-backend:${TAG:-latest}-celery-slow
     volumes:
       - celery-data:/webapp/celery
       - pretrained-models:/webapp/pretrained_models
@@ -83,14 +79,7 @@ services:
     depends_on:
       - redis
     restart: always
-  frontend:
-    image: jeffreyca/spleeter-web-frontend:${TAG:-latest}
-    volumes:
-      - assets:/webapp/frontend/assets
-    stdin_open: true
-    tty: true
 volumes:
-  assets:
   celery-data:
   pretrained-models:
   redis-data:
