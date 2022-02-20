@@ -1,8 +1,8 @@
 import os
+import shutil
 import tempfile
 from pathlib import Path
 
-import magic
 import nnabla as nn
 import numpy as np
 import requests
@@ -16,7 +16,12 @@ from django.conf import settings
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
 
-MODEL_URL = 'https://github.com/JeffreyCA/spleeterweb-d3net/releases/download/d3net-mss/d3net-mss.h5'
+MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/d3net/mss/d3net-mss.zip'
+MODEL_SHA1 = 'ada6858b467628f2f57489f0e862982aeb87942c'
+
+"""
+This module reimplements part of d3net's source separation code from https://github.com/sony/ai-research-code/blob/master/d3net/music-source-separation/separate.py which is under copyright by Sony Corporation under the terms of the Apache license.
+"""
 
 class D3NetSeparator:
     """Performs source separation using D3Net API."""
@@ -28,8 +33,8 @@ class D3NetSeparator:
         """Default constructor.
         :param config: Separator config, defaults to None
         """
-        self.model_file = 'd3net-mss.h5'
-        self.model_dir = Path('pretrained_models')
+        self.model_file = 'd3net-mss.zip'
+        self.model_dir = Path('pretrained_models', 'd3net')
         self.model_file_path = self.model_dir / self.model_file
         self.context = 'cpu' if cpu_separation else 'cudnn'
         self.bitrate = f'{bitrate}k'
@@ -43,7 +48,7 @@ class D3NetSeparator:
                        hop_size=1024,
                        n_channels=2,
                        apply_mwf_flag=True,
-                       ch_flip_average=True):
+                       ch_flip_average=False):
         # Set NNabla extention
         ctx = get_extension_context(self.context)
         nn.set_default_context(ctx)
@@ -76,6 +81,7 @@ class D3NetSeparator:
         # Need to compute all parts even for static mix, for mwf?
         for part in parts:
             print(f'Processing {part}...')
+            nn.load_parameters(f"{(self.model_dir / part)}.h5")
 
             with open('./config/d3net/{}.yaml'.format(part)) as file:
                 # Load part specific Hyper parameters
@@ -98,7 +104,11 @@ class D3NetSeparator:
 
 
     def create_static_mix(self, parts, input_path: str, output_path: Path):
-        download_and_verify(MODEL_URL, self.model_dir, self.model_file_path)
+        download_and_verify(MODEL_URL, MODEL_SHA1, self.model_dir, self.model_file_path)
+        print('Unzipping model...')
+        shutil.unpack_archive(self.model_file_path, self.model_dir)
+        print('Finished unzipping.')
+
         estimates = self.get_estimates(input_path, parts)
 
         final_source = None
@@ -112,16 +122,12 @@ class D3NetSeparator:
         self.audio_adapter.save(output_path, final_source, self.sample_rate, 'mp3', self.bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
-        # Check if we downloaded a webpage instead of the actual model file
-        file_exists = self.model_file_path.is_file()
-        mime = None
-        if file_exists:
-            mime = magic.from_file(str(self.model_file_path), mime=True)
-
-        download_and_verify(MODEL_URL,
+        download_and_verify(MODEL_URL, MODEL_SHA1,
                             self.model_dir,
-                            self.model_file_path,
-                            force=(file_exists and mime == 'text/html'))
+                            self.model_file_path)
+        print('Unzipping model...')
+        shutil.unpack_archive(self.model_file_path, self.model_dir)
+        print('Finished unzipping.')
 
         parts = {
             'vocals': True,
