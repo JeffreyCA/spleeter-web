@@ -220,6 +220,8 @@ class SourceTrack(models.Model):
     title = models.CharField(max_length=200)
     # DateTime when user added the song
     date_created = models.DateTimeField(auto_now_add=True)
+    # DateTime when upload task completed/failed
+    date_finished = models.DateTimeField(default=None, null=True, blank=True)
 
     def url(self):
         """Get the URL of the source file."""
@@ -278,6 +280,8 @@ class StaticMix(models.Model):
     error = models.TextField(blank=True)
     # DateTime when source separation task was started
     date_created = models.DateTimeField(auto_now_add=True)
+    # DateTime when source separation task completed/failed
+    date_finished = models.DateTimeField(default=None, null=True, blank=True)
 
     def artist(self):
         """Get the artist name."""
@@ -405,6 +409,8 @@ class DynamicMix(models.Model):
     error = models.TextField(blank=True)
     # DateTime when source separation task was started
     date_created = models.DateTimeField(auto_now_add=True)
+    # DateTime when source separation task completed/failed
+    date_finished = models.DateTimeField(default=None, null=True, blank=True)
 
     def artist(self):
         """Get the artist name."""

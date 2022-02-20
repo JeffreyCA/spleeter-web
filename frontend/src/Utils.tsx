@@ -5,11 +5,20 @@ const SEC_PER_MIN = 60;
 const DAYS_PER_WEEK = 7;
 
 /**
+ * Convert ISO date string to local date string
+ */
+export const toLocaleDateTimeString = (isoDateString: string): string => {
+  const dateTime = DateTime.fromISO(isoDateString);
+  const dateTimeStr = dateTime.toLocaleString(DateTime.DATETIME_SHORT);
+  return dateTimeStr;
+};
+
+/**
  * Convert ISO date string to custom format (hybrid of relative and absolute date)
  */
 export const toRelativeDateSpan = (isoDateString: string): JSX.Element => {
   const dateTime = DateTime.fromISO(isoDateString);
-  const longDateTimeStr = dateTime.toLocaleString(DateTime.DATETIME_MED);
+  const dateTimeStr = dateTime.toLocaleString(DateTime.DATETIME_SHORT);
   const diffSeconds = -dateTime.diffNow().as('seconds');
   const diffDays = -dateTime.diffNow().as('days');
   let label;
@@ -21,7 +30,7 @@ export const toRelativeDateSpan = (isoDateString: string): JSX.Element => {
   } else {
     label = dateTime.toLocaleString(DateTime.DATE_MED);
   }
-  return <span title={longDateTimeStr ?? undefined}>{label}</span>;
+  return <span title={dateTimeStr ?? undefined}>{label}</span>;
 };
 
 /**

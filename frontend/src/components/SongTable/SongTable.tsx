@@ -12,7 +12,7 @@ import cellEditFactory from 'react-bootstrap-table2-editor';
 import { DynamicMix } from '../../models/DynamicMix';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
-import { toRelativeDateSpan } from '../../Utils';
+import { toLocaleDateTimeString, toRelativeDateSpan } from '../../Utils';
 import DeleteTrackButton from './Button/DeleteTrackButton';
 import PausePlayButton from './Button/PausePlayButton';
 import TextButton from './Button/TextButton';
@@ -24,9 +24,17 @@ import StatusIcon from './StatusIcon';
  * Formatter function for status column
  */
 const statusColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex, formatExtraData) => {
+  let finishedDateTimeText = row.date_finished ? `Done at ${toLocaleDateTimeString(row.date_finished)}` : undefined;
+  if (row.fetch_task_error) {
+    if (finishedDateTimeText) {
+      finishedDateTimeText += '\n';
+    }
+    finishedDateTimeText += `Error: ${row.fetch_task_error}`;
+  }
+
   return (
     <div className="d-flex align-items-center justify-content-start">
-      <StatusIcon status={row.fetch_task_status} overlayText={row.fetch_task_error ?? undefined} />
+      <StatusIcon status={row.fetch_task_status} overlayText={finishedDateTimeText} />
     </div>
   );
 };

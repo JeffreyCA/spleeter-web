@@ -61,7 +61,7 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
         model = DynamicMix
         fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
                   'title', 'vocals_url', 'other_url', 'bass_url',
-                  'drums_url', 'status', 'error', 'date_created')
+                  'drums_url', 'status', 'error', 'date_created', 'date_finished')
 
 class LiteStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model with minimal information."""
@@ -76,7 +76,7 @@ class LiteStaticMixSerializer(serializers.ModelSerializer):
         model = StaticMix
         fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
                   'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url',
-                  'error', 'date_created')
+                  'error', 'date_created', 'date_finished')
 
 class FullDynamicMixSerializer(serializers.ModelSerializer):
     """Serializer for DynamicMix model."""
@@ -116,9 +116,9 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
     class Meta:
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
-                  'separator_args', 'bitrate', 'artist', 'title',
-                  'vocals_url', 'other_url', 'bass_url', 'drums_url',
-                  'status', 'error', 'date_created')
+                  'separator_args', 'bitrate', 'artist', 'title', 'vocals_url',
+                  'other_url', 'bass_url', 'drums_url', 'status', 'error',
+                  'date_created', 'date_finished')
 
 class FullStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model."""
@@ -173,7 +173,7 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title', 'vocals',
                   'drums', 'bass', 'other', 'status', 'url', 'error',
-                  'date_created')
+                  'date_created', 'date_finished')
 
 class LiteSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for representing a SourceTrack along with its associated mixes. Minimal information."""
@@ -191,7 +191,8 @@ class LiteSourceTrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = SourceTrack
         fields = ('id', 'url', 'artist', 'title', 'static', 'dynamic',
-                  'fetch_task_status', 'fetch_task_error', 'date_created')
+                  'fetch_task_status', 'fetch_task_error', 'date_created',
+                  'date_finished')
 
 class FullSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for representing a SourceTrack along with its associated mixes."""
@@ -216,7 +217,8 @@ class FullSourceTrackSerializer(serializers.ModelSerializer):
         model = SourceTrack
         fields = ('id', 'source_file', 'url', 'artist', 'title', 'static',
                   'dynamic', 'is_youtube', 'youtube_link', 'fetch_task',
-                  'fetch_task_status', 'fetch_task_error', 'date_created')
+                  'fetch_task_status', 'fetch_task_error', 'date_created',
+                  'date_finished')
 
 class YTSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for a SourceTrack derived from YouTube link."""

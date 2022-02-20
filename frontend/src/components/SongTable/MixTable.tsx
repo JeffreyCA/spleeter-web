@@ -7,7 +7,7 @@ import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import { DynamicMix } from '../../models/DynamicMix';
 import { separatorLabelMap } from '../../models/Separator';
 import { StaticMix } from '../../models/StaticMix';
-import { toRelativeDateSpan } from '../../Utils';
+import { toLocaleDateTimeString, toRelativeDateSpan } from '../../Utils';
 import { AccompBadge, AllBadge, BassBadge, DrumsBadge, VocalsBadge } from '../Badges';
 import DeleteDynamicMixButton from './Button/DeleteDynamicMixButton';
 import DeleteStaticMixButton from './Button/DeleteStaticMixButton';
@@ -30,9 +30,19 @@ interface MixItem {
  * Formatter function for status column
  */
 const statusColFormatter: ColumnFormatter<MixItem> = (cell, row, rowIndex) => {
+  let finishedDateTimeText = row.mix.date_finished
+    ? `Done at ${toLocaleDateTimeString(row.mix.date_finished)}`
+    : undefined;
+  if (row.mix.error) {
+    if (finishedDateTimeText) {
+      finishedDateTimeText += '\n';
+    }
+    finishedDateTimeText += `Error: ${row.mix.error}`;
+  }
+
   return (
     <div className="d-flex align-items-center justify-content-start">
-      <StatusIcon status={row.mix.status} overlayText={row.mix.error} />
+      <StatusIcon status={row.mix.status} overlayText={finishedDateTimeText} />
     </div>
   );
 };
@@ -294,6 +304,7 @@ class MixTable extends React.Component<Props> {
           static: true,
           mix: mix,
           date_created: mix.date_created,
+          date_finished: mix.date_finished,
         } as MixItem;
       })
     );
@@ -305,6 +316,7 @@ class MixTable extends React.Component<Props> {
           static: false,
           mix: mix,
           date_created: mix.date_created,
+          date_finished: mix.date_finished,
         } as MixItem;
       })
     );

@@ -18,4 +18,5 @@ export interface SongData {
   fetch_task_status: TaskStatus | null;
   fetch_task_error: string | null;
   date_created: string;
+  date_finished?: string;
 }
