@@ -33,7 +33,7 @@ class StatusIcon extends React.Component<Props> {
     };
 
     return (
-      <OverlayTrigger placement="left" delay={{ show: 100, hide: 100 }} overlay={renderTooltip}>
+      <OverlayTrigger placement="left" overlay={renderTooltip}>
         {icon}
       </OverlayTrigger>
     );

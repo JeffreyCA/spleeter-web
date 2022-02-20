@@ -113,7 +113,7 @@ const modelFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
   return (
     <h5 className="mb-0">
       {shouldShowTooltip ? (
-        <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={renderTooltip}>
+        <OverlayTrigger placement="right" delay={{ show: 50, hide: 50 }} overlay={renderTooltip}>
           {badge}
         </OverlayTrigger>
       ) : (
