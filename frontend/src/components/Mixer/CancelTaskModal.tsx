@@ -25,7 +25,7 @@ class CancelTaskModal extends React.Component<Props, {}> {
   render(): JSX.Element | null {
     const { isCancelling } = this.props;
     return (
-      <Modal show={this.props.show} onHide={!isCancelling && this.props.hide}>
+      <Modal show={this.props.show} onHide={!isCancelling ? this.props.hide : undefined}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm cancellation</Modal.Title>
         </Modal.Header>

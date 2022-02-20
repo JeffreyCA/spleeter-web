@@ -25,7 +25,7 @@ class DeleteTaskModal extends React.Component<Props, {}> {
   render(): JSX.Element | null {
     const { isDeleting } = this.props;
     return (
-      <Modal show={this.props.show} onHide={!isDeleting && this.props.hide}>
+      <Modal show={this.props.show} onHide={!isDeleting ? this.props.hide : undefined}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm deletion</Modal.Title>
         </Modal.Header>

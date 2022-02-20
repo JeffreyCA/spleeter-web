@@ -94,7 +94,7 @@ class DeleteTrackModal extends React.Component<Props, State> {
     }
 
     return (
-      <Modal show={show} onHide={!isDeleting && this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isDeleting ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm track deletion</Modal.Title>
         </Modal.Header>
