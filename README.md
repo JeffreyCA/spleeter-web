@@ -220,6 +220,8 @@ Here is a list of all the environment variables you can use to further customize
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process. Docker only. |
 | `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process. Docker only. |
+| `D3NET_OPENVINO` | Set to `1` to use OpenVINO for D3Net CPU separation. Requires Intel CPU. |
+| `D3NET_OPENVINO_THREADS` | Set to the number of CPU threads for D3Net OpenVINO separation. Default: # of CPUs on the machine. Requires Intel CPU. |
 | `DEV_WEBSERVER_PORT` | Port that development webserver is mapped to on **host** machine. Docker only. |
 | `NGINX_PORT` | Port that Nginx is mapped to on **host** machine. Docker only. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
