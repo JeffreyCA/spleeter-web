@@ -199,5 +199,5 @@ xumx-spleeterweb==0.2.4
 yapf==0.31.0
 youtube-dl==2021.4.26
 youtube-title-parse==1.0.0
--e git+https://github.com/JeffreyCA/yt-dlp.git@a31e44e365e4c5ece2b04df3f1dc146076889fd2#egg=yt_dlp
+yt_dlp @ git+https://github.com/JeffreyCA/yt-dlp@a31e44e365e4c5ece2b04df3f1dc146076889fd2
 zipp==3.4.0
