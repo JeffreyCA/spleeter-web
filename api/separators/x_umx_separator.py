@@ -47,7 +47,6 @@ class XUMXSeparator:
         self.chunk_duration = 30
 
     def get_estimates(self, input_path: str):
-        print(1)
         ctx = get_extension_context(self.context)
         nn.set_default_context(ctx)
         nn.set_auto_forward(True)

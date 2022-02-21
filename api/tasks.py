@@ -102,7 +102,6 @@ def create_static_mix(static_mix_id):
         if os.path.exists(rel_path):
             static_mix.status = TaskStatus.DONE
             static_mix.date_finished = timezone.now()
-            print('date finished ' + str(static_mix.date_finished))
             if is_local:
                 # File is already on local filesystem
                 static_mix.file.name = rel_media_path
