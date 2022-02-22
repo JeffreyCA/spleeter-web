@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix bug where status icon overlay sometimes disappears
 - Update dependencies
 
+### Removed
+- Prune unused pip dependencies
+
 
 ## [v3.11.0] - 2021-12-17
 
