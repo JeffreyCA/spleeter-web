@@ -187,12 +187,16 @@ class LiteSourceTrackSerializer(serializers.ModelSerializer):
         source='source_file.youtube_fetch_task.error',
         read_only=True,
         default=None)
+    fetch_task_date_finished = serializers.DateTimeField(
+        source='source_file.youtube_fetch_task.date_finished',
+        read_only=True,
+        default=None)
 
     class Meta:
         model = SourceTrack
         fields = ('id', 'url', 'artist', 'title', 'static', 'dynamic',
                   'fetch_task_status', 'fetch_task_error', 'date_created',
-                  'date_finished')
+                  'fetch_task_date_finished')
 
 class FullSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for representing a SourceTrack along with its associated mixes."""
@@ -212,13 +216,17 @@ class FullSourceTrackSerializer(serializers.ModelSerializer):
         source='source_file.youtube_fetch_task.error',
         read_only=True,
         default=None)
+    fetch_task_date_finished = serializers.DateTimeField(
+        source='source_file.youtube_fetch_task.date_finished',
+        read_only=True,
+        default=None)
 
     class Meta:
         model = SourceTrack
         fields = ('id', 'source_file', 'url', 'artist', 'title', 'static',
                   'dynamic', 'is_youtube', 'youtube_link', 'fetch_task',
                   'fetch_task_status', 'fetch_task_error', 'date_created',
-                  'date_finished')
+                  'fetch_task_date_finished')
 
 class YTSourceTrackSerializer(serializers.ModelSerializer):
     """Serializer for a SourceTrack derived from YouTube link."""

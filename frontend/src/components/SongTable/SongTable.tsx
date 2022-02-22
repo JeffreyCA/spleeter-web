@@ -23,8 +23,10 @@ import StatusIcon from './StatusIcon';
 /**
  * Formatter function for status column
  */
-const statusColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex, formatExtraData) => {
-  let finishedDateTimeText = row.date_finished ? `Done at ${toLocaleDateTimeString(row.date_finished)}` : undefined;
+const statusColFormatter: ColumnFormatter<SongData> = (cell, row, rowIndex) => {
+  let finishedDateTimeText = row.fetch_task_date_finished
+    ? `Done at ${toLocaleDateTimeString(row.fetch_task_date_finished)}`
+    : undefined;
   if (row.fetch_task_error) {
     if (finishedDateTimeText) {
       finishedDateTimeText += '\n';
