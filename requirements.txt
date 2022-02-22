@@ -9,9 +9,9 @@ astunparse==1.6.3
 async-timeout==4.0.2
 attrs==21.2.0
 audioread==2.1.9
-azure-common==1.1.27
-azure-core==1.22.1
-azure-storage-blob==12.9.0
+azure-common==1.1.28
+azure-storage-blob==2.1.0
+azure-storage-common==2.1.0
 bcrypt==3.2.0
 billiard==3.6.4.0
 bleach==3.2.1
@@ -21,10 +21,10 @@ cached-property==1.5.2
 cachetools==4.2.4
 capstone==4.0.2
 celery==5.1.2
-certifi==2020.6.20
-cffi==1.14.3
+certifi==2021.10.8
+cffi==1.15.0
 chardet==3.0.4
-charset-normalizer==2.0.6
+charset-normalizer==2.0.12
 click==7.1.2
 click-didyoumean==0.3.0
 click-plugins==1.1.1
@@ -35,7 +35,7 @@ colored-traceback==0.3.0
 configparser==5.0.1
 contextlib2==0.6.0.post1
 coverage==5.3
-cryptography==3.4.7
+cryptography==36.0.1
 Cython==0.29.28
 d3net-spleeterweb==0.1.3
 decorator==4.4.2
@@ -44,7 +44,7 @@ Deprecated==1.2.13
 diffq==0.2.2
 Django==3.2.12
 django-picklefield==3.0.1
-django-storages==1.12.3
+django-storages==1.11.1
 django-webpack-loader==0.7.0
 djangorestframework==3.13.1
 docutils==0.16
@@ -70,11 +70,10 @@ httpcore==0.13.7
 httplib2==0.19.0
 httpx==0.19.0
 hyperframe==5.2.0
-idna==2.10
+idna==3.3
 imageio==2.9.0
 importlib-metadata==3.10.1
 intervaltree==3.1.0
-isodate==0.6.1
 isort==4.3.21
 jmespath==0.10.0
 joblib==1.0.0
@@ -92,7 +91,6 @@ Mako==1.1.6
 Markdown==3.3.3
 MarkupSafe==2.0.1
 mccabe==0.6.1
-msrest==0.6.21
 multidict==4.7.6
 musdb==0.3.1
 museval==0.3.1
@@ -102,7 +100,7 @@ nnabla-ext-cuda110==1.25.0; sys_platform == 'linux'
 norbert==0.2.1
 numba==0.53.1
 numpy==1.19.5
-oauthlib==3.1.0
+oauthlib==3.2.0
 omegaconf==2.1.1
 onnx==1.8.0
 openunmix==1.1.2
@@ -126,7 +124,7 @@ pwntools==4.7.0
 pyaml==20.4.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycparser==2.20
+pycparser==2.21
 pycryptodomex==3.11.0
 pydub==0.25.1
 pyelftools==0.27
@@ -165,7 +163,7 @@ sortedcontainers==2.4.0
 SoundFile==0.10.3.post1
 spleeter==2.3.0
 SQLAlchemy==1.3.22
-sqlparse==0.3.1
+sqlparse==0.4.2
 stempeg==0.2.2
 submitit==1.4.1
 tensorboard==2.6.0
@@ -199,5 +197,5 @@ xumx-spleeterweb==0.2.4
 yapf==0.31.0
 youtube-dl==2021.4.26
 youtube-title-parse==1.0.0
-yt_dlp @ git+https://github.com/JeffreyCA/yt-dlp@a31e44e365e4c5ece2b04df3f1dc146076889fd2
+yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@a31e44e365e4c5ece2b04df3f1dc146076889fd2
 zipp==3.4.0
