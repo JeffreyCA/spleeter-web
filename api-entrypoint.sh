@@ -2,11 +2,6 @@
 
 # Collect static files
 if [[ -z "${DJANGO_DEVELOPMENT}" ]]; then
-    echo "Waiting for asset creation"
-    while [ ! -d /webapp/frontend/assets/dist ]; do
-        sleep 1
-    done
-    echo "Collect static files"
     python3.7 manage.py collectstatic --noinput
 fi
 

@@ -23,9 +23,3 @@ services:
     volumes:
       - ./api:/webapp/api
       - ./media:/webapp/media
-  frontend:
-    environment:
-      - DJANGO_DEVELOPMENT=true
-    volumes:
-      - ./frontend/src:/webapp/frontend/src
-    restart: always
