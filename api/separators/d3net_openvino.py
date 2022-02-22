@@ -8,6 +8,10 @@ try:
 except:
     pass
 
+"""
+Reimplemented from https://github.com/sony/ai-research-code/blob/master/d3net/music-source-separation/model_openvino.py which is under copyright by Sony Corporation under the terms of the Apache license. 
+"""
+
 class D3NetOpenVinoWrapper(object):
     def __init__(self, model_dir_path, source, nthreads):
         if not openvino_enabled:
