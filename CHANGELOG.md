@@ -5,16 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [v3.12.0] - 2022-02-21
 
+### Changed
+- Update X-UMX and D3Net models to latest version
+- Fix bug where status icon overlay sometimes disappears
+- Update dependencies
+
 ### Added
 - Show datetime when fetch task or separation task finished on status icon hover
 - Model file integrity checks for X-UMX and D3Net models
 - Add support for accelerated CPU separation for D3Net using OpenVINO
     - To enable, set `D3NET_OPENVINO` environment variable to `1` and `D3NET_OPENVINO_THREADS` to number of CPU threads to use
-
-### Changed
-- Update X-UMX and D3Net models to latest version
-- Fix bug where status icon overlay sometimes disappears
-- Update dependencies
 
 ### Removed
 - Prune unused pip dependencies
