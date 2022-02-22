@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.12.0] - 2022-02-21
+
+### Added
+- Show datetime when fetch task or separation task finished on status icon hover
+- Model file integrity checks for X-UMX and D3Net models
+- Add support for accelerated CPU separation for D3Net using OpenVINO
+    - To enable, set `D3NET_OPENVINO` environment variable to `1` and `D3NET_OPENVINO_THREADS` to number of CPU threads to use
+
+### Changed
+- Update X-UMX and D3Net models to latest version
+- Fix bug where status icon overlay sometimes disappears
+- Update dependencies
+
+
 ## [v3.11.0] - 2021-12-17
 
 ### Changed
@@ -15,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Tasnet models
 - Ability to separate using older Demucs models
+
 
 ## [v3.10.0] - 2021-11-01
 
@@ -253,7 +268,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.11.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...HEAD
+[v3.12.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.11.0...v3.12.0
 [v3.11.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...v3.11.0
 [v3.10.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...v3.10.0
 [v3.9.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.8.0...v3.9.0
