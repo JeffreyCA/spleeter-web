@@ -8,9 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update X-UMX and D3Net models to latest version
 - Fix bug where status icon overlay sometimes disappears
+- Fix bug where adding basic auth in front of nginx breaks the app (credit to @jtagcat)
 - Update dependencies
 
 ### Added
+- Add `API_HOST` environment variable to control hostname of API server for nginx (credit to @jtagcat)
 - Show datetime when fetch task or separation task finished on status icon hover
 - Model file integrity checks for X-UMX and D3Net models
 - Add support for accelerated CPU separation for D3Net using OpenVINO
