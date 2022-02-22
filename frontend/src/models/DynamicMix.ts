@@ -15,6 +15,7 @@ export interface DynamicMix {
   status: TaskStatus;
   error: string;
   date_created: string;
+  date_finished?: string;
   vocals_url: string | null;
   other_url: string | null;
   bass_url: string | null;

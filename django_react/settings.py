@@ -1,4 +1,5 @@
 import os
+from multiprocessing import cpu_count
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -66,6 +67,9 @@ CELERY_TASK_ROUTES = {
         'queue': 'fast_queue'
     },
 }
+
+D3NET_OPENVINO = bool(int(os.getenv('D3NET_OPENVINO', '0')))
+D3NET_OPENVINO_THREADS = int(os.getenv('D3NET_OPENVINO_THREADS', cpu_count()))
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

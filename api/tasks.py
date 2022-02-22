@@ -2,20 +2,21 @@ import os
 import os.path
 import pathlib
 import shutil
-
 from typing import Dict
+
 from billiard.context import Process
 from billiard.exceptions import SoftTimeLimitExceeded
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 from .celery import app
 from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
+from .separators.d3net_separator import D3NetSeparator
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
 from .separators.x_umx_separator import XUMXSeparator
-from .separators.d3net_separator import D3NetSeparator
 from .util import get_valid_filename
 from .youtubedl import download_audio, get_file_ext
 
@@ -100,6 +101,7 @@ def create_static_mix(static_mix_id):
         # Check file exists
         if os.path.exists(rel_path):
             static_mix.status = TaskStatus.DONE
+            static_mix.date_finished = timezone.now()
             if is_local:
                 # File is already on local filesystem
                 static_mix.file.name = rel_media_path
@@ -120,6 +122,7 @@ def create_static_mix(static_mix_id):
         print(error)
         print('Please make sure you have FFmpeg and FFprobe installed.')
         static_mix.status = TaskStatus.ERROR
+        static_mix.date_finished = timezone.now()
         static_mix.error = str(error)
         static_mix.save()
     except SoftTimeLimitExceeded:
@@ -127,6 +130,7 @@ def create_static_mix(static_mix_id):
     except Exception as error:
         print(error)
         static_mix.status = TaskStatus.ERROR
+        static_mix.date_finished = timezone.now()
         static_mix.error = str(error)
         static_mix.save()
 
@@ -186,6 +190,7 @@ def create_dynamic_mix(dynamic_mix_id):
         if exists_all_parts(rel_path):
             rename_all_parts(rel_path, file_prefix, file_suffix)
             dynamic_mix.status = TaskStatus.DONE
+            dynamic_mix.date_finished = timezone.now()
             if is_local:
                 save_to_local_storage(dynamic_mix, rel_media_path, file_prefix,
                                       file_suffix)
@@ -198,6 +203,7 @@ def create_dynamic_mix(dynamic_mix_id):
         print(error)
         print('Please make sure you have FFmpeg and FFprobe installed.')
         dynamic_mix.status = TaskStatus.ERROR
+        dynamic_mix.date_finished = timezone.now()
         dynamic_mix.error = str(error)
         dynamic_mix.save()
     except SoftTimeLimitExceeded:
@@ -205,6 +211,7 @@ def create_dynamic_mix(dynamic_mix_id):
     except Exception as error:
         print(error)
         dynamic_mix.status = TaskStatus.ERROR
+        dynamic_mix.date_finished = timezone.now()
         dynamic_mix.error = str(error)
         dynamic_mix.save()
 
@@ -251,6 +258,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         # Check file exists
         if os.path.exists(rel_path):
             fetch_task.status = TaskStatus.DONE
+            fetch_task.date_finished = timezone.now()
             if is_local:
                 # File is already on local filesystem
                 source_file.file.name = rel_media_path
@@ -276,6 +284,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
     except Exception as error:
         print(error)
         fetch_task.status = TaskStatus.ERROR
+        fetch_task.date_finished = timezone.now()
         fetch_task.error = str(error)
         fetch_task.save()
         raise error

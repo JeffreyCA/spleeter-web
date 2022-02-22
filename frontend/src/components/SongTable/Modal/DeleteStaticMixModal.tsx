@@ -111,7 +111,7 @@ class DeleteStaticMixModal extends React.Component<Props, State> {
     const description = parts.join(', ');
 
     return (
-      <Modal show={show} onHide={!isDeleting && this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isDeleting ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm static mix deletion</Modal.Title>
         </Modal.Header>

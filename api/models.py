@@ -113,6 +113,8 @@ class YTAudioDownloadTask(models.Model):
                                  default=TaskStatus.QUEUED)
     # Error message in case of error
     error = models.TextField(blank=True)
+    # DateTime when upload task completed/failed
+    date_finished = models.DateTimeField(default=None, null=True, blank=True)
 
 class SourceFile(models.Model):
     """
@@ -278,6 +280,8 @@ class StaticMix(models.Model):
     error = models.TextField(blank=True)
     # DateTime when source separation task was started
     date_created = models.DateTimeField(auto_now_add=True)
+    # DateTime when source separation task completed/failed
+    date_finished = models.DateTimeField(default=None, null=True, blank=True)
 
     def artist(self):
         """Get the artist name."""
@@ -405,6 +409,8 @@ class DynamicMix(models.Model):
     error = models.TextField(blank=True)
     # DateTime when source separation task was started
     date_created = models.DateTimeField(auto_now_add=True)
+    # DateTime when source separation task completed/failed
+    date_finished = models.DateTimeField(default=None, null=True, blank=True)
 
     def artist(self):
         """Get the artist name."""

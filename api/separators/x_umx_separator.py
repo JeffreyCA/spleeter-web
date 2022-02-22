@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 import os
 import warnings
 from pathlib import Path
@@ -9,9 +10,15 @@ from billiard.pool import Pool
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
 from tqdm import trange
-from xumx.test import separate
+from xumx.test import separate_args_dict
+
 
 MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h5'
+MODEL_SHA1 = '6414e08527d37bd1d08130c4b87255830af819bf'
+
+"""
+This module reimplements part of X-UMX's source separation code from https://github.com/sony/ai-research-code/blob/master/x-umx/test.py which is under copyright by Sony Corporation under the terms of the MIT license.
+"""
 
 class XUMXSeparator:
     """Performs source separation using X-UMX API."""
@@ -64,18 +71,24 @@ class XUMXSeparator:
         else:
             nchunks = (audio.shape[0] // chunk_size) + 1
 
-        print('Separating...')
         estimates = {}
+
+        separate_args = {
+            'model': str(self.model_file_path),
+            'umx_infer': False,
+            'targets': ['bass', 'drums', 'vocals', 'other'],
+            'softmask': self.softmask,
+            'alpha': self.alpha,
+            'residual_model': self.residual_model,
+            'niter': self.iterations
+        }
+
+        print('Separating...')
         for chunk_idx in trange(nchunks):
             cur_chunk = audio[chunk_idx *
                               chunk_size:min((chunk_idx + 1) *
                                              chunk_size, audio.shape[0]), :]
-            cur_estimates = separate(cur_chunk,
-                                     model_path=str(self.model_file_path),
-                                     niter=self.iterations,
-                                     alpha=self.alpha,
-                                     softmask=self.softmask,
-                                     residual_model=self.residual_model)
+            cur_estimates = separate_args_dict(cur_chunk, separate_args)
             if any(estimates) is False:
                 estimates = cur_estimates
             else:
@@ -85,7 +98,8 @@ class XUMXSeparator:
         return estimates
 
     def create_static_mix(self, parts, input_path: str, output_path: Path):
-        download_and_verify(MODEL_URL, self.model_dir, self.model_file_path)
+        download_and_verify(MODEL_URL, MODEL_SHA1, self.model_dir,
+                            self.model_file_path)
         estimates = self.get_estimates(input_path)
 
         final_source = None
@@ -99,7 +113,8 @@ class XUMXSeparator:
         self.audio_adapter.save(output_path, final_source, self.sample_rate, 'mp3', self.bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
-        download_and_verify(MODEL_URL, self.model_dir, self.model_file_path)
+        download_and_verify(MODEL_URL, MODEL_SHA1, self.model_dir,
+                            self.model_file_path)
         estimates = self.get_estimates(input_path)
 
         # Export all source MP3s in parallel

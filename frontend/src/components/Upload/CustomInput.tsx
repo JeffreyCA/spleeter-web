@@ -39,7 +39,7 @@ const CustomInput = ({ accept, onFiles, files, disabled }: IInputProps): JSX.Ele
       <CloudUpload color="grey" size={70} />
       <p className="d-flex align-items-center justify-content-start">
         Drag and drop an audio file. {'  '}
-        <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={supportedFormatsTooltip}>
+        <OverlayTrigger placement="right" delay={{ show: 50, hide: 50 }} overlay={supportedFormatsTooltip}>
           <InfoCircle className="ml-1" size={14} style={{ cursor: 'pointer' }} />
         </OverlayTrigger>
       </p>

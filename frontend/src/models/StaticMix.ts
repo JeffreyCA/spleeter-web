@@ -16,6 +16,7 @@ export interface StaticMix {
   status: TaskStatus;
   error: string;
   date_created: string;
+  date_finished?: string;
   vocals: boolean;
   other: boolean;
   bass: boolean;

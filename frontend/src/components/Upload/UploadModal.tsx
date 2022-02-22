@@ -410,7 +410,7 @@ class UploadModal extends React.Component<Props, State> {
     }
 
     return (
-      <Modal show={show} onHide={!isSubmitting && this.onHide} onExited={this.onExited}>
+      <Modal show={show} onHide={!isSubmitting ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>

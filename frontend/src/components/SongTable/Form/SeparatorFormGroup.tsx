@@ -146,7 +146,7 @@ class SeparatorFormGroup extends React.Component<Props, State> {
       );
     };
     const shiftIterOverlay = (
-      <OverlayTrigger placement="right" delay={{ show: 100, hide: 100 }} overlay={shiftIterRenderTooltip}>
+      <OverlayTrigger placement="right" delay={{ show: 50, hide: 50 }} overlay={shiftIterRenderTooltip}>
         <QuestionCircle className="ml-1" id="random-shifts-question" size={14} />
       </OverlayTrigger>
     );
