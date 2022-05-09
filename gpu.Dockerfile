@@ -29,6 +29,7 @@ RUN mkdir -p /webapp/media /webapp/staticfiles
 
 WORKDIR /webapp
 COPY requirements.txt /webapp/
+RUN pip3 install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip3 install --upgrade pip -r requirements.txt
 
 COPY . .
