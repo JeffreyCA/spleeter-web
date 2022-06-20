@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.13.0] - 2022-06-19
+
+### Changed
+- Update dependencies
+
+### Added
+- EXPERIMENTAL: Add ability to export Dynamic Mixes based on each component's volume levels.
+    - All the mixing and exporting is done in-browser using [FFmpeg.WASM](https://github.com/ffmpegwasm/ffmpeg.wasm).
+    - Sidenote: Spleeter Web uses a [forked version](https://github.com/JeffreyCA/ffmpeg.wasm-core) with some cherry-picked changes from the main FFmpeg repo pertaining to the `amix` filter.
+    - Please report any bugs you encounter with this feature!
+
+
 ## [v3.12.0] - 2022-02-21
 
 ### Changed
