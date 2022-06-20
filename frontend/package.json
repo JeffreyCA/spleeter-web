@@ -50,9 +50,9 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@ffmpeg/core": "^0.10.0",
-    "@ffmpeg/ffmpeg": "^0.10.1",
     "@iconify/react": "^1.1.4",
+    "@jeffreyca/ffmpeg": "^0.10.2",
+    "@jeffreyca/ffmpeg.wasm-core": "^0.10.2",
     "@jeffreyca/react-dropzone-uploader": "^2.11.10",
     "@jeffreyca/react-jinke-music-player": "^4.22.1",
     "awesome-debounce-promise": "^2.1.0",
