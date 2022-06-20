@@ -1,4 +1,4 @@
-import { createFFmpeg, fetchFile, FFmpeg, ProgressCallback } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, fetchFile, FFmpeg, ProgressCallback } from '@jeffreyca/ffmpeg';
 import * as React from 'react';
 import { Alert } from 'react-bootstrap';
 import * as Tone from 'tone';
@@ -166,7 +166,7 @@ class MixerPlayer extends React.Component<Props, State> {
     // Initialize FFMPEG.WASM
     try {
       this.ffmpeg = createFFmpeg({
-        corePath: '/static/dist/node_modules/@ffmpeg/core/dist/ffmpeg-core.js',
+        corePath: '/static/dist/node_modules/@jeffreyca/ffmpeg.wasm-core/dist/ffmpeg-core.js',
         log: false,
         progress: this.onExportProgressTick,
       });

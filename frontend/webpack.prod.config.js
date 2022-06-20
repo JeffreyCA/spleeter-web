@@ -16,7 +16,7 @@ module.exports = {
       patterns: [ 
         { from: './src/favicon.ico' },
         { from: './src/favicon.svg' },
-        { from: './node_modules/@ffmpeg/core/dist/*' },
+        { from: './node_modules/@jeffreyca/ffmpeg.wasm-core/dist/*' },
       ]
     }),
   ],
