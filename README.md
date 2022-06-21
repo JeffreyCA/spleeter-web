@@ -151,7 +151,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
 8. Start backend in separate terminal
     ```sh
-    (env) spleeter-web$ python manage.py collectstatic && python manage.py runserver 0.0.0.0:8000
+    (env) spleeter-web$ python manage.py collectstatic && python manage.py runserver 127.0.0.1:8000
     ````
 
 9. Start Celery workers in separate terminal

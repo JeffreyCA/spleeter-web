@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update dependencies
+- Docker: start Django server using 'api' instead of 0.0.0.0 as bind address
 
 ### Added
 - EXPERIMENTAL: Add ability to export Dynamic Mixes based on each component's volume levels.
