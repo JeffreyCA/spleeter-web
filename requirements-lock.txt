@@ -84,7 +84,7 @@ mutagen==1.45.1
 nnabla==1.25.0
 norbert==0.2.1
 numba==0.53.1
-numpy==1.19.5
+numpy==1.21.0
 oauthlib==3.2.0
 omegaconf==2.2.2
 openunmix==1.2.1
