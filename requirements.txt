@@ -22,6 +22,6 @@ xumx-spleeterweb==0.2.4
 yapf==0.31.0
 youtube-title-parse==1.0.0
 yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@2098fcebb93d655711c198651ce7db6ffa0ce025
-nnabla-ext-cuda110==1.25.0; sys_platform == 'linux'
+nnabla-ext-cuda110==1.29.0; sys_platform == 'linux'
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
