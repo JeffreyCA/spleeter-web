@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';

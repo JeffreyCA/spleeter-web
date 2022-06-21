@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import * as React from 'react';
 import { Alert, Button, Modal, ProgressBar } from 'react-bootstrap';
 import ExportForm from './ExportForm';
@@ -34,7 +33,6 @@ class ExportModal extends React.Component<Props, State> {
 
   handleMixNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const name = e.currentTarget.value;
-    console.log('name changed: ' + name && name !== '' ? name : this.props.defaultName);
     this.setState({
       mixName: name && name !== '' ? name : this.props.defaultName,
     });

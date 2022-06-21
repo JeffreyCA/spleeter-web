@@ -8,7 +8,7 @@ interface Props {
 }
 
 /**
- * Export form.
+ * Dynamic mix export form.
  */
 class ExportForm extends React.Component<Props> {
   constructor(props: Props) {

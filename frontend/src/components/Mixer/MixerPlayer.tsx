@@ -57,6 +57,8 @@ interface State {
  * It uses the Tone.js framework (built on the Web Audio API) to perform timing-sensitive
  * audio playback. Simply using HTMLAudioElement introduces a lot of latency/lag causing
  * the four tracks to be out-of-sync easily.
+ *
+ * It also uses FFMPEG.WASM to support exporting custom mixes to MP3, all done in-browser.
  */
 class MixerPlayer extends React.Component<Props, State> {
   ffmpeg?: FFmpeg;
@@ -188,18 +190,30 @@ class MixerPlayer extends React.Component<Props, State> {
     }
     clearInterval(this.interval);
     document.removeEventListener('keydown', this.onKeyPress, false);
+
+    this.ffmpeg?.exit();
   }
 
   exportMix = async (mixName: string): Promise<void> => {
     if (!this.ffmpeg) {
+      this.setState({
+        error: 'Unable to initialize ffmpeg.',
+      });
+      return;
+    }
+
+    if (!this.tonePlayers) {
+      this.setState({
+        error: 'Tone.js players are undefined',
+      });
       return;
     }
 
     const ffmpeg = this.ffmpeg;
-    const vocalsDb = this.tonePlayers?.player('vocals').volume.value;
-    const accompDb = this.tonePlayers?.player('accomp').volume.value;
-    const bassDb = this.tonePlayers?.player('bass').volume.value;
-    const drumsDb = this.tonePlayers?.player('drums').volume.value;
+    const vocalsDb = this.tonePlayers.player('vocals').volume.value;
+    const accompDb = this.tonePlayers.player('accomp').volume.value;
+    const bassDb = this.tonePlayers.player('bass').volume.value;
+    const drumsDb = this.tonePlayers.player('drums').volume.value;
     const vocalsVolArg = vocalsDb === -Infinity ? '0' : `${vocalsDb}dB`;
     const accompVolArg = accompDb === -Infinity ? '0' : `${accompDb}dB`;
     const bassVolArg = bassDb === -Infinity ? '0' : `${bassDb}dB`;
@@ -226,6 +240,7 @@ class MixerPlayer extends React.Component<Props, State> {
       '-i',
       'drums.mp3',
       '-filter_complex',
+      // https://ffmpeg.org/ffmpeg-filters.html#amix, https://trac.ffmpeg.org/wiki/AudioVolume
       `[0:a]volume=${vocalsVolArg}[a0];[1:a]volume=${accompVolArg}[a1];[2:a]volume=${bassVolArg}[a2];[3:a]volume=${drumsVolArg}[a3];[a0][a1][a2][a3]amix=inputs=4:duration=first:normalize=0[a]`,
       '-b:a',
       `${bitrate}k`,
@@ -240,6 +255,8 @@ class MixerPlayer extends React.Component<Props, State> {
     });
 
     const data = ffmpeg.FS('readFile', 'output.mp3');
+
+    // Download file through browser
     const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
     const link = document.createElement('a');
     link.href = url;
