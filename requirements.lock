@@ -123,7 +123,7 @@ six==1.15.0
 sniffio==1.2.0
 SoundFile==0.10.3.post1
 spleeter==2.3.0
-SQLAlchemy==1.4.31
+SQLAlchemy==1.4.37
 sqlparse==0.4.2
 stempeg==0.2.3
 submitit==1.4.2
@@ -142,7 +142,7 @@ typer==0.3.2
 typing-extensions==3.7.4.3
 uritemplate==4.1.1
 urllib3==1.26.9
-validators==0.18.2
+validators==0.20.0
 vine==5.0.0
 wcwidth==0.2.5
 websockets==10.3
@@ -150,7 +150,7 @@ Werkzeug==2.1.2
 whitenoise==6.2.0
 wrapt==1.12.1
 xumx-spleeterweb==0.2.4
-yapf==0.31.0
+yapf==0.32.0
 youtube-title-parse==1.0.0
 yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@2098fcebb93d655711c198651ce7db6ffa0ce025
 zipp==3.8.0

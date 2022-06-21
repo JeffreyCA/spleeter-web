@@ -17,7 +17,9 @@ updates:
       - dependency-name: "tensor*"
       - dependency-name: "torch*"
       - dependency-name: "celery"
-      - dependency-name: "numpy"
+      - dependency-name: "numpy"              # due to spleeter and other model libs
+      - dependency-name: "nnabla-ext-cuda110" # due to numpy
+      - dependency-name: "nnabla"             # due to numpy
       
   - package-ecosystem: "npm"
     directory: "/frontend"
