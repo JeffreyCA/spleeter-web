@@ -26,5 +26,4 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "tone"
-        versions: ["14.8.40"] # https://github.com/Tonejs/Tone.js/pull/971
+      - dependency-name: "tone" # https://github.com/Tonejs/Tone.js/pull/971
