@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.13.0] - 2022-06-19
+
+### Changed
+- Update dependencies
+- Docker: start Django server using 'api' instead of 0.0.0.0 as bind address
+
+### Added
+- EXPERIMENTAL: Add ability to export Dynamic Mixes based on each component's volume levels.
+    - All the mixing and exporting is done in-browser using [FFmpeg.WASM](https://github.com/ffmpegwasm/ffmpeg.wasm).
+    - Sidenote: Spleeter Web uses a [forked version](https://github.com/JeffreyCA/ffmpeg.wasm-core) with some cherry-picked changes from the main FFmpeg repo pertaining to the `amix` filter.
+    - Please report any bugs you encounter with this feature!
+
+
 ## [v3.12.0] - 2022-02-21
 
 ### Changed
@@ -273,7 +286,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...HEAD
+[v3.13.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...v3.13.0
 [v3.12.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.11.0...v3.12.0
 [v3.11.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...v3.11.0
 [v3.10.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...v3.10.0

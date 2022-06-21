@@ -156,16 +156,8 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
   };
 
   render(): JSX.Element | null {
-    const {
-      data,
-      errors,
-      isAborted,
-      isDeleting,
-      isDeleted,
-      isLoaded,
-      showCancelTaskModal,
-      showDeleteTaskModal,
-    } = this.state;
+    const { data, errors, isAborted, isDeleting, isDeleted, isLoaded, showCancelTaskModal, showDeleteTaskModal } =
+      this.state;
     let alert = null;
 
     if (!isLoaded) {

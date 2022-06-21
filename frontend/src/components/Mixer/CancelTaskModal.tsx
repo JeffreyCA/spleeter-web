@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
@@ -12,7 +11,7 @@ interface Props {
 /**
  * Component for the cancel dynamic mix modal.
  */
-class CancelTaskModal extends React.Component<Props, {}> {
+class CancelTaskModal extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }

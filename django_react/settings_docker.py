@@ -143,8 +143,12 @@ REST_FRAMEWORK = {
     )
 }
 
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ('jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br', 'swf', 'flv',
+                                       'woff', 'woff2', 'wasm')
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django_react.middleware.COEPCOOPHeadersMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
