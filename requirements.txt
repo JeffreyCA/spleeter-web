@@ -13,7 +13,7 @@ gunicorn==20.1.0
 h2==4.1.0
 nnabla==1.25.0
 openvino==2021.4.2
-redis==4.1.4
+redis==4.3.3
 spleeter==2.3.0
 SQLAlchemy==1.4.31
 validators==0.18.2
