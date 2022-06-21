@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - All the mixing and exporting is done in-browser using [FFmpeg.WASM](https://github.com/ffmpegwasm/ffmpeg.wasm).
     - Sidenote: Spleeter Web uses a [forked version](https://github.com/JeffreyCA/ffmpeg.wasm-core) with some cherry-picked changes from the main FFmpeg repo pertaining to the `amix` filter.
     - Please report any bugs you encounter with this feature!
-
+- Docker: add support for RTX GPUs - Thanks @Ma5onic! (#142)
 
 ## [v3.12.0] - 2022-02-21
 
