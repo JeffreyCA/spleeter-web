@@ -20,7 +20,8 @@ updates:
       - dependency-name: "numpy"              # due to spleeter and other model libs
       - dependency-name: "nnabla-ext-cuda110" # due to numpy
       - dependency-name: "nnabla"             # due to numpy
-      
+      - dependency-name: "azure-storage-blob" # due to typing-extensions
+
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
