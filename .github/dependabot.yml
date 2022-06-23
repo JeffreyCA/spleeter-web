@@ -21,6 +21,9 @@ updates:
       - dependency-name: "nnabla-ext-cuda110" # due to numpy
       - dependency-name: "nnabla"             # due to numpy
       - dependency-name: "azure-storage-blob" # due to typing-extensions
+      - dependency-name: "azure-storage-common"
+      - dependency-name: "azure-common"
+      - dependency-name: "django-storages" # https://github.com/jschneier/django-storages/issues/1116
 
   - package-ecosystem: "npm"
     directory: "/frontend"
