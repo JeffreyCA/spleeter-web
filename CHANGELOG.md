@@ -3,18 +3,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v3.13.0] - 2022-06-19
+## [v3.13.0] - 2022-06-23
 
 ### Changed
 - Update dependencies
 - Docker: start Django server using 'api' instead of 0.0.0.0 as bind address
 
 ### Added
-- EXPERIMENTAL: Add ability to export Dynamic Mixes based on each component's volume levels.
-    - All the mixing and exporting is done in-browser using [FFmpeg.WASM](https://github.com/ffmpegwasm/ffmpeg.wasm).
+- Support for RTX GPUs - Thanks @Ma5onic! (#142)
+- HTTPS support using [docker-nginx-certbot](https://github.com/JonasAlfredsson/docker-nginx-certbot).
+    - To use HTTPS, set `APP_HOST` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
+- Add ability to export Dynamic Mixes based on each component's volume levels.
+    - To enable this feature, set `ENABLE_CROSS_ORIGIN_HEADERS=1` in `.env` and either access Spleeter Web at `localhost` or enable HTTPS on your domain (see above). This is because it uses [SharedArrayBuffers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements) which require cross-origin isolation.
+    - All the exporting is done in-browser using [FFmpeg.WASM](https://github.com/ffmpegwasm/ffmpeg.wasm).
     - Sidenote: Spleeter Web uses a [forked version](https://github.com/JeffreyCA/ffmpeg.wasm-core) with some cherry-picked changes from the main FFmpeg repo pertaining to the `amix` filter.
-    - Please report any bugs you encounter with this feature!
-- Docker: add support for RTX GPUs - Thanks @Ma5onic! (#142)
+
 
 ## [v3.12.0] - 2022-02-21
 
