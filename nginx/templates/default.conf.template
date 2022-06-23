@@ -6,6 +6,8 @@ server {
     listen 80;
     client_max_body_size 50M;
 
+    # server_name ${APP_HOST};
+
     location /static/ {
         alias /webapp/staticfiles/;
     }
@@ -17,8 +19,12 @@ server {
     location / {
         proxy_pass http://django_react;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Host $host;
         proxy_set_header Authorization "";
         proxy_redirect off;
+
+        # allow <ip>;
+        # deny all;
     }
 }

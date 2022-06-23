@@ -29,9 +29,11 @@ services:
   nginx:
     image: jeffreyca/spleeter-web-nginx:${TAG:-latest}
     volumes:
+      - ./nginx/templates:/etc/nginx/templates
       - staticfiles:/webapp/staticfiles
     environment:
       - API_HOST=api
+      - CERTBOT_EMAIL=. # Dummy email (overridden by https.yml)
     depends_on:
       - api
     restart: always
@@ -50,6 +52,7 @@ services:
       - CPU_SEPARATION=1
       - APP_HOST
       - DEFAULT_FILE_STORAGE
+      - ENABLE_CROSS_ORIGIN_HEADERS
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - AWS_STORAGE_BUCKET_NAME
