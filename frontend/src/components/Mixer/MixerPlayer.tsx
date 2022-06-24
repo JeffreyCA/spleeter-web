@@ -183,7 +183,7 @@ class MixerPlayer extends React.Component<Props, State> {
       });
     } catch (ex: any) {
       this.setState({
-        exportError: ex.message,
+        exportError: ex.message + '\nCheck ENABLE_CROSS_ORIGIN_HEADERS=1 is set and HTTPS is enabled.',
         isExportInitializing: false,
       });
       console.error(ex);
