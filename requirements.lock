@@ -8,11 +8,12 @@ astunparse==1.6.3
 async-timeout==4.0.2
 attrs==21.4.0
 audioread==2.1.9
-azure-core==1.22.1
-azure-storage-blob==12.11.0
+azure-common==1.1.28
+azure-storage-blob==2.1.0
+azure-storage-common==2.1.0
 billiard==3.6.4.0
 boto3==1.24.13
-botocore==1.27.13
+botocore==1.27.15
 Brotli==1.0.9
 cached-property==1.5.2
 cachetools==5.2.0
@@ -36,7 +37,7 @@ Deprecated==1.2.13
 diffq==0.2.2
 Django==3.2.13
 django-picklefield==3.1
-django-storages==1.12.3
+django-storages==1.11.1
 django-webpack-loader==0.7.0
 djangorestframework==3.13.1
 dora-search==0.1.10
@@ -50,7 +51,7 @@ google-auth==2.8.0
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
-googleapis-common-protos==1.56.2
+googleapis-common-protos==1.56.3
 greenlet==1.1.2
 grpcio==1.34.1
 gunicorn==20.1.0
@@ -66,7 +67,6 @@ idna==3.3
 imageio==2.19.3
 importlib-metadata==3.10.1
 importlib-resources==5.8.0
-isodate==0.6.1
 jmespath==1.0.1
 joblib==1.1.0
 jsonschema==4.6.0
@@ -78,7 +78,6 @@ lameenc==1.4.1
 librosa==0.8.0
 llvmlite==0.36.0
 Markdown==3.3.4
-msrest==0.6.21
 musdb==0.4.0
 museval==0.4.0
 mutagen==1.45.1
@@ -101,7 +100,7 @@ pyaml==21.10.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
-pycryptodomex==3.14.1
+pycryptodomex==3.15.0
 pydub==0.25.1
 pyparsing==3.0.9
 pyrsistent==0.18.1

@@ -1,4 +1,6 @@
-FROM nginx:stable-alpine
+FROM jonasal/nginx-certbot:latest
 
-COPY default.conf.template /etc/nginx/templates/
 ENV API_HOST=api
+
+COPY *.sh /docker-entrypoint.d/
+RUN chmod +x /docker-entrypoint.d/*.sh

@@ -36,7 +36,7 @@ interface Props {
 }
 
 interface State {
-  error?: string;
+  exportError?: string;
   isReady: boolean;
   isInit: boolean;
   isPlaying: boolean;
@@ -45,9 +45,10 @@ interface State {
   volume: VolumeLevels;
   muteStatus: MuteStatus;
   soloStatus: SoloStatus;
-  showExportModal: boolean;
+  isExportInitializing: boolean;
   isExporting: boolean;
   exportRatio: number;
+  showExportModal: boolean;
 }
 
 /**
@@ -92,9 +93,10 @@ class MixerPlayer extends React.Component<Props, State> {
         drums: false,
         bass: false,
       },
-      showExportModal: false,
+      isExportInitializing: false,
       isExporting: false,
       exportRatio: 0,
+      showExportModal: false,
     };
   }
 
@@ -167,15 +169,22 @@ class MixerPlayer extends React.Component<Props, State> {
 
     // Initialize FFMPEG.WASM
     try {
+      this.setState({
+        isExportInitializing: true,
+      });
       this.ffmpeg = createFFmpeg({
         corePath: '/static/dist/node_modules/@jeffreyca/ffmpeg.wasm-core/dist/ffmpeg-core.js',
         log: false,
         progress: this.onExportProgressTick,
       });
       await this.ffmpeg.load();
+      this.setState({
+        isExportInitializing: false,
+      });
     } catch (ex: any) {
       this.setState({
-        error: ex.message,
+        exportError: ex.message,
+        isExportInitializing: false,
       });
       console.error(ex);
     }
@@ -197,15 +206,12 @@ class MixerPlayer extends React.Component<Props, State> {
   exportMix = async (mixName: string): Promise<void> => {
     if (!this.ffmpeg) {
       this.setState({
-        error: 'Unable to initialize ffmpeg.',
+        exportError: 'Unable to initialize ffmpeg.',
       });
       return;
     }
 
     if (!this.tonePlayers) {
-      this.setState({
-        error: 'Tone.js players are undefined',
-      });
       return;
     }
 
@@ -470,29 +476,27 @@ class MixerPlayer extends React.Component<Props, State> {
   render(): JSX.Element {
     const { data } = this.props;
     const {
-      error,
+      exportError,
       durationSeconds,
       secondsElapsed,
       isReady,
       muteStatus,
       soloStatus,
-      showExportModal,
+      isExportInitializing,
       isExporting,
       exportRatio,
+      showExportModal,
     } = this.state;
     const noneSoloed = this.isNoneSoloed(soloStatus);
 
     return (
       <div>
-        {error && (
-          <Alert className="mt-3" variant="danger" style={{ fontSize: '0.9em' }}>
-            Export unsupported: {error}
-          </Alert>
-        )}
         <PlayerUI
-          isExportDisabled={!isReady || error !== undefined}
+          isExportDisabled={isExportInitializing || !isReady || exportError !== undefined}
+          isExportInitializing={isExportInitializing}
           isPlayDisabled={!isReady}
           isPlaying={this.state.isPlaying}
+          exportError={exportError}
           onExportClick={this.onExportClick}
           onPlayClick={this.play}
           onBeforeSeek={this.onBeforeSeek}

@@ -7,9 +7,11 @@ import ExportButton from './ExportButton';
 
 interface Props {
   isExportDisabled: boolean;
+  isExportInitializing: boolean;
   isPlayDisabled: boolean;
   isPlaying: boolean;
   durationSeconds: number;
+  exportError?: string;
   secondsElapsed: number;
   onPlayClick: () => void;
   onExportClick: () => void;
@@ -21,8 +23,10 @@ interface Props {
 const PlayerUI = (props: Props): JSX.Element => {
   const {
     isExportDisabled,
+    isExportInitializing,
     isPlayDisabled,
     isPlaying,
+    exportError,
     onExportClick,
     onPlayClick,
     onBeforeSeek,
@@ -48,7 +52,12 @@ const PlayerUI = (props: Props): JSX.Element => {
         max={isNaN(durationSeconds) ? 0 : durationSeconds}
       />
       <span className="time-duration">{formatTime(durationSeconds)}</span>
-      <ExportButton disabled={isExportDisabled} onClick={onExportClick} />
+      <ExportButton
+        disabled={isExportDisabled}
+        error={exportError}
+        loading={isExportInitializing}
+        onClick={onExportClick}
+      />
     </div>
   );
 };
