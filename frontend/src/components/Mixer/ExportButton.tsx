@@ -36,6 +36,7 @@ class ExportButton extends React.Component<Props> {
 
     const disabledStyle: React.CSSProperties = {
       cursor: 'not-allowed',
+      opacity: '50%',
       pointerEvents: 'none',
     };
 
