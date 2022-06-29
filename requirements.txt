@@ -17,7 +17,7 @@ nnabla==1.25.0
 openvino==2021.4.2
 redis==4.3.3
 spleeter==2.3.0
-SQLAlchemy==1.4.38
+SQLAlchemy==1.4.39
 validators==0.20.0
 whitenoise==6.2.0
 xumx-spleeterweb==0.2.4
