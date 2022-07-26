@@ -4,8 +4,8 @@
     "scripts": {
         "postinstall": "npm install --prefix frontend",
         "heroku-postbuild": "npm run build --prefix frontend",
-        "dev": "npm run dev --prefix frontend & python3 manage.py runserver 0.0.0.0:8000",
-        "dev-prod": "npm run prod --prefix frontend & python3 manage.py runserver 0.0.0.0:8000",
+        "dev": "npm run dev --prefix frontend & python3 manage.py runserver 127.0.0.1:8000",
+        "dev-prod": "npm run prod --prefix frontend & python3 manage.py runserver 127.0.0.1:8000",
         "prod": "npm run build --prefix frontend && python3 manage.py collectstatic && python3 manage.py runserver",
         "migrate": "python3 manage.py makemigrations api && python3 manage.py migrate",
         "celery": "celery -A api worker -l INFO",

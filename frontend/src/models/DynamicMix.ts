@@ -8,6 +8,7 @@ export interface DynamicMix {
   id: string;
   source_track: string;
   separator: Separator;
+  bitrate: number;
   random_shifts?: number;
   extra_info: string[];
   artist: string;

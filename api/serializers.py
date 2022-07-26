@@ -59,7 +59,7 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
+        fields = ('id', 'source_track', 'separator', 'bitrate', 'extra_info', 'artist',
                   'title', 'vocals_url', 'other_url', 'bass_url',
                   'drums_url', 'status', 'error', 'date_created', 'date_finished')
 

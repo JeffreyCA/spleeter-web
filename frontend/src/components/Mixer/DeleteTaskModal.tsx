@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import * as React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
@@ -12,7 +11,7 @@ interface Props {
 /**
  * Component for the delete dynamic mix modal.
  */
-class DeleteTaskModal extends React.Component<Props, {}> {
+class DeleteTaskModal extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }

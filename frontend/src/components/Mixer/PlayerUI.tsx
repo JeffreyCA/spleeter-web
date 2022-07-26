@@ -3,13 +3,18 @@ import ReactSlider from 'react-slider';
 import { formatTime } from '../../Utils';
 import PlayButton from './PlayButton';
 import './PlayerUI.css';
+import ExportButton from './ExportButton';
 
 interface Props {
+  isExportDisabled: boolean;
+  isExportInitializing: boolean;
   isPlayDisabled: boolean;
   isPlaying: boolean;
   durationSeconds: number;
+  exportError?: string;
   secondsElapsed: number;
   onPlayClick: () => void;
+  onExportClick: () => void;
   onBeforeSeek: (seconds: number | number[] | undefined | null) => void;
   onSeeking: (seconds: number | number[] | undefined | null) => void;
   onAfterSeek: (seconds: number | number[] | undefined | null) => void;
@@ -17,8 +22,12 @@ interface Props {
 
 const PlayerUI = (props: Props): JSX.Element => {
   const {
+    isExportDisabled,
+    isExportInitializing,
     isPlayDisabled,
     isPlaying,
+    exportError,
+    onExportClick,
     onPlayClick,
     onBeforeSeek,
     onSeeking,
@@ -43,6 +52,12 @@ const PlayerUI = (props: Props): JSX.Element => {
         max={isNaN(durationSeconds) ? 0 : durationSeconds}
       />
       <span className="time-duration">{formatTime(durationSeconds)}</span>
+      <ExportButton
+        disabled={isExportDisabled}
+        error={exportError}
+        loading={isExportInitializing}
+        onClick={onExportClick}
+      />
     </div>
   );
 };

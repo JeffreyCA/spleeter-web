@@ -1,9 +1,11 @@
+import { createFFmpeg, fetchFile, FFmpeg, ProgressCallback } from '@jeffreyca/ffmpeg';
 import * as React from 'react';
 import { Alert } from 'react-bootstrap';
 import * as Tone from 'tone';
-import { FADE_DURATION_S } from '../../Constants';
+import { DEFAULT_MIX_BITRATE, FADE_DURATION_S } from '../../Constants';
 import { DynamicMix } from '../../models/DynamicMix';
 import { PartId, PartIds } from '../../models/PartId';
+import ExportModal from './ExportModal';
 import './MixerPlayer.css';
 import PlayerUI from './PlayerUI';
 import VolumeUI from './VolumeUI';
@@ -34,6 +36,7 @@ interface Props {
 }
 
 interface State {
+  exportError?: string;
   isReady: boolean;
   isInit: boolean;
   isPlaying: boolean;
@@ -42,6 +45,10 @@ interface State {
   volume: VolumeLevels;
   muteStatus: MuteStatus;
   soloStatus: SoloStatus;
+  isExportInitializing: boolean;
+  isExporting: boolean;
+  exportRatio: number;
+  showExportModal: boolean;
 }
 
 /**
@@ -51,8 +58,11 @@ interface State {
  * It uses the Tone.js framework (built on the Web Audio API) to perform timing-sensitive
  * audio playback. Simply using HTMLAudioElement introduces a lot of latency/lag causing
  * the four tracks to be out-of-sync easily.
+ *
+ * It also uses FFMPEG.WASM to support exporting custom mixes to MP3, all done in-browser.
  */
 class MixerPlayer extends React.Component<Props, State> {
+  ffmpeg?: FFmpeg;
   isMounted = false;
   interval?: number;
   tonePlayers?: Tone.Players;
@@ -83,10 +93,18 @@ class MixerPlayer extends React.Component<Props, State> {
         drums: false,
         bass: false,
       },
+      isExportInitializing: false,
+      isExporting: false,
+      exportRatio: 0,
+      showExportModal: false,
     };
   }
 
   onKeyPress = (event: KeyboardEvent): void => {
+    if (this.state.showExportModal) {
+      return;
+    }
+
     // Mute keyboard shortcuts
     if (event.key === '1' || event.key === '!') {
       this.onMuteClick('vocals');
@@ -115,7 +133,15 @@ class MixerPlayer extends React.Component<Props, State> {
     }
   };
 
-  componentDidMount(): void {
+  onExportProgressTick: ProgressCallback = ({ ratio }) => {
+    if (ratio >= 0 && ratio <= 1) {
+      this.setState({
+        exportRatio: ratio,
+      });
+    }
+  };
+
+  async componentDidMount(): Promise<void> {
     this.isMounted = true;
     const { data } = this.props;
     // Initialize Player objects pointing to the four track files
@@ -140,6 +166,28 @@ class MixerPlayer extends React.Component<Props, State> {
       }
     );
     document.addEventListener('keydown', this.onKeyPress, false);
+
+    // Initialize FFMPEG.WASM
+    try {
+      this.setState({
+        isExportInitializing: true,
+      });
+      this.ffmpeg = createFFmpeg({
+        corePath: '/static/dist/node_modules/@jeffreyca/ffmpeg.wasm-core/dist/ffmpeg-core.js',
+        log: false,
+        progress: this.onExportProgressTick,
+      });
+      await this.ffmpeg.load();
+      this.setState({
+        isExportInitializing: false,
+      });
+    } catch (ex: any) {
+      this.setState({
+        exportError: ex.message + '\nCheck ENABLE_CROSS_ORIGIN_HEADERS=1 is set and HTTPS is enabled.',
+        isExportInitializing: false,
+      });
+      console.error(ex);
+    }
   }
 
   componentWillUnmount(): void {
@@ -151,7 +199,76 @@ class MixerPlayer extends React.Component<Props, State> {
     }
     clearInterval(this.interval);
     document.removeEventListener('keydown', this.onKeyPress, false);
+
+    this.ffmpeg?.exit();
   }
+
+  exportMix = async (mixName: string): Promise<void> => {
+    if (!this.ffmpeg) {
+      this.setState({
+        exportError: 'Unable to initialize ffmpeg.',
+      });
+      return;
+    }
+
+    if (!this.tonePlayers) {
+      return;
+    }
+
+    const ffmpeg = this.ffmpeg;
+    const vocalsDb = this.tonePlayers.player('vocals').volume.value;
+    const accompDb = this.tonePlayers.player('accomp').volume.value;
+    const bassDb = this.tonePlayers.player('bass').volume.value;
+    const drumsDb = this.tonePlayers.player('drums').volume.value;
+    const vocalsVolArg = vocalsDb === -Infinity ? '0' : `${vocalsDb}dB`;
+    const accompVolArg = accompDb === -Infinity ? '0' : `${accompDb}dB`;
+    const bassVolArg = bassDb === -Infinity ? '0' : `${bassDb}dB`;
+    const drumsVolArg = drumsDb === -Infinity ? '0' : `${drumsDb}dB`;
+
+    this.setState({
+      isExporting: true,
+      exportRatio: 0,
+    });
+
+    ffmpeg.FS('writeFile', 'vocals.mp3', await fetchFile(this.props.data?.vocals_url));
+    ffmpeg.FS('writeFile', 'other.mp3', await fetchFile(this.props.data?.other_url));
+    ffmpeg.FS('writeFile', 'bass.mp3', await fetchFile(this.props.data?.bass_url));
+    ffmpeg.FS('writeFile', 'drums.mp3', await fetchFile(this.props.data?.drums_url));
+
+    const bitrate = this.props.data?.bitrate ?? DEFAULT_MIX_BITRATE;
+    const args = [
+      '-i',
+      'vocals.mp3',
+      '-i',
+      'other.mp3',
+      '-i',
+      'bass.mp3',
+      '-i',
+      'drums.mp3',
+      '-filter_complex',
+      // https://ffmpeg.org/ffmpeg-filters.html#amix, https://trac.ffmpeg.org/wiki/AudioVolume
+      `[0:a]volume=${vocalsVolArg}[a0];[1:a]volume=${accompVolArg}[a1];[2:a]volume=${bassVolArg}[a2];[3:a]volume=${drumsVolArg}[a3];[a0][a1][a2][a3]amix=inputs=4:duration=first:normalize=0[a]`,
+      '-b:a',
+      `${bitrate}k`,
+      '-map',
+      '[a]',
+      'output.mp3',
+    ];
+
+    await ffmpeg.run(...args);
+    this.setState({
+      isExporting: false,
+    });
+
+    const data = ffmpeg.FS('readFile', 'output.mp3');
+
+    // Download file through browser
+    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${mixName}.mp3`;
+    link.click();
+  };
 
   /**
    * Handle play/pause button click.
@@ -339,16 +456,48 @@ class MixerPlayer extends React.Component<Props, State> {
     }
   };
 
+  onExportClick = (): void => {
+    this.setState({
+      showExportModal: true,
+    });
+  };
+
+  onExportHide = (): void => {
+    if (this.state.isExporting) {
+      return;
+    }
+
+    this.setState({
+      showExportModal: false,
+      exportRatio: 0,
+    });
+  };
+
   render(): JSX.Element {
     const { data } = this.props;
-    const { durationSeconds, secondsElapsed, isReady, muteStatus, soloStatus } = this.state;
+    const {
+      exportError,
+      durationSeconds,
+      secondsElapsed,
+      isReady,
+      muteStatus,
+      soloStatus,
+      isExportInitializing,
+      isExporting,
+      exportRatio,
+      showExportModal,
+    } = this.state;
     const noneSoloed = this.isNoneSoloed(soloStatus);
 
     return (
       <div>
         <PlayerUI
+          isExportDisabled={isExportInitializing || !isReady || exportError !== undefined}
+          isExportInitializing={isExportInitializing}
           isPlayDisabled={!isReady}
           isPlaying={this.state.isPlaying}
+          exportError={exportError}
+          onExportClick={this.onExportClick}
           onPlayClick={this.play}
           onBeforeSeek={this.onBeforeSeek}
           onSeeking={this.onSeeking}
@@ -416,6 +565,14 @@ class MixerPlayer extends React.Component<Props, State> {
             &nbsp;(Hold either<kbd>Ctrl/Cmd/Shift</kbd>to solo/unsolo multiple parts)
           </p>
         </Alert>
+        <ExportModal
+          defaultName={`${data?.title} - ${data?.artist}`}
+          show={showExportModal}
+          hide={this.onExportHide}
+          submit={this.exportMix}
+          isExporting={isExporting}
+          exportRatio={exportRatio}
+        />
       </div>
     );
   }

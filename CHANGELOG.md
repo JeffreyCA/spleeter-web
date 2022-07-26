@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.13.0] - 2022-06-23
+
+### Changed
+- Update dependencies
+- Docker: start Django server using 'api' instead of 0.0.0.0 as bind address
+
+### Added
+- Support for RTX GPUs - Thanks @Ma5onic! (#142)
+- HTTPS support using [docker-nginx-certbot](https://github.com/JonasAlfredsson/docker-nginx-certbot).
+    - To use HTTPS, set `APP_HOST` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
+- Add ability to export Dynamic Mixes based on each component's volume levels.
+    - To enable this feature, set `ENABLE_CROSS_ORIGIN_HEADERS=1` in `.env` and either access Spleeter Web at `localhost` or enable HTTPS on your domain (see above). This is because it uses [SharedArrayBuffers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements) which require cross-origin isolation.
+        - If using an external storage provider, you'll need to set the `Cross-Origin-Resource-Policy` response headers to `cross-origin`. See [this](https://web.dev/coop-coep/) for more details.
+    - All the exporting is done in-browser using [FFmpeg.WASM](https://github.com/ffmpegwasm/ffmpeg.wasm).
+    - Sidenote: Spleeter Web uses a [forked version](https://github.com/JeffreyCA/ffmpeg.wasm-core) with some cherry-picked changes from the main FFmpeg repo pertaining to the `amix` filter.
+
+
 ## [v3.12.0] - 2022-02-21
 
 ### Changed
@@ -273,7 +290,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...HEAD
+[v3.13.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...v3.13.0
 [v3.12.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.11.0...v3.12.0
 [v3.11.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...v3.11.0
 [v3.10.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.9.0...v3.10.0

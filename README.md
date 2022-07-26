@@ -3,7 +3,7 @@
 
 Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or you can use it remove the vocals to get an instrumental version of a song.
 
-It supports a number of different source separation models: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model`), [Demucs](https://github.com/facebookresearch/demucs), [Tasnet](https://github.com/facebookresearch/demucs), [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx), and [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net).
+It supports a number of different source separation models: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model`), [Demucs](https://github.com/facebookresearch/demucs), [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx), and [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net).
 
 The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue. Docker images are available, including ones with GPU support.
 
@@ -23,9 +23,9 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [License](#license)
 
 ## Features
-- Supports Spleeter, Demucs, Tasnet, and CrossNet-Open-Unmix (X-UMX) source separation models
+- Supports Spleeter, Demucs, CrossNet-Open-Unmix (X-UMX), and D3Net source separation models
     - Each model supports a different set of user-configurable parameters in the UI
-- Dynamic Mixes lets you control the outputs of each component while playing back the track in real-time
+- Dynamic Mixes let you export and play back in realtime your own custom mix of the different components
 - Import tracks by uploading a file (MP3, FLAC, WAV) or by YouTube link
     - Built-in YouTube search functionality (YouTube Data API key required)
 - Persistent audio library with ability to stream and download your source tracks and mixes
@@ -151,7 +151,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     ```
 8. Start backend in separate terminal
     ```sh
-    (env) spleeter-web$ python manage.py collectstatic && python manage.py runserver 0.0.0.0:8000
+    (env) spleeter-web$ python manage.py collectstatic && python manage.py runserver 127.0.0.1:8000
     ````
 
 9. Start Celery workers in separate terminal
@@ -220,9 +220,11 @@ Here is a list of all the environment variables you can use to further customize
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process. Docker only. |
 | `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process. Docker only. |
+| `CERTBOT_EMAIL` | Email address for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
 | `D3NET_OPENVINO` | Set to `1` to use OpenVINO for D3Net CPU separation. Requires Intel CPU. |
 | `D3NET_OPENVINO_THREADS` | Set to the number of CPU threads for D3Net OpenVINO separation. Default: # of CPUs on the machine. Requires Intel CPU. |
 | `DEV_WEBSERVER_PORT` | Port that development webserver is mapped to on **host** machine. Docker only. |
+| `ENABLE_CROSS_ORIGIN_HEADERS` | Set to `1` to set `Cross-Origin-Embedder-Policy` and `Cross-Origin-Opener-Policy` headers which are required for exporting Dynamic Mixes in-browser. |
 | `NGINX_PORT` | Port that Nginx is mapped to on **host** machine. Docker only. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 
@@ -248,6 +250,8 @@ Then, depending on which backend you're using, set these additional variables:
 
 To play back a dynamic mix, you may need to configure your storage service's CORS settings to allow the `Access-Control-Allow-Origin` header.
 
+If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally set the `Cross-Origin-Resource-Policy` response headers of audio files to `cross-origin`. See [this](https://web.dev/coop-coep/) for more details.
+
 ## Deployment
 **Spleeter Web** can be deployed on a VPS or a cloud server such as Azure VMs, AWS EC2, DigitalOcean, etc. Deploying to cloud container services like ECS is not yet supported out of the box.
 
@@ -261,25 +265,16 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 3. In `spleeter-web`, create an `.env` file with the production environment variables
 
-    `.env` file:
+    Example `.env` file:
     ```
     APP_HOST=<domain name or public IP of server>
     DEFAULT_FILE_STORAGE=<FILE or AWS or AZURE>       # Optional (default = FILE)
-    AWS_ACCESS_KEY_ID=<access key id>                 # Optional
-    AWS_SECRET_ACCESS_KEY=<secret key>                # Optional
-    AWS_STORAGE_BUCKET_NAME=<bucket name>             # Optional
-    AWS_S3_CUSTOM_DOMAIN=<custom domain>              # Optional
-    AZURE_ACCOUNT_KEY=<account key>                   # Optional
-    AZURE_ACCOUNT_NAME=<account name>                 # Optional
-    AZURE_CONTAINER=<container name>                  # Optional
-    AZURE_CUSTOM_DOMAIN=<custom domain>               # Optional
     CELERY_FAST_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 3)
     CELERY_SLOW_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 1)
-    NGINX_PORT=<webserver port>                       # Optional (default = 80)
     YOUTUBE_API_KEY=<youtube api key>                 # Optional
     ```
 
-    These values are referenced in `django_react/settings_docker.py` and `docker-compose.yml`, so you can also edit those files directly to set your production settings.
+    See [Environment Variables](#environment-variables) for all the available variables. You can also set these directly in the `docker-compose.*.yml` files.
 
 4. Build and start production containers
 
@@ -303,6 +298,10 @@ To play back a dynamic mix, you may need to configure your storage service's COR
 
 4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
 
+## HTTPS support
+
+Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable HTTPS, set `APP_HOST` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
+
 ## [Common issues & FAQs](https://github.com/JeffreyCA/spleeter-web/wiki/Common-issues-&-FAQs)
 
 ## Credits
@@ -312,11 +311,12 @@ Special thanks to:
 * [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 * [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
 * [react-music-player](https://github.com/lijinke666/react-music-player)
+* [docker-nginx-certbot](https://github.com/JonasAlfredsson/docker-nginx-certbot)
 
 And to all the researchers and devs behind the supported source separation models:
 
 * [Spleeter](https://github.com/deezer/spleeter)
-* [Demucs/Tasnet](https://github.com/facebookresearch/demucs)
+* [Demucs](https://github.com/facebookresearch/demucs)
 * [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net)
 

@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  nginx:
+    restart: unless-stopped
+    environment:
+      - API_HOST=api
+      - ENABLE_HTTPS=1
+      - APP_HOST
+      - CERTBOT_EMAIL
+    volumes:
+      - ./certbot/conf/:/etc/letsencrypt
