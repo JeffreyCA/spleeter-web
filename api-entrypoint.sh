@@ -16,7 +16,7 @@ python3.7 manage.py migrate
 
 echo "Starting server"
 if [[ -z "${DJANGO_DEVELOPMENT}" ]]; then
-    gunicorn -b api:8000 django_react.wsgi
+    gunicorn -b $API_HOST:8000 django_react.wsgi
 else
-    python3.7 manage.py runserver api:8000
+    python3.7 manage.py runserver $API_HOST:8000
 fi
