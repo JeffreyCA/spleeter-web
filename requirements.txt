@@ -27,3 +27,4 @@ yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@2098fcebb93d655711c198651ce7db6
 nnabla-ext-cuda110==1.25.0; sys_platform == 'linux'
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
+numpy>=1.22.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
