@@ -1,4 +1,4 @@
-FROM node:14-buster
+FROM node:16.16.0-bullseye-slim
 
 RUN mkdir -p /webapp/frontend/assets
 WORKDIR /webapp/frontend
