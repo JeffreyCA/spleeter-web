@@ -9,7 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     "types": [
-      "@jeffreyca/react-jinke-music-player",
+      "@jeffreyca/react-jinke-music-player"
     ]
   },
   "typeRoots": [
