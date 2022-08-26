@@ -63,7 +63,7 @@
     "jquery": "^3.6.0",
     "luxon": "^2.5.0",
     "react": "^16.14.0",
-    "react-bootstrap": "^1.6.5",
+    "react-bootstrap": "^1.6.6",
     "react-bootstrap-icons": "^1.8.4",
     "react-bootstrap-table-next": "^4.0.3",
     "react-bootstrap-table2-editor": "^1.4.0",
