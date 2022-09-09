@@ -2,7 +2,7 @@ azure-common==1.1.28
 azure-storage-blob==2.1.0
 azure-storage-common==2.1.0
 boto3==1.24.67
-celery==5.1.2
+celery==5.2.7
 d3net-spleeterweb==0.1.3
 demucs==3.0.5
 Django==3.2.15
