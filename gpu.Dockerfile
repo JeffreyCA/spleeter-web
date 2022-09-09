@@ -20,9 +20,9 @@ RUN apt-get update \
     wget \
     && add-apt-repository universe \
     && apt-get update \
-    && apt-get -y install python3.7 python3.7-gdbm python3-distutils \
+    && apt-get -y install python3.8 python3.8-gdbm python3-distutils \
     && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-    && python3.7 get-pip.py \
+    && python3.8 get-pip.py \
     && ln -s /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudart.so.11.0 /usr/lib/x86_64-linux-gnu/libcudart.so.11.0
 
 RUN mkdir -p /webapp/media /webapp/staticfiles

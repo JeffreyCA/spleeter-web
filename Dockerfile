@@ -1,4 +1,4 @@
-FROM python:3.7-buster
+FROM python:3.8-slim-bullseye
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -9,7 +9,7 @@ WORKDIR /webapp
 COPY requirements.txt /webapp/
 
 # Install all dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev && pip install --upgrade pip -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends git ffmpeg libasound2-dev libsndfile-dev && pip install --upgrade pip wheel && pip install -r requirements.txt
 
 COPY . .
 
