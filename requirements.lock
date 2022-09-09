@@ -35,7 +35,7 @@ decorator==5.1.1
 demucs==3.0.5
 Deprecated==1.2.13
 diffq==0.2.3
-Django==4.1.1
+Django==4.0.7
 django-picklefield==3.1
 django-storages==1.11.1
 django-webpack-loader==1.6.0
@@ -138,12 +138,13 @@ tensorflow-estimator==2.7.0
 tensorflow-io-gcs-filesystem==0.27.0
 termcolor==1.1.0
 threadpoolctl==3.1.0
-torch==1.12.1
-torchaudio==0.12.1
+torch==1.10.1
+torchaudio==0.10.1
 tqdm==4.64.1
 treetable==0.2.5
 typer==0.3.2
 typing_extensions==4.3.0
+tzdata==2022.2
 uritemplate==4.1.1
 urllib3==1.26.12
 validators==0.20.0
