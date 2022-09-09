@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.14.0] - 2022-09-08
+
+### Changed
+- Raise minimum Python version to 3.8 and NodeJS version to 16
+- Update Docker images to use Python 3.8 and NodeJS 16 (bullseye)
+- Update Spleeter, Demucs, Tensorflow, and other dependencies
+
+### Removed
+- Remove some unused NPM dependencies
+
 ## [v3.13.0] - 2022-06-23
 
 ### Changed
@@ -290,7 +300,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.14.0...HEAD
+[v3.14.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...v3.14.0
 [v3.13.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...v3.13.0
 [v3.12.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.11.0...v3.12.0
 [v3.11.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.10.0...v3.11.0
