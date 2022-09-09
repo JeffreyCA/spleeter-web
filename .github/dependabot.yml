@@ -14,6 +14,7 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "celery"             # due to conflict with 'click' package with spleeter 
       - dependency-name: "torch*"
       - dependency-name: "numpy"              # due to spleeter and other model libs
       - dependency-name: "nnabla-ext-cuda110" # due to numpy
