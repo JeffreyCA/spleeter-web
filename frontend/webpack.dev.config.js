@@ -16,8 +16,8 @@ module.exports = {
   },
   plugins: [
     new BundleTracker({
-      path: path.resolve('./assets/'),
-      filename: 'webpack-stats.json'
+      path: __dirname,
+      filename: './assets/webpack-stats.json'
     }),
     new CopyWebpackPlugin({ 
       patterns: [ 

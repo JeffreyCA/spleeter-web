@@ -102,8 +102,8 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 ### Requirements
 * 4 GB+ of memory (source separation is memory-intensive)
-* Python 3.6+ ([link](https://www.python.org/downloads/))
-* Node.js 12+ ([link](https://nodejs.org/en/download/))
+* Python 3.8+ ([link](https://www.python.org/downloads/))
+* Node.js 16+ ([link](https://nodejs.org/en/download/))
 * Redis ([link](https://redis.io/))
 * ffmpeg and ffprobe ([link](https://www.ffmpeg.org/download.html))
     * On macOS, you can install it using Homebrew or MacPorts
