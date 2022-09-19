@@ -11,9 +11,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', 'sekrit')
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
 
-CPU_SEPARATION = bool(int(os.getenv('CPU_SEPARATION', '1')))
+CPU_SEPARATION = os.getenv('CPU_SEPARATION', '1') == '1'
 
-ALLOW_ALL_HOSTS = bool(int(os.getenv('ALLOW_ALL_HOSTS', '0')))
+ALLOW_ALL_HOSTS = os.getenv('ALLOW_ALL_HOSTS', '0') == '1'
 if ALLOW_ALL_HOSTS:
     ALLOWED_HOSTS = ['*']
 else:
@@ -77,7 +77,7 @@ CELERY_TASK_ROUTES = {
     },
 }
 
-D3NET_OPENVINO = bool(int(os.getenv('D3NET_OPENVINO', '0')))
+D3NET_OPENVINO = os.getenv('D3NET_OPENVINO', '0') == '1'
 D3NET_OPENVINO_THREADS = int(os.getenv('D3NET_OPENVINO_THREADS', cpu_count()))
 
 # Database

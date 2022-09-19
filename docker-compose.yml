@@ -51,6 +51,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - CPU_SEPARATION=1
+      - ALLOW_ALL_HOSTS
       - APP_HOST
       - DEFAULT_FILE_STORAGE
       - ENABLE_CROSS_ORIGIN_HEADERS
