@@ -3,7 +3,7 @@ services:
   nginx:
     ports:
       - "${NGINX_PORT:-80}:80"
-      - "443:443"
+      - "${NGINX_PORT_SSL:-443}:443"
   api:
     expose:
       - "8000"

@@ -13,7 +13,14 @@ YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
 
 CPU_SEPARATION = bool(int(os.getenv('CPU_SEPARATION', '1')))
 
-ALLOWED_HOSTS = [os.getenv('APP_HOST'), '0.0.0.0', '127.0.0.1', 'localhost']
+ALLOW_ALL_HOSTS = bool(int(os.getenv('ALLOW_ALL_HOSTS', '0')))
+if ALLOW_ALL_HOSTS:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS_SET = {'0.0.0.0', '127.0.0.1', 'localhost'}
+    if os.getenv('APP_HOST'):
+        ALLOWED_HOSTS_SET = ALLOWED_HOSTS_SET.union(set(os.getenv('APP_HOST').split(',')))
+    ALLOWED_HOSTS = list(ALLOWED_HOSTS_SET)
 
 DEFAULT_FILE_STORAGE = os.getenv('DEFAULT_FILE_STORAGE', 'api.storage.FileSystemStorage')
 if DEFAULT_FILE_STORAGE != 'api.storage.FileSystemStorage':

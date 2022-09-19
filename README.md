@@ -205,8 +205,9 @@ Here is a list of all the environment variables you can use to further customize
 |---|---|
 | `CPU_SEPARATION` | No need to set this if using Docker. Otherwise, set to `1` if you want CPU separation and `0` if you want GPU separation. |
 | `DJANGO_DEVELOPMENT` | Set to `true` if you want to run development build, which uses `settings_dev.py`/`settings_docker_dev.py` and runs Webpack in dev mode. |
-| `APP_HOST` | Domain name or public IP of server. This is only used for production builds (i.e. when `DJANGO_DEVELOPMENT` is not set) |
-| `API_HOST` | Hostname of API server (for nginx) |
+| `ALLOW_ALL_HOSTS` | Set to `1` if you want Django to allow all hosts, overriding any `APP_HOST` value. This effectively sets the Django setting `ALLOWED_HOSTS` to `[*]`. There are [security risks](https://docs.djangoproject.com/en/4.1/ref/settings/#allowed-hosts) associated with doing this. Default: `0` |
+| `APP_HOST` | Domain name(s) or public IP(s) of server. To specify multiple hosts, separate them by a comma (`,`). |
+| `API_HOST` | Hostname of API server (for nginx). |
 | `DEFAULT_FILE_STORAGE` | Whether to use local filesystem or cloud-based storage for storing uploads and separated files. `FILE` or `AWS` or `AZURE`. |
 | `AWS_ACCESS_KEY_ID` | AWS access key. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
@@ -225,7 +226,8 @@ Here is a list of all the environment variables you can use to further customize
 | `D3NET_OPENVINO_THREADS` | Set to the number of CPU threads for D3Net OpenVINO separation. Default: # of CPUs on the machine. Requires Intel CPU. |
 | `DEV_WEBSERVER_PORT` | Port that development webserver is mapped to on **host** machine. Docker only. |
 | `ENABLE_CROSS_ORIGIN_HEADERS` | Set to `1` to set `Cross-Origin-Embedder-Policy` and `Cross-Origin-Opener-Policy` headers which are required for exporting Dynamic Mixes in-browser. |
-| `NGINX_PORT` | Port that Nginx is mapped to on **host** machine. Docker only. |
+| `NGINX_PORT` | Port that Nginx is mapped to on **host** machine for HTTP. Docker only. |
+| `NGINX_PORT_SSL` | Port that Nginx is mapped to on **host** machine for HTTPS. Docker only. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
@@ -267,7 +269,7 @@ If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally 
 
     Example `.env` file:
     ```
-    APP_HOST=<domain name or public IP of server>
+    APP_HOST=<domain name(s) or public IP(s) of server>
     DEFAULT_FILE_STORAGE=<FILE or AWS or AZURE>       # Optional (default = FILE)
     CELERY_FAST_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 3)
     CELERY_SLOW_QUEUE_CONCURRENCY=<concurrency count> # Optional (default = 1)
@@ -296,7 +298,7 @@ If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally 
     spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
 
-4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000.
+4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000. You can change this by setting `NGINX_PORT` and `NGINX_PORT_SSL`.
 
 ## HTTPS support
 
