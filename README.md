@@ -221,6 +221,7 @@ Here is a list of all the environment variables you can use to further customize
 | `CELERY_RESULT_BACKEND` | Result backend for Celery (e.g. `redis://localhost:6379/0`). |
 | `CELERY_FAST_QUEUE_CONCURRENCY` | Number of concurrent YouTube import tasks Celery can process. Docker only. |
 | `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process. Docker only. |
+| `CERTBOT_DOMAIN` | Domain for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
 | `CERTBOT_EMAIL` | Email address for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
 | `D3NET_OPENVINO` | Set to `1` to use OpenVINO for D3Net CPU separation. Requires Intel CPU. |
 | `D3NET_OPENVINO_THREADS` | Set to the number of CPU threads for D3Net OpenVINO separation. Default: # of CPUs on the machine. Requires Intel CPU. |
@@ -302,7 +303,7 @@ If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally 
 
 ## HTTPS support
 
-Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable HTTPS, set `APP_HOST` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
+Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable HTTPS, set **both** `APP_HOST` and `CERTBOT_EMAIL` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
 
 ## [Common issues & FAQs](https://github.com/JeffreyCA/spleeter-web/wiki/Common-issues-&-FAQs)
 

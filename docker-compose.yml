@@ -33,6 +33,7 @@ services:
       - staticfiles:/webapp/staticfiles
     environment:
       - API_HOST=api
+      - CERTBOT_DOMAIN=.
       - CERTBOT_EMAIL=. # Dummy email (overridden by https.yml)
     depends_on:
       - api

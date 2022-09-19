@@ -6,6 +6,7 @@ services:
       - API_HOST=api
       - ENABLE_HTTPS=1
       - APP_HOST
+      - CERTBOT_DOMAIN
       - CERTBOT_EMAIL
     volumes:
       - ./certbot/conf/:/etc/letsencrypt
