@@ -303,7 +303,7 @@ If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally 
 
 ## HTTPS support
 
-Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable HTTPS, set **both** `APP_HOST` and `CERTBOT_EMAIL` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
+Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable HTTPS, set **both** `CERTBOT_DOMAIN` and `CERTBOT_EMAIL` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
 
 ## [Common issues & FAQs](https://github.com/JeffreyCA/spleeter-web/wiki/Common-issues-&-FAQs)
 
