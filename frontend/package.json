@@ -42,7 +42,7 @@
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^2.3.8",
     "url-loader": "^4.1.1",
-    "webpack": "^4.46.0",
+    "webpack": "^5.74.0",
     "webpack-bundle-tracker": "^1.6.0",
     "webpack-cli": "^4.10.0"
   },
