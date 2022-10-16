@@ -308,20 +308,24 @@ Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable H
 ## [Common issues & FAQs](https://github.com/JeffreyCA/spleeter-web/wiki/Common-issues-&-FAQs)
 
 ## Credits
-Special thanks to:
+Special thanks to my [Sponsors](https://github.com/sponsors/JeffreyCA/):
 
-* [tone.js](https://github.com/Tonejs/Tone.js/)
-* [youtube-dl](https://github.com/ytdl-org/youtube-dl)
-* [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
-* [react-music-player](https://github.com/lijinke666/react-music-player)
-* [docker-nginx-certbot](https://github.com/JonasAlfredsson/docker-nginx-certbot)
+* [603000](https://github.com/603000)
 
-And to all the researchers and devs behind the supported source separation models:
+And especially to all the researchers and devs behind all the source separation models:
 
 * [Spleeter](https://github.com/deezer/spleeter)
 * [Demucs](https://github.com/facebookresearch/demucs)
 * [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net)
+
+And additional thanks to these wonderful projects:
+
+* [tone.js](https://github.com/Tonejs/Tone.js/)
+* [youtube-dl](https://github.com/ytdl-org/youtube-dl) / [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+* [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
+* [react-music-player](https://github.com/lijinke666/react-music-player)
+* [docker-nginx-certbot](https://github.com/JonasAlfredsson/docker-nginx-certbot)
 
 Turntable icon made from [Icon Fonts](https://www.onlinewebfonts.com/icon/497039) is licensed by CC BY 3.0.
 
