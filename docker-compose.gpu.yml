@@ -17,6 +17,8 @@ x-celery-env: &celery-env
   - D3NET_OPENVINO=0
   - NVIDIA_VISIBLE_DEVICES=all
   - NVIDIA_DRIVER_CAPABILITIES=all
+  - PYTORCH_NO_CUDA_MEMORY_CACHING
+  - DEMUCS_SEGMENT_SIZE
 services:
   redis:
     image: redis:6.0-buster

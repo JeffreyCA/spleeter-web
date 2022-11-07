@@ -35,6 +35,7 @@ class DemucsSeparator:
         self.verbose = True
         self.bitrate = f'{bitrate}k'
         self.audio_adapter = AudioAdapter.default()
+        self.segment = int(settings.DEMUCS_SEGMENT_SIZE) if settings.DEMUCS_SEGMENT_SIZE else None
 
     def get_model(self):
         torch.hub.set_dir(str(self.model_dir))
@@ -46,6 +47,12 @@ class DemucsSeparator:
         if isinstance(model, BagOfModels):
             print(f"Selected model is a bag of {len(model.models)} models. "
                 "You will see that many progress bars per track.")
+            if self.segment is not None:
+                for sub in model.models:
+                    sub.segment = self.segment
+        else:
+            if self.segment is not None:
+                model.segment = self.segment
 
         model.cpu()
         model.eval()

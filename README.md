@@ -224,11 +224,13 @@ Here is a list of all the environment variables you can use to further customize
 | `CERTBOT_DOMAIN` | Domain for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
 | `CERTBOT_EMAIL` | Email address for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
 | `D3NET_OPENVINO` | Set to `1` to use OpenVINO for D3Net CPU separation. Requires Intel CPU. |
+| `DEMUCS_SEGMENT_SIZE` | Length of each split for GPU separation. Default is `40`, which requires a around 7 GB of GPU memory. For GPUs with 2-4 GB of memory, experiment with lower values (minimum is `10`). Also recommended to set `PYTORCH_NO_CUDA_MEMORY_CACHING=1`. |
 | `D3NET_OPENVINO_THREADS` | Set to the number of CPU threads for D3Net OpenVINO separation. Default: # of CPUs on the machine. Requires Intel CPU. |
 | `DEV_WEBSERVER_PORT` | Port that development webserver is mapped to on **host** machine. Docker only. |
 | `ENABLE_CROSS_ORIGIN_HEADERS` | Set to `1` to set `Cross-Origin-Embedder-Policy` and `Cross-Origin-Opener-Policy` headers which are required for exporting Dynamic Mixes in-browser. |
 | `NGINX_PORT` | Port that Nginx is mapped to on **host** machine for HTTP. Docker only. |
 | `NGINX_PORT_SSL` | Port that Nginx is mapped to on **host** machine for HTTPS. Docker only. |
+| `PYTORCH_NO_CUDA_MEMORY_CACHING` | Set to `1` to disable Pytorch caching for GPU separation. May help with Demucs separation on lower memory GPUs. Also see `DEMUCS_SEGMENT_SIZE`. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
