@@ -1,4 +1,3 @@
-version: '3.4'
 x-celery-env: &celery-env
   - DJANGO_SETTINGS_MODULE=django_react.settings_docker
   - CELERY_BROKER_URL=redis://redis:6379/0
@@ -76,7 +75,11 @@ services:
       - celery-data:/webapp/celery
       - pretrained-models:/webapp/pretrained_models
       - sqlite-data:/webapp/sqlite
-    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
     environment: *celery-env
     depends_on:
       - redis
@@ -88,7 +91,11 @@ services:
       - celery-data:/webapp/celery
       - pretrained-models:/webapp/pretrained_models
       - sqlite-data:/webapp/sqlite
-    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
     environment: *celery-env
     depends_on:
       - redis
