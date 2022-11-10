@@ -18,7 +18,7 @@ openvino==2021.4.2
 protobuf==3.20.3
 redis==4.3.4
 spleeter==2.3.2
-SQLAlchemy==1.4.42
+SQLAlchemy==1.4.43
 tensorflow==2.7.2
 torch==1.10.1
 torchaudio==0.10.1
