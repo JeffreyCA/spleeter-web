@@ -8,7 +8,7 @@ demucs==3.0.5
 Django==4.1.3
 django-picklefield==3.1
 django-storages==1.11.1
-django-webpack-loader==1.6.0
+django-webpack-loader==1.7.0
 djangorestframework==3.14.0
 google-api-python-client==2.65.0
 gunicorn==20.1.0
