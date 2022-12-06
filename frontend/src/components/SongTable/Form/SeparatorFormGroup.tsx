@@ -173,7 +173,12 @@ class SeparatorFormGroup extends React.Component<Props, State> {
               <optgroup label="Open-Unmix">
                 <option value="xumx">{separatorLabelMap['xumx']}</option>
               </optgroup>
+              <optgroup label="Demucs v4">
+                <option value="htdemucs">{separatorLabelMap['htdemucs']}</option>
+                <option value="htdemucs_ft">{separatorLabelMap['htdemucs_ft']}</option>
+              </optgroup>
               <optgroup label="Demucs v3">
+                <option value="hdemucs_mmi">{separatorLabelMap['hdemucs_mmi']}</option>
                 <option value="mdx">{separatorLabelMap['mdx']}</option>
                 <option value="mdx_extra">{separatorLabelMap['mdx_extra']}</option>
                 <option value="mdx_q">{separatorLabelMap['mdx_q']}</option>

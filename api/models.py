@@ -42,6 +42,9 @@ SPLEETER = 'spleeter'
 D3NET = 'd3net'
 XUMX = 'xumx'
 
+DEMUCS4_HT = 'htdemucs'
+DEMUCS4_HT_FT = 'htdemucs_ft'
+DEMUCS3_MMI = 'hdemucs_mmi'
 DEMUCS3_MDX = 'mdx'
 DEMUCS3_MDX_EXTRA = 'mdx_extra'
 DEMUCS3_MDX_Q = 'mdx_q'
@@ -58,8 +61,9 @@ DEMUCS_LIGHT = 'light'
 DEMUCS_LIGHT_EXTRA = 'light_extra'
 
 DEMUCS_FAMILY = [
-    DEMUCS3_MDX, DEMUCS3_MDX_EXTRA, DEMUCS3_MDX_Q, DEMUCS3_MDX_EXTRA_Q, DEMUCS,
-    DEMUCS_HQ, DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TASNET_EXTRA,
+    DEMUCS4_HT, DEMUCS4_HT_FT, DEMUCS3_MMI, 
+    DEMUCS3_MDX, DEMUCS3_MDX_EXTRA, DEMUCS3_MDX_Q, DEMUCS3_MDX_EXTRA_Q,
+    DEMUCS, DEMUCS_HQ, DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TASNET_EXTRA,
     DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA
 ]
 
@@ -69,6 +73,9 @@ SEP_CHOICES = [
     (
         'demucs',
         (
+            (DEMUCS4_HT, 'Demucs v4'),
+            (DEMUCS4_HT_FT, 'Demucs v4 Fine-tuned'),
+            (DEMUCS3_MMI, 'Demucs v3 MMI'),
             (DEMUCS3_MDX, 'Demucs v3'),
             (DEMUCS3_MDX_EXTRA, 'Demucs v3 Extra'),
             (DEMUCS3_MDX_Q, 'Demucs v3 Quantized'),
