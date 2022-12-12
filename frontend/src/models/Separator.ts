@@ -2,7 +2,11 @@ export type Separator =
   | 'spleeter'
   | 'd3net'
   | 'xumx'
+  // Demucs v4
+  | 'htdemucs'
+  | 'htdemucs_ft'
   // Demucs v3
+  | 'hdemucs_mmi'
   | 'mdx'
   | 'mdx_extra'
   | 'mdx_q'
@@ -22,7 +26,11 @@ export const separatorLabelMap = {
   spleeter: 'Spleeter',
   d3net: 'D3Net',
   xumx: 'X-UMX',
+  // Demucs v4
+  htdemucs: 'Demucs v4',
+  htdemucs_ft: 'Demucs v4 Fine-tuned',
   // Demucs v3
+  hdemucs_mmi: 'Demucs v3 MMI',
   mdx: 'Demucs v3',
   mdx_extra: 'Demucs v3 Extra',
   mdx_q: 'Demucs v3 Q',
@@ -40,7 +48,11 @@ export const separatorLabelMap = {
 
 export const isDemucsOrTasnet = (separator: Separator): boolean => {
   return (
+    // Demucs v4
+    separator === 'htdemucs' ||
+    separator === 'htdemucs_ft' ||
     // Demucs v3
+    separator === 'hdemucs_mmi' ||
     separator === 'mdx' ||
     separator === 'mdx_extra' ||
     separator === 'mdx_q' ||
