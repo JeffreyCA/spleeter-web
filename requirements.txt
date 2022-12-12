@@ -4,7 +4,7 @@ azure-storage-common==2.1.0
 boto3==1.26.25
 celery==5.1.2
 d3net-spleeterweb==0.1.3
-demucs @ git+https://github.com/facebookresearch/demucs@9ad3d0b74a1be853d7af8e87f71ebc144e1b99fd
+demucs==4.0.0
 Django==4.1.4
 django-picklefield==3.1
 django-storages==1.11.1
@@ -28,7 +28,7 @@ whitenoise==6.2.0
 xumx-spleeterweb==0.2.4
 yapf==0.32.0
 youtube-title-parse==1.0.0
-yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@7d6f7a086fc189249e65f21ca1498d9aab284ae4
+yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@bcb2893494d6cf9507ffdaf76b9ed24bd42f427d
 nnabla-ext-cuda110==1.25.0; sys_platform == 'linux'
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
