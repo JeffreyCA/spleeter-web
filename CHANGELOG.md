@@ -3,16 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v3.16.0] - 2022-12-11
-
-### Changed
-- Update Demucs to v4, which features new Hybrid Transformer models with average SDR of 9.0
-     - [More info](https://github.com/facebookresearch/demucs/blob/main/docs/release.md#v400-7th-of-december-2022)
-
-
-## [v3.15.0] - 2022-11-06
+## [v3.15.0] - 2022-12-11
 
 ### Added
+- Update Demucs to v4, which features new Hybrid Transformer models with average SDR of 9.0
+     - [More info](https://github.com/facebookresearch/demucs/blob/main/docs/release.md#v400-7th-of-december-2022)
 - Add ability to configure segment sizes for Demucs models
     - If Demucs separation fails for you due insufficient GPU memory, try setting the environment variable `DEMUCS_SEGMENT_SIZE` to a lower value like `10` (default is `40`, which requires a around 7 GB of memory). You may have to experiment a bit to find the appropriate value. See [this](https://github.com/facebookresearch/demucs#memory-requirements-for-gpu-acceleration) for more info.
     - Also try setting `PYTORCH_NO_CUDA_MEMORY_CACHING=1` to disable caching
@@ -319,8 +314,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...HEAD
-[v3.16.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...v3.16.0
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...HEAD
 [v3.15.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.14.0...v3.15.0
 [v3.14.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...v3.14.0
 [v3.13.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...v3.13.0
