@@ -57,7 +57,7 @@
     "babel-runtime": "^6.26.0",
     "he": "^1.2.0",
     "html5-file-selector": "^2.1.0",
-    "jquery": "^3.6.1",
+    "jquery": "^3.6.2",
     "luxon": "^2.5.0",
     "react": "^16.14.0",
     "react-bootstrap": "^1.6.6",
