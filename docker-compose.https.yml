@@ -7,5 +7,6 @@ services:
       - APP_HOST
       - CERTBOT_DOMAIN
       - CERTBOT_EMAIL
+      - UPLOAD_FILE_SIZE_LIMIT=${UPLOAD_FILE_SIZE_LIMIT:-100}
     volumes:
       - ./certbot/conf/:/etc/letsencrypt

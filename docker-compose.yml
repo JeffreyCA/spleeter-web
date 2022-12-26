@@ -16,6 +16,7 @@ x-celery-env: &celery-env
   - AZURE_CUSTOM_DOMAIN
   - D3NET_OPENVINO
   - D3NET_OPENVINO_THREADS
+  - YOUTUBE_LENGTH_LIMIT
 services:
   redis:
     image: redis:6.0-buster
@@ -34,6 +35,7 @@ services:
       - API_HOST=api
       - CERTBOT_DOMAIN=.
       - CERTBOT_EMAIL=. # Dummy email (overridden by https.yml)
+      - UPLOAD_FILE_SIZE_LIMIT=${UPLOAD_FILE_SIZE_LIMIT:-100}
     depends_on:
       - api
     restart: always
@@ -63,6 +65,8 @@ services:
       - AZURE_CONTAINER
       - AZURE_CUSTOM_DOMAIN
       - YOUTUBE_API_KEY
+      - UPLOAD_FILE_SIZE_LIMIT
+      - YOUTUBE_LENGTH_LIMIT
     depends_on:
       - redis
       - frontend

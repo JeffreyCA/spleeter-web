@@ -19,6 +19,7 @@ x-celery-env: &celery-env
   - NVIDIA_DRIVER_CAPABILITIES=all
   - PYTORCH_NO_CUDA_MEMORY_CACHING
   - DEMUCS_SEGMENT_SIZE
+  - YOUTUBE_LENGTH_LIMIT
 services:
   redis:
     image: redis:6.0-buster
@@ -37,6 +38,7 @@ services:
       - API_HOST=api
       - CERTBOT_EMAIL=. # Dummy email (overridden by https.yml)
       - CERTBOT_DOMAIN=.
+      - UPLOAD_FILE_SIZE_LIMIT=${UPLOAD_FILE_SIZE_LIMIT:-100}
     depends_on:
       - api
     restart: always
@@ -66,6 +68,8 @@ services:
       - AZURE_CONTAINER
       - AZURE_CUSTOM_DOMAIN
       - YOUTUBE_API_KEY
+      - UPLOAD_FILE_SIZE_LIMIT
+      - YOUTUBE_LENGTH_LIMIT
     depends_on:
       - redis
       - frontend

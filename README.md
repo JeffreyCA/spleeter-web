@@ -231,7 +231,9 @@ Here is a list of all the environment variables you can use to further customize
 | `NGINX_PORT` | Port that Nginx is mapped to on **host** machine for HTTP. Docker only. |
 | `NGINX_PORT_SSL` | Port that Nginx is mapped to on **host** machine for HTTPS. Docker only. |
 | `PYTORCH_NO_CUDA_MEMORY_CACHING` | Set to `1` to disable Pytorch caching for GPU separation. May help with Demucs separation on lower memory GPUs. Also see `DEMUCS_SEGMENT_SIZE`. |
+| `UPLOAD_FILE_SIZE_LIMIT` | Maximum allowed upload file size (in megabytes). Default is `100`. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
+| `YOUTUBE_LENGTH_LIMIT` | Maximum allowed YouTube track length (in minutes). Default is `30`. |
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 

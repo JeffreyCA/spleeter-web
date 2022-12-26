@@ -1,6 +1,6 @@
 server {
     listen 443 ssl http2;
-    client_max_body_size 50M;
+    client_max_body_size ${UPLOAD_FILE_SIZE_LIMIT}M;
 
     ssl_certificate         /etc/letsencrypt/live/${CERTBOT_DOMAIN}/fullchain.pem;
     ssl_certificate_key     /etc/letsencrypt/live/${CERTBOT_DOMAIN}/privkey.pem;
