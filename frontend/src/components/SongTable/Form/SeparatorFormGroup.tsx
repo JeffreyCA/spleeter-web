@@ -3,10 +3,11 @@ import { Col, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { QuestionCircle } from 'react-bootstrap-icons';
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import {
-  ALL_MIX_BITRATES,
-  DEFAULT_MIX_BITRATE,
   DEFAULT_MODEL,
+  DEFAULT_OUTPUT_FORMAT,
   DEFAULT_SOFTMASK_ALPHA,
+  LOSSLESS_OUTPUT_FORMATS,
+  LOSSY_OUTPUT_FORMATS,
   MAX_SHIFT_ITER,
 } from '../../../Constants';
 import { isDemucsOrTasnet, Separator, separatorLabelMap } from '../../../models/Separator';
@@ -19,7 +20,7 @@ interface Props {
   handleIterationsChange: (newIterations: number) => void;
   handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
   handleAlphaChange: (newAlpha: number) => void;
-  handleBitrateChange: (newBitrate: number) => void;
+  handleOutputFormatChange: (newOutputFormat: number) => void;
 }
 
 interface State {
@@ -40,9 +41,9 @@ interface State {
    */
   alpha: string;
   /**
-   * Output bitrate.
+   * Output format/bitrate.
    */
-  bitrate: number;
+  output_format: number;
 }
 
 /**
@@ -56,7 +57,7 @@ class SeparatorFormGroup extends React.Component<Props, State> {
       shiftIters: 0,
       softmask: false,
       alpha: DEFAULT_SOFTMASK_ALPHA.toString(),
-      bitrate: DEFAULT_MIX_BITRATE,
+      output_format: DEFAULT_OUTPUT_FORMAT,
     };
   }
 
@@ -121,13 +122,13 @@ class SeparatorFormGroup extends React.Component<Props, State> {
   onBitrateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
     const parsedVal = parseInt(event.target.value);
     this.setState({
-      bitrate: parsedVal,
+      output_format: parsedVal,
     });
-    this.props.handleBitrateChange(parsedVal);
+    this.props.handleOutputFormatChange(parsedVal);
   };
 
   render(): JSX.Element {
-    const { selectedModel, shiftIters, softmask, alpha, bitrate } = this.state;
+    const { selectedModel, shiftIters, softmask, alpha, output_format: bitrate } = this.state;
     const { className } = this.props;
 
     // Reuse same components for Demucs's random shifts and X-UMX's EM iterations
@@ -211,12 +212,19 @@ class SeparatorFormGroup extends React.Component<Props, State> {
         <Form.Row className="mt-3">
           <Col xs={6}>
             <Form.Group className="mb-0" controlId="bitrate-group">
-              <Form.Label id="bitrate">Bitrate:</Form.Label>
+              <Form.Label id="bitrate">Format:</Form.Label>
               <Form.Control as="select" defaultValue={bitrate} onChange={this.onBitrateChange}>
-                <optgroup label="MP3 CBR">
-                  {ALL_MIX_BITRATES.map((val, idx) => (
-                    <option key={idx} value={val}>
-                      {val} kbps
+                <optgroup label="Lossy">
+                  {LOSSY_OUTPUT_FORMATS.map((val, _) => (
+                    <option key={val[1]} value={val[0]}>
+                      MP3 {val[1]}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Lossless">
+                  {LOSSLESS_OUTPUT_FORMATS.map((val, _) => (
+                    <option key={val[1]} value={val[0]}>
+                      {val[1]}
                     </option>
                   ))}
                 </optgroup>

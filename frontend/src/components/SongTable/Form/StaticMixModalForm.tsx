@@ -14,7 +14,7 @@ interface Props {
   handleIterationsChange: (newIterations: number) => void;
   handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
   handleAlphaChange: (newAlpha: number) => void;
-  handleBitrateChange: (newBitrate: number) => void;
+  handleOutputFormatChange: (newOutputFormat: number) => void;
 }
 
 interface State {
@@ -44,25 +44,23 @@ class StaticMixModalForm extends React.Component<Props, State> {
       handleIterationsChange,
       handleSoftmaskChange,
       handleAlphaChange,
-      handleBitrateChange,
+      handleOutputFormatChange,
     } = this.props;
 
     // Map part names to checkboxes
-    const checkboxes = Array.from(MusicPartMap.keys()).map(
-      (key: string): JSX.Element => {
-        return (
-          <Form.Group key={key} controlId={`${key}-checkbox`} className="mb-0">
-            <Form.Check
-              type="checkbox"
-              name={key}
-              label={MusicPartMap.get(key)}
-              onChange={handleCheckboxChange}
-              className="capitalize"
-            />
-          </Form.Group>
-        );
-      }
-    );
+    const checkboxes = Array.from(MusicPartMap.keys()).map((key: string): JSX.Element => {
+      return (
+        <Form.Group key={key} controlId={`${key}-checkbox`} className="mb-0">
+          <Form.Check
+            type="checkbox"
+            name={key}
+            label={MusicPartMap.get(key)}
+            onChange={handleCheckboxChange}
+            className="capitalize"
+          />
+        </Form.Group>
+      );
+    });
 
     return (
       <Form>
@@ -74,7 +72,7 @@ class StaticMixModalForm extends React.Component<Props, State> {
           handleIterationsChange={handleIterationsChange}
           handleSoftmaskChange={handleSoftmaskChange}
           handleAlphaChange={handleAlphaChange}
-          handleBitrateChange={handleBitrateChange}
+          handleOutputFormatChange={handleOutputFormatChange}
         />
         <Form.Group className="mt-3">
           <Form.Label>Parts to keep:</Form.Label>

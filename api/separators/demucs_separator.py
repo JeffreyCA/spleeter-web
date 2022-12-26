@@ -1,6 +1,5 @@
 import gc
 from pathlib import Path
-from demucs.utils import DummyPoolExecutor
 
 import torch
 
@@ -10,6 +9,9 @@ from demucs.pretrained import get_model, ModelLoadingError
 from demucs.separate import *
 from django.conf import settings
 from spleeter.audio.adapter import AudioAdapter
+from api.models import OutputFormat
+
+from api.util import output_format_to_ext, is_output_format_lossy
 
 """
 This module defines a wrapper interface over the Demucs API.
@@ -21,7 +23,7 @@ class DemucsSeparator:
     def __init__(self,
                  model_name='mdx_extra_q',
                  cpu_separation=True,
-                 bitrate=256,
+                 output_format=OutputFormat.MP3_256.value,
                  shifts=5):
         self.device = 'cpu' if cpu_separation else 'cuda'
         self.sample_rate = 44100
@@ -33,7 +35,8 @@ class DemucsSeparator:
         self.overlap = 0.25
         self.workers = 0
         self.verbose = True
-        self.bitrate = f'{bitrate}k'
+        self.audio_bitrate = f'{output_format}k' if is_output_format_lossy(output_format) else None
+        self.audio_format = output_format_to_ext(output_format)
         self.audio_adapter = AudioAdapter.default()
         self.segment = int(settings.DEMUCS_SEGMENT_SIZE) if settings.DEMUCS_SEGMENT_SIZE else None
 
@@ -105,9 +108,9 @@ class DemucsSeparator:
 
         final_source = final_source.cpu().transpose(0, 1).numpy()
 
-        print('Exporting MP3...')
+        print(f'Exporting to {output_path}...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate,
-                                'mp3', self.bitrate)
+                                self.audio_format, self.audio_bitrate)
 
 
     def separate_into_parts(self, input_path: str, output_path: str):
@@ -122,7 +125,7 @@ class DemucsSeparator:
         model = self.get_model()
         raw_sources = self.apply_model(model, input_path)
 
-        # Export all source MP3s in parallel
+        # Export all sources in parallel
         pool = Pool()
         tasks = []
 
@@ -130,12 +133,13 @@ class DemucsSeparator:
                                 ['drums', 'bass', 'other', 'vocals']):
 
             source = source.cpu().transpose(0, 1).numpy()
-            filename = f'{name}.mp3'
+            filename = f'{name}.{self.audio_format}'
 
-            print(f'Exporting {name} MP3...')
-            task = pool.apply_async(self.audio_adapter.save,
-                                    (output_path / filename, source,
-                                     self.sample_rate, 'mp3', self.bitrate))
+            print(f'Exporting {filename}...')
+            task = pool.apply_async(
+                self.audio_adapter.save,
+                (output_path / filename, source, self.sample_rate,
+                 self.audio_format, self.audio_bitrate))
             tasks.append(task)
 
         try:
