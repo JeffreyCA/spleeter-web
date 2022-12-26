@@ -4,8 +4,9 @@ from spleeter.audio.adapter import AudioAdapter
 from spleeter.separator import Separator
 from spleeter.utils import *
 from spleeter.audio import STFTBackend
+from api.models import OutputFormat
 
-from api.util import bitrate_to_ext, is_bitrate_lossy
+from api.util import output_format_to_ext, is_output_format_lossy
 
 """
 This module defines a wrapper interface over the Spleeter API.
@@ -13,12 +14,13 @@ This module defines a wrapper interface over the Spleeter API.
 
 class SpleeterSeparator:
     """Performs source separation using Spleeter API."""
-    def __init__(self, cpu_separation: bool, bitrate=256):
+    def __init__(self, cpu_separation: bool, output_format=OutputFormat.MP3_256.value):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
-        self.audio_bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
-        self.audio_format = bitrate_to_ext(bitrate)
+        self.audio_bitrate = f'{output_format}k' if is_output_format_lossy(
+            output_format) else None
+        self.audio_format = output_format_to_ext(output_format)
         self.sample_rate = 44100
         self.spleeter_stem = 'config/4stems-16kHz.json'
         self.separator = Separator(self.spleeter_stem,

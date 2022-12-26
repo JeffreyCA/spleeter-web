@@ -17,7 +17,7 @@ from .separators.d3net_separator import D3NetSeparator
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
 from .separators.x_umx_separator import XUMXSeparator
-from .util import bitrate_to_ext, get_valid_filename
+from .util import output_format_to_ext, get_valid_filename
 from .youtubedl import download_audio, get_file_ext
 
 """
@@ -56,7 +56,7 @@ def create_static_mix(static_mix_id):
     static_mix.status = TaskStatus.IN_PROGRESS
     static_mix.save()
 
-    ext = bitrate_to_ext(static_mix.bitrate)
+    ext = output_format_to_ext(static_mix.bitrate)
 
     try:
         # Get paths
@@ -190,9 +190,8 @@ def create_dynamic_mix(dynamic_mix_id):
         else:
             separator.separate_into_parts(path, rel_path)
 
+        ext = output_format_to_ext(dynamic_mix.bitrate)
         # Check all parts exist
-        ext = bitrate_to_ext(dynamic_mix.bitrate)
-
         if exists_all_parts(rel_path, ext):
             rename_all_parts(rel_path, file_prefix, file_suffix, ext)
             dynamic_mix.status = TaskStatus.DONE

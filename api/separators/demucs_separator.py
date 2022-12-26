@@ -1,6 +1,5 @@
 import gc
 from pathlib import Path
-from demucs.utils import DummyPoolExecutor
 
 import torch
 
@@ -10,8 +9,9 @@ from demucs.pretrained import get_model, ModelLoadingError
 from demucs.separate import *
 from django.conf import settings
 from spleeter.audio.adapter import AudioAdapter
+from api.models import OutputFormat
 
-from api.util import bitrate_to_ext, is_bitrate_lossy
+from api.util import output_format_to_ext, is_output_format_lossy
 
 """
 This module defines a wrapper interface over the Demucs API.
@@ -23,7 +23,7 @@ class DemucsSeparator:
     def __init__(self,
                  model_name='mdx_extra_q',
                  cpu_separation=True,
-                 bitrate=256,
+                 output_format=OutputFormat.MP3_256.value,
                  shifts=5):
         self.device = 'cpu' if cpu_separation else 'cuda'
         self.sample_rate = 44100
@@ -35,8 +35,8 @@ class DemucsSeparator:
         self.overlap = 0.25
         self.workers = 0
         self.verbose = True
-        self.bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
-        self.audio_format = bitrate_to_ext(bitrate)
+        self.audio_bitrate = f'{output_format}k' if is_output_format_lossy(output_format) else None
+        self.audio_format = output_format_to_ext(output_format)
         self.audio_adapter = AudioAdapter.default()
         self.segment = int(settings.DEMUCS_SEGMENT_SIZE) if settings.DEMUCS_SEGMENT_SIZE else None
 
@@ -110,7 +110,7 @@ class DemucsSeparator:
 
         print(f'Exporting to {output_path}...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate,
-                                self.audio_format, self.bitrate)
+                                self.audio_format, self.audio_bitrate)
 
 
     def separate_into_parts(self, input_path: str, output_path: str):
@@ -139,7 +139,7 @@ class DemucsSeparator:
             task = pool.apply_async(
                 self.audio_adapter.save,
                 (output_path / filename, source, self.sample_rate,
-                 self.audio_format, self.bitrate))
+                 self.audio_format, self.audio_bitrate))
             tasks.append(task)
 
         try:

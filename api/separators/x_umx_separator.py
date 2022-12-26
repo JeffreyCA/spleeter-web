@@ -5,6 +5,7 @@ from pathlib import Path
 
 import nnabla as nn
 import numpy as np
+from api.models import OutputFormat
 from api.separators.util import download_and_verify
 from billiard.pool import Pool
 from nnabla.ext_utils import get_extension_context
@@ -12,7 +13,7 @@ from spleeter.audio.adapter import AudioAdapter
 from tqdm import trange
 from xumx.test import separate_args_dict
 
-from api.util import bitrate_to_ext, is_bitrate_lossy
+from api.util import output_format_to_ext, is_output_format_lossy
 
 
 MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h5'
@@ -24,14 +25,12 @@ This module reimplements part of X-UMX's source separation code from https://git
 
 class XUMXSeparator:
     """Performs source separation using X-UMX API."""
-    def __init__(
-        self,
-        cpu_separation: bool,
-        bitrate=256,
-        softmask=False,
-        alpha=1.0,
-        iterations=1
-    ):
+    def __init__(self,
+                 cpu_separation: bool,
+                 output_format=OutputFormat.MP3_256.value,
+                 softmask=False,
+                 alpha=1.0,
+                 iterations=1):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
@@ -42,8 +41,8 @@ class XUMXSeparator:
         self.softmask = softmask
         self.alpha = alpha
         self.iterations = iterations
-        self.bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
-        self.audio_format = bitrate_to_ext(bitrate)
+        self.audio_bitrate = f'{output_format}k' if is_output_format_lossy(output_format) else None
+        self.audio_format = output_format_to_ext(output_format)
         self.sample_rate = 44100
         self.residual_model = False
         self.audio_adapter = AudioAdapter.default()
@@ -114,7 +113,7 @@ class XUMXSeparator:
 
         print(f'Exporting to {output_path}...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate,
-                                self.audio_format, self.bitrate)
+                                self.audio_format, self.audio_bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
         download_and_verify(MODEL_URL, MODEL_SHA1, self.model_dir,
@@ -132,7 +131,7 @@ class XUMXSeparator:
             task = pool.apply_async(
                 self.audio_adapter.save,
                 (output_path / filename, estimate, self.sample_rate,
-                 self.audio_format, self.bitrate))
+                 self.audio_format, self.audio_bitrate))
             tasks.append(task)
 
         pool.close()

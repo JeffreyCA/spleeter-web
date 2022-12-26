@@ -103,7 +103,7 @@ class TaskStatus(models.IntegerChoices):
 
 class OutputFormat(models.IntegerChoices):
     """
-    Enum for output formats. Reserve 0 and 1 'bitrates' for backcompat.
+    Enum for output formats.
     """
     WAV = 0, 'WAV'
     FLAC = 1, 'FLAC'

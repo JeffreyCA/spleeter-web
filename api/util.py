@@ -13,13 +13,15 @@ def get_valid_filename(s):
     s = str(s).strip()
     return re.sub(r'(?u)[^-\w\s.,[\]()]', '', s)
 
-def is_bitrate_lossy(bitrate: int):
-    return bitrate != OutputFormat.FLAC.value and bitrate != OutputFormat.WAV.value
+def is_output_format_lossy(output_format: int):
+    """Return whether OutputFormat enum is a lossy format."""
+    return output_format != OutputFormat.FLAC.value and output_format != OutputFormat.WAV.value
 
-def bitrate_to_ext(bitrate: int):
-    if bitrate == OutputFormat.FLAC.value:
+def output_format_to_ext(output_format: int):
+    """Resolve OutputFormat enum to a file extension."""
+    if output_format == OutputFormat.FLAC.value:
         return 'flac'
-    elif bitrate == OutputFormat.WAV.value:
+    elif output_format == OutputFormat.WAV.value:
         return 'wav'
     else:
         return 'mp3'

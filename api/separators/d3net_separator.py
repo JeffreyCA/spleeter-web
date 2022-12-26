@@ -7,6 +7,7 @@ import nnabla as nn
 import numpy as np
 import requests
 import yaml
+from api.models import OutputFormat
 from api.separators.util import download_and_verify
 from billiard.pool import Pool
 from d3net.filter import apply_mwf
@@ -16,7 +17,7 @@ from django.conf import settings
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
 
-from api.util import bitrate_to_ext, is_bitrate_lossy
+from api.util import output_format_to_ext, is_output_format_lossy
 
 from .d3net_openvino import D3NetOpenVinoWrapper
 
@@ -40,7 +41,10 @@ This module reimplements part of d3net's source separation code from https://git
 
 class D3NetSeparator:
     """Performs source separation using D3Net API."""
-    def __init__(self, cpu_separation: bool, bitrate=256):
+
+    def __init__(self,
+                 cpu_separation: bool,
+                 output_format=OutputFormat.MP3_256.value):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
@@ -57,8 +61,8 @@ class D3NetSeparator:
 
         self.model_file_path = self.model_dir / self.model_file
         self.context = 'cpu' if cpu_separation else 'cudnn'
-        self.bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
-        self.audio_format = bitrate_to_ext(bitrate)
+        self.audio_bitrate = f'{output_format}k' if is_output_format_lossy(output_format) else None
+        self.audio_format = output_format_to_ext(output_format)
         self.sample_rate = 44100
         self.audio_adapter = AudioAdapter.default()
 
@@ -153,7 +157,7 @@ class D3NetSeparator:
 
         print(f'Exporting to {output_path}...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate,
-                                self.audio_format, self.bitrate)
+                                self.audio_format, self.audio_bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
         download_and_verify(self.model_url, self.model_sha1, self.model_dir,
@@ -175,7 +179,7 @@ class D3NetSeparator:
             task = pool.apply_async(
                 self.audio_adapter.save,
                 (output_path / filename, estimate, self.sample_rate,
-                 self.audio_format, self.bitrate))
+                 self.audio_format, self.audio_bitrate))
             tasks.append(task)
 
         pool.close()
