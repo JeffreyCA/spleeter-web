@@ -59,9 +59,10 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'source_track', 'separator', 'bitrate', 'extra_info', 'artist',
-                  'title', 'vocals_url', 'other_url', 'bass_url',
-                  'drums_url', 'status', 'error', 'date_created', 'date_finished')
+        fields = ('id', 'source_track', 'separator', 'bitrate',
+                  'extra_info', 'artist', 'title', 'vocals_url', 'other_url',
+                  'bass_url', 'drums_url', 'status', 'error', 'date_created',
+                  'date_finished')
 
 class LiteStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model with minimal information."""
@@ -116,9 +117,9 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
     class Meta:
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
-                  'separator_args', 'bitrate', 'artist', 'title', 'vocals_url',
-                  'other_url', 'bass_url', 'drums_url', 'status', 'error',
-                  'date_created', 'date_finished')
+                  'separator_args', 'bitrate', 'artist', 'title',
+                  'vocals_url', 'other_url', 'bass_url', 'drums_url', 'status',
+                  'error', 'date_created', 'date_finished')
 
 class FullStaticMixSerializer(serializers.ModelSerializer):
     """Serializer for StaticMix model."""
@@ -171,8 +172,8 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaticMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
-                  'separator_args', 'bitrate', 'artist', 'title', 'vocals',
-                  'drums', 'bass', 'other', 'status', 'url', 'error',
+                  'separator_args', 'bitrate', 'artist', 'title',
+                  'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error',
                   'date_created', 'date_finished')
 
 class LiteSourceTrackSerializer(serializers.ModelSerializer):

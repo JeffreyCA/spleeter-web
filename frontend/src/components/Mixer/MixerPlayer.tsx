@@ -2,7 +2,7 @@ import { createFFmpeg, fetchFile, FFmpeg, ProgressCallback } from '@jeffreyca/ff
 import * as React from 'react';
 import { Alert } from 'react-bootstrap';
 import * as Tone from 'tone';
-import { DEFAULT_MIX_BITRATE, FADE_DURATION_S } from '../../Constants';
+import { FADE_DURATION_S } from '../../Constants';
 import { DynamicMix } from '../../models/DynamicMix';
 import { PartId, PartIds } from '../../models/PartId';
 import ExportModal from './ExportModal';

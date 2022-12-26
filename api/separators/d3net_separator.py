@@ -16,6 +16,8 @@ from django.conf import settings
 from nnabla.ext_utils import get_extension_context
 from spleeter.audio.adapter import AudioAdapter
 
+from api.util import bitrate_to_ext, is_bitrate_lossy
+
 from .d3net_openvino import D3NetOpenVinoWrapper
 
 MODEL = {
@@ -55,7 +57,8 @@ class D3NetSeparator:
 
         self.model_file_path = self.model_dir / self.model_file
         self.context = 'cpu' if cpu_separation else 'cudnn'
-        self.bitrate = f'{bitrate}k'
+        self.bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
+        self.audio_format = bitrate_to_ext(bitrate)
         self.sample_rate = 44100
         self.audio_adapter = AudioAdapter.default()
 
@@ -148,9 +151,9 @@ class D3NetSeparator:
                 continue
             final_source = source if final_source is None else final_source + source
 
-        print('Writing to MP3...')
+        print(f'Exporting to {output_path}...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate,
-                                'mp3', self.bitrate)
+                                self.audio_format, self.bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
         download_and_verify(self.model_url, self.model_sha1, self.model_dir,
@@ -161,17 +164,18 @@ class D3NetSeparator:
 
         estimates = self.get_estimates(input_path, parts)
 
-        # Export all source MP3s in parallel
+        # Export all sources in parallel
         pool = Pool()
         tasks = []
         output_path = Path(output_path)
 
         for name, estimate in estimates.items():
-            filename = f'{name}.mp3'
-            print(f'Exporting {name} MP3...')
-            task = pool.apply_async(self.audio_adapter.save,
-                                    (output_path / filename, estimate,
-                                     self.sample_rate, 'mp3', self.bitrate))
+            filename = f'{name}.{self.audio_format}'
+            print(f'Exporting {filename}...')
+            task = pool.apply_async(
+                self.audio_adapter.save,
+                (output_path / filename, estimate, self.sample_rate,
+                 self.audio_format, self.bitrate))
             tasks.append(task)
 
         pool.close()

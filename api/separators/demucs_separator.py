@@ -11,6 +11,8 @@ from demucs.separate import *
 from django.conf import settings
 from spleeter.audio.adapter import AudioAdapter
 
+from api.util import bitrate_to_ext, is_bitrate_lossy
+
 """
 This module defines a wrapper interface over the Demucs API.
 Code adapted from https://github.com/facebookresearch/demucs/blob/main/demucs/separate.py which is copyrighted by Facebook, Inc. and its affiliates. under the terms of the MIT license.
@@ -33,7 +35,8 @@ class DemucsSeparator:
         self.overlap = 0.25
         self.workers = 0
         self.verbose = True
-        self.bitrate = f'{bitrate}k'
+        self.bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
+        self.audio_format = bitrate_to_ext(bitrate)
         self.audio_adapter = AudioAdapter.default()
         self.segment = int(settings.DEMUCS_SEGMENT_SIZE) if settings.DEMUCS_SEGMENT_SIZE else None
 
@@ -105,9 +108,9 @@ class DemucsSeparator:
 
         final_source = final_source.cpu().transpose(0, 1).numpy()
 
-        print('Exporting MP3...')
+        print(f'Exporting to {output_path}...')
         self.audio_adapter.save(output_path, final_source, self.sample_rate,
-                                'mp3', self.bitrate)
+                                self.audio_format, self.bitrate)
 
 
     def separate_into_parts(self, input_path: str, output_path: str):
@@ -122,7 +125,7 @@ class DemucsSeparator:
         model = self.get_model()
         raw_sources = self.apply_model(model, input_path)
 
-        # Export all source MP3s in parallel
+        # Export all sources in parallel
         pool = Pool()
         tasks = []
 
@@ -130,12 +133,13 @@ class DemucsSeparator:
                                 ['drums', 'bass', 'other', 'vocals']):
 
             source = source.cpu().transpose(0, 1).numpy()
-            filename = f'{name}.mp3'
+            filename = f'{name}.{self.audio_format}'
 
-            print(f'Exporting {name} MP3...')
-            task = pool.apply_async(self.audio_adapter.save,
-                                    (output_path / filename, source,
-                                     self.sample_rate, 'mp3', self.bitrate))
+            print(f'Exporting {filename}...')
+            task = pool.apply_async(
+                self.audio_adapter.save,
+                (output_path / filename, source, self.sample_rate,
+                 self.audio_format, self.bitrate))
             tasks.append(task)
 
         try:

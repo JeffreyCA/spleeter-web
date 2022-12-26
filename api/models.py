@@ -61,7 +61,7 @@ DEMUCS_LIGHT = 'light'
 DEMUCS_LIGHT_EXTRA = 'light_extra'
 
 DEMUCS_FAMILY = [
-    DEMUCS4_HT, DEMUCS4_HT_FT, DEMUCS3_MMI, 
+    DEMUCS4_HT, DEMUCS4_HT_FT, DEMUCS3_MMI,
     DEMUCS3_MDX, DEMUCS3_MDX_EXTRA, DEMUCS3_MDX_Q, DEMUCS3_MDX_EXTRA_Q,
     DEMUCS, DEMUCS_HQ, DEMUCS_EXTRA, DEMUCS_QUANTIZED, TASNET, TASNET_EXTRA,
     DEMUCS_LIGHT, DEMUCS_LIGHT_EXTRA
@@ -101,13 +101,16 @@ class TaskStatus(models.IntegerChoices):
     DONE = 2, 'Done'
     ERROR = -1, 'Error'
 
-class Bitrate(models.IntegerChoices):
+class OutputFormat(models.IntegerChoices):
     """
-    Enum for MP3 bitrates.
+    Enum for output formats. Reserve 0 and 1 'bitrates' for backcompat.
     """
-    MP3_192 = 192
-    MP3_256 = 256
-    MP3_320 = 320
+    WAV = 0, 'WAV'
+    FLAC = 1, 'FLAC'
+    MP3_192 = 192, '192 kbps'
+    MP3_256 = 256, '256 kbps'
+    MP3_320 = 320, '320 kbps'
+
 
 class YTAudioDownloadTask(models.Model):
     """Model representing the status of a task to fetch audio from YouTube link."""
@@ -262,8 +265,8 @@ class StaticMix(models.Model):
     # Separator-specific args
     separator_args = PickledObjectField(default=dict)
     # Bitrate
-    bitrate = models.IntegerField(choices=Bitrate.choices,
-                                  default=Bitrate.MP3_256)
+    bitrate = models.IntegerField(choices=OutputFormat.choices,
+                                  default=OutputFormat.MP3_256)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='static',
@@ -322,7 +325,7 @@ class StaticMix(models.Model):
         prefix = ''.join(prefix_lst)
         parts = ','.join(parts_lst)
 
-        suffix = f'{self.bitrate} kbps,{self.separator}'
+        suffix = f'{self.get_bitrate_display()},{self.separator}'
         if self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
             suffix += f',{random_shifts} shifts'
@@ -348,17 +351,17 @@ class StaticMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+            return [f'{self.get_bitrate_display()}', '4 stems (16 kHz)']
         elif self.separator == D3NET:
-            return [f'{self.bitrate} kbps']
+            return [f'{self.get_bitrate_display()}']
         elif self.separator in DEMUCS_FAMILY:
             return [
-                f'{self.bitrate} kbps',
+                f'{self.get_bitrate_display()}',
                 f'Random shifts: {self.separator_args["random_shifts"]}'
             ]
         else:
             info_arr = [
-                f'{self.bitrate} kbps',
+                f'{self.get_bitrate_display()}',
                 f'Iterations: {self.separator_args["iterations"]}',
                 f'Softmask: {self.separator_args["softmask"]}',
             ]
@@ -369,8 +372,8 @@ class StaticMix(models.Model):
             return info_arr
     class Meta:
         unique_together = [[
-            'source_track', 'separator', 'separator_args', 'bitrate', 'vocals', 'drums',
-            'bass', 'other'
+            'source_track', 'separator', 'separator_args', 'bitrate',
+            'vocals', 'drums', 'bass', 'other'
         ]]
 
 # pylint: disable=unsubscriptable-object
@@ -387,8 +390,8 @@ class DynamicMix(models.Model):
     # Separator-specific args
     separator_args = PickledObjectField(default=dict)
     # Bitrate
-    bitrate = models.IntegerField(choices=Bitrate.choices,
-                                  default=Bitrate.MP3_256)
+    bitrate = models.IntegerField(choices=OutputFormat.choices,
+                                  default=OutputFormat.MP3_256)
     # Source track on which it is based
     source_track = models.ForeignKey(SourceTrack,
                                      related_name='dynamic',
@@ -440,19 +443,19 @@ class DynamicMix(models.Model):
         "[Demucs, 0]"
         """
         if self.separator == SPLEETER:
-            return f'[{self.bitrate} kbps,{self.separator}]'
+            return f'[{self.get_bitrate_display()},{self.separator}]'
         elif self.separator == D3NET:
-            return f'[{self.bitrate} kbps]'
+            return f'[{self.get_bitrate_display()}]'
         elif self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
-            return f'[{self.bitrate} kbps,{self.separator},{random_shifts} shifts]'
+            return f'[{self.get_bitrate_display()},{self.separator},{random_shifts} shifts]'
         else:
             iterations = self.separator_args['iterations']
             softmask = self.separator_args['softmask']
             # Replace decimal point with underscore
             alpha = str(self.separator_args['alpha']).replace('.', '_')
 
-            suffix = f'[{self.bitrate} kbps,{self.separator},{iterations} iter'
+            suffix = f'[{self.get_bitrate_display()},{self.separator},{iterations} iter'
             if softmask:
                 suffix += f',softmask {alpha}'
             suffix += ']'
@@ -493,15 +496,17 @@ class DynamicMix(models.Model):
     def get_extra_info(self):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
-            return [f'{self.bitrate} kbps', '4 stems (16 kHz)']
+            return [f'{self.get_bitrate_display()}', '4 stems (16 kHz)']
         elif self.separator == D3NET:
-            return [f'{self.bitrate} kbps']
+            return [f'{self.get_bitrate_display()}']
         elif self.separator in DEMUCS_FAMILY:
             random_shifts = self.separator_args['random_shifts']
-            return [f'{self.bitrate} kbps', f'Random shifts: {random_shifts}']
+            return [
+                f'{self.get_bitrate_display()}', f'Random shifts: {random_shifts}'
+            ]
         else:
             info_arr = [
-                f'{self.bitrate} kbps',
+                f'{self.get_bitrate_display()}',
                 f'Iterations: {self.separator_args["iterations"]}',
                 f'Softmask: {self.separator_args["softmask"]}',
             ]
@@ -513,8 +518,5 @@ class DynamicMix(models.Model):
 
     class Meta:
         unique_together = [[
-            'source_track',
-            'separator',
-            'separator_args',
-            'bitrate'
+            'source_track', 'separator', 'separator_args', 'bitrate'
         ]]

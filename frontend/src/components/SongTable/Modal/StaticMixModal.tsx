@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { DEFAULT_MIX_BITRATE, DEFAULT_MODEL, DEFAULT_SOFTMASK_ALPHA } from '../../../Constants';
+import { DEFAULT_MODEL, DEFAULT_OUTPUT_FORMAT, DEFAULT_SOFTMASK_ALPHA } from '../../../Constants';
 import { SongData } from '../../../models/SongData';
 import { StaticMix } from '../../../models/StaticMix';
 import StaticMixModalForm from '../Form/StaticMixModalForm';
@@ -37,9 +37,9 @@ interface State {
    */
   softmask_alpha: number;
   /**
-   * Output bitrate.
+   * Output format/bitrate.
    */
-  bitrate: number;
+  outputFormat: number;
   /**
    * Whether to include vocals.
    */
@@ -78,7 +78,7 @@ class StaticMixModal extends React.Component<Props, State> {
       emIterations: 1,
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
-      bitrate: DEFAULT_MIX_BITRATE,
+      outputFormat: DEFAULT_OUTPUT_FORMAT,
       vocals: false, // Include vocals
       drums: false, // Include drums
       bass: false, // Include bass
@@ -98,7 +98,7 @@ class StaticMixModal extends React.Component<Props, State> {
       emIterations: 1,
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
-      bitrate: DEFAULT_MIX_BITRATE,
+      outputFormat: DEFAULT_OUTPUT_FORMAT,
       vocals: false,
       drums: false,
       bass: false,
@@ -141,7 +141,7 @@ class StaticMixModal extends React.Component<Props, State> {
         softmask: this.state.softmask,
         alpha: this.state.softmask_alpha,
       },
-      bitrate: this.state.bitrate,
+      bitrate: this.state.outputFormat,
       vocals: this.state.vocals,
       drums: this.state.drums,
       bass: this.state.bass,
@@ -202,9 +202,9 @@ class StaticMixModal extends React.Component<Props, State> {
     console.log('Softmask alpha change:', newAlpha);
   };
 
-  handleBitrateChange = (newBitrate: number): void => {
-    this.setState({ bitrate: newBitrate });
-    console.log('Bitrate change:', newBitrate);
+  handleOutputFormatChange = (newOutputFormat: number): void => {
+    this.setState({ outputFormat: newOutputFormat });
+    console.log('Output format change:', newOutputFormat);
   };
 
   render(): JSX.Element | null {
@@ -234,7 +234,7 @@ class StaticMixModal extends React.Component<Props, State> {
             handleIterationsChange={this.handleIterationsChange}
             handleSoftmaskChange={this.handleSoftmaskChange}
             handleAlphaChange={this.handleAlphaChange}
-            handleBitrateChange={this.handleBitrateChange}
+            handleOutputFormatChange={this.handleOutputFormatChange}
           />
           {allChecked && <Alert variant="warning">You must leave at least one part unchecked.</Alert>}
           {noneChecked && <Alert variant="warning">You must check at least one part.</Alert>}

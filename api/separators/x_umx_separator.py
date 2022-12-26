@@ -12,6 +12,8 @@ from spleeter.audio.adapter import AudioAdapter
 from tqdm import trange
 from xumx.test import separate_args_dict
 
+from api.util import bitrate_to_ext, is_bitrate_lossy
+
 
 MODEL_URL = 'https://nnabla.org/pretrained-models/ai-research-code/x-umx/x-umx.h5'
 MODEL_SHA1 = '6414e08527d37bd1d08130c4b87255830af819bf'
@@ -40,7 +42,8 @@ class XUMXSeparator:
         self.softmask = softmask
         self.alpha = alpha
         self.iterations = iterations
-        self.bitrate = f'{bitrate}k'
+        self.bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
+        self.audio_format = bitrate_to_ext(bitrate)
         self.sample_rate = 44100
         self.residual_model = False
         self.audio_adapter = AudioAdapter.default()
@@ -109,23 +112,27 @@ class XUMXSeparator:
                 continue
             final_source = source if final_source is None else final_source + source
 
-        print('Writing to MP3...')
-        self.audio_adapter.save(output_path, final_source, self.sample_rate, 'mp3', self.bitrate)
+        print(f'Exporting to {output_path}...')
+        self.audio_adapter.save(output_path, final_source, self.sample_rate,
+                                self.audio_format, self.bitrate)
 
     def separate_into_parts(self, input_path: str, output_path: Path):
         download_and_verify(MODEL_URL, MODEL_SHA1, self.model_dir,
                             self.model_file_path)
         estimates = self.get_estimates(input_path)
 
-        # Export all source MP3s in parallel
+        # Export all sources in parallel
         pool = Pool()
         tasks = []
         output_path = Path(output_path)
 
         for name, estimate in estimates.items():
-            filename = f'{name}.mp3'
-            print(f'Exporting {name} MP3...')
-            task = pool.apply_async(self.audio_adapter.save, (output_path / filename, estimate, self.sample_rate, 'mp3', self.bitrate))
+            filename = f'{name}.{self.audio_format}'
+            print(f'Exporting {filename}...')
+            task = pool.apply_async(
+                self.audio_adapter.save,
+                (output_path / filename, estimate, self.sample_rate,
+                 self.audio_format, self.bitrate))
             tasks.append(task)
 
         pool.close()

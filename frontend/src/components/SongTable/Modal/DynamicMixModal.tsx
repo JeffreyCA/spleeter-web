@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { DEFAULT_MIX_BITRATE, DEFAULT_MODEL, DEFAULT_SOFTMASK_ALPHA } from '../../../Constants';
+import { DEFAULT_MODEL, DEFAULT_OUTPUT_FORMAT, DEFAULT_SOFTMASK_ALPHA } from '../../../Constants';
 import { DynamicMix } from '../../../models/DynamicMix';
 import { SongData } from '../../../models/SongData';
 import DynamicMixModalForm from '../Form/DynamicMixModalForm';
@@ -39,7 +39,7 @@ interface State {
   /**
    * Output bitrate.
    */
-  bitrate: number;
+  outputFormat: number;
   /**
    * Whether currently in process of creating mix.
    */
@@ -62,7 +62,7 @@ class DynamicMixModal extends React.Component<Props, State> {
       emIterations: 1,
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
-      bitrate: DEFAULT_MIX_BITRATE,
+      outputFormat: DEFAULT_OUTPUT_FORMAT,
       isCreating: false,
       errors: [],
     };
@@ -78,7 +78,7 @@ class DynamicMixModal extends React.Component<Props, State> {
       emIterations: 1,
       softmask: false,
       softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
-      bitrate: DEFAULT_MIX_BITRATE,
+      outputFormat: DEFAULT_OUTPUT_FORMAT,
       isCreating: false,
       errors: [],
     });
@@ -117,7 +117,7 @@ class DynamicMixModal extends React.Component<Props, State> {
         softmask: this.state.softmask,
         alpha: this.state.softmask_alpha,
       },
-      bitrate: this.state.bitrate,
+      bitrate: this.state.outputFormat,
     };
 
     this.setState({
@@ -169,9 +169,9 @@ class DynamicMixModal extends React.Component<Props, State> {
     console.log('Softmask alpha change:', newAlpha);
   };
 
-  handleBitrateChange = (newBitrate: number): void => {
-    this.setState({ bitrate: newBitrate });
-    console.log('Bitrate change:', newBitrate);
+  handleOutputFormatChange = (newOutputFormat: number): void => {
+    this.setState({ outputFormat: newOutputFormat });
+    console.log('Output format change:', newOutputFormat);
   };
 
   render(): JSX.Element | null {
@@ -197,7 +197,7 @@ class DynamicMixModal extends React.Component<Props, State> {
             handleIterationsChange={this.handleIterationsChange}
             handleSoftmaskChange={this.handleSoftmaskChange}
             handleAlphaChange={this.handleAlphaChange}
-            handleBitrateChange={this.handleBitrateChange}
+            handleOutputFormatChange={this.handleOutputFormatChange}
           />
           {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
           {invalidAlpha && <Alert variant="danger">Softmask alpha must be greater than 0.</Alert>}

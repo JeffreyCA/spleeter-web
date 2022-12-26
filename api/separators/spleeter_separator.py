@@ -5,6 +5,8 @@ from spleeter.separator import Separator
 from spleeter.utils import *
 from spleeter.audio import STFTBackend
 
+from api.util import bitrate_to_ext, is_bitrate_lossy
+
 """
 This module defines a wrapper interface over the Spleeter API.
 """
@@ -15,8 +17,8 @@ class SpleeterSeparator:
         """Default constructor.
         :param config: Separator config, defaults to None
         """
-        self.audio_bitrate = f'{bitrate}k'
-        self.audio_format = 'mp3'
+        self.audio_bitrate = f'{bitrate}k' if is_bitrate_lossy(bitrate) else None
+        self.audio_format = bitrate_to_ext(bitrate)
         self.sample_rate = 44100
         self.spleeter_stem = 'config/4stems-16kHz.json'
         self.separator = Separator(self.spleeter_stem,
@@ -57,7 +59,7 @@ class SpleeterSeparator:
         self.separator.separate_to_file(input_path,
                                         output_path,
                                         self.audio_adapter,
-                                        codec='mp3',
+                                        codec=self.audio_format,
                                         duration=None,
                                         bitrate=self.audio_bitrate,
                                         filename_format='{instrument}.{codec}',

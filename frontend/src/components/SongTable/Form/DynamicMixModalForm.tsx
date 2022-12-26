@@ -12,7 +12,7 @@ interface Props {
   handleIterationsChange: (newIterations: number) => void;
   handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
   handleAlphaChange: (newAlpha: number) => void;
-  handleBitrateChange: (newBitrate: number) => void;
+  handleOutputFormatChange: (newOutputFormatChange: number) => void;
 }
 
 /**
@@ -27,7 +27,7 @@ class DynamicMixModalForm extends React.Component<Props> {
       handleIterationsChange,
       handleSoftmaskChange,
       handleAlphaChange,
-      handleBitrateChange,
+      handleOutputFormatChange,
     } = this.props;
 
     return (
@@ -40,7 +40,7 @@ class DynamicMixModalForm extends React.Component<Props> {
           handleIterationsChange={handleIterationsChange}
           handleSoftmaskChange={handleSoftmaskChange}
           handleAlphaChange={handleAlphaChange}
-          handleBitrateChange={handleBitrateChange}
+          handleOutputFormatChange={handleOutputFormatChange}
         />
       </Form>
     );
