@@ -264,7 +264,7 @@ class StaticMix(models.Model):
                                  default=SPLEETER)
     # Separator-specific args
     separator_args = PickledObjectField(default=dict)
-    # Bitrate
+    # Output format (name is 'bitrate' for legacy reasons)
     bitrate = models.IntegerField(choices=OutputFormat.choices,
                                   default=OutputFormat.MP3_256)
     # Source track on which it is based
@@ -389,7 +389,7 @@ class DynamicMix(models.Model):
                                  default=SPLEETER)
     # Separator-specific args
     separator_args = PickledObjectField(default=dict)
-    # Bitrate
+    # Output format (name is 'bitrate' for legacy reasons)
     bitrate = models.IntegerField(choices=OutputFormat.choices,
                                   default=OutputFormat.MP3_256)
     # Source track on which it is based
