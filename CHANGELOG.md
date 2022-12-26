@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.16.0] - 2022-12-26
+
+### Added
+- Support lossless output formats (WAV, FLAC)
+- Add `UPLOAD_FILE_SIZE_LIMIT` (in MB) and `YOUTUBE_LENGTH_LIMIT` (in minutes) environment variables to customize upload limits
+
+
 ## [v3.15.0] - 2022-12-11
 
 ### Added
@@ -314,7 +321,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...HEAD
+[v3.16.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...v3.16.0
 [v3.15.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.14.0...v3.15.0
 [v3.14.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...v3.14.0
 [v3.13.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.12.0...v3.13.0
