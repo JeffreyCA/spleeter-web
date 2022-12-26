@@ -295,7 +295,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         fetch_task.save()
         raise error
 
-def exists_all_parts(rel_path, ext='mp3'):
+def exists_all_parts(rel_path, ext):
     """Returns whether all of the individual component tracks exist on filesystem."""
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
@@ -305,7 +305,7 @@ def exists_all_parts(rel_path, ext='mp3'):
             return False
     return True
 
-def rename_all_parts(rel_path, file_prefix: str, file_suffix: str, ext: str='mp3'):
+def rename_all_parts(rel_path, file_prefix: str, file_suffix: str, ext: str):
     """Renames individual part files to names with track artist and title."""
     parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
@@ -319,7 +319,7 @@ def save_to_local_storage(dynamic_mix,
                           rel_media_path,
                           file_prefix: str,
                           file_suffix: str,
-                          ext: str = 'mp3'):
+                          ext: str):
     """Saves individual parts to the local file system
 
     :param dynamic_mix: DynamicMix model
@@ -342,7 +342,7 @@ def save_to_local_storage(dynamic_mix,
     dynamic_mix.save()
 
 def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix: str,
-                        file_suffix: str, ext: str='mp3'):
+                        file_suffix: str, ext: str):
     """Saves individual parts to external file storage (S3, Azure, etc.)
 
     :param dynamic_mix: DynamicMix model
