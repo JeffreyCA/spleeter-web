@@ -2,7 +2,7 @@ import { createFFmpeg, fetchFile, FFmpeg, ProgressCallback } from '@jeffreyca/ff
 import * as React from 'react';
 import { Alert } from 'react-bootstrap';
 import * as Tone from 'tone';
-import { FADE_DURATION_S } from '../../Constants';
+import { DEFAULT_OUTPUT_FORMAT, FADE_DURATION_S } from '../../Constants';
 import { DynamicMix } from '../../models/DynamicMix';
 import { PartId, PartIds } from '../../models/PartId';
 import ExportModal from './ExportModal';
@@ -212,6 +212,21 @@ class MixerPlayer extends React.Component<Props, State> {
     }
 
     if (!this.tonePlayers) {
+      this.setState({
+        exportError: 'Unexpected error (1).',
+      });
+      return;
+    }
+
+    if (
+      !this.props.data?.vocals_url ||
+      !this.props.data?.other_url ||
+      !this.props.data?.bass_url ||
+      !this.props.data?.drums_url
+    ) {
+      this.setState({
+        exportError: 'Unexpected error (2).',
+      });
       return;
     }
 
@@ -230,29 +245,38 @@ class MixerPlayer extends React.Component<Props, State> {
       exportRatio: 0,
     });
 
-    ffmpeg.FS('writeFile', 'vocals.mp3', await fetchFile(this.props.data?.vocals_url));
-    ffmpeg.FS('writeFile', 'other.mp3', await fetchFile(this.props.data?.other_url));
-    ffmpeg.FS('writeFile', 'bass.mp3', await fetchFile(this.props.data?.bass_url));
-    ffmpeg.FS('writeFile', 'drums.mp3', await fetchFile(this.props.data?.drums_url));
+    const ext = this.props.data.vocals_url.split('.').pop();
+    const isLossless = ext === 'wav' || ext === 'flac';
+    const vocalsFile = 'vocals.' + ext;
+    const otherFile = 'other.' + ext;
+    const bassFile = 'bass.' + ext;
+    const drumsFile = 'drums.' + ext;
+    const outFile = 'output.' + ext;
 
-    const bitrate = this.props.data?.bitrate ?? DEFAULT_MIX_BITRATE;
+    ffmpeg.FS('writeFile', vocalsFile, await fetchFile(this.props.data.vocals_url));
+    ffmpeg.FS('writeFile', otherFile, await fetchFile(this.props.data.other_url));
+    ffmpeg.FS('writeFile', bassFile, await fetchFile(this.props.data.bass_url));
+    ffmpeg.FS('writeFile', drumsFile, await fetchFile(this.props.data.drums_url));
+
+    const bitrate = this.props.data?.bitrate ?? DEFAULT_OUTPUT_FORMAT;
+
     const args = [
       '-i',
-      'vocals.mp3',
+      vocalsFile,
       '-i',
-      'other.mp3',
+      otherFile,
       '-i',
-      'bass.mp3',
+      bassFile,
       '-i',
-      'drums.mp3',
+      drumsFile,
       '-filter_complex',
       // https://ffmpeg.org/ffmpeg-filters.html#amix, https://trac.ffmpeg.org/wiki/AudioVolume
       `[0:a]volume=${vocalsVolArg}[a0];[1:a]volume=${accompVolArg}[a1];[2:a]volume=${bassVolArg}[a2];[3:a]volume=${drumsVolArg}[a3];[a0][a1][a2][a3]amix=inputs=4:duration=first:normalize=0[a]`,
-      '-b:a',
-      `${bitrate}k`,
+      isLossless ? '-sample_fmt' : '-b:a',
+      isLossless ? 's16' : `${bitrate}k`,
       '-map',
       '[a]',
-      'output.mp3',
+      outFile,
     ];
 
     await ffmpeg.run(...args);
@@ -260,13 +284,13 @@ class MixerPlayer extends React.Component<Props, State> {
       isExporting: false,
     });
 
-    const data = ffmpeg.FS('readFile', 'output.mp3');
+    const data = ffmpeg.FS('readFile', outFile);
 
     // Download file through browser
-    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
+    const url = URL.createObjectURL(new Blob([data.buffer]));
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${mixName}.mp3`;
+    link.download = `${mixName}.${ext}`;
     link.click();
   };
 
