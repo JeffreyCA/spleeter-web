@@ -20,8 +20,8 @@ redis==4.4.0
 spleeter==2.3.2
 SQLAlchemy==1.4.45
 tensorflow==2.7.2
-torch==1.10.1
-torchaudio==0.10.1
+torch==1.13.1
+torchaudio==0.13.1
 tzdata==2022.7
 validators==0.20.0
 whitenoise==6.2.0
