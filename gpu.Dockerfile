@@ -29,7 +29,7 @@ RUN mkdir -p /webapp/media /webapp/staticfiles
 
 WORKDIR /webapp
 COPY requirements.txt /webapp/
-RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+RUN pip3 install torch==1.13.1 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
 RUN pip3 install --upgrade pip -r requirements.txt
 
 COPY . .
