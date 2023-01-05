@@ -13,7 +13,7 @@ djangorestframework==3.14.0
 google-api-python-client==2.71.0
 gunicorn==20.1.0
 h2==4.1.0
-nnabla==1.30.0
+nnabla==1.32.0
 openvino==2022.3.0
 protobuf==3.19.4
 redis==4.4.0
