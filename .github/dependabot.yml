@@ -18,6 +18,7 @@ updates:
       - dependency-name: "azure-storage-blob" # due to typing-extensions
       - dependency-name: "azure-storage-common"
       - dependency-name: "azure-common"
+      - dependency-name: "protobuf"           # due to conflict with 'nnabla'
 
   - package-ecosystem: "npm"
     directory: "/frontend"
