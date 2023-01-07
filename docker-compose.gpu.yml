@@ -1,4 +1,5 @@
 x-celery-env: &celery-env
+  - TF_CPP_MIN_LOG_LEVEL=2
   - DJANGO_SETTINGS_MODULE=django_react.settings_docker
   - CELERY_BROKER_URL=redis://redis:6379/0
   - CELERY_RESULT_BACKEND=redis://redis:6379/0
@@ -51,6 +52,7 @@ services:
     stdin_open: true
     tty: true
     environment:
+      - TF_CPP_MIN_LOG_LEVEL=2
       - DJANGO_SETTINGS_MODULE=django_react.settings_docker
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0

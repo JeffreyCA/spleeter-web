@@ -6,10 +6,11 @@ ENV PYTHONUNBUFFERED 1
 RUN mkdir -p /webapp/media /webapp/staticfiles
 WORKDIR /webapp
 
-COPY requirements.txt /webapp/
-
 # Install all dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev && pip install --upgrade pip wheel && pip install -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev
+
+COPY requirements.txt /webapp/
+RUN pip install --upgrade pip wheel && pip install -r requirements.txt
 
 COPY . .
 
