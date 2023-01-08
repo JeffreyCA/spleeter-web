@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu20.04
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -29,7 +29,7 @@ RUN apt-get update \
 RUN mkdir -p /webapp/media /webapp/staticfiles
 
 WORKDIR /webapp
-RUN pip3 install torch==1.13.1 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
+RUN pip3 install torch==1.10.2+cu111 -f https://download.pytorch.org/whl/torch_stable.html
 COPY requirements.txt /webapp/
 RUN pip3 install --upgrade pip -r requirements.txt
 
