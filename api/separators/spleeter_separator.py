@@ -14,7 +14,7 @@ This module defines a wrapper interface over the Spleeter API.
 
 class SpleeterSeparator:
     """Performs source separation using Spleeter API."""
-    def __init__(self, cpu_separation: bool, output_format=OutputFormat.MP3_256.value):
+    def __init__(self, cpu_separation: bool, output_format=OutputFormat.MP3_256.value, with_piano: bool = False):
         """Default constructor.
         :param config: Separator config, defaults to None
         """
@@ -22,7 +22,7 @@ class SpleeterSeparator:
             output_format) else None
         self.audio_format = output_format_to_ext(output_format)
         self.sample_rate = 44100
-        self.spleeter_stem = 'config/4stems-16kHz.json'
+        self.spleeter_stem = 'config/5stems-16kHz.json' if with_piano else 'config/4stems-16kHz.json'
         self.separator = Separator(self.spleeter_stem,
                                    stft_backend=STFTBackend.LIBROSA if cpu_separation else STFTBackend.TENSORFLOW,
                                    multiprocess=False)
@@ -32,7 +32,7 @@ class SpleeterSeparator:
         """Creates a static mix by performing source separation and adding the
            parts to be kept into a single track.
 
-        :param parts: List of parts to keep ('vocals', 'drums', 'bass', 'other')
+        :param parts: List of parts to keep
         :param input_path: Path to source file
         :param output_path: Path to output file
         :raises e: FFMPEG error
@@ -41,13 +41,11 @@ class SpleeterSeparator:
                                               sample_rate=self.sample_rate)
         prediction = self.separator.separate(waveform, '')
         out = np.zeros_like(prediction['vocals'])
-        part_count = 0
 
         # Add up parts that were requested
         for key in prediction:
             if parts[key]:
                 out += prediction[key]
-                part_count += 1
 
         self.audio_adapter.save(output_path, out, self.sample_rate,
                                 self.audio_format, self.audio_bitrate)
