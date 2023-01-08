@@ -20,7 +20,7 @@ spleeter==2.3.2
 SQLAlchemy==1.4.46
 tensorflow==2.11.0
 torch==1.10.2
-torchaudio==0.10.2
+torchaudio==0.13.1
 tzdata==2022.7
 validators==0.20.0
 whitenoise==6.3.0
