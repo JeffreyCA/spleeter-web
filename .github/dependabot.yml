@@ -19,7 +19,7 @@ updates:
       - dependency-name: "nnabla"             # due to conflict with 'numpy'
       - dependency-name: "nnabla-ext-*" # due to conflict with 'numpy'
       - dependency-name: "protobuf"           # due to conflict with 'nnabla'
-      - dependency-name: "torch"              # due to conflict with 'nnabla' and CUDA
+      - dependency-name: "torch*"             # due to conflict with 'nnabla' and CUDA
 
   - package-ecosystem: "npm"
     directory: "/frontend"
