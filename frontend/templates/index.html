@@ -21,8 +21,6 @@
   <div id="react"></div>
   {% if DJANGO_DEVELOPMENT %}
     {% render_bundle 'main' 'js' %}
-    {% render_bundle 'runtime' 'js' %}
-    {% render_bundle 'vendors' 'js' %}
   {% else %}
     <script src="{% static "dist/main.js" %}"></script>
     <script src="{% static "dist/runtime.js" %}"></script>
