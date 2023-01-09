@@ -217,8 +217,11 @@ class MixerPlayer extends React.Component<Props, State> {
     }
     clearInterval(this.interval);
     document.removeEventListener('keydown', this.onKeyPress, false);
-
-    this.ffmpeg?.exit();
+    try {
+      this.ffmpeg?.exit();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   exportMix = async (mixName: string): Promise<void> => {
