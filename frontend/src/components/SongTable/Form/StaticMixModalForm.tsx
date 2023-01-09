@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form } from 'react-bootstrap';
-import { MusicPartMap } from '../../../models/MusicParts';
+import { MusicPartMap4, MusicPartMap5 } from '../../../models/MusicParts';
 import { SongData } from '../../../models/SongData';
 import SeparatorFormGroup from './SeparatorFormGroup';
 import SongInfoFormGroup from './SongInfoFormGroup';
@@ -35,10 +35,16 @@ class StaticMixModalForm extends React.Component<Props, State> {
     };
   }
 
+  handleModelChange = (newModel: string): void => {
+    this.setState({
+      selectedModel: newModel,
+    });
+    this.props.handleModelChange(newModel);
+  };
+
   render(): JSX.Element {
     const {
       song,
-      handleModelChange,
       handleCheckboxChange,
       handleRandomShiftsChange,
       handleIterationsChange,
@@ -46,6 +52,7 @@ class StaticMixModalForm extends React.Component<Props, State> {
       handleAlphaChange,
       handleOutputFormatChange,
     } = this.props;
+    const MusicPartMap = this.state.selectedModel === 'spleeter_5stems' ? MusicPartMap5 : MusicPartMap4;
 
     // Map part names to checkboxes
     const checkboxes = Array.from(MusicPartMap.keys()).map((key: string): JSX.Element => {
@@ -67,7 +74,7 @@ class StaticMixModalForm extends React.Component<Props, State> {
         <SongInfoFormGroup song={song} />
         <SeparatorFormGroup
           className="mt-3 mb-0"
-          handleModelChange={handleModelChange}
+          handleModelChange={this.handleModelChange}
           handleRandomShiftsChange={handleRandomShiftsChange}
           handleIterationsChange={handleIterationsChange}
           handleSoftmaskChange={handleSoftmaskChange}

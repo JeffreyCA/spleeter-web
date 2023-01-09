@@ -9,7 +9,7 @@ import { FADE_DURATION_MS } from '../../Constants';
 import { separatorLabelMap } from '../../models/Separator';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
-import { AccompShortBadge, BassBadge, DrumsBadge, OriginalBadge, VocalsBadge } from '../Badges';
+import { AccompShortBadge, BassBadge, DrumsBadge, OriginalBadge, PianoBadge, VocalsBadge } from '../Badges';
 import './MusicPlayer.css';
 
 interface Props {
@@ -52,9 +52,11 @@ class MusicPlayer extends React.Component<Props> {
       const accompBadge = staticMix.other ? <AccompShortBadge title="Accompaniment" /> : null;
       const bassBadge = staticMix.bass ? <BassBadge title="Bass" /> : null;
       const drumsBadge = staticMix.drums ? <DrumsBadge title="Drums" /> : null;
+      const pianoBadge = staticMix.piano ? <PianoBadge title="Piano" /> : null;
+
       audioTitleExtra = (
         <div className="badge-flex ml-2 mr-2">
-          {separatorBadge} {vocalBadge} {accompBadge} {bassBadge} {drumsBadge}
+          {separatorBadge} {vocalBadge} {accompBadge} {bassBadge} {drumsBadge} {pianoBadge}
         </div>
       );
       audioList = [

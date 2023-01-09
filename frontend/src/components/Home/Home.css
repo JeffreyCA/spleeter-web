@@ -8,6 +8,11 @@
   color: white;
 }
 
+.badge-piano {
+  background-color: #000000;
+  color: white;
+}
+
 .badge-drums {
   background-color: #a8110d;
   color: white;
@@ -25,6 +30,11 @@
 
 .badge-accomp-faded {
   background-color: #02abb42c;
+  color: white;
+}
+
+.badge-piano-faded {
+  background-color: #5454542c;
   color: white;
 }
 

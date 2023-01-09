@@ -185,7 +185,7 @@ class DynamicMixModal extends React.Component<Props, State> {
     const slowCpuModel = model === 'xumx' || model === 'd3net';
 
     return (
-      <Modal show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
+      <Modal size="lg" show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Create dynamic mix</Modal.Title>
         </Modal.Header>
