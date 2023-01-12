@@ -9,9 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support Spleeter's 5-stem model which separates piano in addition to other accompaniment
 
 ### Changed
+- Update separator form UI to use buttons instead of dropdown menus
+- Improve form field validation
+- Bring back 'iterations' param for X-UMX model
+- Update dependencies
 - Fix Dev Docker Compose config
 - Fix bug where deleting dynamic mix may cause blank screen
-- Update dependencies
 
 ### Removed
 - Remove frontend upload size check and rely on Nginx and backend instead
