@@ -19,6 +19,7 @@ export interface DynamicMix {
   date_finished?: string;
   vocals_url: string | null;
   other_url: string | null;
+  piano_url: string | null;
   bass_url: string | null;
   drums_url: string | null;
 }

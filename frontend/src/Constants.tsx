@@ -1,4 +1,8 @@
 export const DEFAULT_MODEL = 'spleeter';
+export const DEFAULT_MODEL_FAMILY = 'spleeter';
+export const DEFAULT_SPLEETER_MODEL = 'spleeter';
+export const DEFAULT_DEMUCS_MODEL = 'htdemucs';
+
 export const LOSSY_OUTPUT_FORMATS: [number, string][] = [
   [192, '192 kbps'],
   [256, '256 kbps'],
@@ -11,12 +15,11 @@ export const LOSSLESS_OUTPUT_FORMATS: [number, string][] = [
 ];
 export const DEFAULT_OUTPUT_FORMAT = 256;
 export const DEFAULT_SOFTMASK_ALPHA = 1.0;
+export const MAX_SOFTMASK_ALPHA = 2.0;
+export const MIN_SOFTMASK_ALPHA = 0.1;
 export const MAX_SHIFT_ITER = 50;
 export const FADE_DURATION_MS = 300;
 export const FADE_DURATION_S = 0.3;
-
-// This value is the same on the server-side (settings.py)
-export const MAX_FILE_BYTES = 100 * 1024 * 1024;
 
 export const ALLOWED_EXTENSIONS = [
   // Lossless

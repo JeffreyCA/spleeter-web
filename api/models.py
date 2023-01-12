@@ -39,6 +39,7 @@ def mix_track_path(instance, filename):
     return os.path.join(settings.SEPARATE_DIR, str(instance.id), filename)
 
 SPLEETER = 'spleeter'
+SPLEETER_PIANO = 'spleeter_5stems'
 D3NET = 'd3net'
 XUMX = 'xumx'
 
@@ -69,6 +70,7 @@ DEMUCS_FAMILY = [
 
 SEP_CHOICES = [
     (SPLEETER, 'Spleeter'),
+    (SPLEETER_PIANO, 'Spleeter with Piano'),
     (D3NET, 'D3Net'),
     (
         'demucs',
@@ -279,6 +281,8 @@ class StaticMix(models.Model):
     bass = models.BooleanField()
     # Whether track contains accompaniment ('other' is the term used by Spleeter API)
     other = models.BooleanField()
+    # Whether track contains piano
+    piano = models.BooleanField(null=True, default=None)
     # Status of source separation task
     status = models.IntegerField(choices=TaskStatus.choices,
                                  default=TaskStatus.QUEUED)
@@ -322,6 +326,8 @@ class StaticMix(models.Model):
             parts_lst.append('bass')
         if self.other:
             parts_lst.append('other')
+        if self.piano:
+            parts_lst.append('piano')
         prefix = ''.join(prefix_lst)
         parts = ','.join(parts_lst)
 
@@ -352,6 +358,8 @@ class StaticMix(models.Model):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return [f'{self.get_bitrate_display()}', '4 stems (16 kHz)']
+        elif self.separator == SPLEETER_PIANO:
+            return [f'{self.get_bitrate_display()}', '5 stems (16 kHz)']
         elif self.separator == D3NET:
             return [f'{self.get_bitrate_display()}']
         elif self.separator in DEMUCS_FAMILY:
@@ -373,7 +381,7 @@ class StaticMix(models.Model):
     class Meta:
         unique_together = [[
             'source_track', 'separator', 'separator_args', 'bitrate',
-            'vocals', 'drums', 'bass', 'other'
+            'vocals', 'drums', 'bass', 'other', 'piano'
         ]]
 
 # pylint: disable=unsubscriptable-object
@@ -404,6 +412,12 @@ class DynamicMix(models.Model):
     other_file = models.FileField(upload_to=mix_track_path,
                                   max_length=255,
                                   blank=True)
+    # Path to piano file
+    piano_file = models.FileField(upload_to=mix_track_path,
+                                  max_length=255,
+                                  blank=True,
+                                  null=True,
+                                  default=None)
     # Path to bass file
     bass_file = models.FileField(upload_to=mix_track_path,
                                  max_length=255,
@@ -473,6 +487,12 @@ class DynamicMix(models.Model):
             return self.other_file.url
         return ''
 
+    def piano_url(self):
+        """Get the URL of the piano file."""
+        if self.piano_file:
+            return self.piano_file.url
+        return ''
+
     def bass_url(self):
         """Get the URL of the bass file."""
         if self.bass_file:
@@ -497,6 +517,8 @@ class DynamicMix(models.Model):
         """Get extra information about the mix"""
         if self.separator == SPLEETER:
             return [f'{self.get_bitrate_display()}', '4 stems (16 kHz)']
+        elif self.separator == SPLEETER_PIANO:
+            return [f'{self.get_bitrate_display()}', '5 stems (16 kHz)']
         elif self.separator == D3NET:
             return [f'{self.get_bitrate_display()}']
         elif self.separator in DEMUCS_FAMILY:

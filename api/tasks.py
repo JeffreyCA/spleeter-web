@@ -2,7 +2,7 @@ import os
 import os.path
 import pathlib
 import shutil
-from typing import Dict
+from typing import Dict, List
 
 from billiard.context import Process
 from billiard.exceptions import SoftTimeLimitExceeded
@@ -11,13 +11,13 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 
 from .celery import app
-from .models import (DynamicMix, SourceFile, StaticMix, TaskStatus,
+from .models import (D3NET, SPLEETER, SPLEETER_PIANO, XUMX, DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
 from .separators.d3net_separator import D3NetSeparator
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
 from .separators.x_umx_separator import XUMXSeparator
-from .util import output_format_to_ext, get_valid_filename
+from .util import ALL_PARTS, ALL_PARTS_5, output_format_to_ext, get_valid_filename
 from .youtubedl import download_audio, get_file_ext
 
 """
@@ -26,11 +26,13 @@ This module defines various Celery tasks used for Spleeter Web.
 
 def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separation: bool):
     """Returns separator object for corresponding source separation model."""
-    if separator == 'spleeter':
-        return SpleeterSeparator(cpu_separation, bitrate)
-    elif separator == 'd3net':
+    if separator == SPLEETER:
+        return SpleeterSeparator(cpu_separation, bitrate, False)
+    elif separator == SPLEETER_PIANO:
+        return SpleeterSeparator(cpu_separation, bitrate, True)
+    elif separator == D3NET:
         return D3NetSeparator(cpu_separation, bitrate)
-    elif separator == 'xumx':
+    elif separator == XUMX:
         softmask = separator_args['softmask']
         alpha = separator_args['alpha']
         iterations = separator_args['iterations']
@@ -81,6 +83,8 @@ def create_static_mix(static_mix_id):
             'bass': static_mix.bass,
             'other': static_mix.other
         }
+        if static_mix.separator == SPLEETER_PIANO:
+            parts['piano'] = static_mix.piano
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
@@ -169,6 +173,8 @@ def create_dynamic_mix(dynamic_mix_id):
                                   dynamic_mix.bitrate,
                                   settings.CPU_SEPARATION)
 
+        all_parts = ALL_PARTS_5 if dynamic_mix.separator == SPLEETER_PIANO else ALL_PARTS
+
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
         path = dynamic_mix.source_path(
@@ -192,16 +198,17 @@ def create_dynamic_mix(dynamic_mix_id):
 
         ext = output_format_to_ext(dynamic_mix.bitrate)
         # Check all parts exist
-        if exists_all_parts(rel_path, ext):
-            rename_all_parts(rel_path, file_prefix, file_suffix, ext)
+        if exists_all_parts(rel_path, ext, all_parts):
+            rename_all_parts(rel_path, file_prefix, file_suffix, ext,
+                             all_parts)
             dynamic_mix.status = TaskStatus.DONE
             dynamic_mix.date_finished = timezone.now()
             if is_local:
                 save_to_local_storage(dynamic_mix, rel_media_path, file_prefix,
-                                      file_suffix, ext)
+                                      file_suffix, ext, all_parts)
             else:
                 save_to_ext_storage(dynamic_mix, rel_path, file_prefix,
-                                    file_suffix, ext)
+                                    file_suffix, ext, all_parts)
         else:
             raise Exception('Error writing to file')
     except FileNotFoundError as error:
@@ -294,9 +301,8 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         fetch_task.save()
         raise error
 
-def exists_all_parts(rel_path, ext):
+def exists_all_parts(rel_path, ext, parts: List[str]):
     """Returns whether all of the individual component tracks exist on filesystem."""
-    parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         rel_part_path = os.path.join(rel_path, f'{part}.{ext}')
         if not os.path.exists(rel_part_path):
@@ -304,9 +310,8 @@ def exists_all_parts(rel_path, ext):
             return False
     return True
 
-def rename_all_parts(rel_path, file_prefix: str, file_suffix: str, ext: str):
+def rename_all_parts(rel_path, file_prefix: str, file_suffix: str, ext: str, parts: List[str]):
     """Renames individual part files to names with track artist and title."""
-    parts = ['vocals', 'other', 'bass', 'drums']
     for part in parts:
         old_rel_path = os.path.join(rel_path, f'{part}.{ext}')
         new_rel_path = os.path.join(
@@ -318,7 +323,8 @@ def save_to_local_storage(dynamic_mix,
                           rel_media_path,
                           file_prefix: str,
                           file_suffix: str,
-                          ext: str):
+                          ext: str,
+                          parts=List[str]):
     """Saves individual parts to the local file system
 
     :param dynamic_mix: DynamicMix model
@@ -333,27 +339,31 @@ def save_to_local_storage(dynamic_mix,
         rel_media_path, f'{file_prefix} (bass) {file_suffix}.{ext}')
     rel_media_path_drums = os.path.join(
         rel_media_path, f'{file_prefix} (drums) {file_suffix}.{ext}')
+    if 'piano' in parts:
+        rel_media_path_piano = os.path.join(
+            rel_media_path, f'{file_prefix} (piano) {file_suffix}.{ext}')
+
     # File is already on local filesystem
     dynamic_mix.vocals_file.name = rel_media_path_vocals
     dynamic_mix.other_file.name = rel_media_path_other
     dynamic_mix.bass_file.name = rel_media_path_bass
     dynamic_mix.drums_file.name = rel_media_path_drums
+    if 'piano' in parts:
+        dynamic_mix.piano_file.name = rel_media_path_piano
+
     dynamic_mix.save()
 
 def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix: str,
-                        file_suffix: str, ext: str):
+                        file_suffix: str, ext: str, parts: List[str]):
     """Saves individual parts to external file storage (S3, Azure, etc.)
 
     :param dynamic_mix: DynamicMix model
     :param rel_path_dir: Relative path to DynamicMix ID directory
     :param file_prefix: Filename prefix
     """
-    parts = ['vocals', 'other', 'bass', 'drums']
     filenames = {
-        'vocals': f'{file_prefix} (vocals) {file_suffix}.{ext}',
-        'other': f'{file_prefix} (other) {file_suffix}.{ext}',
-        'bass': f'{file_prefix} (bass) {file_suffix}.{ext}',
-        'drums': f'{file_prefix} (drums) {file_suffix}.{ext}'
+        part: f'{file_prefix} ({part}) {file_suffix}.{ext}'
+        for part in parts
     }
     content_files = {}
 
@@ -368,6 +378,9 @@ def save_to_ext_storage(dynamic_mix, rel_path_dir, file_prefix: str,
     dynamic_mix.other_file = content_files['other']
     dynamic_mix.bass_file = content_files['bass']
     dynamic_mix.drums_file = content_files['drums']
+    if 'piano' in parts:
+        dynamic_mix.piano_file = content_files['piano']
+
     dynamic_mix.save()
 
     shutil.rmtree(rel_path_dir, ignore_errors=True)

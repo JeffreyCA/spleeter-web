@@ -4,7 +4,7 @@ import axios from 'axios';
 import he from 'he';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { ALLOWED_EXTENSIONS, MAX_FILE_BYTES } from '../../Constants';
+import { ALLOWED_EXTENSIONS } from '../../Constants';
 import { SongData } from '../../models/SongData';
 import { YouTubeLinkFetchStatus } from '../../models/YouTubeLinkFetchStatus';
 import { YouTubeSearchResponse } from '../../models/YouTubeSearchResponse';
@@ -429,7 +429,6 @@ class UploadModal extends React.Component<Props, State> {
               <Dropzone
                 disabled={!!link}
                 maxFiles={1}
-                maxSizeBytes={MAX_FILE_BYTES}
                 multiple={false}
                 accept={ALLOWED_EXTENSIONS.join(',')}
                 onChangeStatus={this.onFileUploadStatusChange}

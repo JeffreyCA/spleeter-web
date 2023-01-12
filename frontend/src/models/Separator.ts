@@ -1,5 +1,8 @@
+export type SeparatorFamily = 'spleeter' | 'd3net' | 'xumx' | 'demucs';
+
 export type Separator =
   | 'spleeter'
+  | 'spleeter_5stems'
   | 'd3net'
   | 'xumx'
   // Demucs v4
@@ -24,6 +27,7 @@ export type Separator =
 // Map of separator IDs to labels
 export const separatorLabelMap = {
   spleeter: 'Spleeter',
+  spleeter_5stems: 'Spleeter 5 stems',
   d3net: 'D3Net',
   xumx: 'X-UMX',
   // Demucs v4

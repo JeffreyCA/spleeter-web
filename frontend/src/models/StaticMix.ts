@@ -19,6 +19,7 @@ export interface StaticMix {
   date_finished?: string;
   vocals: boolean;
   other: boolean;
+  piano: boolean;
   bass: boolean;
   drums: boolean;
 }

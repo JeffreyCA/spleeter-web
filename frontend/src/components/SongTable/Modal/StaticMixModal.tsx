@@ -57,6 +57,10 @@ interface State {
    */
   other: boolean;
   /**
+   * Whether to include piano.
+   */
+  piano: boolean;
+  /**
    * Whether currently in process of creating mix.
    */
   isCreating: boolean;
@@ -83,6 +87,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false, // Include drums
       bass: false, // Include bass
       other: false, // Include accompaniment
+      piano: false, // Include piano
       isCreating: false,
       errors: [],
     };
@@ -103,6 +108,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false,
       bass: false,
       other: false,
+      piano: false,
       isCreating: false,
       errors: [],
     });
@@ -146,6 +152,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: this.state.drums,
       bass: this.state.bass,
       other: this.state.other,
+      piano: this.state.piano,
     };
 
     this.setState({
@@ -208,20 +215,25 @@ class StaticMixModal extends React.Component<Props, State> {
   };
 
   render(): JSX.Element | null {
-    const { model, vocals, drums, bass, other, errors, softmask, softmask_alpha, isCreating } = this.state;
+    const { model, vocals, drums, bass, other, piano, errors, softmask, softmask_alpha, isCreating } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
     }
 
     // Display error if all or no parts are checked
-    const allChecked = vocals && drums && bass && other;
-    const noneChecked = !(vocals || drums || bass || other);
+    let allChecked = vocals && drums && bass && other;
+    let noneChecked = !(vocals || drums || bass || other);
+    if (model === 'spleeter_5stems') {
+      allChecked = allChecked && piano;
+      noneChecked = noneChecked && !piano;
+    }
+
     const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0;
     const slowCpuModel = model === 'xumx' || model === 'd3net';
 
     return (
-      <Modal show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
+      <Modal size="lg" show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title>Create static mix</Modal.Title>
         </Modal.Header>

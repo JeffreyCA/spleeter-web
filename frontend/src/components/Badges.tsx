@@ -51,6 +51,15 @@ export const AccompShortBadge = (props: BadgeProps): JSX.Element => {
   );
 };
 
+export const PianoBadge = (props: BadgeProps): JSX.Element => {
+  const { faded, title } = props;
+  return (
+    <Badge pill className={props.className} variant={faded ? 'piano-faded' : 'piano'} title={title}>
+      Piano
+    </Badge>
+  );
+};
+
 export const DrumsBadge = (props: BadgeProps): JSX.Element => {
   const { faded, title } = props;
   return (

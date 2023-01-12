@@ -59,8 +59,8 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DynamicMix
-        fields = ('id', 'source_track', 'separator', 'bitrate',
-                  'extra_info', 'artist', 'title', 'vocals_url', 'other_url',
+        fields = ('id', 'source_track', 'separator', 'bitrate', 'extra_info',
+                  'artist', 'title', 'vocals_url', 'other_url', 'piano_url',
                   'bass_url', 'drums_url', 'status', 'error', 'date_created',
                   'date_finished')
 
@@ -76,7 +76,7 @@ class LiteStaticMixSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaticMix
         fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
-                  'title', 'vocals', 'drums', 'bass', 'other', 'status', 'url',
+                  'title', 'vocals', 'drums', 'bass', 'other', 'piano', 'status', 'url',
                   'error', 'date_created', 'date_finished')
 
 class FullDynamicMixSerializer(serializers.ModelSerializer):
@@ -118,7 +118,7 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title',
-                  'vocals_url', 'other_url', 'bass_url', 'drums_url', 'status',
+                  'vocals_url', 'other_url', 'piano_url', 'bass_url', 'drums_url', 'status',
                   'error', 'date_created', 'date_finished')
 
 class FullStaticMixSerializer(serializers.ModelSerializer):
@@ -138,6 +138,11 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
             'bass'] and data['other']
         none_checked = not (data['vocals'] or data['drums'] or data['bass']
                             or data['other'])
+
+        if data['separator'] == SPLEETER_PIANO:
+            all_checked = all_checked and data['piano']
+            none_checked = none_checked and not data['piano']
+
         if all_checked:
             raise serializers.ValidationError(
                 {'checked': 'You must leave at least one part unchecked.'})
@@ -173,7 +178,7 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         model = StaticMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title',
-                  'vocals', 'drums', 'bass', 'other', 'status', 'url', 'error',
+                  'vocals', 'drums', 'bass', 'other', 'piano', 'status', 'url', 'error',
                   'date_created', 'date_finished')
 
 class LiteSourceTrackSerializer(serializers.ModelSerializer):

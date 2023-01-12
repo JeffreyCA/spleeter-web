@@ -2,6 +2,9 @@ import re
 
 from api.models import OutputFormat
 
+ALL_PARTS = ['vocals', 'other', 'bass', 'drums']
+ALL_PARTS_5 = ['vocals', 'other', 'piano', 'bass', 'drums']
+
 def get_valid_filename(s):
     """
     Return the given string converted to a string that can be used for a clean

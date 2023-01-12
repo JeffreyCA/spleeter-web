@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Col, Form } from 'react-bootstrap';
+import { MAX_SOFTMASK_ALPHA, MIN_SOFTMASK_ALPHA } from '../../../Constants';
 
 interface Props {
   alpha: string;
@@ -34,8 +35,8 @@ class XUMXFormSubgroup extends React.Component<Props> {
             <Form.Label id="softmask-alpha">Softmask alpha:</Form.Label>
             <Form.Control
               type="number"
-              min={0.1}
-              max={2.0}
+              min={MIN_SOFTMASK_ALPHA}
+              max={MAX_SOFTMASK_ALPHA}
               step={0.1}
               defaultValue={alpha}
               placeholder="1.0"

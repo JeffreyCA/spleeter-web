@@ -66,6 +66,8 @@ def delete_dynamic_mix(sender, instance, using, **kwargs):
         instance.vocals_file.delete()
     if instance.other_file:
         instance.other_file.delete()
+    if instance.piano_file:
+        instance.piano_file.delete()
     if instance.bass_file:
         instance.bass_file.delete()
     if instance.drums_file:

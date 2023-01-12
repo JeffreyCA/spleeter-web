@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.17.0] - 2023-01-11
+
+### Added
+- Support Spleeter's 5-stem model which separates piano in addition to other accompaniment
+
+### Changed
+- Update separator form UI to use buttons instead of dropdown menus
+- Improve form field validation
+- Bring back 'iterations' param for X-UMX model
+- Update dependencies
+- Fix Dev Docker Compose config
+- Fix bug where deleting dynamic mix may cause blank screen
+
+### Removed
+- Remove frontend upload size check and rely on Nginx and backend instead
+
+
 ## [v3.16.0] - 2022-12-26
 
 ### Added
@@ -321,7 +338,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.17.0...HEAD
+[v3.17.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...v3.17.0
 [v3.16.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...v3.16.0
 [v3.15.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.14.0...v3.15.0
 [v3.14.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.13.0...v3.14.0
