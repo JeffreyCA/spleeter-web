@@ -5,6 +5,7 @@ services:
       - API_HOST=api
       - ENABLE_HTTPS=1
       - APP_HOST
+      - CERTBOT_CERT_NAME=spleeter-web
       - CERTBOT_DOMAIN
       - CERTBOT_EMAIL
       - UPLOAD_FILE_SIZE_LIMIT=${UPLOAD_FILE_SIZE_LIMIT:-100}
