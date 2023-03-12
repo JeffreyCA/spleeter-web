@@ -34,6 +34,7 @@ services:
       - staticfiles:/webapp/staticfiles
     environment:
       - API_HOST=api
+      - CERTBOT_CERT_NAME=spleeter-web
       - CERTBOT_DOMAIN=.
       - CERTBOT_EMAIL=. # Dummy email (overridden by https.yml)
       - UPLOAD_FILE_SIZE_LIMIT=${UPLOAD_FILE_SIZE_LIMIT:-100}
