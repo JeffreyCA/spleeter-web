@@ -214,6 +214,8 @@ Here is a list of all the environment variables you can use to further customize
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
 | `AWS_STORAGE_BUCKET_NAME` | AWS S3 storage bucket name. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
 | `AWS_S3_CUSTOM_DOMAIN` | Custom domain, such as for a CDN. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
+| `AWS_S3_REGION_NAME` | S3 region (e.g. `us-east-1`). Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
+| `AWS_S3_SIGNATURE_VERSION` | Default signature version used for generating presigned urls. To be able to access your s3 objects in all regions through presigned urls, set this to `s3v4`. Used when `DEFAULT_FILE_STORAGE` is set to `AWS`. |
 | `AZURE_ACCOUNT_KEY` | Azure Blob account key. Used when `DEFAULT_FILE_STORAGE` is set to `AZURE`. |
 | `AZURE_ACCOUNT_NAME` | Azure Blob account name. Used when `DEFAULT_FILE_STORAGE` is set to `AZURE`. |
 | `AZURE_CONTAINER` | Azure Blob container name. Used when `DEFAULT_FILE_STORAGE` is set to `AZURE`. |

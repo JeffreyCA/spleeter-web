@@ -53,6 +53,8 @@ AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', '')
 AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+AWS_S3_SIGNATURE_VERSION = os.getenv('AWS_S3_SIGNATURE_VERSION')
 
 # A path prefix that will be prepended to all uploads
 AWS_LOCATION = 'media'
@@ -60,8 +62,6 @@ AWS_LOCATION = 'media'
 AWS_QUERYSTRING_AUTH = False
 # Make uploaded files publicly accessible and downloadable
 AWS_S3_OBJECT_PARAMETERS = {'ACL': 'public-read', 'ContentDisposition': 'attachment'}
-# S3 region
-AWS_S3_REGION_NAME = 'us-east-1'
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
