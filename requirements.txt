@@ -18,7 +18,7 @@ protobuf==3.19.4
 redis==4.5.4
 spleeter==2.3.2
 SQLAlchemy==1.4.47
-tensorflow==2.11.0
+tensorflow==2.12.0
 torch==1.10.2
 torchaudio==0.10.2
 tzdata==2022.7
