@@ -38,7 +38,7 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-react": "^7.32.2",
     "postcss-loader": "^4.3.0",
-    "prettier": "^2.8.7",
+    "prettier": "^2.8.8",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^2.3.8",
     "url-loader": "^4.1.1",
