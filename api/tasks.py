@@ -3,6 +3,7 @@ import os.path
 import pathlib
 import shutil
 from typing import Dict, List
+import traceback
 
 from billiard.context import Process
 from billiard.exceptions import SoftTimeLimitExceeded
@@ -136,7 +137,7 @@ def create_static_mix(static_mix_id):
     except SoftTimeLimitExceeded:
         print('Aborted!')
     except Exception as error:
-        print(error)
+        print(traceback.format_exc())
         static_mix.status = TaskStatus.ERROR
         static_mix.date_finished = timezone.now()
         static_mix.error = str(error)
@@ -212,7 +213,7 @@ def create_dynamic_mix(dynamic_mix_id):
         else:
             raise Exception('Error writing to file')
     except FileNotFoundError as error:
-        print(error)
+        print(traceback.format_exc())
         print('Please make sure you have FFmpeg and FFprobe installed.')
         dynamic_mix.status = TaskStatus.ERROR
         dynamic_mix.date_finished = timezone.now()
@@ -221,7 +222,7 @@ def create_dynamic_mix(dynamic_mix_id):
     except SoftTimeLimitExceeded:
         print('Aborted!')
     except Exception as error:
-        print(error)
+        print(traceback.format_exc())
         dynamic_mix.status = TaskStatus.ERROR
         dynamic_mix.date_finished = timezone.now()
         dynamic_mix.error = str(error)
@@ -294,7 +295,7 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
     except SoftTimeLimitExceeded:
         print('Aborted!')
     except Exception as error:
-        print(error)
+        print(traceback.format_exc())
         fetch_task.status = TaskStatus.ERROR
         fetch_task.date_finished = timezone.now()
         fetch_task.error = str(error)
