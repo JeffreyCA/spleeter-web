@@ -11,6 +11,7 @@ djangorestframework==3.14.0
 google-api-python-client==2.89.0
 gunicorn==20.1.0
 h2==4.1.0
+kombu==5.3.1
 nnabla==1.26.0
 numpy==1.22.4
 openvino==2022.3.0
