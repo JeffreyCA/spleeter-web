@@ -26,7 +26,7 @@ tzdata==2022.7
 validators==0.20.0
 whitenoise==6.4.0
 xumx-spleeterweb==0.2.4
-yapf==0.40.0
+yapf==0.40.1
 youtube-title-parse==1.0.0
 yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@d85e0b4f76e57f09a34361581012d5e8c7395955
 nnabla-ext-cuda110==1.26.0; sys_platform == 'linux'
