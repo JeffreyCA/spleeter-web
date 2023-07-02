@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.18.0] - 2023-07-01
+
+### Added
+- Add `AWS_S3_REGION_NAME` and `AWS_S3_SIGNATURE_VERSION` variables for S3 integration
+- Add more descriptive error logging
+
+### Changed
+- Allow multiple `CERTBOT_DOMAIN`s and hardcode cert-name to 'spleeter-web' (#533)
+- Fix bug where separation would fail immediately (#672)
+- Update GPU Docker base image to `cuda:11.2.2` from `cuda:11.2.0` due to deprecation
+- Update dependencies
+
+
 ## [v3.17.0] - 2023-01-11
 
 ### Added
@@ -338,7 +351,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.17.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.18.0...HEAD
+[v3.18.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.17.0...v3.18.0
 [v3.17.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...v3.17.0
 [v3.16.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...v3.16.0
 [v3.15.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.14.0...v3.15.0
