@@ -279,7 +279,7 @@ class YTSourceTrackView(generics.CreateAPIView):
 
         try:
             # Kick off download task in background
-            result = fetch_youtube_audio.delay(source_file.id, fetch_task.id,
+            result = fetch_youtube_audio.delay(str(source_file.id), str(fetch_task.id),
                                                data['artist'], data['title'],
                                                data['youtube_link'])
             # Set the celery task ID in the model
