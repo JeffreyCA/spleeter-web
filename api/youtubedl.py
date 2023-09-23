@@ -21,7 +21,9 @@ def get_file_ext(url):
     # Always use the best audio quality available
         'format': 'bestaudio/best',
         'forcefilename': True,
-        'noplaylist': True
+        'noplaylist': True,
+        'source_address': settings.YOUTUBEDL_SOURCE_ADDR,
+        'verbose': settings.YOUTUBEDL_VERBOSE
     }
     # Try up to 3 times as youtubedl tends to be flakey
     for _ in range(settings.YOUTUBE_MAX_RETRIES):
@@ -45,7 +47,9 @@ def get_meta_info(url):
     opts = {
         'format': 'bestaudio/best',
         'forcefilename': True,
-        'noplaylist': True
+        'noplaylist': True,
+        'source_address': settings.YOUTUBEDL_SOURCE_ADDR,
+        'verbose': settings.YOUTUBEDL_VERBOSE
     }
     # Try up to 3 times, as youtubedl tends to be flakey
     for _ in range(settings.YOUTUBE_MAX_RETRIES):
@@ -103,7 +107,9 @@ def download_audio(url, dir_path):
         'forcefilename': True,
         'outtmpl': str(dir_path),
         'cachedir': False,
-        'noplaylist': True
+        'noplaylist': True,
+        'source_address': settings.YOUTUBEDL_SOURCE_ADDR,
+        'verbose': settings.YOUTUBEDL_VERBOSE
     }
 
     # Retry mechanism is handled on Celery's side

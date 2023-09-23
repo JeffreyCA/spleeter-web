@@ -23,6 +23,8 @@ x-celery-env: &celery-env
   - PYTORCH_NO_CUDA_MEMORY_CACHING
   - DEMUCS_SEGMENT_SIZE
   - YOUTUBE_LENGTH_LIMIT
+  - YOUTUBEDL_SOURCE_ADDR
+  - YOUTUBEDL_VERBOSE
 services:
   redis:
     image: redis:6.0-buster
@@ -77,6 +79,8 @@ services:
       - YOUTUBE_API_KEY
       - UPLOAD_FILE_SIZE_LIMIT
       - YOUTUBE_LENGTH_LIMIT
+      - YOUTUBEDL_SOURCE_ADDR
+      - YOUTUBEDL_VERBOSE
     depends_on:
       - redis
       - frontend

@@ -237,6 +237,8 @@ Here is a list of all the environment variables you can use to further customize
 | `UPLOAD_FILE_SIZE_LIMIT` | Maximum allowed upload file size (in megabytes). Default is `100`. |
 | `YOUTUBE_API_KEY` | YouTube Data API key. |
 | `YOUTUBE_LENGTH_LIMIT` | Maximum allowed YouTube track length (in minutes). Default is `30`. |
+| `YOUTUBEDL_SOURCE_ADDR` | Client-side IP address for `yt-dlp` to bind to. If you are facing 403 Forbidden errors, try setting this to `0.0.0.0` to force all connections through IPv4. |
+| `YOUTUBEDL_VERBOSE` | Set to `1` to enable verbose logging for `yt-dlp`. |
 
 ## Using cloud storage (Azure Storage, AWS S3, etc.)
 

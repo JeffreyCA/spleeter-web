@@ -20,6 +20,8 @@ x-celery-env: &celery-env
   - D3NET_OPENVINO
   - D3NET_OPENVINO_THREADS
   - YOUTUBE_LENGTH_LIMIT
+  - YOUTUBEDL_SOURCE_ADDR
+  - YOUTUBEDL_VERBOSE
 services:
   redis:
     image: redis:6.0-buster
@@ -74,6 +76,8 @@ services:
       - YOUTUBE_API_KEY
       - UPLOAD_FILE_SIZE_LIMIT
       - YOUTUBE_LENGTH_LIMIT
+      - YOUTUBEDL_SOURCE_ADDR
+      - YOUTUBEDL_VERBOSE
     depends_on:
       - redis
       - frontend
