@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.19.0] - 2023-09-24
+
+### Added
+- Add 2 environment variables for configuring `yt-dlp`:
+  - `YOUTUBEDL_SOURCE_ADDR` - Client-side IP address for `yt-dlp` to bind to. If you are facing 403 Forbidden errors, try setting this to `0.0.0.0` to force all connections through IPv4
+  - `YOUTUBEDL_VERBOSE` - Set to `1` to enable verbose logging for `yt-dlp`
+- Add download button on music player
+
+### Changed
+- Update dependencies
+
+
 ## [v3.18.0] - 2023-07-01
 
 ### Added
@@ -351,7 +363,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.18.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.19.0...HEAD
+[v3.19.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.18.0...v3.19.0
 [v3.18.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.17.0...v3.18.0
 [v3.17.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...v3.17.0
 [v3.16.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.15.0...v3.16.0
