@@ -1,4 +1,4 @@
-azure-storage-blob==12.18.1
+azure-storage-blob==12.18.2
 boto3==1.28.55
 celery==5.1.2
 d3net-spleeterweb==0.1.3
