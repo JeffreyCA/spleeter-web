@@ -9,6 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 20
     allow:
       - dependency-type: "all"
     ignore:
@@ -27,6 +28,7 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 20
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
