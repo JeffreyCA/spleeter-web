@@ -22,6 +22,9 @@ jobs:
         # Container registry server url
         login-server: https://index.docker.io/v1/
 
+    - name: Free disk space
+      run: sudo rm -rf /usr/local/lib/android "$AGENT_TOOLSDIRECTORY"
+
     - name: Build images (latest)
       run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build
 
@@ -47,15 +50,7 @@ jobs:
         login-server: https://index.docker.io/v1/
 
     - name: Free disk space
-      uses: jlumbroso/free-disk-space@v1.3.0
-      with:
-        tool-cache: false
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
+      run: sudo rm -rf /usr/local/lib/android "$AGENT_TOOLSDIRECTORY"
 
     - name: Build GPU images (latest)
       run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build api
