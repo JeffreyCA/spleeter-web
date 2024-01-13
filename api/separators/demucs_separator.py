@@ -67,7 +67,8 @@ class DemucsSeparator:
         wav = load_track(input_path, model.audio_channels, model.samplerate)
 
         ref = wav.mean(0)
-        wav = (wav - ref.mean()) / ref.std()
+        wav -= ref.mean()
+        wav /= ref.std()
         raw_sources = apply_model(model,
                               wav[None],
                               device=self.device,
@@ -76,8 +77,8 @@ class DemucsSeparator:
                               overlap=self.overlap,
                               progress=True,
                               num_workers=self.workers)[0]
-        raw_sources = raw_sources * ref.std() + ref.mean()
-
+        raw_sources *= ref.std()
+        raw_sources += ref.mean()
         if not settings.CPU_SEPARATION:
             del model
             torch.cuda.empty_cache()
