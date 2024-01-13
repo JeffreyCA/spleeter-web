@@ -76,7 +76,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     2. [Install the NVIDIA Container Toolkit.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) If on Windows, refer to [this](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
 
-    3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi`
+    3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi`
 
 4. Download and run prebuilt Docker images:
     ```sh
@@ -102,6 +102,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 **If you are on Windows, it's recommended to follow the Docker instructions above. Celery is not well-supported on Windows.**
 
 ### Requirements
+* x86-64 arch (For AArch64 systems, use Docker)
 * 4 GB+ of memory (source separation is memory-intensive)
 * Python 3.8+ ([link](https://www.python.org/downloads/))
 * Node.js 16+ ([link](https://nodejs.org/en/download/))
