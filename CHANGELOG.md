@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.20.0] - 2024-01-13
+
+### Added
+- Add Docker support for AArch64 systems (including Apple Silicon)
+
+### Changed
+- Update Docker Python version to 3.9
+- Update Docker CUDA image version to 11.6.1
+- Update dependencies
+
+
 ## [v3.19.0] - 2023-09-24
 
 ### Added
@@ -363,7 +374,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.19.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.0...HEAD
+[v3.20.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.19.0...v3.20.0
 [v3.19.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.18.0...v3.19.0
 [v3.18.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.17.0...v3.18.0
 [v3.17.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.16.0...v3.17.0

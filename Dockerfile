@@ -1,4 +1,4 @@
-FROM python:3.8-bullseye
+FROM python:3.9-bullseye
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -9,8 +9,9 @@ WORKDIR /webapp
 # Install all dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev
 
-COPY requirements.txt /webapp/
+COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip install --upgrade pip wheel && pip install -r requirements.txt
+RUN pip install -r requirements-spleeter.txt --no-dependencies
 
 COPY . .
 

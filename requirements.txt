@@ -13,23 +13,32 @@ gunicorn==20.1.0
 h2==4.1.0
 kombu==5.3.1
 lameenc==1.7.0
-nnabla==1.26.0
-numpy==1.22.4
-openvino==2022.3.1
+nnabla==1.30.0
+numba==0.56.4
+numpy==1.23.5
+openvino==2023.2.0
 protobuf==3.19.4
 redis==4.6.0
-spleeter==2.3.2
 SQLAlchemy==1.4.50
 tensorflow==2.11.0
-torch==1.10.2
-torchaudio==0.10.2
+torch==1.13.1
+torchaudio==0.13.1
 tzdata==2022.7
 validators==0.22.0
 whitenoise==6.6.0
 xumx-spleeterweb==0.2.4
 yapf==0.40.2
 youtube-title-parse==1.0.0
-yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@488aa3f9b83838a933803e6426238a04bccd7fa6
-nnabla-ext-cuda110==1.26.0; sys_platform == 'linux'
+yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@4e168eb4bb7796da834b4f4d5f562a3478326403
+nnabla-ext-cuda114==1.30.0; sys_platform == 'linux' and platform_machine == 'x86_64'
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
+# Spleeter dependencies
+ffmpeg-python==0.2.0
+httpx==0.26.0
+librosa==0.8.1
+# Override Spleeter's hard llvmlite dependency
+llvmlite==0.39.0
+norbert==0.2.1
+pandas==1.5.3
+typer==0.9.0
