@@ -132,6 +132,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 3. Install Python dependencies
     ```sh
     (env) spleeter-web$ pip install -r requirements.txt
+    (env) spleeter-web$ pip install -r requirements-spleeter.txt --no-dependencies
     ```
 4. Install Node dependencies
     ```sh
