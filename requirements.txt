@@ -36,7 +36,7 @@ python-magic-bin==0.4.14; sys_platform != 'linux'
 # Spleeter dependencies
 ffmpeg-python==0.2.0
 httpx==0.26.0
-librosa==0.8.1
+librosa==0.10.1
 # Override Spleeter's hard llvmlite dependency
 llvmlite==0.39.0
 norbert==0.2.1
