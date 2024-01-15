@@ -38,7 +38,7 @@ ffmpeg-python==0.2.0
 httpx==0.26.0
 librosa==0.8.1
 # Override Spleeter's hard llvmlite dependency
-llvmlite==0.39.0
+llvmlite==0.41.1
 norbert==0.2.1
 pandas==1.5.3
 typer==0.9.0
