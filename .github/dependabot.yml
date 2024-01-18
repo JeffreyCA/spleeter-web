@@ -23,6 +23,9 @@ updates:
       - dependency-name: "torch*"             # due to conflict with 'nnabla' and CUDA
       - dependency-name: "tensorflow"         # due to conflict with 'spleeter'
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "librosa"            # Spleeter dependencies
+      - dependency-name: "numba"              # Spleeter dependencies
+      - dependency-name: "llvmlite"           # Spleeter dependencies
 
   - package-ecosystem: "npm"
     directory: "/frontend"
