@@ -26,6 +26,7 @@ updates:
       - dependency-name: "librosa"            # Spleeter dependencies
       - dependency-name: "numba"              # Spleeter dependencies
       - dependency-name: "llvmlite"           # Spleeter dependencies
+      - dependency-name: "httpx"              # due to https://github.com/deezer/spleeter/pull/808
 
   - package-ecosystem: "npm"
     directory: "/frontend"
