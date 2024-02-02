@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 from spleeter import *
 from spleeter.audio.adapter import AudioAdapter
@@ -28,6 +30,15 @@ class SpleeterSeparator:
                                    multiprocess=False)
         self.audio_adapter = AudioAdapter.default()
 
+    def check_and_remove_empty_model_dirs(self):
+        model_paths = [
+            Path('pretrained_models', '4stems'),
+            Path('pretrained_models', '5stems')
+        ]
+        for model_path in model_paths:
+            if model_path.exists() and not any(model_path.iterdir()):
+                model_path.rmdir()
+
     def create_static_mix(self, parts, input_path, output_path):
         """Creates a static mix by performing source separation and adding the
            parts to be kept into a single track.
@@ -39,6 +50,7 @@ class SpleeterSeparator:
         """
         waveform, _ = self.audio_adapter.load(input_path,
                                               sample_rate=self.sample_rate)
+        self.check_and_remove_empty_model_dirs()
         prediction = self.separator.separate(waveform, '')
         out = np.zeros_like(prediction['vocals'])
 
@@ -56,6 +68,7 @@ class SpleeterSeparator:
         :param input_path: Input path
         :param output_path: Output path
         """
+        self.check_and_remove_empty_model_dirs()
         self.separator.separate_to_file(input_path,
                                         output_path,
                                         self.audio_adapter,
