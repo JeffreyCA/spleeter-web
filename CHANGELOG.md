@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.20.1] - 2024-02-01
+
+### Changed
+- Fix regression where first-time Spleeter model download fails due to `httpx` not following redirects (#949)
+    - Thanks [@microtherion](https://github.com/microtherion) for the fix!
+
+
 ## [v3.20.0] - 2024-01-13
 
 ### Added
@@ -374,7 +381,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.1...HEAD
+[v3.20.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.0...v3.20.1
 [v3.20.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.19.0...v3.20.0
 [v3.19.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.18.0...v3.19.0
 [v3.18.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.17.0...v3.18.0
