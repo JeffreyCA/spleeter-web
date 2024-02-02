@@ -35,7 +35,8 @@ python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
 # Spleeter dependencies
 ffmpeg-python==0.2.0
-httpx==0.26.0
+# Do NOT upgrade to 0.20.0 or later until https://github.com/deezer/spleeter/pull/808 is fixed
+httpx==0.19.0
 librosa==0.8.1
 # Override Spleeter's hard llvmlite dependency
 llvmlite==0.39.0
