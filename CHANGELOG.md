@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [v3.20.1] - 2024-02-01
 
 ### Changed
-- Fix regression where first-time Spleeter model download fails due to `httpx` not following redirects (#949)
-    - Thanks [@microtherion](https://github.com/microtherion) for the fix!
-
+- Fix regression where first-time Spleeter model download fails due to `httpx` not following redirects (#949) - thanks [@microtherion](https://github.com/microtherion) for the fix!
+- Add cleanup logic to remove leftover model files from failed download attempts
+- Update dependencies
 
 ## [v3.20.0] - 2024-01-13
 
