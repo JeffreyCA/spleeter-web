@@ -24,7 +24,7 @@ tensorflow==2.11.0
 torch==1.13.1
 torchaudio==0.13.1
 tzdata==2022.7
-validators==0.22.0
+validators==0.23.0
 whitenoise==6.6.0
 xumx-spleeterweb==0.2.4
 yapf==0.40.2
