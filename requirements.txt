@@ -16,7 +16,7 @@ lameenc==1.7.0
 nnabla==1.30.0
 numba==0.56.4
 numpy==1.23.5
-openvino==2023.2.0
+openvino==2023.3.0
 protobuf==3.19.4
 redis==4.6.0
 SQLAlchemy==1.4.52
