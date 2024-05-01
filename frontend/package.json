@@ -61,7 +61,7 @@
     "luxon": "^2.5.2",
     "react": "^16.14.0",
     "react-bootstrap": "^1.6.8",
-    "react-bootstrap-icons": "^1.11.3",
+    "react-bootstrap-icons": "^1.11.4",
     "react-bootstrap-table-next": "^4.0.3",
     "react-bootstrap-table2-editor": "^1.4.0",
     "react-dom": "^16.14.0",
