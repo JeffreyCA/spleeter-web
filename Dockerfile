@@ -7,7 +7,7 @@ RUN mkdir -p /webapp/media /webapp/staticfiles
 WORKDIR /webapp
 
 # Install all dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev libhdf5-dev
 
 COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip install --upgrade pip wheel && pip install -r requirements.txt

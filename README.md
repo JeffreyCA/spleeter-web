@@ -79,6 +79,9 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi`
 
 4. Download and run prebuilt Docker images:
+
+    > Note: On Apple Silicon and other AArch64 systems, the Docker images need to be built from source.
+
     ```sh
     # CPU separation
     spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
