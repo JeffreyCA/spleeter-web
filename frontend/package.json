@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@jeffreyca/ffmpeg": "^0.10.3",
-    "@jeffreyca/ffmpeg.wasm-core": "^0.10.2",
+    "@jeffreyca/ffmpeg.wasm-core": "^0.11.0",
     "@jeffreyca/react-dropzone-uploader": "^2.11.10",
     "@jeffreyca/react-jinke-music-player": "^4.22.1",
     "awesome-debounce-promise": "^2.1.0",
