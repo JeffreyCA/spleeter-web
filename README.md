@@ -76,7 +76,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     2. [Install the NVIDIA Container Toolkit.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) If on Windows, refer to [this](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
 
-    3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi`
+    3. Verify Docker works with your GPU by running `sudo docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu20.04 nvidia-smi`
 
 4. Download and run prebuilt Docker images:
 
