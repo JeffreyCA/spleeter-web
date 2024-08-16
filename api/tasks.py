@@ -14,10 +14,8 @@ from django.utils import timezone
 from .celery import app
 from .models import (D3NET, SPLEETER, SPLEETER_PIANO, XUMX, DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
-from .separators.d3net_separator import D3NetSeparator
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
-from .separators.x_umx_separator import XUMXSeparator
 from .util import ALL_PARTS, ALL_PARTS_5, output_format_to_ext, get_valid_filename
 from .youtubedl import download_audio, get_file_ext
 
@@ -32,12 +30,9 @@ def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separa
     elif separator == SPLEETER_PIANO:
         return SpleeterSeparator(cpu_separation, bitrate, True)
     elif separator == D3NET:
-        return D3NetSeparator(cpu_separation, bitrate)
+        return None
     elif separator == XUMX:
-        softmask = separator_args['softmask']
-        alpha = separator_args['alpha']
-        iterations = separator_args['iterations']
-        return XUMXSeparator(cpu_separation, bitrate, softmask, alpha, iterations)
+        return None
     else:
         random_shifts = separator_args['random_shifts']
         return DemucsSeparator(separator, cpu_separation, bitrate,

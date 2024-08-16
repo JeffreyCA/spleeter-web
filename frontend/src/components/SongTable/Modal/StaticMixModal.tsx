@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import { DEFAULT_MODEL, DEFAULT_OUTPUT_FORMAT, DEFAULT_SOFTMASK_ALPHA } from '../../../Constants';
+import { DEFAULT_MODEL, DEFAULT_OUTPUT_FORMAT } from '../../../Constants';
 import { SongData } from '../../../models/SongData';
 import { StaticMix } from '../../../models/StaticMix';
 import StaticMixModalForm from '../Form/StaticMixModalForm';
@@ -24,18 +24,6 @@ interface State {
    * Random shifts parameter (Demucs).
    */
   randomShifts: number;
-  /**
-   * Expectation-maximization algorithm iterations (X-UMX).
-   */
-  emIterations: number;
-  /**
-   * Whether to use softmask (X-UMX)
-   */
-  softmask: boolean;
-  /**
-   * Alpha value for softmask (X-UMX)
-   */
-  softmask_alpha: number;
   /**
    * Output format/bitrate.
    */
@@ -79,9 +67,6 @@ class StaticMixModal extends React.Component<Props, State> {
     this.state = {
       model: DEFAULT_MODEL,
       randomShifts: 0,
-      emIterations: 1,
-      softmask: false,
-      softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
       outputFormat: DEFAULT_OUTPUT_FORMAT,
       vocals: false, // Include vocals
       drums: false, // Include drums
@@ -100,9 +85,6 @@ class StaticMixModal extends React.Component<Props, State> {
     this.setState({
       model: DEFAULT_MODEL,
       randomShifts: 0,
-      emIterations: 1,
-      softmask: false,
-      softmask_alpha: DEFAULT_SOFTMASK_ALPHA,
       outputFormat: DEFAULT_OUTPUT_FORMAT,
       vocals: false,
       drums: false,
@@ -143,9 +125,6 @@ class StaticMixModal extends React.Component<Props, State> {
       separator: this.state.model,
       separator_args: {
         random_shifts: this.state.randomShifts,
-        iterations: this.state.emIterations,
-        softmask: this.state.softmask,
-        alpha: this.state.softmask_alpha,
       },
       bitrate: this.state.outputFormat,
       vocals: this.state.vocals,
@@ -193,29 +172,13 @@ class StaticMixModal extends React.Component<Props, State> {
     console.log('Rand shift change:', newRandomShifts);
   };
 
-  handleIterationsChange = (newIterations: number): void => {
-    this.setState({ emIterations: newIterations });
-    console.log('EM iteration change:', newIterations);
-  };
-
-  handleSoftmaskChange = (newSoftmaskChecked: boolean): void => {
-    // Hide softmask alpha errors if unchecked
-    this.setState({ softmask: newSoftmaskChecked });
-    console.log('Softmask change:', newSoftmaskChecked);
-  };
-
-  handleAlphaChange = (newAlpha: number): void => {
-    this.setState({ softmask_alpha: newAlpha });
-    console.log('Softmask alpha change:', newAlpha);
-  };
-
   handleOutputFormatChange = (newOutputFormat: number): void => {
     this.setState({ outputFormat: newOutputFormat });
     console.log('Output format change:', newOutputFormat);
   };
 
   render(): JSX.Element | null {
-    const { model, vocals, drums, bass, other, piano, errors, softmask, softmask_alpha, isCreating } = this.state;
+    const { model, vocals, drums, bass, other, piano, errors, isCreating } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
@@ -229,9 +192,6 @@ class StaticMixModal extends React.Component<Props, State> {
       noneChecked = noneChecked && !piano;
     }
 
-    const invalidAlpha = model === 'xumx' && softmask && softmask_alpha < 0;
-    const slowCpuModel = model === 'xumx' || model === 'd3net';
-
     return (
       <Modal size="lg" show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
@@ -243,15 +203,10 @@ class StaticMixModal extends React.Component<Props, State> {
             handleCheckboxChange={this.handleCheckboxChange}
             handleModelChange={this.handleModelChange}
             handleRandomShiftsChange={this.handleRandomShiftsChange}
-            handleIterationsChange={this.handleIterationsChange}
-            handleSoftmaskChange={this.handleSoftmaskChange}
-            handleAlphaChange={this.handleAlphaChange}
             handleOutputFormatChange={this.handleOutputFormatChange}
           />
           {allChecked && <Alert variant="warning">You must leave at least one part unchecked.</Alert>}
           {noneChecked && <Alert variant="warning">You must check at least one part.</Alert>}
-          {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
-          {invalidAlpha && <Alert variant="danger">Softmask alpha must be greater than 0.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger">
               {errors.map((val, idx) => (
@@ -264,10 +219,7 @@ class StaticMixModal extends React.Component<Props, State> {
           <Button variant="outline-danger" disabled={isCreating} onClick={this.onHide}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            disabled={allChecked || noneChecked || invalidAlpha || isCreating}
-            onClick={this.onSubmit}>
+          <Button variant="primary" disabled={allChecked || noneChecked || isCreating} onClick={this.onSubmit}>
             Create Mix
           </Button>
         </Modal.Footer>

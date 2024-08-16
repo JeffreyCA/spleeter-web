@@ -28,7 +28,6 @@ configparser==6.0.0
 contextlib2==21.6.0
 cryptography==41.0.3
 Cython==3.0.0
-d3net-spleeterweb==0.1.3
 decorator==5.1.1
 demucs==4.0.0
 diffq==0.2.4
@@ -83,7 +82,6 @@ MarkupSafe==2.1.3
 musdb==0.4.0
 museval==0.4.1
 mutagen==1.46.0
-nnabla==1.26.0
 norbert==0.2.1
 numba==0.55.2
 numpy==1.22.4
@@ -156,11 +154,9 @@ websockets==11.0.3
 Werkzeug==2.3.6
 whitenoise==6.5.0
 wrapt==1.15.0
-xumx-spleeterweb==0.2.4
 yapf==0.40.1
 youtube-title-parse==1.0.0
 yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@14c97f13e06b94ee31e12ae1cf16a59c91e178ee
 zipp==3.16.2
-nnabla-ext-cuda114==1.26.0; sys_platform == 'linux'
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
