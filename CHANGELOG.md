@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v3.21.0] - 2024-08-16
+
+### Changed
+- Update GPU Dockerfile to CUDA 11.8 and PyTorch to 2.4.0
+- Update dependencies
+
+
 ## [v3.20.2] - 2024-06-28
 
 ### Added
@@ -392,7 +399,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.2...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.0...HEAD
+[v3.21.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.2...v3.21.0
 [v3.20.2]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.1...v3.20.2
 [v3.20.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.0...v3.20.1
 [v3.20.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.19.0...v3.20.0
