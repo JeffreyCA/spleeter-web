@@ -24,12 +24,12 @@ jobs:
       run: sudo rm -rf /usr/local/lib/android "$AGENT_TOOLSDIRECTORY"
 
     - name: Build images (release)
-      run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+      run: docker compose -f docker-compose.yml -f docker-compose.build.yml build
       env:
         TAG: ${{ github.event.release.tag_name }}
 
     - name: Push images to Docker Hub (release)
-      run: docker-compose -f docker-compose.yml -f docker-compose.build.yml push
+      run: docker compose -f docker-compose.yml -f docker-compose.build.yml push
       env:
         DOCKER_CLIENT_TIMEOUT: 180
         COMPOSE_HTTP_TIMEOUT: 180
@@ -54,12 +54,12 @@ jobs:
       run: sudo rm -rf /usr/local/lib/android "$AGENT_TOOLSDIRECTORY"
 
     - name: Build GPU images (release)
-      run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build api
+      run: docker compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build api
       env:
         TAG: ${{ github.event.release.tag_name }}
 
     - name: Push GPU images to Docker Hub (release)
-      run: docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml push api
+      run: docker compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml push api
       env:
         DOCKER_CLIENT_TIMEOUT: 180
         COMPOSE_HTTP_TIMEOUT: 180
