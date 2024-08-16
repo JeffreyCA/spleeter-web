@@ -20,7 +20,7 @@ openvino==2023.2.0
 protobuf==3.19.4
 redis==4.6.0
 SQLAlchemy==1.4.53
-tensorflow==2.11.0
+tensorflow==2.12.1
 torch==2.4.0
 torchaudio==2.4.0
 tzdata==2022.7
