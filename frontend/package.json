@@ -29,7 +29,7 @@
     "@types/react-slider": "^1.3.6",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
-    "bootstrap": "^4.6.2",
+    "bootstrap": "^5.0.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.4.1",
     "css-loader": "^5.2.7",
