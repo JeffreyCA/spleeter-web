@@ -53,7 +53,7 @@
     "@jeffreyca/react-jinke-music-player": "^4.22.1",
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^0.28.1",
-    "babel-loader": "^8.3.0",
+    "babel-loader": "^8.4.1",
     "babel-runtime": "^6.26.0",
     "he": "^1.2.0",
     "html5-file-selector": "^2.1.0",
