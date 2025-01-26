@@ -29,7 +29,7 @@ whitenoise==6.8.2
 xumx-spleeterweb==0.2.4
 yapf==0.43.0
 youtube-title-parse==1.0.0
-yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@780593fa1a0d27220529c9ea745da3947709dab0
+yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@94deb2f9272608bd0f169c84c663534a5aae2cf8
 nnabla-ext-cuda114==1.30.0; sys_platform == 'linux' and platform_machine == 'x86_64'
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
