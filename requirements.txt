@@ -26,7 +26,7 @@ torch==2.4.0
 torchaudio==2.4.0
 tzdata==2022.7
 validators==0.34.0
-whitenoise==6.8.2
+whitenoise==6.9.0
 xumx-spleeterweb==0.2.4
 yapf==0.43.0
 youtube-title-parse==1.0.0
