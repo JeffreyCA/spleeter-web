@@ -12,7 +12,7 @@ google-api-python-client==2.161.0
 gunicorn==22.0.0
 h2==4.2.0
 kombu==5.4.2
-lameenc==1.7.0
+lameenc==1.8.1
 mutagen==1.47.0
 nnabla==1.30.0
 numba==0.56.4
@@ -43,4 +43,4 @@ librosa==0.8.1
 llvmlite==0.39.0
 norbert==0.2.1
 pandas==1.5.3
-typer==0.14.0
+typer==0.15.1
