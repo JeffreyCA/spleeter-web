@@ -13,7 +13,7 @@ gunicorn==22.0.0
 h2==4.1.0
 kombu==5.4.2
 lameenc==1.7.0
-mutagen==1.46.0
+mutagen==1.47.0
 nnabla==1.30.0
 numba==0.56.4
 numpy==1.23.5
