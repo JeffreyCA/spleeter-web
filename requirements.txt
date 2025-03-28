@@ -11,7 +11,7 @@ djangorestframework==3.15.2
 google-api-python-client==2.166.0
 gunicorn==22.0.0
 h2==4.2.0
-kombu==5.4.2
+kombu==5.5.1
 lameenc==1.8.1
 mutagen==1.47.0
 nnabla==1.30.0
