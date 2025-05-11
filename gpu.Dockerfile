@@ -33,7 +33,7 @@ WORKDIR /webapp
 
 RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade wheel setuptools
-RUN pip3 install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install torch==2.7.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu118
 
 COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip3 install --upgrade pip -r requirements.txt
