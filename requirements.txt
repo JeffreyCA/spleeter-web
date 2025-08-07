@@ -23,7 +23,7 @@ redis==4.6.0
 SQLAlchemy==1.4.54
 tensorflow==2.11.0
 torch==2.7.0
-torchaudio==2.7.0
+torchaudio==2.8.0
 tzdata==2025.2
 validators==0.35.0
 whitenoise==6.9.0
