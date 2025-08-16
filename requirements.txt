@@ -43,4 +43,4 @@ librosa==0.8.1
 llvmlite==0.39.0
 norbert==0.2.1
 pandas==1.5.3
-typer==0.15.3
+typer==0.16.0
