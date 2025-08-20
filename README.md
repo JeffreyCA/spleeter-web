@@ -84,17 +84,17 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
     ```sh
     # CPU separation
-    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
+    spleeter-web$ docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
     # GPU separation
-    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
+    spleeter-web$ docker compose -f docker-compose.gpu.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up
     ```
 
     Alternatively, you can build the Docker images from source:
     ```sh
     # CPU separation
-    spleeter-web$ docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build
+    spleeter-web$ docker compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build
     # GPU separation
-    spleeter-web$ docker-compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build
+    spleeter-web$ docker compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build
     ```
 
 5. Launch **Spleeter Web**
@@ -300,17 +300,17 @@ If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally 
     If you are self-hosting media files:
     ```sh
     # Use prebuilt images
-    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up -d
+    spleeter-web$ sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up -d
     # Or build from source
-    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build -d
+    spleeter-web$ sudo docker compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml -f docker-compose.prod.selfhost.yml up --build -d
     ```
 
     Otherwise if using a storage provider:
     ```sh
     # Use prebuilt images
-    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+    spleeter-web$ sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
     # Or build from source
-    spleeter-web$ sudo docker-compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
+    spleeter-web$ sudo docker compose -f docker-compose.yml -f docker-compose.build.yml -f docker-compose.prod.yml up --build -d
     ```
 
 4. Access **Spleeter Web** at whatever you set `APP_HOST` to. Note that it will be running on port 80, not 8000. You can change this by setting `NGINX_PORT` and `NGINX_PORT_SSL`.
