@@ -8,7 +8,7 @@ django-picklefield==3.3
 django-storages==1.14.6
 django-webpack-loader==1.8.1
 djangorestframework==3.16.1
-google-api-python-client==2.179.0
+google-api-python-client==2.181.0
 gunicorn==23.0.0
 h2==4.2.0
 kombu==5.5.4
