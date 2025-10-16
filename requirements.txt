@@ -22,7 +22,7 @@ protobuf==3.19.4
 redis==4.6.0
 SQLAlchemy==1.4.54
 tensorflow==2.11.0
-torch==2.7.0
+torch==2.9.0
 torchaudio==2.7.0
 tzdata==2025.2
 validators==0.35.0
