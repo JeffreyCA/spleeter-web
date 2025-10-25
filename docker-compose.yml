@@ -32,7 +32,7 @@ services:
       - redis-data:/data
     restart: always
   nginx:
-    image: jeffreyca/spleeter-web-nginx:${TAG:-latest}
+    image: jeffreyca/spleeter-web-nginx:${TAG:-v3}
     volumes:
       - ./nginx/templates:/etc/nginx/templates
       - staticfiles:/webapp/staticfiles
@@ -46,7 +46,7 @@ services:
       - api
     restart: always
   api:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-v3}
     volumes:
       - assets:/webapp/frontend/assets
       - sqlite-data:/webapp/sqlite
@@ -83,7 +83,7 @@ services:
       - frontend
     restart: always
   celery-fast:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-v3}
     entrypoint: ./celery-fast-entrypoint.sh
     volumes:
       - celery-data:/webapp/celery
@@ -96,7 +96,7 @@ services:
       - "8.8.8.8"
     restart: always
   celery-slow:
-    image: jeffreyca/spleeter-web-backend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-backend:${TAG:-v3}
     entrypoint: ./celery-slow-entrypoint.sh
     volumes:
       - celery-data:/webapp/celery
@@ -107,7 +107,7 @@ services:
       - redis
     restart: always
   frontend:
-    image: jeffreyca/spleeter-web-frontend:${TAG:-latest}
+    image: jeffreyca/spleeter-web-frontend:${TAG:-v3}
     volumes:
       - assets:/webapp/frontend/assets
     stdin_open: true

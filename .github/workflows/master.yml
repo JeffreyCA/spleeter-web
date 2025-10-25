@@ -2,7 +2,7 @@ name: Docker Compose push (master)
 
 on:
   push:
-    branches: [ master ]
+    branches: [ v3 ]
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -25,10 +25,10 @@ jobs:
     - name: Free disk space
       run: sudo rm -rf /usr/local/lib/android "$AGENT_TOOLSDIRECTORY"
 
-    - name: Build images (latest)
+    - name: Build images (v3)
       run: docker compose -f docker-compose.yml -f docker-compose.build.yml build
 
-    - name: Push images to Docker Hub (latest)
+    - name: Push images to Docker Hub (v3)
       run: docker compose -f docker-compose.yml -f docker-compose.build.yml push
       env:
         DOCKER_CLIENT_TIMEOUT: 180
@@ -52,10 +52,10 @@ jobs:
     - name: Free disk space
       run: sudo rm -rf /usr/local/lib/android "$AGENT_TOOLSDIRECTORY"
 
-    - name: Build GPU images (latest)
+    - name: Build GPU images (v3)
       run: docker compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml build api
 
-    - name: Push GPU images to Docker Hub (latest)
+    - name: Push GPU images to Docker Hub (v3)
       run: docker compose -f docker-compose.gpu.yml -f docker-compose.build.gpu.yml push api
       env:
         DOCKER_CLIENT_TIMEOUT: 180
