@@ -456,7 +456,7 @@ class DynamicMix(models.Model):
         Produce a string describing the separator model and random shift value:
         "[Demucs, 0]"
         """
-        if self.separator == SPLEETER:
+        if self.separator == SPLEETER or self.separator == SPLEETER_PIANO:
             return f'[{self.get_bitrate_display()},{self.separator}]'
         elif self.separator == D3NET:
             return f'[{self.get_bitrate_display()}]'

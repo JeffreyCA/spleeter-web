@@ -3,9 +3,20 @@
 
 Spleeter Web is a web application for isolating or removing the vocal, accompaniment, bass, and/or drum components of any song. For example, you can use it to isolate the vocals of a track, or you can use it remove the vocals to get an instrumental version of a song.
 
-It supports a number of different source separation models: [Spleeter](https://github.com/deezer/spleeter) (`4stems-model` and `5stems-model`), [Demucs](https://github.com/facebookresearch/demucs), [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx), and [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net).
-
 The app uses [Django](https://www.djangoproject.com/) for the backend API and [React](https://reactjs.org/) for the frontend. [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) is used for the task queue. Docker images are available, including ones with GPU support.
+
+**Supported models**:
+
+- [Spleeter](https://github.com/deezer/spleeter) (`4stems-model` and `5stems-model`)
+- [Demucs v3 and v4](https://github.com/facebookresearch/demucs)
+
+**Retired models**:
+
+* [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx) (X-UMX)
+* [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net)
+
+> [!NOTE]
+> If you want to use the last version of Spleeter Web that supports D3Net and X-UMX, please checkout the `v3` branch. Mixes previously created with D3Net and X-UMX remain available for playback and download on all versions of Spleeter Web.
 
 ## Table of Contents
 
@@ -23,7 +34,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [License](#license)
 
 ## Features
-- Supports Spleeter, Demucs, CrossNet-Open-Unmix (X-UMX), and D3Net source separation models
+- Supports Spleeter and Demucs source separation models for new mixes
     - Each model supports a different set of user-configurable parameters in the UI
 - Dynamic Mixes let you export and play back in realtime your own custom mix of the different components
 - Import tracks by uploading an audio file or by a YouTube link
@@ -107,7 +118,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 ### Requirements
 * x86-64 arch (For AArch64 systems, use Docker)
 * 4 GB+ of memory (source separation is memory-intensive)
-* Python 3.8+ ([link](https://www.python.org/downloads/))
+* Python 3.11+ ([link](https://www.python.org/downloads/))
 * Node.js 16+ ([link](https://nodejs.org/en/download/))
 * Redis ([link](https://redis.io/))
 * ffmpeg and ffprobe ([link](https://www.ffmpeg.org/download.html))
@@ -231,9 +242,7 @@ Here is a list of all the environment variables you can use to further customize
 | `CELERY_SLOW_QUEUE_CONCURRENCY` | Number of concurrent source separation tasks Celery can process. Docker only. |
 | `CERTBOT_DOMAIN` | Domain for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
 | `CERTBOT_EMAIL` | Email address for creating HTTPS certs using Let's Encrypt's Certbot. Docker only. |
-| `D3NET_OPENVINO` | Set to `1` to use OpenVINO for D3Net CPU separation. Requires Intel CPU. |
 | `DEMUCS_SEGMENT_SIZE` | Length of each split for GPU separation. Default is `40`, which requires a around 7 GB of GPU memory. For GPUs with 2-4 GB of memory, experiment with lower values (minimum is `10`). Also recommended to set `PYTORCH_NO_CUDA_MEMORY_CACHING=1`. |
-| `D3NET_OPENVINO_THREADS` | Set to the number of CPU threads for D3Net OpenVINO separation. Default: # of CPUs on the machine. Requires Intel CPU. |
 | `DEV_WEBSERVER_PORT` | Port that development webserver is mapped to on **host** machine. Docker only. |
 | `ENABLE_CROSS_ORIGIN_HEADERS` | Set to `1` to set `Cross-Origin-Embedder-Policy` and `Cross-Origin-Opener-Policy` headers which are required for exporting Dynamic Mixes in-browser. |
 | `NGINX_PORT` | Port that Nginx is mapped to on **host** machine for HTTP. Docker only. |

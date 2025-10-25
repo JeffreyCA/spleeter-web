@@ -11,9 +11,6 @@ interface Props {
   handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleModelChange: (newModel: string) => void;
   handleRandomShiftsChange: (newRandomShifts: number) => void;
-  handleIterationsChange: (newIterations: number) => void;
-  handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
-  handleAlphaChange: (newAlpha: number) => void;
   handleOutputFormatChange: (newOutputFormat: number) => void;
 }
 
@@ -43,15 +40,7 @@ class StaticMixModalForm extends React.Component<Props, State> {
   };
 
   render(): JSX.Element {
-    const {
-      song,
-      handleCheckboxChange,
-      handleRandomShiftsChange,
-      handleIterationsChange,
-      handleSoftmaskChange,
-      handleAlphaChange,
-      handleOutputFormatChange,
-    } = this.props;
+    const { song, handleCheckboxChange, handleRandomShiftsChange, handleOutputFormatChange } = this.props;
     const MusicPartMap = this.state.selectedModel === 'spleeter_5stems' ? MusicPartMap5 : MusicPartMap4;
 
     // Map part names to checkboxes
@@ -76,9 +65,6 @@ class StaticMixModalForm extends React.Component<Props, State> {
           className="mt-3 mb-0"
           handleModelChange={this.handleModelChange}
           handleRandomShiftsChange={handleRandomShiftsChange}
-          handleIterationsChange={handleIterationsChange}
-          handleSoftmaskChange={handleSoftmaskChange}
-          handleAlphaChange={handleAlphaChange}
           handleOutputFormatChange={handleOutputFormatChange}
         />
         <Form.Group className="mt-3">

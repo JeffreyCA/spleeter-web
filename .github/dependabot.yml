@@ -17,8 +17,6 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "celery"             # due to conflict with 'click' package with spleeter 
       - dependency-name: "numpy"              # due to conflict with 'nnabla'
-      - dependency-name: "nnabla"             # due to conflict with 'numpy'
-      - dependency-name: "nnabla-ext-*"       # due to conflict with 'numpy'
       - dependency-name: "protobuf"           # due to conflict with 'nnabla'
       - dependency-name: "tensorflow"         # due to conflict with 'spleeter'
         update-types: ["version-update:semver-major", "version-update:semver-minor"]

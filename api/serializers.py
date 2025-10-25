@@ -5,6 +5,8 @@ from .validators import is_valid_youtube
 This module defines Django serializers.
 """
 
+LEGACY_SEPARATORS = {D3NET, XUMX}
+
 class PickledObjectSerializerField(serializers.Field):
     """Serializer field for PickledObjectField"""
     def to_internal_value(self, data):
@@ -91,8 +93,14 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
 
         :param data: Request data
         """
+        if data['separator'] in LEGACY_SEPARATORS:
+            raise serializers.ValidationError({
+                'separator':
+                'D3Net and X-UMX are no longer available for new mixes.'
+            })
+
         args = data['separator_args']
-        if data['separator'] in DEMUCS_FAMILY or data['separator'] == XUMX:
+        if data['separator'] in DEMUCS_FAMILY:
             try:
                 random_shifts = args['random_shifts']
                 if random_shifts < 0:
@@ -102,16 +110,6 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'args': "Must include 'random_shifts' argument."})
 
-        if data['separator'] == XUMX:
-            try:
-                softmask = args['softmask']
-                alpha = args['alpha']
-                if alpha < 0:
-                    raise serializers.ValidationError(
-                        {'args': 'Softmask alpha must be greater than 0.'})
-            except KeyError:
-                raise serializers.ValidationError(
-                    {'args': "Must include 'softmask' and 'alpha' arguments."})
         return data
 
     class Meta:
@@ -151,7 +149,13 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
                 {'checked': 'You must check at least one part.'})
 
         args = data['separator_args']
-        if data['separator'] in DEMUCS_FAMILY or data['separator'] == XUMX:
+        if data['separator'] in LEGACY_SEPARATORS:
+            raise serializers.ValidationError({
+                'separator':
+                'D3Net and X-UMX are no longer available for new mixes.'
+            })
+
+        if data['separator'] in DEMUCS_FAMILY:
             try:
                 random_shifts = args['random_shifts']
                 if random_shifts < 0:
@@ -160,17 +164,6 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
             except KeyError:
                 raise serializers.ValidationError(
                     {'args': "Must include 'random_shifts' argument."})
-
-        if data['separator'] == XUMX:
-            try:
-                softmask = args['softmask']
-                alpha = args['alpha']
-                if alpha < 0:
-                    raise serializers.ValidationError(
-                        {'args': 'Softmask alpha must be greater than 0.'})
-            except KeyError:
-                raise serializers.ValidationError(
-                    {'args': "Must include 'softmask' and 'alpha' arguments."})
 
         return data
 

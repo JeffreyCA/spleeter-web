@@ -5,7 +5,6 @@ from spleeter import *
 from spleeter.audio.adapter import AudioAdapter
 from spleeter.separator import Separator
 from spleeter.utils import *
-from spleeter.audio import STFTBackend
 from api.models import OutputFormat
 
 from api.util import output_format_to_ext, is_output_format_lossy
@@ -25,9 +24,7 @@ class SpleeterSeparator:
         self.audio_format = output_format_to_ext(output_format)
         self.sample_rate = 44100
         self.spleeter_stem = 'config/5stems-16kHz.json' if with_piano else 'config/4stems-16kHz.json'
-        self.separator = Separator(self.spleeter_stem,
-                                   stft_backend=STFTBackend.LIBROSA if cpu_separation else STFTBackend.TENSORFLOW,
-                                   multiprocess=False)
+        self.separator = Separator(self.spleeter_stem, multiprocess=False)
         self.audio_adapter = AudioAdapter.default()
 
     def check_and_remove_empty_model_dirs(self):

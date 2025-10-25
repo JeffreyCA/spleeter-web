@@ -1,7 +1,7 @@
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install all dependencies
@@ -22,10 +22,12 @@ RUN apt-get update \
     && add-apt-repository universe \
     && apt-get update
 
-RUN apt-get -y install python3.9 python3.9-gdbm python3-distutils \
+RUN add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update \
+    && apt-get -y install python3.11 python3.11-dev python3.11-distutils python3.11-venv python3.11-gdbm \
     && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-    && python3.9 get-pip.py \
-    && ln -s /usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0 /usr/lib/x86_64-linux-gnu/libcudart.so.11.0
+    && python3.11 get-pip.py \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python3
 
 RUN mkdir -p /webapp/media /webapp/staticfiles
 
@@ -33,7 +35,7 @@ WORKDIR /webapp
 
 RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade wheel setuptools
-RUN pip3 install torch==2.7.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install torch==2.9.0 torchaudio==2.9.0 --index-url https://download.pytorch.org/whl/cu128
 
 COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip3 install --upgrade pip -r requirements.txt

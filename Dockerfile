@@ -1,14 +1,13 @@
-FROM python:3.9-bullseye
+FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 RUN mkdir -p /webapp/media /webapp/staticfiles
 WORKDIR /webapp
 
 # Install all dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libasound2-dev libsndfile-dev libhdf5-dev
-
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg git libasound2-dev libsndfile-dev libhdf5-dev libmagic-dev
 COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip install --upgrade pip wheel && pip install -r requirements.txt
 RUN pip install -r requirements-spleeter.txt --no-dependencies
