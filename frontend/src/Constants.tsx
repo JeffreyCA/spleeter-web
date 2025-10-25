@@ -14,10 +14,7 @@ export const LOSSLESS_OUTPUT_FORMATS: [number, string][] = [
   [1, 'FLAC'],
 ];
 export const DEFAULT_OUTPUT_FORMAT = 256;
-export const DEFAULT_SOFTMASK_ALPHA = 1.0;
-export const MAX_SOFTMASK_ALPHA = 2.0;
-export const MIN_SOFTMASK_ALPHA = 0.1;
-export const MAX_SHIFT_ITER = 50;
+export const MAX_RANDOM_SHIFT = 50;
 export const FADE_DURATION_MS = 300;
 export const FADE_DURATION_S = 0.3;
 

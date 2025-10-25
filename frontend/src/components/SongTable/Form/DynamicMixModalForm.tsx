@@ -9,9 +9,6 @@ interface Props {
   song: SongData;
   handleModelChange: (newModel: string) => void;
   handleRandomShiftsChange: (newRandomShifts: number) => void;
-  handleIterationsChange: (newIterations: number) => void;
-  handleSoftmaskChange: (newSoftmaskChecked: boolean) => void;
-  handleAlphaChange: (newAlpha: number) => void;
   handleOutputFormatChange: (newOutputFormatChange: number) => void;
 }
 
@@ -24,9 +21,6 @@ class DynamicMixModalForm extends React.Component<Props> {
       song,
       handleModelChange,
       handleRandomShiftsChange,
-      handleIterationsChange,
-      handleSoftmaskChange,
-      handleAlphaChange,
       handleOutputFormatChange,
     } = this.props;
 
@@ -37,9 +31,6 @@ class DynamicMixModalForm extends React.Component<Props> {
           className="mt-3"
           handleModelChange={handleModelChange}
           handleRandomShiftsChange={handleRandomShiftsChange}
-          handleIterationsChange={handleIterationsChange}
-          handleSoftmaskChange={handleSoftmaskChange}
-          handleAlphaChange={handleAlphaChange}
           handleOutputFormatChange={handleOutputFormatChange}
         />
       </Form>

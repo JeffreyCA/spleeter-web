@@ -12,12 +12,11 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 
 from .celery import app
-from .models import (D3NET, SPLEETER, SPLEETER_PIANO, XUMX, DynamicMix, SourceFile, StaticMix, TaskStatus,
+from .models import (DEMUCS_FAMILY, D3NET, SPLEETER, SPLEETER_PIANO, XUMX,
+                     DynamicMix, SourceFile, StaticMix, TaskStatus,
                      YTAudioDownloadTask)
-from .separators.d3net_separator import D3NetSeparator
 from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
-from .separators.x_umx_separator import XUMXSeparator
 from .util import ALL_PARTS, ALL_PARTS_5, output_format_to_ext, get_valid_filename
 from .youtubedl import download_audio, get_file_ext
 
@@ -25,23 +24,24 @@ from .youtubedl import download_audio, get_file_ext
 This module defines various Celery tasks used for Spleeter Web.
 """
 
-def get_separator(separator: str, separator_args: Dict, bitrate: int, cpu_separation: bool):
+LEGACY_SEPARATORS = {D3NET, XUMX}
+
+
+def get_separator(separator: str, separator_args: Dict, bitrate: int,
+                  cpu_separation: bool):
     """Returns separator object for corresponding source separation model."""
+    if separator in LEGACY_SEPARATORS:
+        raise ValueError(
+            f'{separator} is no longer supported for new separations.')
     if separator == SPLEETER:
         return SpleeterSeparator(cpu_separation, bitrate, False)
-    elif separator == SPLEETER_PIANO:
+    if separator == SPLEETER_PIANO:
         return SpleeterSeparator(cpu_separation, bitrate, True)
-    elif separator == D3NET:
-        return D3NetSeparator(cpu_separation, bitrate)
-    elif separator == XUMX:
-        softmask = separator_args['softmask']
-        alpha = separator_args['alpha']
-        iterations = separator_args['iterations']
-        return XUMXSeparator(cpu_separation, bitrate, softmask, alpha, iterations)
-    else:
-        random_shifts = separator_args['random_shifts']
+    if separator in DEMUCS_FAMILY:
+        random_shifts = separator_args.get('random_shifts', 0)
         return DemucsSeparator(separator, cpu_separation, bitrate,
                                random_shifts)
+    raise ValueError(f'Unknown separator "{separator}".')
 
 @app.task()
 def create_static_mix(static_mix_id):
@@ -73,10 +73,17 @@ def create_static_mix(static_mix_id):
                                     static_mix_id)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = get_separator(static_mix.separator,
-                                  static_mix.separator_args,
-                                  static_mix.bitrate,
-                                  settings.CPU_SEPARATION)
+        try:
+            separator = get_separator(static_mix.separator,
+                                      static_mix.separator_args,
+                                      static_mix.bitrate,
+                                      settings.CPU_SEPARATION)
+        except ValueError as exc:
+            static_mix.status = TaskStatus.ERROR
+            static_mix.error = str(exc)
+            static_mix.date_finished = timezone.now()
+            static_mix.save()
+            return
 
         parts = {
             'vocals': static_mix.vocals,
@@ -169,10 +176,17 @@ def create_dynamic_mix(dynamic_mix_id):
         rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
 
         pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-        separator = get_separator(dynamic_mix.separator,
-                                  dynamic_mix.separator_args,
-                                  dynamic_mix.bitrate,
-                                  settings.CPU_SEPARATION)
+        try:
+            separator = get_separator(dynamic_mix.separator,
+                                      dynamic_mix.separator_args,
+                                      dynamic_mix.bitrate,
+                                      settings.CPU_SEPARATION)
+        except ValueError as exc:
+            dynamic_mix.status = TaskStatus.ERROR
+            dynamic_mix.error = str(exc)
+            dynamic_mix.date_finished = timezone.now()
+            dynamic_mix.save()
+            return
 
         all_parts = ALL_PARTS_5 if dynamic_mix.separator == SPLEETER_PIANO else ALL_PARTS
 

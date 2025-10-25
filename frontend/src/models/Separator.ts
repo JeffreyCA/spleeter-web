@@ -28,8 +28,8 @@ export type Separator =
 export const separatorLabelMap = {
   spleeter: 'Spleeter',
   spleeter_5stems: 'Spleeter 5 stems',
-  d3net: 'D3Net',
-  xumx: 'X-UMX',
+  d3net: 'D3Net (legacy)',
+  xumx: 'X-UMX (legacy)',
   // Demucs v4
   htdemucs: 'Demucs v4',
   htdemucs_ft: 'Demucs v4 Fine-tuned',

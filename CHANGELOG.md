@@ -3,12 +3,32 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v4.0.0] - 2025-10-25
+
+### Removed
+- Remove support for D3Net and X-UMX. Existing mixes created with these models remain playable/downloadable.
+    - These models had complex dependencies (NNabla, OpenVINO) that created maintenance burden and made it difficult to support newer Python and CUDA versions.
+    - To remain on previous version, please check out and use the `v3` branch.
+
+### Changed
+- Update GPU Dockerfile to use CUDA 12.2 and PyTorch 2.9.0
+- Update to Spleeter 2.4.2
+- Update to Python 3.11
+- Update dependencies
+
+
+## [v3.21.1] - 2025-10-25
+(Final v3 release)
+
+### Changed
+- Update dependencies
+
+
 ## [v3.21.0] - 2024-08-16
 
 ### Changed
 - Update GPU Dockerfile to CUDA 11.8 and PyTorch to 2.4.0
 - Update dependencies
-
 
 ## [v3.20.2] - 2024-06-28
 
@@ -399,7 +419,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v4.0.0...HEAD
+[v4.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.1...v4.0.0
+[v3.21.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.0...v3.21.1
 [v3.21.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.2...v3.21.0
 [v3.20.2]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.1...v3.20.2
 [v3.20.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.0...v3.20.1

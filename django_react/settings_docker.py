@@ -77,9 +77,6 @@ CELERY_TASK_ROUTES = {
     },
 }
 
-D3NET_OPENVINO = os.getenv('D3NET_OPENVINO', '0') == '1'
-D3NET_OPENVINO_THREADS = int(os.getenv('D3NET_OPENVINO_THREADS', cpu_count()))
-
 DEMUCS_SEGMENT_SIZE = os.getenv('DEMUCS_SEGMENT_SIZE')
 
 # Database
