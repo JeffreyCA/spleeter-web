@@ -3,7 +3,7 @@ boto3==1.40.66
 celery==5.3.6
 cffi==2.0.0
 demucs==4.0.1
-Django==4.2.25
+Django==4.2.26
 django-picklefield==3.3
 django-storages==1.14.6
 django-webpack-loader==1.8.1
