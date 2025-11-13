@@ -29,6 +29,9 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
     && python3.11 get-pip.py \
     && ln -sf /usr/bin/python3.11 /usr/bin/python3
 
+# For yt-dlp: https://github.com/yt-dlp/yt-dlp/issues/15012
+COPY --from=denoland/deno:bin-2.5.6 /deno /usr/local/bin/deno
+
 RUN mkdir -p /webapp/media /webapp/staticfiles
 
 WORKDIR /webapp

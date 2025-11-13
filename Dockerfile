@@ -8,6 +8,10 @@ WORKDIR /webapp
 
 # Install all dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg git libasound2-dev libsndfile-dev libhdf5-dev libmagic-dev
+
+# For yt-dlp: https://github.com/yt-dlp/yt-dlp/issues/15012
+COPY --from=denoland/deno:bin-2.5.6 /deno /usr/local/bin/deno
+
 COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip install --upgrade pip wheel && pip install -r requirements.txt
 RUN pip install -r requirements-spleeter.txt --no-dependencies

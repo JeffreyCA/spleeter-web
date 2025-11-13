@@ -27,7 +27,7 @@ validators==0.35.0
 whitenoise==6.11.0
 yapf==0.43.0
 youtube-title-parse==1.0.0
-yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@50d30e1bf6431bfd08c32271cc1dcdb5c57e29c5
+yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@4499cc5f7d6eef78b0092304626bd87c852f66f0
 python-magic==0.4.27; sys_platform == 'linux'
 python-magic-bin==0.4.14; sys_platform != 'linux'
 # Spleeter dependencies
