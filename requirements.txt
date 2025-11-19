@@ -1,5 +1,5 @@
 azure-storage-blob==12.27.0
-boto3==1.40.75
+boto3==1.40.76
 celery==5.3.6
 cffi==2.0.0
 demucs==4.0.1
