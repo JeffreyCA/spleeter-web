@@ -4,7 +4,7 @@ celery==5.3.6
 cffi==2.0.0
 demucs==4.0.1
 Django==4.2.25
-django-picklefield==3.3
+django-picklefield==3.4.0
 django-storages==1.14.6
 django-webpack-loader==1.8.1
 djangorestframework==3.16.1
