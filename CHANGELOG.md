@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - 5-stem with guitar
     - 5-stem with piano
     - 6-stem with guitar and piano
+    - Weights used: https://huggingface.co/jarredou/BS-ROFO-SW-Fixed
 
 ### Changed
 - Update dependencies
