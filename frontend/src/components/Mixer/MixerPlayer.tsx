@@ -127,10 +127,12 @@ class MixerPlayer extends React.Component<Props, State> {
       this.onMuteClick('bass');
     } else if (event.key === '4' || event.key === '$') {
       this.onMuteClick('drums');
-    } else if (this.hasPiano() && (event.key === '5' || event.key === '%')) {
-      this.onMuteClick('piano');
-    } else if (this.hasGuitar() && (event.key === '6' || event.key === '^')) {
+    } else if (this.hasGuitar() && (event.key === '5' || event.key === '%')) {
       this.onMuteClick('guitar');
+    } else if (!this.hasGuitar() && this.hasPiano() && (event.key === '5' || event.key === '%')) {
+      this.onMuteClick('piano');
+    } else if (this.hasGuitar() && this.hasPiano() && (event.key === '6' || event.key === '^')) {
+      this.onMuteClick('piano');
     }
 
     // Solo keyboard shortcuts
@@ -142,10 +144,12 @@ class MixerPlayer extends React.Component<Props, State> {
       this.onSoloClick('bass', !event.ctrlKey && !event.metaKey && !event.shiftKey);
     } else if (event.key.toLowerCase() === 'r') {
       this.onSoloClick('drums', !event.ctrlKey && !event.metaKey && !event.shiftKey);
-    } else if (this.hasPiano() && event.key.toLowerCase() === 't') {
-      this.onSoloClick('piano', !event.ctrlKey && !event.metaKey && !event.shiftKey);
-    } else if (this.hasGuitar() && event.key.toLowerCase() === 'y') {
+    } else if (this.hasGuitar() && event.key.toLowerCase() === 't') {
       this.onSoloClick('guitar', !event.ctrlKey && !event.metaKey && !event.shiftKey);
+    } else if (!this.hasGuitar() && this.hasPiano() && event.key.toLowerCase() === 't') {
+      this.onSoloClick('piano', !event.ctrlKey && !event.metaKey && !event.shiftKey);
+    } else if (this.hasGuitar() && this.hasPiano() && event.key.toLowerCase() === 'y') {
+      this.onSoloClick('piano', !event.ctrlKey && !event.metaKey && !event.shiftKey);
     }
 
     if (event.key === ' ' && this.state.isReady) {
@@ -745,16 +749,16 @@ class MixerPlayer extends React.Component<Props, State> {
             <kbd>2</kbd>
             <kbd>3</kbd>
             <kbd>4</kbd>
-            {this.hasPiano() && <kbd>5</kbd>}
-            {this.hasGuitar() && <kbd>6</kbd>}
+            {this.hasGuitar() && <kbd>5</kbd>}
+            {this.hasPiano() && <kbd>{this.hasGuitar() ? '6' : '5'}</kbd>}
             <br />
             <b>Solo/unsolo parts: </b>
             <kbd>Q</kbd>
             <kbd>W</kbd>
             <kbd>E</kbd>
             <kbd>R</kbd>
-            {this.hasPiano() && <kbd>T</kbd>}
-            {this.hasGuitar() && <kbd>Y</kbd>}
+            {this.hasGuitar() && <kbd>T</kbd>}
+            {this.hasPiano() && <kbd>{this.hasGuitar() ? 'Y' : 'T'}</kbd>}
             &nbsp;(Hold either<kbd>Ctrl/Cmd/Shift</kbd>to solo/unsolo multiple parts)
           </p>
         </Alert>
