@@ -9,6 +9,7 @@ import torch.nn as nn
 import yaml
 from omegaconf import OmegaConf
 from spleeter.audio.adapter import AudioAdapter
+from tqdm import tqdm
 
 from api.models import OutputFormat
 from api.util import output_format_to_ext, is_output_format_lossy
@@ -185,6 +186,13 @@ class BSRoformerSeparator:
         # Number of stems
         S = len(self.config.training.instruments)
         
+        # Calculate total number of segments for progress bar
+        total_segments = 0
+        pos = 0
+        while pos < mix_tensor.shape[1]:
+            total_segments += 1
+            pos += step
+        
         with torch.inference_mode():
             req_shape = (S,) + tuple(mix_tensor.shape)
             result = torch.zeros(req_shape, dtype=torch.float32, device=device)
@@ -193,37 +201,40 @@ class BSRoformerSeparator:
             batch_locations = []
             
             i = 0
-            while i < mix_tensor.shape[1]:
-                part = mix_tensor[:, i:i + C].to(device)
-                length = part.shape[-1]
-                if length < C:
-                    if length > C // 2 + 1:
-                        part = nn.functional.pad(part, (0, C - length), mode='reflect')
-                    else:
-                        part = nn.functional.pad(part, (0, C - length, 0, 0), mode='constant', value=0)
-                
-                batch_data.append(part)
-                batch_locations.append((i, length))
-                i += step
-                
-                # Process in batches
-                if len(batch_data) >= batch_size or (i >= mix_tensor.shape[1]):
-                    arr = torch.stack(batch_data, dim=0)
-                    x = model(arr)
+            with tqdm(total=total_segments, desc='Separating', unit='segment', ncols=120) as pbar:
+                while i < mix_tensor.shape[1]:
+                    part = mix_tensor[:, i:i + C].to(device)
+                    length = part.shape[-1]
+                    if length < C:
+                        if length > C // 2 + 1:
+                            part = nn.functional.pad(part, (0, C - length), mode='reflect')
+                        else:
+                            part = nn.functional.pad(part, (0, C - length, 0, 0), mode='constant', value=0)
                     
-                    for j in range(len(batch_locations)):
-                        start, l = batch_locations[j]
-                        window = window_middle
-                        if start == 0:
-                            window = window_start
-                        elif i >= mix_tensor.shape[1]:
-                            window = window_finish
+                    batch_data.append(part)
+                    batch_locations.append((i, length))
+                    i += step
+                    
+                    # Process in batches
+                    if len(batch_data) >= batch_size or (i >= mix_tensor.shape[1]):
+                        arr = torch.stack(batch_data, dim=0)
+                        x = model(arr)
                         
-                        result[..., start:start + l] += x[j][..., :l] * window[..., :l]
-                        counter[..., start:start + l] += window[..., :l]
-                    
-                    batch_data = []
-                    batch_locations = []
+                        for j in range(len(batch_locations)):
+                            start, l = batch_locations[j]
+                            window = window_middle
+                            if start == 0:
+                                window = window_start
+                            elif i >= mix_tensor.shape[1]:
+                                window = window_finish
+                            
+                            result[..., start:start + l] += x[j][..., :l] * window[..., :l]
+                            counter[..., start:start + l] += window[..., :l]
+                        
+                        # Update progress bar
+                        pbar.update(len(batch_data))
+                        batch_data = []
+                        batch_locations = []
             
             # Normalize by overlap counter
             estimated_sources = result / counter.clamp(min=1e-10)
