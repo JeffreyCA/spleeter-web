@@ -73,6 +73,10 @@ Spleeter Web isolates or removes vocal, accompaniment, bass, drums, guitar, and 
 | `components/SongTable/Form/StaticMixModalForm.tsx` | Form for creating static mixes (parts to keep) |
 | `components/SongTable/Form/DynamicMixModalForm.tsx` | Form for creating dynamic mixes |
 | `components/SongTable/Form/SeparatorFormGroup.tsx` | Separator model selection dropdown |
+| `components/SongTable/Modal/StaticMixModal.tsx` | Modal + state for static mix creation, sends API request |
+| `components/SongTable/Modal/DynamicMixModal.tsx` | Modal + state for dynamic mix creation, sends API request |
+| `components/SongTable/MixTable.tsx` | Table showing mixes with status, badges, actions |
+| `components/Home/MusicPlayer.tsx` | Audio player with badge display for current track |
 | `models/Separator.ts` | TypeScript types for separator models |
 | `models/MusicParts.ts` | Maps of stem keys to display names |
 | `models/PartId.ts` | Union type of valid stem identifiers |
@@ -87,7 +91,8 @@ When adding a new stem type (e.g., guitar, piano):
 
 2. **Badge component:**
    - Create `components/Mixer/Badges/<Stem>Badge.tsx`
-   - Use consistent color scheme (vocals=green, drums=yellow, bass=red, etc.)
+   - Export from `components/Badges.tsx` barrel file
+   - Use consistent color scheme (vocals=green, drums=yellow, bass=red, guitar=brown, piano=purple)
 
 3. **MixerPlayer updates:**
    - Add to `VolumeLevels`, `MuteStatus`, `SoloStatus` interfaces
@@ -98,9 +103,29 @@ When adding a new stem type (e.g., guitar, piano):
    - Add `Tone.Player` and `Tone.Channel` for audio playback
    - Update `componentWillUnmount()` cleanup
 
-4. **Forms:**
+4. **Forms and Modals:**
    - Add new `MusicPartMap` in `models/MusicParts.ts`
    - Update `StaticMixModalForm.tsx` to select correct map based on separator
+   - **Update `StaticMixModal.tsx`**: Add field to State interface, constructor, resetState(), onSubmit() data, and allChecked/noneChecked validation
+
+5. **Tables and Players:**
+   - Update `MixTable.tsx` partsFormatter to show badge for new stem
+   - Update `MusicPlayer.tsx` to show badge in audio player title
+
+6. **Backend Serializers (`api/serializers.py`):**
+   - Add field to `FullStaticMixSerializer.Meta.fields`
+   - Add field to `LiteStaticMixSerializer.Meta.fields`
+   - Add `<stem>_url` to `FullDynamicMixSerializer.Meta.fields`
+   - Add `<stem>_url` to `LiteDynamicMixSerializer.Meta.fields`
+   - Update validation logic in `FullStaticMixSerializer.validate()` for new separator variants
+
+7. **Model Constraints (`api/models.py`):**
+   - Add field to `StaticMix.Meta.unique_together`
+   - Create database migration after model changes
+
+8. **Frontend Models:**
+   - Add field to `models/StaticMix.ts` interface
+   - Add `<stem>_url` to `models/DynamicMix.ts` interface
 
 ## Adding a New Separator Model
 

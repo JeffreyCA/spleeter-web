@@ -9,6 +9,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 - [Spleeter](https://github.com/deezer/spleeter) (`4stems-model` and `5stems-model`)
 - [Demucs v3 and v4](https://github.com/facebookresearch/demucs)
+- [BS-RoFormer](https://arxiv.org/abs/2309.02612)
 
 **Retired models**:
 
@@ -34,8 +35,6 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 - [License](#license)
 
 ## Features
-- Supports Spleeter and Demucs source separation models for new mixes
-    - Each model supports a different set of user-configurable parameters in the UI
 - Dynamic Mixes let you export and play back in realtime your own custom mix of the different components
 - Import tracks by uploading an audio file or by a YouTube link
     - Built-in YouTube search functionality (YouTube Data API key required)

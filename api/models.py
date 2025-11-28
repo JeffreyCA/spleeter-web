@@ -410,7 +410,7 @@ class StaticMix(models.Model):
     class Meta:
         unique_together = [[
             'source_track', 'separator', 'separator_args', 'bitrate',
-            'vocals', 'drums', 'bass', 'other', 'piano'
+            'vocals', 'drums', 'bass', 'other', 'guitar', 'piano'
         ]]
 
 # pylint: disable=unsubscriptable-object

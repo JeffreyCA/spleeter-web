@@ -8,7 +8,7 @@ import { DynamicMix } from '../../models/DynamicMix';
 import { separatorLabelMap } from '../../models/Separator';
 import { StaticMix } from '../../models/StaticMix';
 import { toLocaleDateTimeString, toRelativeDateSpan } from '../../Utils';
-import { AccompBadge, AllBadge, BassBadge, DrumsBadge, PianoBadge, VocalsBadge } from '../Badges';
+import { AccompBadge, AllBadge, BassBadge, DrumsBadge, GuitarBadge, PianoBadge, VocalsBadge } from '../Badges';
 import DeleteDynamicMixButton from './Button/DeleteDynamicMixButton';
 import DeleteStaticMixButton from './Button/DeleteStaticMixButton';
 import PausePlayButton from './Button/PausePlayButton';
@@ -136,6 +136,7 @@ const partsFormatter: ColumnFormatter<MixItem> = (cellContent, row) => {
         {mix.other && <AccompBadge />}
         {mix.bass && <BassBadge />}
         {mix.drums && <DrumsBadge />}
+        {mix.guitar && <GuitarBadge />}
         {mix.piano && <PianoBadge />}
       </h5>
     );

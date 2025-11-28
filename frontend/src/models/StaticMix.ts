@@ -20,6 +20,7 @@ export interface StaticMix {
   vocals: boolean;
   other: boolean;
   piano: boolean;
+  guitar: boolean;
   bass: boolean;
   drums: boolean;
 }

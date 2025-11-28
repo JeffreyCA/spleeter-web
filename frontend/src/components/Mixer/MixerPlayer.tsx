@@ -712,19 +712,6 @@ class MixerPlayer extends React.Component<Props, State> {
           onSoloClick={this.onSoloClick}
           onVolChange={this.onVolChange}
         />
-        {this.hasPiano() && (
-          <VolumeUI
-            id="piano"
-            url={data?.piano_url ?? ''}
-            disabled={!isReady}
-            isActive={!muteStatus.piano && (soloStatus.piano || noneSoloed)}
-            isMuted={muteStatus.piano}
-            isSoloed={soloStatus.piano}
-            onMuteClick={this.onMuteClick}
-            onSoloClick={this.onSoloClick}
-            onVolChange={this.onVolChange}
-          />
-        )}
         {this.hasGuitar() && (
           <VolumeUI
             id="guitar"
@@ -733,6 +720,19 @@ class MixerPlayer extends React.Component<Props, State> {
             isActive={!muteStatus.guitar && (soloStatus.guitar || noneSoloed)}
             isMuted={muteStatus.guitar}
             isSoloed={soloStatus.guitar}
+            onMuteClick={this.onMuteClick}
+            onSoloClick={this.onSoloClick}
+            onVolChange={this.onVolChange}
+          />
+        )}
+        {this.hasPiano() && (
+          <VolumeUI
+            id="piano"
+            url={data?.piano_url ?? ''}
+            disabled={!isReady}
+            isActive={!muteStatus.piano && (soloStatus.piano || noneSoloed)}
+            isMuted={muteStatus.piano}
+            isSoloed={soloStatus.piano}
             onMuteClick={this.onMuteClick}
             onSoloClick={this.onSoloClick}
             onVolChange={this.onVolChange}
