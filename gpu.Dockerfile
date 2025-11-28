@@ -38,11 +38,16 @@ WORKDIR /webapp
 
 RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade wheel setuptools
-RUN pip3 install torch==2.9.0 torchaudio==2.9.0 --index-url https://download.pytorch.org/whl/cu128
+RUN pip3 install torch==2.9.1 torchaudio==2.9.1 --index-url https://download.pytorch.org/whl/cu128
 
 COPY requirements.txt requirements-spleeter.txt /webapp/
 RUN pip3 install --upgrade pip -r requirements.txt
 RUN pip3 install -r requirements-spleeter.txt --no-dependencies
+
+# Hugging Face CLI
+ENV HF_CLI_BIN_DIR=/usr/local/bin
+RUN curl -LsSf https://hf.co/cli/install.sh | bash
+
 COPY . .
 
 COPY api-entrypoint.sh /usr/local/bin/

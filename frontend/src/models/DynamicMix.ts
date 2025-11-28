@@ -22,4 +22,5 @@ export interface DynamicMix {
   piano_url: string | null;
   bass_url: string | null;
   drums_url: string | null;
+  guitar_url: string | null;
 }

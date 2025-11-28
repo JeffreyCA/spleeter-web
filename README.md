@@ -124,6 +124,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 * ffmpeg and ffprobe ([link](https://www.ffmpeg.org/download.html))
     * On macOS, you can install it using Homebrew or MacPorts
     * On Windows, you can follow [this guide](http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
+* Hugging Face CLI ([link])(https://huggingface.co/docs/huggingface_hub/en/guides/cli)
 
 ### Instructions
 1. Set environment variables
@@ -341,6 +342,7 @@ And especially to all the researchers and devs behind all the source separation 
 * [Demucs](https://github.com/facebookresearch/demucs)
 * [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net)
+* [BS-RoFormer](https://arxiv.org/abs/2309.02612)
 
 And additional thanks to these wonderful projects:
 
@@ -349,6 +351,7 @@ And additional thanks to these wonderful projects:
 * [react-dropzone-uploader](https://github.com/fortana-co/react-dropzone-uploader)
 * [react-music-player](https://github.com/lijinke666/react-music-player)
 * [docker-nginx-certbot](https://github.com/JonasAlfredsson/docker-nginx-certbot)
+* [ultimatevocalremovergui](https://github.com/Anjok07/ultimatevocalremovergui)
 
 Turntable icon made from [Icon Fonts](https://www.onlinewebfonts.com/icon/497039) is licensed by CC BY 3.0.
 

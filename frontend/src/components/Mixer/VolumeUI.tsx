@@ -3,7 +3,7 @@ import { Button, Col, Row } from 'react-bootstrap';
 import { Download } from 'react-bootstrap-icons';
 import ReactSlider from 'react-slider';
 import { PartId } from '../../models/PartId';
-import { AccompShortBadge, BassBadge, DrumsBadge, PianoBadge, VocalsBadge } from '../Badges';
+import { AccompShortBadge, BassBadge, DrumsBadge, GuitarBadge, PianoBadge, VocalsBadge } from '../Badges';
 import MuteButton from './MuteButton';
 import SoloButton from './SoloButton';
 import './VolumeUI.css';
@@ -49,6 +49,8 @@ const VolumeUI = (props: Props): JSX.Element => {
     badge = <DrumsBadge className="vol-badge" />;
   } else if (props.id === 'piano') {
     badge = <PianoBadge className="vol-badge" />;
+  } else if (props.id === 'guitar') {
+    badge = <GuitarBadge className="vol-badge" />;
   }
 
   const trackInactive = props.isActive ? '' : 'track-inactive';

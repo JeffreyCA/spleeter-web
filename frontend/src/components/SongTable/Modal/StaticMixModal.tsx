@@ -192,6 +192,8 @@ class StaticMixModal extends React.Component<Props, State> {
       noneChecked = noneChecked && !piano;
     }
 
+    const slowCpuModel = model.startsWith('bs_roformer');
+
     return (
       <Modal size="lg" show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
         <Modal.Header closeButton>
@@ -207,6 +209,7 @@ class StaticMixModal extends React.Component<Props, State> {
           />
           {allChecked && <Alert variant="warning">You must leave at least one part unchecked.</Alert>}
           {noneChecked && <Alert variant="warning">You must check at least one part.</Alert>}
+          {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger">
               {errors.map((val, idx) => (

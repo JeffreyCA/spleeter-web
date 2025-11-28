@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v4.1.0] - 2025-11-28
+
+### Added
+- Add BS-RoFormer model support, a newer SOTA model from ByteDance AI Research lab. Available in 4 variants:
+    - 4-stem
+    - 5-stem with guitar
+    - 5-stem with piano
+    - 6-stem with guitar and piano
+
+### Changed
+- Update dependencies
+
+
 ## [v4.0.0] - 2025-10-25
 
 ### Removed
