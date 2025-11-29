@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v4.1.0] - 2025-11-28
+
+### Added
+- Add BS-RoFormer model support, a newer SOTA model from ByteDance AI Research lab. Available in 4 variants:
+    - 4-stem
+    - 5-stem with guitar
+    - 5-stem with piano
+    - 6-stem with guitar and piano
+    - Weights used: https://huggingface.co/jarredou/BS-ROFO-SW-Fixed
+
+### Changed
+- Update dependencies
+
+
 ## [v4.0.0] - 2025-10-25
 
 ### Removed
@@ -420,7 +434,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v4.1.0...HEAD
+[v4.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v4.0.0...v4.1.0
 [v4.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.1...v4.0.0
 [v3.21.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.0...v3.21.1
 [v3.21.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.2...v3.21.0

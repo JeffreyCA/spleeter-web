@@ -23,6 +23,11 @@
   color: white;
 }
 
+.badge-guitar {
+  background-color: #8B4513;
+  color: white;
+}
+
 .badge-vocals-faded {
   background-color: #7c56c92c;
   color: white;
@@ -45,6 +50,11 @@
 
 .badge-bass-faded {
   background-color: #095ca428;
+  color: white;
+}
+
+.badge-guitar-faded {
+  background-color: #8b45132c;
   color: white;
 }
 

@@ -63,7 +63,7 @@ class LiteDynamicMixSerializer(serializers.ModelSerializer):
         model = DynamicMix
         fields = ('id', 'source_track', 'separator', 'bitrate', 'extra_info',
                   'artist', 'title', 'vocals_url', 'other_url', 'piano_url',
-                  'bass_url', 'drums_url', 'status', 'error', 'date_created',
+                  'bass_url', 'drums_url', 'guitar_url', 'status', 'error', 'date_created',
                   'date_finished')
 
 class LiteStaticMixSerializer(serializers.ModelSerializer):
@@ -78,7 +78,7 @@ class LiteStaticMixSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaticMix
         fields = ('id', 'source_track', 'separator', 'extra_info', 'artist',
-                  'title', 'vocals', 'drums', 'bass', 'other', 'piano', 'status', 'url',
+                  'title', 'vocals', 'drums', 'bass', 'other', 'piano', 'guitar', 'status', 'url',
                   'error', 'date_created', 'date_finished')
 
 class FullDynamicMixSerializer(serializers.ModelSerializer):
@@ -116,7 +116,7 @@ class FullDynamicMixSerializer(serializers.ModelSerializer):
         model = DynamicMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title',
-                  'vocals_url', 'other_url', 'piano_url', 'bass_url', 'drums_url', 'status',
+                  'vocals_url', 'other_url', 'piano_url', 'bass_url', 'drums_url', 'guitar_url', 'status',
                   'error', 'date_created', 'date_finished')
 
 class FullStaticMixSerializer(serializers.ModelSerializer):
@@ -140,6 +140,15 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         if data['separator'] == SPLEETER_PIANO:
             all_checked = all_checked and data['piano']
             none_checked = none_checked and not data['piano']
+        elif data['separator'] == BS_ROFORMER_5S_PIANO:
+            all_checked = all_checked and data['piano']
+            none_checked = none_checked and not data['piano']
+        elif data['separator'] == BS_ROFORMER_5S_GUITAR:
+            all_checked = all_checked and data['guitar']
+            none_checked = none_checked and not data['guitar']
+        elif data['separator'] == BS_ROFORMER_6S:
+            all_checked = all_checked and data['guitar'] and data['piano']
+            none_checked = none_checked and not data['guitar'] and not data['piano']
 
         if all_checked:
             raise serializers.ValidationError(
@@ -171,7 +180,7 @@ class FullStaticMixSerializer(serializers.ModelSerializer):
         model = StaticMix
         fields = ('id', 'celery_id', 'source_track', 'separator',
                   'separator_args', 'bitrate', 'artist', 'title',
-                  'vocals', 'drums', 'bass', 'other', 'piano', 'status', 'url', 'error',
+                  'vocals', 'drums', 'bass', 'other', 'guitar', 'piano', 'status', 'url', 'error',
                   'date_created', 'date_finished')
 
 class LiteSourceTrackSerializer(serializers.ModelSerializer):

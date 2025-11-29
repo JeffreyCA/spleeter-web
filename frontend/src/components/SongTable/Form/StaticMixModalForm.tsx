@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form } from 'react-bootstrap';
-import { MusicPartMap4, MusicPartMap5 } from '../../../models/MusicParts';
+import { MusicPartMap4, MusicPartMap5Guitar, MusicPartMap5Piano, MusicPartMap6 } from '../../../models/MusicParts';
 import { SongData } from '../../../models/SongData';
 import SeparatorFormGroup from './SeparatorFormGroup';
 import SongInfoFormGroup from './SongInfoFormGroup';
@@ -39,9 +39,24 @@ class StaticMixModalForm extends React.Component<Props, State> {
     this.props.handleModelChange(newModel);
   };
 
+  getMusicPartMap = (): Map<string, string> => {
+    const { selectedModel } = this.state;
+    switch (selectedModel) {
+      case 'spleeter_5stems':
+      case 'bs_roformer_5s_piano':
+        return MusicPartMap5Piano;
+      case 'bs_roformer_5s_guitar':
+        return MusicPartMap5Guitar;
+      case 'bs_roformer_6s':
+        return MusicPartMap6;
+      default:
+        return MusicPartMap4;
+    }
+  };
+
   render(): JSX.Element {
     const { song, handleCheckboxChange, handleRandomShiftsChange, handleOutputFormatChange } = this.props;
-    const MusicPartMap = this.state.selectedModel === 'spleeter_5stems' ? MusicPartMap5 : MusicPartMap4;
+    const MusicPartMap = this.getMusicPartMap();
 
     // Map part names to checkboxes
     const checkboxes = Array.from(MusicPartMap.keys()).map((key: string): JSX.Element => {

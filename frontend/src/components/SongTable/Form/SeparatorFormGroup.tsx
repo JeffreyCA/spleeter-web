@@ -3,6 +3,7 @@ import { Col, Form, OverlayTrigger, ToggleButton, ToggleButtonGroup, Tooltip } f
 import { QuestionCircle } from 'react-bootstrap-icons';
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 import {
+  DEFAULT_BS_ROFORMER_MODEL,
   DEFAULT_DEMUCS_MODEL,
   DEFAULT_MODEL,
   DEFAULT_MODEL_FAMILY,
@@ -62,6 +63,8 @@ class SeparatorFormGroup extends React.Component<Props, State> {
       this.onModelSelectChange(DEFAULT_SPLEETER_MODEL);
     } else if (modelFamily === 'demucs') {
       this.onModelSelectChange(DEFAULT_DEMUCS_MODEL);
+    } else if (modelFamily === 'bs_roformer') {
+      this.onModelSelectChange(DEFAULT_BS_ROFORMER_MODEL);
     }
   };
 
@@ -135,7 +138,7 @@ class SeparatorFormGroup extends React.Component<Props, State> {
                 4-stem
               </ToggleButton>
               <ToggleButton id="variant-spleeterpiano" variant="outline-secondary" value="spleeter_5stems">
-                5-stem (with piano)
+                5-stem (piano)
               </ToggleButton>
             </ToggleButtonGroup>
           </Col>
@@ -176,6 +179,36 @@ class SeparatorFormGroup extends React.Component<Props, State> {
       </Form.Group>
     );
 
+    const bsRoformerVariantPicker = (
+      <Form.Group className="mt-2 mb-1">
+        <Form.Label>Variant:</Form.Label>
+        <Form.Row>
+          <Col>
+            <ToggleButtonGroup type="radio" name="options" value={selectedModel} onChange={this.onModelSelectChange}>
+              <ToggleButton id="variant-bsroformer-4stem" variant="outline-secondary" value="bs_roformer">
+                4-stem
+              </ToggleButton>
+              <ToggleButton
+                id="variant-bsroformer-5stem-guitar"
+                variant="outline-secondary"
+                value="bs_roformer_5s_guitar">
+                5-stem (guitar)
+              </ToggleButton>
+              <ToggleButton
+                id="variant-bsroformer-5stem-piano"
+                variant="outline-secondary"
+                value="bs_roformer_5s_piano">
+                5-stem (piano)
+              </ToggleButton>
+              <ToggleButton id="variant-bsroformer-6stem" variant="outline-secondary" value="bs_roformer_6s">
+                6-stem (guitar + piano)
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Col>
+        </Form.Row>
+      </Form.Group>
+    );
+
     return (
       <Form.Group className={className} controlId="separator">
         <Form.Group className="mb-1">
@@ -187,6 +220,9 @@ class SeparatorFormGroup extends React.Component<Props, State> {
                 name="options"
                 value={selectedModelFamily}
                 onChange={this.onModelFamilyChange}>
+                <ToggleButton id="family-bsroformer" variant="outline-secondary" value="bs_roformer">
+                  BS-RoFormer
+                </ToggleButton>
                 <ToggleButton id="family-spleeter" variant="outline-secondary" value="spleeter">
                   Spleeter
                 </ToggleButton>
@@ -199,6 +235,7 @@ class SeparatorFormGroup extends React.Component<Props, State> {
         </Form.Group>
         {selectedModelFamily === 'spleeter' && spleeterVariantPicker}
         {selectedModelFamily === 'demucs' && demucsVariantPicker}
+        {selectedModelFamily === 'bs_roformer' && bsRoformerVariantPicker}
         {selectedModelFamily === 'demucs' && (
           <Form.Group className="mb-0 mt-2">
             <Form.Label id={randomShiftId}>

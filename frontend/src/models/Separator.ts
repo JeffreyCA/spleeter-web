@@ -1,10 +1,14 @@
-export type SeparatorFamily = 'spleeter' | 'd3net' | 'xumx' | 'demucs';
+export type SeparatorFamily = 'spleeter' | 'd3net' | 'xumx' | 'demucs' | 'bs_roformer';
 
 export type Separator =
   | 'spleeter'
   | 'spleeter_5stems'
   | 'd3net'
   | 'xumx'
+  | 'bs_roformer'
+  | 'bs_roformer_5s_guitar'
+  | 'bs_roformer_5s_piano'
+  | 'bs_roformer_6s'
   // Demucs v4
   | 'htdemucs'
   | 'htdemucs_ft'
@@ -27,7 +31,11 @@ export type Separator =
 // Map of separator IDs to labels
 export const separatorLabelMap = {
   spleeter: 'Spleeter',
-  spleeter_5stems: 'Spleeter 5 stems',
+  spleeter_5stems: 'Spleeter 5-stem',
+  bs_roformer: 'BS-RoFormer 4-stem',
+  bs_roformer_5s_guitar: 'BS-RoFormer 5-stem (guitar)',
+  bs_roformer_5s_piano: 'BS-RoFormer 5-stem (piano)',
+  bs_roformer_6s: 'BS-RoFormer 6-stem',
   d3net: 'D3Net (legacy)',
   xumx: 'X-UMX (legacy)',
   // Demucs v4
@@ -48,6 +56,15 @@ export const separatorLabelMap = {
   tasnet_extra: 'Tasnet v2 Extra',
   light: 'Demucs v1 Light',
   light_extra: 'Demucs v1 Light (extra)',
+};
+
+export const isBsRoformer = (separator: Separator): boolean => {
+  return (
+    separator === 'bs_roformer' ||
+    separator === 'bs_roformer_5s_guitar' ||
+    separator === 'bs_roformer_5s_piano' ||
+    separator === 'bs_roformer_6s'
+  );
 };
 
 export const isDemucsOrTasnet = (separator: Separator): boolean => {

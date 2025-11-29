@@ -42,6 +42,14 @@ SPLEETER = 'spleeter'
 SPLEETER_PIANO = 'spleeter_5stems'
 D3NET = 'd3net'
 XUMX = 'xumx'
+BS_ROFORMER = 'bs_roformer'
+BS_ROFORMER_5S_GUITAR = 'bs_roformer_5s_guitar'
+BS_ROFORMER_5S_PIANO = 'bs_roformer_5s_piano'
+BS_ROFORMER_6S = 'bs_roformer_6s'
+
+BS_ROFORMER_FAMILY = [
+    BS_ROFORMER, BS_ROFORMER_5S_GUITAR, BS_ROFORMER_5S_PIANO, BS_ROFORMER_6S
+]
 
 DEMUCS4_HT = 'htdemucs'
 DEMUCS4_HT_FT = 'htdemucs_ft'
@@ -71,6 +79,14 @@ DEMUCS_FAMILY = [
 SEP_CHOICES = [
     (SPLEETER, 'Spleeter'),
     (SPLEETER_PIANO, 'Spleeter with Piano'),
+    (
+        'bs_roformer',
+        (
+            (BS_ROFORMER, 'BS-RoFormer 4-stem'),
+            (BS_ROFORMER_5S_GUITAR, 'BS-RoFormer 5-stem (Guitar)'),
+            (BS_ROFORMER_5S_PIANO, 'BS-RoFormer 5-stem (Piano)'),
+            (BS_ROFORMER_6S, 'BS-RoFormer 6-stem'),
+        )),
     (D3NET, 'D3Net'),
     (
         'demucs',
@@ -261,7 +277,7 @@ class StaticMix(models.Model):
     # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Separation model
-    separator = models.CharField(max_length=20,
+    separator = models.CharField(max_length=40,
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
     # Separator-specific args
@@ -283,6 +299,8 @@ class StaticMix(models.Model):
     other = models.BooleanField()
     # Whether track contains piano
     piano = models.BooleanField(null=True, default=None)
+    # Whether track contains guitar
+    guitar = models.BooleanField(null=True, default=None)
     # Status of source separation task
     status = models.IntegerField(choices=TaskStatus.choices,
                                  default=TaskStatus.QUEUED)
@@ -324,10 +342,13 @@ class StaticMix(models.Model):
             parts_lst.append('drums')
         if self.bass:
             parts_lst.append('bass')
-        if self.other:
-            parts_lst.append('other')
         if self.piano:
             parts_lst.append('piano')
+        if self.guitar:
+            parts_lst.append('guitar')
+        if self.other:
+            parts_lst.append('other')
+
         prefix = ''.join(prefix_lst)
         parts = ','.join(parts_lst)
 
@@ -360,6 +381,14 @@ class StaticMix(models.Model):
             return [f'{self.get_bitrate_display()}', '4 stems (16 kHz)']
         elif self.separator == SPLEETER_PIANO:
             return [f'{self.get_bitrate_display()}', '5 stems (16 kHz)']
+        elif self.separator in BS_ROFORMER_FAMILY:
+            # stem_info = {
+            #     BS_ROFORMER: '4 stems',
+            #     BS_ROFORMER_5S_GUITAR: '5 stems (Guitar)',
+            #     BS_ROFORMER_5S_PIANO: '5 stems (Piano)',
+            #     BS_ROFORMER_6S: '6 stems',
+            # }
+            return [f'{self.get_bitrate_display()}']
         elif self.separator == D3NET:
             return [f'{self.get_bitrate_display()}']
         elif self.separator in DEMUCS_FAMILY:
@@ -381,7 +410,7 @@ class StaticMix(models.Model):
     class Meta:
         unique_together = [[
             'source_track', 'separator', 'separator_args', 'bitrate',
-            'vocals', 'drums', 'bass', 'other', 'piano'
+            'vocals', 'drums', 'bass', 'other', 'guitar', 'piano'
         ]]
 
 # pylint: disable=unsubscriptable-object
@@ -392,7 +421,7 @@ class DynamicMix(models.Model):
     # ID of the associated Celery task
     celery_id = models.UUIDField(default=None, null=True, blank=True)
     # Separation model
-    separator = models.CharField(max_length=20,
+    separator = models.CharField(max_length=40,
                                  choices=SEP_CHOICES,
                                  default=SPLEETER)
     # Separator-specific args
@@ -426,6 +455,12 @@ class DynamicMix(models.Model):
     drums_file = models.FileField(upload_to=mix_track_path,
                                   max_length=255,
                                   blank=True)
+    # Path to guitar file
+    guitar_file = models.FileField(upload_to=mix_track_path,
+                                   max_length=255,
+                                   blank=True,
+                                   null=True,
+                                   default=None)
     # Status of source separation task
     status = models.IntegerField(choices=TaskStatus.choices,
                                  default=TaskStatus.QUEUED)
@@ -457,6 +492,8 @@ class DynamicMix(models.Model):
         "[Demucs, 0]"
         """
         if self.separator == SPLEETER or self.separator == SPLEETER_PIANO:
+            return f'[{self.get_bitrate_display()},{self.separator}]'
+        elif self.separator in BS_ROFORMER_FAMILY:
             return f'[{self.get_bitrate_display()},{self.separator}]'
         elif self.separator == D3NET:
             return f'[{self.get_bitrate_display()}]'
@@ -505,6 +542,12 @@ class DynamicMix(models.Model):
             return self.drums_file.url
         return ''
 
+    def guitar_url(self):
+        """Get the URL of the guitar file."""
+        if self.guitar_file:
+            return self.guitar_file.url
+        return ''
+
     def source_path(self):
         """Get the path to the source file."""
         return self.source_track.source_file.file.path
@@ -519,6 +562,14 @@ class DynamicMix(models.Model):
             return [f'{self.get_bitrate_display()}', '4 stems (16 kHz)']
         elif self.separator == SPLEETER_PIANO:
             return [f'{self.get_bitrate_display()}', '5 stems (16 kHz)']
+        elif self.separator in BS_ROFORMER_FAMILY:
+            # stem_info = {
+            #     BS_ROFORMER: '4 stems',
+            #     BS_ROFORMER_5S_GUITAR: '5 stems (Guitar)',
+            #     BS_ROFORMER_5S_PIANO: '5 stems (Piano)',
+            #     BS_ROFORMER_6S: '6 stems',
+            # }
+            return [f'{self.get_bitrate_display()}']
         elif self.separator == D3NET:
             return [f'{self.get_bitrate_display()}']
         elif self.separator in DEMUCS_FAMILY:

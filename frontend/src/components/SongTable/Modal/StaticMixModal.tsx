@@ -45,6 +45,10 @@ interface State {
    */
   other: boolean;
   /**
+   * Whether to include guitar.
+   */
+  guitar: boolean;
+  /**
    * Whether to include piano.
    */
   piano: boolean;
@@ -72,6 +76,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false, // Include drums
       bass: false, // Include bass
       other: false, // Include accompaniment
+      guitar: false, // Include guitar
       piano: false, // Include piano
       isCreating: false,
       errors: [],
@@ -90,6 +95,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: false,
       bass: false,
       other: false,
+      guitar: false,
       piano: false,
       isCreating: false,
       errors: [],
@@ -131,6 +137,7 @@ class StaticMixModal extends React.Component<Props, State> {
       drums: this.state.drums,
       bass: this.state.bass,
       other: this.state.other,
+      guitar: this.state.guitar,
       piano: this.state.piano,
     };
 
@@ -178,7 +185,7 @@ class StaticMixModal extends React.Component<Props, State> {
   };
 
   render(): JSX.Element | null {
-    const { model, vocals, drums, bass, other, piano, errors, isCreating } = this.state;
+    const { model, vocals, drums, bass, other, guitar, piano, errors, isCreating } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
@@ -187,10 +194,18 @@ class StaticMixModal extends React.Component<Props, State> {
     // Display error if all or no parts are checked
     let allChecked = vocals && drums && bass && other;
     let noneChecked = !(vocals || drums || bass || other);
-    if (model === 'spleeter_5stems') {
+    if (model === 'spleeter_5stems' || model === 'bs_roformer_5s_piano') {
       allChecked = allChecked && piano;
       noneChecked = noneChecked && !piano;
+    } else if (model === 'bs_roformer_5s_guitar') {
+      allChecked = allChecked && guitar;
+      noneChecked = noneChecked && !guitar;
+    } else if (model === 'bs_roformer_6s') {
+      allChecked = allChecked && guitar && piano;
+      noneChecked = noneChecked && !guitar && !piano;
     }
+
+    const slowCpuModel = model.startsWith('bs_roformer');
 
     return (
       <Modal size="lg" show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
@@ -207,6 +222,7 @@ class StaticMixModal extends React.Component<Props, State> {
           />
           {allChecked && <Alert variant="warning">You must leave at least one part unchecked.</Alert>}
           {noneChecked && <Alert variant="warning">You must check at least one part.</Alert>}
+          {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger">
               {errors.map((val, idx) => (

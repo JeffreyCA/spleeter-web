@@ -138,11 +138,13 @@ class DynamicMixModal extends React.Component<Props, State> {
   };
 
   render(): JSX.Element | null {
-    const { isCreating, errors } = this.state;
+    const { model, isCreating, errors } = this.state;
     const { show, song } = this.props;
     if (!song) {
       return null;
     }
+
+    const slowCpuModel = model.startsWith('bs_roformer');
 
     return (
       <Modal size="lg" show={show} onHide={!isCreating ? this.onHide : undefined} onExited={this.onExited}>
@@ -156,6 +158,7 @@ class DynamicMixModal extends React.Component<Props, State> {
             handleRandomShiftsChange={this.handleRandomShiftsChange}
             handleOutputFormatChange={this.handleOutputFormatChange}
           />
+          {slowCpuModel && <Alert variant="warning">This model has very long CPU separation times.</Alert>}
           {errors.length > 0 && (
             <Alert variant="danger" className="m-0">
               {errors.map((val, idx) => (
