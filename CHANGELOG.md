@@ -434,7 +434,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Undocumented
 
 
-[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/JeffreyCA/spleeter-web/compare/v4.1.0...HEAD
+[v4.1.0]: https://github.com/JeffreyCA/spleeter-web/compare/v4.0.0...v4.1.0
 [v4.0.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.1...v4.0.0
 [v3.21.1]: https://github.com/JeffreyCA/spleeter-web/compare/v3.21.0...v3.21.1
 [v3.21.0]: https://github.com/JeffreyCA/spleeter-web/compare/v3.20.2...v3.21.0
