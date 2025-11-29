@@ -94,7 +94,7 @@ class MusicPlayer extends React.Component<Props> {
         drag={false}
         preload={true}
         autoHiddenCover={true}
-        showDownload={true}
+        showDownload={false}
         showPlayMode={false}
         showReload={false}
         showThemeSwitch={false}

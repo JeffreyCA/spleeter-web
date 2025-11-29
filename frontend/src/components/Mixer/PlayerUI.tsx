@@ -53,8 +53,8 @@ const PlayerUI = (props: Props): JSX.Element => {
       />
       <span className="time-duration">{formatTime(durationSeconds)}</span>
       <ExportButton
-        disabled={isExportDisabled}
-        error={exportError}
+        disabled={true}
+        // error={exportError}
         loading={isExportInitializing}
         onClick={onExportClick}
       />

@@ -95,11 +95,11 @@ class AutoRefreshButton extends React.Component<Props, State> {
 
   componentDidMount(): void {
     // Tick every second
-    this.tickInterval = setInterval(this.tick, 1000);
+    // this.tickInterval = setInterval(this.tick, 1000);
   }
 
   componentWillUnmount(): void {
-    clearInterval(this.tickInterval);
+    // clearInterval(this.tickInterval);
   }
 
   render(): JSX.Element {
@@ -109,14 +109,15 @@ class AutoRefreshButton extends React.Component<Props, State> {
 
     return (
       <div style={{ display: 'flex', alignItems: 'center', alignContent: 'center' }}>
-        <pre style={{ fontSize: 13, margin: 0 }}>{text}</pre>
+        <pre style={{ fontSize: 13, margin: 0 }}></pre>
         <Button
           variant="secondary"
           className="ml-3"
           size="sm"
-          disabled={appearRefreshing}
+          disabled
           onClick={this.refreshNow}
-          style={{ cursor: appearRefreshing ? 'progress' : 'pointer' }}>
+          // style={{ cursor: appearRefreshing ? 'progress' : 'pointer' }}
+        >
           <ArrowClockwise />
         </Button>
       </div>

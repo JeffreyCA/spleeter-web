@@ -86,7 +86,7 @@ const VolumeUI = (props: Props): JSX.Element => {
           )}
         />
       </Col>
-      <Button className="ml-4" size="sm" variant="success" disabled={!props.url} href={props.url} target="_blank">
+      <Button className="ml-4" size="sm" variant="success" disabled>
         <Download />
       </Button>
     </Row>

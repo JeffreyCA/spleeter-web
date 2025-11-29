@@ -2,6 +2,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { Alert } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
+import { DemoData } from '../../DemoData';
 import { DynamicMix } from '../../models/DynamicMix';
 import { SongData } from '../../models/SongData';
 import { StaticMix } from '../../models/StaticMix';
@@ -313,14 +314,7 @@ class Home extends React.Component<RouteComponentProps, State> {
    * Fetch song data from backend
    */
   loadData = async (): Promise<void> => {
-    return axios
-      .get<SongData[]>('/api/source-track/')
-      .then(({ data }) => {
-        if (data) {
-          this.setState({ songList: data });
-        }
-      })
-      .catch(error => console.log('API errors:', error));
+    this.setState({ songList: DemoData });
   };
 
   componentDidMount(): void {
@@ -328,7 +322,7 @@ class Home extends React.Component<RouteComponentProps, State> {
   }
 
   componentWillUnmount(): void {
-    clearInterval(this.taskInterval);
+    // clearInterval(this.taskInterval);
   }
 
   render(): JSX.Element {

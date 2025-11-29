@@ -17,7 +17,7 @@ class PlayMixButton extends React.Component<Props> {
       <Button
         variant="secondary"
         className="btn-circle p-2"
-        href={`/mixer/${mixId}/`}
+        href={`#/mixer/${mixId}/`}
         size="lg"
         style={{ borderRadius: '50%' }}>
         <RecordPlayer width={20} height={20} />

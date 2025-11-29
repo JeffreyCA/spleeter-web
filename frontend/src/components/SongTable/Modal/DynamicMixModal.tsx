@@ -152,6 +152,9 @@ class DynamicMixModal extends React.Component<Props, State> {
           <Modal.Title>Create dynamic mix</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <Alert variant="danger">
+            <div>Functionality disabled for demo purposes.</div>
+          </Alert>
           <DynamicMixModalForm
             song={song}
             handleModelChange={this.handleModelChange}
@@ -171,7 +174,7 @@ class DynamicMixModal extends React.Component<Props, State> {
           <Button variant="outline-danger" disabled={isCreating} onClick={this.onHide}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={this.onSubmit} disabled={isCreating}>
+          <Button variant="success" disabled>
             Create Mix
           </Button>
         </Modal.Footer>

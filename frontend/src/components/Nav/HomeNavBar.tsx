@@ -14,7 +14,12 @@ const HomeNavBar = (props: Props): JSX.Element => {
   return (
     <Navbar bg="light" variant="light" expand="lg">
       <Container>
-        <Navbar.Brand href="/">Spleeter Web</Navbar.Brand>
+        <Navbar.Brand href="https://jeffreyca.github.io/spleeter-web/">Spleeter Web (Demo)</Navbar.Brand>
+        <Nav className="mr-auto">
+          <Nav.Link target="_blank" rel="noopener noreferrer" href="https://github.com/JeffreyCA/spleeter-web">
+            GitHub
+          </Nav.Link>
+        </Nav>
         <Navbar.Toggle />
         <Navbar.Collapse className="text-right">
           <Nav className="ml-auto">

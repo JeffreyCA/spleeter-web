@@ -1,7 +1,7 @@
-import axios from 'axios';
 import * as React from 'react';
 import { Alert, Badge, Container, Row, Spinner } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router';
+import { DynamicMixData } from '../../DemoData';
 import { DynamicMix } from '../../models/DynamicMix';
 import { separatorLabelMap } from '../../models/Separator';
 import PlainNavBar from '../Nav/PlainNavBar';
@@ -56,79 +56,22 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
 
   loadData = (): void => {
     const mixId = this.getMixId();
-    axios
-      .get<DynamicMix>(`/api/mix/dynamic/${mixId}/`)
-      .then(({ data }) => {
-        if (data) {
-          this.setState({ isLoaded: true, data: data });
-          document.title = `${data.title} - ${data.artist} · Spleeter Web`;
-        }
-        if (data.error) {
-          this.setState({
-            errors: [data.error],
-          });
-        }
-        if (data.status === 'Queued' || data.status === 'In Progress') {
-          this.timeout = setTimeout(() => this.loadData(), 5000);
-        } else if (data.status === 'Done') {
-          this.setState({ showCancelTaskModal: false });
-        }
-      })
-      .catch(() => {
-        this.setState({
-          isLoaded: true,
-          data: undefined,
-          errors: [`Dynamic mix ${mixId} does not exist.`],
-        });
-      });
+    const data = DynamicMixData.get(mixId);
+    if (data?.title && data?.artist) {
+      document.title = `${data.title} - ${data.artist} · Spleeter Web`;
+    }
+    this.setState({
+      isLoaded: true,
+      data: data,
+    });
   };
 
   cancelTask = (): Promise<void> => {
-    const mixId = this.getMixId();
-    this.setState({
-      isDeleting: true,
-    });
-    // Cancel dynamic mix task
-    return axios
-      .delete(`/api/mix/dynamic/${mixId}/`)
-      .then(() => {
-        this.setState({
-          isDeleting: false,
-          isAborted: true,
-        });
-        clearTimeout(this.timeout);
-      })
-      .catch(({ response }) => {
-        const { data } = response;
-        this.setState({
-          isDeleting: false,
-          errors: [data.error],
-        });
-      });
+    return Promise.resolve();
   };
 
   deleteTask = (): Promise<void> => {
-    const mixId = this.getMixId();
-    this.setState({
-      isDeleting: true,
-    });
-    // Delete dynamic mix task
-    return axios
-      .delete(`/api/mix/dynamic/${mixId}/`)
-      .then(() => {
-        this.setState({
-          isDeleting: false,
-          isDeleted: true,
-        });
-        clearTimeout(this.timeout);
-      })
-      .catch(({ response }) => {
-        const { data } = response;
-        this.setState({
-          isDeleting: false,
-          errors: [data.error],
-        });
-      });
+    return Promise.resolve();
   };
 
   componentDidMount(): void {
@@ -136,7 +79,7 @@ class Mixer extends React.Component<RouteComponentProps<MatchParams>, State> {
   }
 
   componentWillUnmount(): void {
-    clearInterval(this.timeout);
+    // clearInterval(this.timeout);
   }
 
   onCancelTaskClick = (): void => {

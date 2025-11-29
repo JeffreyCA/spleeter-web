@@ -130,7 +130,7 @@ class SongTable extends React.Component<Props> {
       if (oldValue !== newValue && newValue) {
         const id = row.id;
         const dataField = column.dataField;
-        axios.patch(`/api/source-track/${id}/`, { [dataField]: newValue });
+        // axios.patch(`/api/source-track/${id}/`, { [dataField]: newValue });
       }
     };
 
@@ -204,14 +204,16 @@ class SongTable extends React.Component<Props> {
         editable: true,
         text: 'Title',
         sort: true,
-        validator: (newValue: string) => {
-          if (!newValue) {
+        validator: (newValue: string, row: SongData, column) => {
+          if (newValue !== row[column.dataField as 'artist' | 'title']) {
             return {
               valid: false,
-              message: 'Cannot be empty.',
+              message: 'Disabled for demo purposes.',
             };
           }
-          return true;
+          return {
+            valid: true,
+          };
         },
       },
       {
@@ -219,14 +221,16 @@ class SongTable extends React.Component<Props> {
         editable: true,
         text: 'Artist',
         sort: true,
-        validator: (newValue: string) => {
-          if (!newValue) {
+        validator: (newValue: string, row: SongData, column) => {
+          if (newValue !== row[column.dataField as 'artist' | 'title']) {
             return {
               valid: false,
-              message: 'Cannot be empty.',
+              message: 'Disabled for demo purposes.',
             };
           }
-          return true;
+          return {
+            valid: true,
+          };
         },
       },
       {

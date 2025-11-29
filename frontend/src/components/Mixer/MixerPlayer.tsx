@@ -212,7 +212,7 @@ class MixerPlayer extends React.Component<Props, State> {
         isExportInitializing: true,
       });
       this.ffmpeg = createFFmpeg({
-        corePath: '/static/dist/node_modules/@jeffreyca/ffmpeg.wasm-core/dist/ffmpeg-core.js',
+        corePath: '/spleeter-web/dist/node_modules/@jeffreyca/ffmpeg.wasm-core/dist/ffmpeg-core.js',
         log: false,
         progress: this.onExportProgressTick,
       });
