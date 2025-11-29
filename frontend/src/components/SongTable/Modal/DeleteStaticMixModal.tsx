@@ -101,14 +101,17 @@ class DeleteStaticMixModal extends React.Component<Props, State> {
     if (mix.other) {
       parts.push('accompaniment');
     }
-    if (mix.piano) {
-      parts.push('piano');
-    }
     if (mix.bass) {
       parts.push('bass');
     }
     if (mix.drums) {
       parts.push('drums');
+    }
+    if (mix.piano) {
+      parts.push('piano');
+    }
+    if (mix.guitar) {
+      parts.push('guitar');
     }
 
     const description = parts.join(', ');
