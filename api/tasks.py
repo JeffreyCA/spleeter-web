@@ -106,6 +106,13 @@ def create_static_mix(static_mix_id):
         }
         if static_mix.separator == SPLEETER_PIANO:
             parts['piano'] = static_mix.piano
+        elif static_mix.separator == BS_ROFORMER_5S_GUITAR:
+            parts['guitar'] = static_mix.guitar
+        elif static_mix.separator == BS_ROFORMER_5S_PIANO:
+            parts['piano'] = static_mix.piano
+        elif static_mix.separator == BS_ROFORMER_6S:
+            parts['guitar'] = static_mix.guitar
+            parts['piano'] = static_mix.piano
 
         # Non-local filesystems like S3/Azure Blob do not support source_path()
         is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'

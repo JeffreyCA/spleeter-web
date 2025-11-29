@@ -135,6 +135,7 @@ When adding a new source separation model:
    - Add model constant(s) to `api/models.py` in `SEP_CHOICES`
    - Create separator class in `api/separators/<name>_separator.py`
    - Update `get_separator()` in `api/tasks.py`
+   - **Update `create_static_mix()` in `api/tasks.py`**: Add logic to include new stem fields (e.g., `guitar`, `piano`) in the `parts` dictionary for the new separator variants
    - Add any new stem fields to `StaticMix` and `DynamicMix` models
    - Create database migration: `python manage.py makemigrations api`
 
