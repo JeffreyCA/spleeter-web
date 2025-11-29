@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from einops import rearrange, reduce
 
 """
-Code adapted from https://github.com/Anjok07/ultimatevocalremovergui/blob/v5.6.0_roformer_add%2Bdirectml/lib_v5/attend.py which is copyrighted under the terms of the MIT license.
+Code adapted from https://github.com/Anjok07/ultimatevocalremovergui/blob/v5.6.0_roformer_add%2Bdirectml/lib_v5/bs_roformer.py and https://github.com/lucidrains/BS-RoFormer which are copyrighted under the terms of the MIT license.
 """
 
 # constants

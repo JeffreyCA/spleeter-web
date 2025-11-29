@@ -9,7 +9,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
 
 - [Spleeter](https://github.com/deezer/spleeter) (`4stems-model` and `5stems-model`)
 - [Demucs v3 and v4](https://github.com/facebookresearch/demucs)
-- [BS-RoFormer](https://arxiv.org/abs/2309.02612)
+- [BS-RoFormer](https://github.com/lucidrains/BS-RoFormer)
 
 **Retired models**:
 
@@ -341,7 +341,7 @@ And especially to all the researchers and devs behind all the source separation 
 * [Demucs](https://github.com/facebookresearch/demucs)
 * [CrossNet-Open-Unmix](https://github.com/sony/ai-research-code/tree/master/x-umx)
 * [D3Net](https://github.com/sony/ai-research-code/tree/master/d3net)
-* [BS-RoFormer](https://arxiv.org/abs/2309.02612)
+* [BS-RoFormer](https://github.com/lucidrains/BS-RoFormer)
 
 And additional thanks to these wonderful projects:
 

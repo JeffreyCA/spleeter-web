@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - 5-stem with piano
     - 6-stem with guitar and piano
     - Weights used: https://huggingface.co/jarredou/BS-ROFO-SW-Fixed
+    - Implementation adapted from [ultimatevocalremovergui](https://github.com/Anjok07/ultimatevocalremovergui) and [BS-RoFormer](https://github.com/lucidrains/BS-RoFormer) under MIT license
 
 ### Changed
 - Update dependencies
