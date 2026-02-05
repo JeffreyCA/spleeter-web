@@ -1,4 +1,4 @@
-azure-storage-blob==12.27.1
+azure-storage-blob==12.28.0
 boto3==1.42.42
 celery==5.3.6
 cffi==2.0.0
