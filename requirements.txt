@@ -24,7 +24,7 @@ torch==2.9.1
 torchaudio==2.9.1
 tzdata==2025.2
 validators==0.35.0
-whitenoise==6.11.0
+whitenoise==6.12.0
 yapf==0.43.0
 youtube-title-parse==1.0.0
 yt-dlp @ git+https://github.com/JeffreyCA/yt-dlp@c1f39eda43ccdbe7065d38b2b43f5009f460199e
