@@ -41,5 +41,5 @@ typer==0.20.0
 # BS-RoFormer dependencies
 einops>=0.6.0
 beartype>=0.14.0
-rotary-embedding-torch>=0.3.0
+rotary-embedding-torch>=0.8.9
 omegaconf>=2.3.0
