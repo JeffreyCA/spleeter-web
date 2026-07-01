@@ -42,4 +42,4 @@ typer==0.20.0
 einops>=0.6.0
 beartype>=0.14.0
 rotary-embedding-torch>=0.3.0
-omegaconf>=2.3.0
+omegaconf>=2.3.1
