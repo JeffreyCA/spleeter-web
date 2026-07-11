@@ -21,38 +21,53 @@ This module defines a wrapper interface over the BS-RoFormer model for music sou
 Code adapted from https://github.com/Anjok07/ultimatevocalremovergui/blob/v5.6.0_roformer_add%2Bdirectml/separate.py which is copyrighted under the terms of the MIT license.
 """
 
-# Hugging Face repository URL
-HF_REPO_ID = 'jarredou/BS-ROFO-SW-Fixed'
-HF_REVISION = 'f99fc5c2e4bc201413cfc1ca5767cf62ddb1a9a4'
+# Hugging Face repository and files
+HF_REPO_ID = 'noblebarkrr/mvsepless_resources'
+HF_REVISION = '370198fbb6997e3f5774778254698794e7b1267d'
+HF_MODEL_FILENAME = 'bs_roformer/bs_6stem_fixed.ckpt'
+HF_CONFIG_FILENAME = 'bs_roformer/bs_6stem_fixed_config.yaml'
 
 # Default paths for model files
 DEFAULT_MODEL_DIR = Path('pretrained_models/bs_roformer')
-DEFAULT_MODEL_PATH = DEFAULT_MODEL_DIR / 'BS-Rofo-SW-Fixed.ckpt'
-DEFAULT_CONFIG_PATH = DEFAULT_MODEL_DIR / 'BS-Rofo-SW-Fixed.yaml'
+DEFAULT_MODEL_PATH = DEFAULT_MODEL_DIR / 'bs_6stem_fixed.ckpt'
+DEFAULT_CONFIG_PATH = DEFAULT_MODEL_DIR / 'bs_6stem_fixed_config.yaml'
 
 
 def try_download_model(model_dir: Path = DEFAULT_MODEL_DIR,
-                              model_path: Path = DEFAULT_MODEL_PATH,
-                              config_path: Path = DEFAULT_CONFIG_PATH):
+                       model_path: Path = DEFAULT_MODEL_PATH,
+                       config_path: Path = DEFAULT_CONFIG_PATH):
     """
     Download BS-RoFormer model from Hugging Face if not already present.
-    Uses huggingface cli to fetch the repository.
+    Uses huggingface cli to fetch only the required files.
     """
+
+    if model_path.is_file() and config_path.is_file():
+        return
 
     print(f'Downloading BS-RoFormer model from {HF_REPO_ID} if needed...')
     
     # Create parent directory if needed
-    model_dir.parent.mkdir(parents=True, exist_ok=True)
+    model_dir.mkdir(parents=True, exist_ok=True)
     
     # Download using huggingface cli - no-ops if already present
     try:
         subprocess.run(
-            ['hf', 'download', HF_REPO_ID, '--revision', HF_REVISION, '--local-dir', str(model_dir)],
+            [
+                'hf', 'download', HF_REPO_ID,
+                HF_MODEL_FILENAME, HF_CONFIG_FILENAME,
+                '--revision', HF_REVISION,
+                '--local-dir', str(model_dir.parent),
+            ],
             check=True
         )
-        # print(f'Successfully downloaded BS-RoFormer model to {model_dir}')
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f'Failed to download BS-RoFormer model') from e
+    except (OSError, subprocess.CalledProcessError) as e:
+        raise RuntimeError('Failed to download BS-RoFormer model') from e
+
+    missing_paths = [path for path in (model_path, config_path) if not path.is_file()]
+    if missing_paths:
+        raise RuntimeError(
+            f'BS-RoFormer download completed but files are missing: {missing_paths}'
+        )
 
 
 def load_config(config_path):
