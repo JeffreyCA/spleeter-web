@@ -2,7 +2,7 @@ azure-storage-blob==12.27.1
 boto3==1.43.54
 celery==5.3.6
 cffi==2.0.0
-demucs==4.0.1
+demucs==4.1.0
 Django==4.2.26
 django-picklefield==3.4.0
 django-storages==1.14.6
