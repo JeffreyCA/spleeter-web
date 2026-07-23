@@ -40,6 +40,6 @@ pandas==1.5.3
 typer==0.20.0
 # BS-RoFormer dependencies
 einops>=0.6.0
-beartype>=0.14.0
+beartype>=0.22.9
 rotary-embedding-torch>=0.3.0
 omegaconf>=2.3.0
