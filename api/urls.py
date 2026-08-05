@@ -27,5 +27,7 @@ urlpatterns = [
          views.DynamicMixRetrieveDestroyView.as_view()),
     path('api/task/', views.YTAudioDownloadTaskListView.as_view()),
     path('api/task/<uuid:id>/',
-         views.YTAudioDownloadTaskRetrieveView.as_view())
+         views.YTAudioDownloadTaskRetrieveView.as_view()),
+    path('api/recovery/scan/', views.RecoveryScanView.as_view()),
+    path('api/recovery/import/', views.RecoveryImportView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

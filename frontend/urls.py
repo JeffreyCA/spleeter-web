@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
+    path('recovery/', TemplateView.as_view(template_name='index.html')),
     re_path('mixer/.*/', views.index, name='index')
 ]

@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 
+from . import recovery
 from .celery import app
 from .models import *
 from .serializers import *
@@ -437,3 +438,27 @@ class YTAudioDownloadTaskListView(generics.ListAPIView):
     """View that handles listing YouTube download tasks."""
     queryset = YTAudioDownloadTask.objects.all()
     serializer_class = YTAudioDownloadTaskSerializer
+
+class RecoveryScanView(APIView):
+    """View that scans the media directory for recoverable uploads and mixes."""
+    def get(self, request):
+        if not recovery.storage_is_local():
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'errors': ['Recovery requires local file storage']
+                },
+                status=400)
+        return JsonResponse(recovery.perform_scan())
+
+class RecoveryImportView(APIView):
+    """View that imports user-confirmed recoverable uploads and mixes."""
+    def post(self, request):
+        if not recovery.storage_is_local():
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'errors': ['Recovery requires local file storage']
+                },
+                status=400)
+        return JsonResponse(recovery.perform_import(request.data))

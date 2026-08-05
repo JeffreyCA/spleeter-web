@@ -1,0 +1,9 @@
+.recovery-editable {
+  border-bottom: 1px dashed #adb5bd;
+  cursor: pointer;
+}
+
+.recovery-editable .recovery-edit-icon {
+  color: #adb5bd;
+  margin-left: 0.25rem;
+}

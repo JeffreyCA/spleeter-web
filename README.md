@@ -30,6 +30,7 @@ The app uses [Django](https://www.djangoproject.com/) for the backend API and [R
     - [Environment variables](#environment-variables)
 - [Using cloud storage](#using-cloud-storage-azure-storage-aws-s3-etc)
 - [Deployment](#deployment)
+- [Recovering from a lost database](#recovering-from-a-lost-database)
 - [Common issues & FAQs](#common-issues--faqs)
 - [Credits](#credits)
 - [License](#license)
@@ -327,6 +328,10 @@ If you have `ENABLE_CROSS_ORIGIN_HEADERS` set, then you'll need to additionally 
 ## HTTPS support
 
 Enabling HTTPS allows you to export Dynamic Mixes from your browser. To enable HTTPS, set **both** `CERTBOT_DOMAIN` and `CERTBOT_EMAIL` to your domain name and `CERTBOT_EMAIL` to your email in `.env` and include `-f docker-compose.https.yml` in your `docker-compose up` command.
+
+## Recovering from a lost database
+
+If the database is ever lost but the `media` directory survives, visit `/recovery` (a hidden maintenance page) to scan the media directory and re-import the tracks and mixes into the database on a best-effort basis. Only local file storage is supported, and some metadata (such as YouTube links) cannot be recovered.
 
 ## [Common issues & FAQs](https://github.com/JeffreyCA/spleeter-web/wiki/Common-issues-&-FAQs)
 
