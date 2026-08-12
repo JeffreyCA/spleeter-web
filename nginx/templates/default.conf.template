@@ -18,6 +18,8 @@ server {
 
     location / {
         proxy_pass http://django_react;
+        # Must not be below the gunicorn timeout, or slow requests 504 here first
+        proxy_read_timeout 120s;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Host $host;

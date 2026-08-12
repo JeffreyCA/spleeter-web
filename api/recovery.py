@@ -218,16 +218,28 @@ def file_mtime(path):
 def list_files_with_ext(dir_path, extensions):
     """List files in a directory whose extension is in the given set.
 
+    Media directories can live on slow bind mounts (a Docker Desktop host
+    mount, say), where every syscall is expensive, so this checks the
+    extension before asking whether the entry is a file, and uses scandir so
+    that the answer usually comes from the directory listing itself rather
+    than a stat call per entry.
+
     :param dir_path: Directory to list
     :param extensions: Set of lowercase extensions including the dot
     :return: Sorted list of matching file names
     """
     result = []
-    for name in sorted(os.listdir(dir_path)):
-        if not os.path.isfile(os.path.join(dir_path, name)):
-            continue
-        if os.path.splitext(name)[1].lower() in extensions:
-            result.append(name)
+    try:
+        with os.scandir(dir_path) as entries:
+            for entry in entries:
+                if os.path.splitext(entry.name)[1].lower() not in extensions:
+                    continue
+                if entry.is_file():
+                    result.append(entry.name)
+    except OSError:
+        # Missing directory, or a file where a directory was expected
+        return []
+    result.sort()
     return result
 
 
@@ -238,8 +250,6 @@ def find_upload_file(dir_id):
     :return: File name, or None if the directory has no valid audio file
     """
     dir_path = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR, dir_id)
-    if not os.path.isdir(dir_path):
-        return None
     files = list_files_with_ext(dir_path, set(settings.VALID_FILE_EXT))
     return files[0] if files else None
 
@@ -251,8 +261,6 @@ def parse_mix_dir(dir_id):
     :return: Dict describing the directory, or None if it has no mix files
     """
     dir_path = os.path.join(settings.MEDIA_ROOT, settings.SEPARATE_DIR, dir_id)
-    if not os.path.isdir(dir_path):
-        return None
     files = list_files_with_ext(dir_path, MIX_FILE_EXTS)
     if not files:
         return None

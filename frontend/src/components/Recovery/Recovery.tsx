@@ -262,10 +262,14 @@ class Recovery extends React.Component<Record<string, never>, State> {
     const { existingTracks } = this.state;
     return [
       { value: '', label: 'Select a track...' },
-      ...existingTracks.map(track => ({
-        value: `track:${track.id}`,
-        label: `${track.artist ? `${track.artist} - ` : ''}${track.title}`,
-      })),
+      // Sorted, because this list can run to hundreds of entries and is
+      // otherwise in database insertion order
+      ...existingTracks
+        .map(track => ({
+          value: `track:${track.id}`,
+          label: `${track.artist ? `${track.artist} - ` : ''}${track.title}`,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
     ];
   };
 
@@ -379,24 +383,10 @@ class Recovery extends React.Component<Record<string, never>, State> {
       },
     ];
 
-    // When a source track is selected, mirror that track's metadata so the cells
-    // always show what the mix will actually get; otherwise show the values
-    // inferred from the filename as a hint of what the mix is.
-    const existingTrackById: { [id: string]: RecoveryTrackRef } = {};
-    this.state.existingTracks.forEach(track => (existingTrackById[track.id] = track));
-    // eslint-disable-next-line react/display-name
-    const mixMetadataFormatter = (field: 'artist' | 'title') => (cell: string, row: RecoveryMix) => {
-      const track = existingTrackById[row.track.split(':')[1]];
-      return track ? (
-        <span className="text-muted" title="Comes from the selected source track">
-          {track[field]}
-        </span>
-      ) : (
-        <span className="text-muted font-italic" title="Inferred from the file name">
-          {cell}
-        </span>
-      );
-    };
+    // These always describe the mix file itself, never the selected source track.
+    // They are what identifies the row, and what makes a wrong assignment visible
+    // when compared against the Source track column.
+    const mixMetadataFormatter = (cell: string) => <span title="Read from the mix file name">{cell}</span>;
 
     const mixColumns: ColumnDescription<RecoveryMix>[] = [
       {
@@ -438,14 +428,14 @@ class Recovery extends React.Component<Record<string, never>, State> {
       {
         dataField: 'artist',
         editable: false,
-        text: 'Artist',
-        formatter: mixMetadataFormatter('artist'),
+        text: 'Mix artist',
+        formatter: mixMetadataFormatter,
       },
       {
         dataField: 'title',
         editable: false,
-        text: 'Title',
-        formatter: mixMetadataFormatter('title'),
+        text: 'Mix title',
+        formatter: mixMetadataFormatter,
       },
       {
         dataField: 'track',

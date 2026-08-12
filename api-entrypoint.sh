@@ -16,7 +16,7 @@ python3.11 manage.py migrate
 
 echo "Starting server"
 if [[ -z "${DJANGO_DEVELOPMENT}" ]]; then
-    gunicorn -b $API_HOST:8000 django_react.wsgi
+    gunicorn -b $API_HOST:8000 --timeout ${GUNICORN_TIMEOUT:-120} django_react.wsgi
 else
     python3.11 manage.py runserver $API_HOST:8000
 fi
