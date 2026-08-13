@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
-import { Alert, Badge, Button, Container, Form, Spinner, Tab, Tabs } from 'react-bootstrap';
-import { PauseFill, Pencil, PlayFill } from 'react-bootstrap-icons';
+import { Alert, Badge, Button, Container, Form, ListGroup, Modal, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { Clipboard, ClipboardCheck, PauseFill, Pencil, PlayFill } from 'react-bootstrap-icons';
 import BootstrapTable, { ColumnDescription, SelectRowProps } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import cellEditFactory from 'react-bootstrap-table2-editor';
@@ -61,6 +61,11 @@ interface State {
   activeTab: string;
   placeholderArtist: string;
   placeholderTitle: string;
+  // Mix whose source track is being chosen in the picker modal, if any
+  pickerMixId?: string;
+  pickerFilter: string;
+  // Path most recently copied from the picker, briefly shown with a checkmark
+  copiedPath?: string;
 }
 
 /**
@@ -70,6 +75,8 @@ interface State {
  */
 class Recovery extends React.Component<Record<string, never>, State> {
   audio: HTMLAudioElement;
+  pickerSearchRef = React.createRef<HTMLInputElement>();
+  copyResetTimer?: number;
 
   constructor(props: Record<string, never>) {
     super(props);
@@ -90,6 +97,9 @@ class Recovery extends React.Component<Record<string, never>, State> {
       activeTab: 'uploads',
       placeholderArtist: '',
       placeholderTitle: '',
+      pickerMixId: undefined,
+      pickerFilter: '',
+      copiedPath: undefined,
     };
   }
 
@@ -99,6 +109,7 @@ class Recovery extends React.Component<Record<string, never>, State> {
 
   componentWillUnmount(): void {
     this.audio.pause();
+    window.clearTimeout(this.copyResetTimer);
   }
 
   stopPlayback = (): void => {
@@ -228,6 +239,49 @@ class Recovery extends React.Component<Record<string, never>, State> {
     this.setState({ activeTab: tab ?? 'uploads' });
   };
 
+  openPicker = (mixId: string): void => {
+    this.setState({ pickerMixId: mixId, pickerFilter: '' });
+  };
+
+  closePicker = (): void => {
+    this.setState({ pickerMixId: undefined });
+  };
+
+  pickTrack = (value: string): void => {
+    if (this.state.pickerMixId) {
+      this.onTrackChoiceChange(this.state.pickerMixId, value);
+    }
+    this.closePicker();
+  };
+
+  focusPickerSearch = (): void => {
+    this.pickerSearchRef.current?.focus();
+  };
+
+  // navigator.clipboard needs a secure context, and this page may well be
+  // served over plain http
+  copyViaTextarea = (path: string): void => {
+    const textarea = document.createElement('textarea');
+    textarea.value = path;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  };
+
+  copyPath = (path: string, event: React.MouseEvent): void => {
+    // The copy icon sits inside the clickable list entry; don't pick the track
+    event.stopPropagation();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(path).catch(() => this.copyViaTextarea(path));
+    } else {
+      this.copyViaTextarea(path);
+    }
+    this.setState({ copiedPath: path });
+    window.clearTimeout(this.copyResetTimer);
+    this.copyResetTimer = window.setTimeout(() => this.setState({ copiedPath: undefined }), 1500);
+  };
+
   onTrackChoiceChange = (mixId: string, value: string): void => {
     // Replace the row object so the table repaints the whole row, including the
     // artist/title cells whose editability depends on this choice
@@ -258,7 +312,7 @@ class Recovery extends React.Component<Record<string, never>, State> {
     this.setState({ selectedMixIds: isSelected ? rows.map(row => row.id) : [] });
   };
 
-  trackChoiceOptions = (): Array<{ value: string; label: string; title: string }> => {
+  trackChoiceOptions = (): Array<{ value: string; label: string; path: string }> => {
     const { existingTracks } = this.state;
     const trackName = (track: RecoveryTrackRef) => `${track.artist ? `${track.artist} - ` : ''}${track.title}`;
     const countBy = (values: string[]) => {
@@ -267,33 +321,90 @@ class Recovery extends React.Component<Record<string, never>, State> {
       return counts;
     };
 
-    // Tracks that share a name are indistinguishable by name alone, so those
-    // spell out the file they came from. The same file can also be uploaded
-    // twice, so anything still ambiguous falls back to part of the track ID.
-    const nameCounts = countBy(existingTracks.map(trackName));
-    const labelled = existingTracks.map(track => {
-      const name = trackName(track);
-      const file = track.path.split('/').pop() || 'no file';
-      return {
-        value: `track:${track.id}`,
-        label: nameCounts[name] > 1 ? `${name}  [${file}]` : name,
-        title: track.path || 'no file',
-      };
-    });
-    const labelCounts = countBy(labelled.map(option => option.label));
+    // The file path shown with every entry is what tells tracks with the same
+    // name apart. The same file can also be uploaded twice, so entries whose
+    // name and path both collide get part of the track ID appended.
+    const identityCounts = countBy(existingTracks.map(track => `${trackName(track)} ${track.path}`));
+    // Sorted, because this list can run to hundreds of entries and is
+    // otherwise in database insertion order
+    return existingTracks
+      .map(track => {
+        const name = trackName(track);
+        return {
+          value: `track:${track.id}`,
+          label: identityCounts[`${name} ${track.path}`] > 1 ? `${name}  #${track.id.slice(0, 8)}` : name,
+          path: track.path,
+        };
+      })
+      .sort((a, b) => a.label.localeCompare(b.label) || a.path.localeCompare(b.path));
+  };
 
-    return [
-      { value: '', label: 'Select a track...', title: '' },
-      // Sorted, because this list can run to hundreds of entries and is
-      // otherwise in database insertion order
-      ...labelled
-        .map(option =>
-          labelCounts[option.label] > 1
-            ? { ...option, label: `${option.label}  #${option.value.slice(6, 14)}` }
-            : option
-        )
-        .sort((a, b) => a.label.localeCompare(b.label)),
-    ];
+  // One shared modal serves every row's source track picker: it filters as the
+  // user types, which beats scrolling a native dropdown of hundreds of tracks,
+  // and it avoids rendering the full track list once per table row
+  renderTrackPicker = (trackOptions: Array<{ value: string; label: string; path: string }>): JSX.Element => {
+    const { pickerMixId, pickerFilter, mixes } = this.state;
+    const mix = mixes.find(mix => mix.id === pickerMixId);
+    const tokens = pickerFilter.toLowerCase().split(/\s+/).filter(Boolean);
+    const visibleOptions = trackOptions.filter(option =>
+      tokens.every(token => `${option.label} ${option.path}`.toLowerCase().includes(token))
+    );
+    return (
+      <Modal show={!!mix} onHide={this.closePicker} onEntered={this.focusPickerSearch}>
+        <Modal.Header closeButton>
+          <Modal.Title as="h6">Source track for: {mix?.prefix}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            ref={this.pickerSearchRef}
+            placeholder="Search by name or file..."
+            value={pickerFilter}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              this.setState({ pickerFilter: event.target.value })
+            }
+            onKeyDown={(event: React.KeyboardEvent) => {
+              if (event.key === 'Enter' && visibleOptions.length === 1) {
+                this.pickTrack(visibleOptions[0].value);
+              }
+            }}
+          />
+          {visibleOptions.length === 0 ? (
+            <p className="text-muted mt-3 mb-0">No tracks match.</p>
+          ) : (
+            <ListGroup className="recovery-track-list mt-3">
+              {visibleOptions.map(option => (
+                <ListGroup.Item
+                  action
+                  key={option.value}
+                  active={mix?.track === option.value}
+                  onClick={() => this.pickTrack(option.value)}>
+                  {option.label}
+                  <small className="recovery-track-path d-block">
+                    {option.path || 'no file'}
+                    {option.path && (
+                      <span
+                        className="recovery-copy ml-1"
+                        title="Copy file path"
+                        onClick={event => this.copyPath(option.path, event)}>
+                        {this.state.copiedPath === option.path ? <ClipboardCheck size={12} /> : <Clipboard size={12} />}
+                      </span>
+                    )}
+                  </small>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
+        </Modal.Body>
+        <Modal.Footer className="justify-content-between">
+          <span className="text-muted small">
+            {visibleOptions.length} of {trackOptions.length} tracks
+          </span>
+          <Button variant="outline-danger" size="sm" disabled={!mix?.track} onClick={() => this.pickTrack('')}>
+            Clear selection
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
   };
 
   renderResults = (): JSX.Element | null => {
@@ -371,6 +482,8 @@ class Recovery extends React.Component<Record<string, never>, State> {
   render(): JSX.Element {
     const { isLoaded, scanErrors, uploads, mixes, selectedUploadIds, selectedMixIds, importing } = this.state;
     const trackOptions = this.trackChoiceOptions();
+    const trackOptionByValue: { [value: string]: { label: string; path: string } } = {};
+    trackOptions.forEach(option => (trackOptionByValue[option.value] = option));
 
     const uploadColumns: ColumnDescription<RecoveryUpload>[] = [
       {
@@ -465,19 +578,14 @@ class Recovery extends React.Component<Record<string, never>, State> {
         editable: false,
         text: 'Source track',
         formatter: (cell: string, row: RecoveryMix) => (
-          <Form.Control
-            as="select"
+          <Button
+            variant={cell ? 'outline-secondary' : 'outline-primary'}
             size="sm"
-            value={cell}
-            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-              this.onTrackChoiceChange(row.id, event.target.value)
-            }>
-            {trackOptions.map(option => (
-              <option key={option.value} value={option.value} title={option.title}>
-                {option.label}
-              </option>
-            ))}
-          </Form.Control>
+            className="recovery-track-choice"
+            title={cell ? trackOptionByValue[cell]?.path : undefined}
+            onClick={() => this.openPicker(row.id)}>
+            {cell ? trackOptionByValue[cell]?.label ?? cell : 'Select a track...'}
+          </Button>
         ),
       },
       {
@@ -611,6 +719,7 @@ class Recovery extends React.Component<Record<string, never>, State> {
                   )}
                 </Tab>
               </Tabs>
+              {this.renderTrackPicker(trackOptions)}
             </div>
           )}
         </Container>
