@@ -258,17 +258,40 @@ class Recovery extends React.Component<Record<string, never>, State> {
     this.setState({ selectedMixIds: isSelected ? rows.map(row => row.id) : [] });
   };
 
-  trackChoiceOptions = (): Array<{ value: string; label: string }> => {
+  trackChoiceOptions = (): Array<{ value: string; label: string; title: string }> => {
     const { existingTracks } = this.state;
+    const trackName = (track: RecoveryTrackRef) => `${track.artist ? `${track.artist} - ` : ''}${track.title}`;
+    const countBy = (values: string[]) => {
+      const counts: { [value: string]: number } = {};
+      values.forEach(value => (counts[value] = (counts[value] ?? 0) + 1));
+      return counts;
+    };
+
+    // Tracks that share a name are indistinguishable by name alone, so those
+    // spell out the file they came from. The same file can also be uploaded
+    // twice, so anything still ambiguous falls back to part of the track ID.
+    const nameCounts = countBy(existingTracks.map(trackName));
+    const labelled = existingTracks.map(track => {
+      const name = trackName(track);
+      const file = track.path.split('/').pop() || 'no file';
+      return {
+        value: `track:${track.id}`,
+        label: nameCounts[name] > 1 ? `${name}  [${file}]` : name,
+        title: track.path || 'no file',
+      };
+    });
+    const labelCounts = countBy(labelled.map(option => option.label));
+
     return [
-      { value: '', label: 'Select a track...' },
+      { value: '', label: 'Select a track...', title: '' },
       // Sorted, because this list can run to hundreds of entries and is
       // otherwise in database insertion order
-      ...existingTracks
-        .map(track => ({
-          value: `track:${track.id}`,
-          label: `${track.artist ? `${track.artist} - ` : ''}${track.title}`,
-        }))
+      ...labelled
+        .map(option =>
+          labelCounts[option.label] > 1
+            ? { ...option, label: `${option.label}  #${option.value.slice(6, 14)}` }
+            : option
+        )
         .sort((a, b) => a.label.localeCompare(b.label)),
     ];
   };
@@ -450,7 +473,7 @@ class Recovery extends React.Component<Record<string, never>, State> {
               this.onTrackChoiceChange(row.id, event.target.value)
             }>
             {trackOptions.map(option => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value} value={option.value} title={option.title}>
                 {option.label}
               </option>
             ))}

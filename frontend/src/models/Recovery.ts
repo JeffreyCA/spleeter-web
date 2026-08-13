@@ -38,6 +38,7 @@ export interface RecoveryTrackRef {
   id: string;
   artist: string;
   title: string;
+  path: string;
 }
 
 export interface RecoveryScanResponse {

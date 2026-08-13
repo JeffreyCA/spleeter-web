@@ -371,10 +371,14 @@ def scan_mixes():
 
     lookup = {}
     for track in SourceTrack.objects.all():
-        lookup.setdefault(match_key(track.artist, track.title), {
+        key = match_key(track.artist, track.title)
+        # Several tracks can share a name, and picking one of them arbitrarily
+        # would silently attach mixes to the wrong track, so mark the name as
+        # ambiguous and leave the choice to the user
+        lookup[key] = None if key in lookup else {
             'kind': 'track',
             'id': str(track.id)
-        })
+        }
 
     for name in sorted(os.listdir(separate_root)):
         if not is_uuid(name) or name in existing_ids:
@@ -412,11 +416,14 @@ def perform_scan():
     """
     uploads = scan_uploads()
     mixes = scan_mixes()
+    # The file is what tells two tracks with the same artist and title apart,
+    # so its path is sent along for the source track picker
     existing_tracks = [{
         'id': str(track.id),
         'artist': track.artist,
-        'title': track.title
-    } for track in SourceTrack.objects.all()]
+        'title': track.title,
+        'path': track.source_file.file.name if track.source_file.file else ''
+    } for track in SourceTrack.objects.select_related('source_file').all()]
     return {
         'uploads': uploads,
         'mixes': mixes,
