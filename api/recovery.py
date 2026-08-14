@@ -52,6 +52,15 @@ DEFAULT_BITRATE = 256
 # Mix output files are only ever MP3/WAV/FLAC (see api.util.output_format_to_ext)
 MIX_FILE_EXTS = frozenset(['.mp3', '.wav', '.flac'])
 
+# settings.VALID_FILE_EXT only covers what users may upload, but uploads/ also holds
+# YouTube downloads, which are named after the format yt-dlp fetched (see
+# api.youtubedl.download_audio). Its audio formats are all upload-legal, but the
+# 'bestaudio/best' fallback can yield a video container, and older downloads were
+# named from a guessed extension that did not always match the file. Those files are
+# already on disk, so recovery reads anything yt-dlp can leave behind.
+UPLOAD_FILE_EXTS = frozenset(settings.VALID_FILE_EXT) | frozenset(
+    ['.mp4', '.m4v', '.mkv', '.mov', '.avi', '.flv', '.3gp'])
+
 # The greedy prefix binds to the *last* "(parts) [suffix]" group, so titles that
 # themselves contain parentheses parse correctly.
 MIX_FILENAME_RE = re.compile(
@@ -250,7 +259,7 @@ def find_upload_file(dir_id):
     :return: File name, or None if the directory has no valid audio file
     """
     dir_path = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR, dir_id)
-    files = list_files_with_ext(dir_path, set(settings.VALID_FILE_EXT))
+    files = list_files_with_ext(dir_path, UPLOAD_FILE_EXTS)
     return files[0] if files else None
 
 

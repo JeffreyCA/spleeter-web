@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import os
 
 from django.conf import settings
 from yt_dlp import YoutubeDL
@@ -9,35 +8,6 @@ from youtube_title_parse import get_artist_title
 """
 This module contains functions related to downloading/parsing YouTube links with youtubedl.
 """
-
-def get_file_ext(url):
-    """
-    Get the file extension of the audio file that would be extracted from the
-    given YouTube video URL.
-
-    :param url: YouTube video URL
-    """
-    opts = {
-    # Always use the best audio quality available
-        'format': 'bestaudio/best',
-        'forcefilename': True,
-        'noplaylist': True,
-        'source_address': settings.YOUTUBEDL_SOURCE_ADDR,
-        'verbose': settings.YOUTUBEDL_VERBOSE,
-        'remote_components': ['ejs:github', 'ejs:npm']
-    }
-    # Try up to 3 times as youtubedl tends to be flakey
-    for _ in range(settings.YOUTUBE_MAX_RETRIES):
-        try:
-            with YoutubeDL(opts) as ydl:
-                info = ydl.extract_info(url, download=False)
-                filename = ydl.prepare_filename(info)
-                _, file_extension = os.path.splitext(filename)
-                return file_extension
-        except DownloadError:
-            # Allow for retry
-            pass
-    raise Exception('get_file_ext failed')
 
 def get_meta_info(url):
     """
@@ -97,17 +67,20 @@ def get_meta_info(url):
             pass
     raise DownloadError('Unable to parse YouTube link')
 
-def download_audio(url, dir_path):
+def download_audio(url, path_template):
     """
     Extract audio track from YouTube video and save to given path.
 
     :param url: YouTube video URL
-    :param dir_path: Path to save audio file
+    :param path_template: Output template for the audio file. Must end in '%(ext)s'
+                          so the file is named after the format that is actually
+                          downloaded (see the return value).
+    :return: Path of the file that was written
     """
     opts = {
         'format': 'bestaudio/best',
         'forcefilename': True,
-        'outtmpl': str(dir_path),
+        'outtmpl': str(path_template),
         'cachedir': False,
         'noplaylist': True,
         'source_address': settings.YOUTUBEDL_SOURCE_ADDR,
@@ -120,4 +93,10 @@ def download_audio(url, dir_path):
         info = ydl.extract_info(url, download=False)
         if info['duration'] > settings.YOUTUBE_LENGTH_LIMIT:
             raise Exception('Video length too long')
-        ydl.download([url])
+        # The format is picked per extraction and can differ between calls, so only
+        # the download itself can say what was written and under which extension
+        info = ydl.extract_info(url)
+        downloads = info.get('requested_downloads') or []
+        if downloads and downloads[0].get('filepath'):
+            return downloads[0]['filepath']
+        return ydl.prepare_filename(info)

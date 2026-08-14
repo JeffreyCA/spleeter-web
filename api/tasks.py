@@ -21,7 +21,7 @@ from .separators.demucs_separator import DemucsSeparator
 from .separators.spleeter_separator import SpleeterSeparator
 from .separators.bs_roformer_separator import BSRoformerSeparator
 from .util import ALL_PARTS, ALL_PARTS_5_PIANO, ALL_PARTS_5_GUITAR, ALL_PARTS_6, output_format_to_ext, get_valid_filename
-from .youtubedl import download_audio, get_file_ext
+from .youtubedl import download_audio
 
 """
 This module defines various Celery tasks used for Spleeter Web.
@@ -296,15 +296,19 @@ def fetch_youtube_audio(source_file_id, fetch_task_id, artist, title, link):
         # Get paths
         directory = os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR,
                                  str(source_file_id))
-        filename = get_valid_filename(artist + ' - ' +
-                                      title) + get_file_ext(link)
+        pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
+        # get_valid_filename strips '%', so the track name cannot be mistaken for a
+        # field of the output template
+        path_template = os.path.join(
+            directory,
+            get_valid_filename(artist + ' - ' + title) + '.%(ext)s')
+
+        # Start download. Only the download knows the real extension, so the paths
+        # that get stored are derived from the file it actually wrote.
+        rel_path = download_audio(link, path_template)
+        filename = os.path.basename(rel_path)
         rel_media_path = os.path.join(settings.UPLOAD_DIR, str(source_file_id),
                                       filename)
-        rel_path = os.path.join(settings.MEDIA_ROOT, rel_media_path)
-        pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
-
-        # Start download
-        download_audio(link, rel_path)
 
         is_local = settings.DEFAULT_FILE_STORAGE == 'api.storage.FileSystemStorage'
 
