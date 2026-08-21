@@ -618,11 +618,13 @@ class Recovery extends React.Component<Record<string, never>, State> {
         <Container className="mt-4 mb-5">
           <h2>Media Recovery</h2>
           <p className="text-muted">
-            Recover missing database entries from files in the media directory, on a best-effort basis. Import the
-            uploads first, then the separated mixes - a mix can only be assigned to a track that already exists. If a
-            mix&apos;s original upload is gone, create a placeholder track for it from the Uploads tab. Use the play
-            buttons to preview files (or individual stems) by ear, and click underlined fields to fix metadata before
-            importing. Everything can still be edited later on the main page.
+            If the database was lost or reset, this page rebuilds its entries from the audio files still in the media
+            directory.
+          </p>
+          <p className="text-muted">
+            Import uploads first, then mixes (a mix can only be assigned to a track that already exists). If a
+            mix&apos;s upload is gone, add a placeholder track for it in the Uploads tab. Click any underlined field to
+            correct it before importing, or edit it later on the main page.
           </p>
           {scanErrors.length > 0 && (
             <Alert variant="danger">
