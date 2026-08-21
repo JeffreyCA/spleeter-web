@@ -22,7 +22,7 @@ SQLAlchemy==1.4.54
 tensorflow==2.15.1
 torch==2.9.1
 torchaudio==2.9.1
-tzdata==2025.2
+tzdata==2025.3
 validators==0.35.0
 whitenoise==6.11.0
 yapf==0.43.0
